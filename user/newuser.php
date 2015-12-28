@@ -17,7 +17,11 @@
   </ul>
 </div>
    
-    <!-- Page Content -->
+
+<div class="container">
+	<p><?php echo $uploaderr ?></p>
+</div>
+   <!-- Page Content -->
 
 	<form class="form-horizontal" action="newuserprocessing.php" method="post" enctype="multipart/form-data">
 <fieldset>
@@ -29,6 +33,7 @@
 
 <!-- Text input-->
 <div class="form-group">
+	
   <label class="col-md-4 control-label" for="item">First Name</label>  
   <div class="col-md-4">
   <input id="first" name="first" type="text" placeholder="Mitch" class="form-control input-md" required="">

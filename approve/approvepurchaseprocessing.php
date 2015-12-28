@@ -59,6 +59,17 @@ catch(PDOException $e)
 
 $conn = null; 
 
+// Reset all values
+$_SESSION['currentitem'] = '';
+$_SESSION['username'] = '';
+$_SESSION['item'] =  '';
+$_SESSION['reason'] =  '';
+$_SESSION['vendor'] = '';
+$_SESSION['committee'] = '';
+$_SESSION['category'] = '';
+$_SESSION['cost'] = '';
+$_SESSION['status']= '';
+$_SESSION['comments']= '';
 ?>
 
 <?php header('Location: index.php'); ?>

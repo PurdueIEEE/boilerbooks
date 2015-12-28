@@ -89,6 +89,15 @@ $conn = null;
 <!-- Form Name -->
 <legend></legend>
 
+<div class="row">
+		<div class="col-sm-4"></div>
+		<div class="col-sm-2">
+			<h4 class='text-left'>Purchase Request by:</h4>
+		</div>
+		<div class="col-sm-6">
+			<h4><em><?php echo $_SESSION['name']; ?></em></h4> 
+		</div>
+</div>
 
 <div class="form-group">
   <label class="col-md-4 control-label" for="Committee">Committee</label>
@@ -155,9 +164,10 @@ $conn = null;
   <label class="col-md-4 control-label" for="category">Category</label>
   <div class="col-md-4">
     <select id="category" name="category" class="form-control">
-      <option value="Electrical">Electrical</option>
-      <option value="Mechanical">Mechanical</option>
-      <option value="Software">Software</option>
+      <option value="Electrical">TBD</option>
+      <option value="Mechanical">Electrical</option>
+      <option value="Software">Mechanical</option>
+	  <option value="Software">Software</option>
     </select>
   </div>
 </div>

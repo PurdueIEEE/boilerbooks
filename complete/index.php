@@ -148,6 +148,14 @@ $conn = null;
   </div>
 </div>
 
+<div class="form-group">
+  <label class="col-md-4 control-label" for="cost">Receipt</label>  
+  <div class="col-md-4">
+  <input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
+    
+  </div>
+</div>
+
 
 <!-- Textarea -->
 <div class="form-group">
