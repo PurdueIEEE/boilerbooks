@@ -53,11 +53,11 @@ try {
 		$conn = null; 
 
 		
-		header("Location: http://kylerakos.me/ieee/boilerbooks/loggedin.php");
+		header("Location: ../loggedin.php");
 	}
 	else
 	{
-		header("Location: http://kylerakos.me/ieee/boilerbooks/");
+		header("Location: changepassword.php");
 	}
 	
 	}

@@ -1,5 +1,5 @@
 <?php 
-	$title = 'Kyle Rakos';
+	$title = 'Boiler Books';
 	include '../header.php';
 ?>
 

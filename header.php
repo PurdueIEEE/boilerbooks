@@ -59,6 +59,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand topnav" href="http://pieee.org">IEEE</a>
+				<a class="navbar-brand navbar-right" href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
 
