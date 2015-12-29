@@ -1,32 +1,27 @@
-<?php 
-	session_start();
-	if (!isset($_SESSION['user']))
-	{
-		header("Location: ../index.php");
-		die();
-	}
+<?php
+	$title = 'Boiler Books';
+	$completeactive = "active";
+	include '../menu.php';
 ?>
 
-<?php //to do
-/*$servername = "localhost";
+<?php 
+$servername = "localhost";
 $username = "testuser";
 $password = "password123";
 $dbname = "ieee-money";
 
-// define variables and set to empty values
-$item = $reason = $vendor = $committee = $cost = $comments = $category = "";
 
-$item = test_input($_POST["item"]);
-$reason = test_input($_POST["reason"]);
-$vendor = test_input($_POST["vendor"]);
-$committee = test_input($_POST["committee"]);
-$cost = test_input($_POST["cost"]);
+
+// define variables and set to empty values
+$cost = $comments = $receipt = "";
+$committee = $_SESSION['committee'];
+$item = $_SESSION['item'];
+$purchaseID = $_SESSION['purchaseID'];
+
+$sqler = $uploaderr = '';
 $comments = test_input($_POST["comments"]);
-$category = test_input($_POST["category"]);
-$stat = test_input($_POST["status"]);
-$fundsource = test_input($_POST["fundsource"]);
-$usr = $_SESSION['user'];
-$purchaseid = $_SESSION['currentitem'];
+$cost = test_input($_POST["cost"]);
+
 
 function test_input($data) {
   $data = trim($data);
@@ -34,6 +29,53 @@ function test_input($data) {
   $data = htmlspecialchars($data);
   return $data;
 }
+
+
+ 
+
+$receipt = "money.krakos.net/";
+
+
+$target_dir = "../receipts/";
+$target_dir_save = "/receipts/";
+$target_file = $target_dir . $committee . "_" . $item . "_" . $purchaseID . ".pdf";
+$target_file_save = $target_dir_save . $committee . "_" . $item . "_" . $purchaseID . ".pdf";
+$uploadOk = 1;
+
+
+$FileType = pathinfo($target_dir . basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION);
+echo "Here:" . "<br>";
+echo $FileType . "<br>";
+echo $$_FILES["fileToUpload"]["name"] . "<br>";
+
+// Check if file already exists
+if (file_exists($target_file)) {
+	$uploaderr = $uploaderr . "Sorry, file already exists.";
+	$uploadOk = 0;
+}
+// Check file size
+if ($_FILES["fileToUpload"]["size"] > 500000) {
+	$uploaderr = $uploaderr . "Sorry, your reimbursement cert is too large.";
+	$uploadOk = 0;
+}
+// Allow certain file formats
+if($FileType != "pdf") {
+	$uploaderr = $uploaderr . "Sorry, only PDFs are allowed for the reimbursement cert.";
+	$uploadOk = 0;
+}
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+	$uploaderr = $uploaderr . "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+} else {
+	if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+		echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+		$receipt = $target_file_save;
+	} else {
+		$uploaderr = $uploaderr . "Sorry, there was an error uploading your file.";
+	}
+}
+
  
 
 try {
@@ -41,12 +83,9 @@ try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $sql = "UPDATE Purchases SET username='$usr', item='$item', purchasereason='$reason', vendor='$vendor',
-	committee='$committee', category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
-	comments='$comments' WHERE Purchases.purchaseID = '$purchaseid'";
+    $sql = "UPDATE Purchases SET cost='$cost', status='Purchased', comments='$comments', 
+	receipt='$receipt' WHERE Purchases.purchaseID = '$purchaseID'";
 	
-    //$sql = "INSERT INTO Purchases (item) 
-	//VALUES ('$item')";
 	
 	// use exec() because no results are returned
     $conn->exec($sql);
@@ -54,11 +93,34 @@ try {
     }
 catch(PDOException $e)
     {
-    echo $sql . "<br>" . $e->getMessage();
+    $sqler =  $sql . "<br>" . $e->getMessage();
     }
 
 $conn = null; 
-*/
-?>
 
-<?php header('Location: index.php'); ?>
+
+$_SESSION['username'] = '';
+$_SESSION['item'] =  '';
+$_SESSION['reason'] =  '';
+$_SESSION['vendor'] = '';
+$_SESSION['committee'] = '';
+$_SESSION['category'] = '';
+$_SESSION['cost'] = '';
+$_SESSION['status']= '';
+$_SESSION['comments']= '';
+$_SESSION['status']= '';
+$_SESSION['purchaseID']= '';
+
+
+
+if ($uploaderr == '' and $sqler == '') {
+	header('Location: index.php'); 
+}
+else {
+	echo "There were errors <br> '";
+	echo $uploaderr . "'<br>'";
+	echo $sqler . "'<br>";
+}
+
+
+?>

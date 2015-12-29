@@ -79,7 +79,7 @@ $conn = null;
 
 <!-- Page Content -->
 
-	<form class="form-horizontal" action="completeprocessing.php" method="post">>
+	<form class="form-horizontal" action="completeprocessing.php" method="post" enctype="multipart/form-data">
 <fieldset>
 
 <!-- Form Name -->

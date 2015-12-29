@@ -38,9 +38,9 @@ try {
 		$items .= $row['committee'];
 		$items .= '</td> <td>';
 		$items .= $row['category'];
-		$items .= '</td> <td>';
+		$items .= '</td> <td><a href=';
 		$items .= $row['receipt'];
-		$items .= '</td> <td>';
+		$items .= '>here</a></td> <td>';
 		$items .= $row['status'];
 		$items .= '</td> <td>';
 		$items .= $row['amount'];
