@@ -27,7 +27,9 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT DATE(p.purchasedate) as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status, 
 	p.cost, p.comments FROM Purchases p
+			INNER JOIN approval a ON a.committee = p.committee
 			WHERE p.committee = '$committee'
+			AND a.username = '$usr'
 			ORDER BY p.purchasedate";
 	//$stmt->execute();
 	
