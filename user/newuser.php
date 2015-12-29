@@ -64,7 +64,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Address</label>  
   <div class="col-md-4">
-  <input id="cost" name="cost" type="text" placeholder="610 Purdue Mall" class="form-control input-md" required="">
+  <input id="address" name="address" type="text" placeholder="610 Purdue Mall" class="form-control input-md" required="">
     
   </div>
 </div>

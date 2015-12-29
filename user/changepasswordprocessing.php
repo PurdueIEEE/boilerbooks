@@ -1,10 +1,7 @@
 <?php 
-	session_start();
-	if (!isset($_SESSION['user']))
-	{
-		header("Location: ../index.php");
-		die();
-	}
+	$title = 'Boiler Books';
+	include '../header.php';
+	include '../menu.php';
 ?>
 
 <?php

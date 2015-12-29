@@ -20,15 +20,15 @@ try {
 		WHERE U.username = '$usr'";
 
 	foreach ($conn->query($sql) as $row) {
-		$first .= $row['first'];
-		$last .= $row['last'];
-		$email .= $row['email'];
-		$address .= $row['address'];
-		$city .= $row['city'];
-		$state .= $row['state'];
-		$zip .= $row['zip'];
-		$cert .= $row['cert'];
-		$username .= $row['username'];
+		$first = $row['first'];
+		$last = $row['last'];
+		$email = $row['email'];
+		$address = $row['address'];
+		$city = $row['city'];
+		$state = $row['state'];
+		$zip = $row['zip'];
+		$cert = $row['cert'];
+		$usr = $row['username'];
 		
 	}
 		//echo $items;
@@ -105,7 +105,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Current Address</label>  
   <div class="col-md-4">
-  <input id="cost" name="cost" type="text" placeholder="610 Purdue Mall" class="form-control input-md" required=""  value = <?php echo $address ?>>
+  <input id="address" name="address" type="text" placeholder="610 Purdue Mall" class="form-control input-md" required=""  value = <?php echo $address ?>>
     
   </div>
 </div>
@@ -152,7 +152,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Current Username</label>  
   <div class="col-md-4">
-  <input id="username" name="username" type="text" placeholder="mdaniels" class="form-control input-md" required=""  value = <?php echo $username ?>>
+  <input id="username" name="username" type="text" placeholder="mdaniels" class="form-control input-md" required=""  value = <?php echo $usr ?>>
     
   </div>
 </div>
