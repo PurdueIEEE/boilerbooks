@@ -100,7 +100,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$sql = "UPDATE Users SET first='$first', last='$last', email = '$email', address = '$address',
+	$sql = "UPDATE Users SET modifydate = NOW(), first='$first', last='$last', email = '$email', address = '$address',
 			city='$city', state = '$state', zip='$zip', cert='$cert', username='$usr' WHERE username='$curusr'";
 
 	// Prepare statement

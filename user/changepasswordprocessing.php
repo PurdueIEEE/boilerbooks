@@ -43,7 +43,7 @@ try {
 		$password1 = password_hash($password1,PASSWORD_DEFAULT);
 		$password2 = password_hash($password1,PASSWORD_DEFAULT);
 
-		$sql = "UPDATE Users SET password='$password1' WHERE username='$usr'";
+		$sql = "UPDATE Users SET modifydate = NOW(), password='$password1' WHERE username='$usr'";
 
 		// use exec() because no results are returned
 		$conn->exec($sql);
