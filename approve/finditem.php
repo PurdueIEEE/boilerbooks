@@ -81,6 +81,9 @@ elseif ($_SESSION['committee'] == 'ROV') {
 elseif ($_SESSION['committee'] == 'Rocket') {
 	$_SESSION['rocketactive'] = 'selected';
 }
+elseif ($_SESSION['generalieee'] == 'General IEEE') {
+	$_SESSION['generalieee'] = 'selected';
+}
 header("Location: index.php");
 
 

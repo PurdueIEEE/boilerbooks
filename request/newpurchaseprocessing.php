@@ -40,8 +40,6 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $sql = "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,fundsource,comments)
     VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$category', '$cost', 'Requested', 'BOSO', '$comments')";
-    //$sql = "INSERT INTO Purchases (item) 
-	//VALUES ('$item')";
 	
 	// use exec() because no results are returned
     $conn->exec($sql);
@@ -53,4 +51,7 @@ catch(PDOException $e)
     }
 
 $conn = null; 
+
+
+$_SESSION['item'] = $item;
 ?>

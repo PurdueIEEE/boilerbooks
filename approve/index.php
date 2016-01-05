@@ -103,7 +103,8 @@ $conn = null;
   <label class="col-md-4 control-label" for="Committee">Committee</label>
   <div class="col-md-4">
     <select id="committee" name="committee" class="form-control">
-      <option <?php echo $_SESSION['aerialactive']; ?> value="Aerial Robotics">Aerial Robotics</option>
+      <option <?php echo $_SESSION['generalieee']; ?> value="General IEEE">General IEEE</option>
+	  <option <?php echo $_SESSION['aerialactive']; ?> value="Aerial Robotics">Aerial Robotics</option>
       <option <?php echo $_SESSION['computersocietyactive']; ?> value="Computer Society">Computer Society</option>
       <option <?php echo $_SESSION['embsactive']; ?> value="EMBS">EMBS</option>
       <option <?php echo $_SESSION['learningactive']; ?> value="Learning">Learning</option>
@@ -146,7 +147,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Cost</label>  
   <div class="col-md-4">
-  <input id="cost" name="cost" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>">
+  <input id="cost" name="cost" type="number" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>">
     
   </div>
 </div>

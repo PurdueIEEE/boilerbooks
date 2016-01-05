@@ -17,7 +17,8 @@
   <label class="col-md-4 control-label" for="Committee">Committee</label>
   <div class="col-md-4">
     <select id="committee" name="committee" class="form-control">
-      <option value="Aerial Robotics">Aerial Robotics</option>
+      <option value="Aerial Robotics">General IEEE</option>
+	  <option value="Aerial Robotics">Aerial Robotics</option>
       <option value="Computer Society">Computer Society</option>
       <option value="EMBS">EMBS</option>
       <option value="Learning">Learning</option>
@@ -60,7 +61,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Cost</label>  
   <div class="col-md-4">
-  <input id="cost" name="cost" type="text" placeholder="$156.56" class="form-control input-md" required="">
+  <input id="cost" name="cost" type="number" placeholder="$156.56" class="form-control input-md" required="">
     
   </div>
 </div>

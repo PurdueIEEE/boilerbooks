@@ -19,7 +19,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
-	$sql = "SELECT p.purchaseID, p.item FROM Purchases p
+	$sql = "SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
 			INNER JOIN approval a on p.committee = a.committee
 			WHERE p.status = 'Approved'
 				AND p.username = '$usr'";
@@ -143,7 +143,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>  
   <div class="col-md-4">
-  <input id="cost" name="cost" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="$<?php echo $_SESSION['cost']; ?>">
+  <input id="cost" name="cost" type="number" placeholder="$123.45" class="form-control input-md" required="" value="$<?php echo $_SESSION['cost']; ?>">
     
   </div>
 </div>
