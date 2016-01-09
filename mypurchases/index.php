@@ -2,7 +2,7 @@
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
 	include '../menu.php';
-	
+
 ?>
 
 <?php
@@ -12,59 +12,63 @@ $password = "password123";
 $dbname = "ieee-money";
 $items = '';
 $usr = $_SESSION['user'];
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT DATE(p.purchasedate) as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status, 
-	p.cost, p.comments FROM Purchases p
+	$sql = "SELECT DATE(p.purchasedate) as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+	p.cost, p.comments, p.username purchasedby
+	, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+	FROM Purchases p
 			WHERE p.username = '$usr'
 			ORDER BY p.purchasedate";
 	//$stmt->execute();
-	
-	
+
+
 	foreach ($conn->query($sql) as $row) {
 		$items.= '<tr> <td>';
 		$items .= $row['date'];
-		$items .= '</td> <td>';
+		$items .= '</td> <td><a href=';
+		$items .= $row['receipt'];
+		$items .= '>';
 		$items .= $row['item'];
-		$items .= '</td> <td>';
+		$items .= '</a></td> <td>';
 		$items .= $row['purchasereason'];
 		$items .= '</td> <td>';
 		$items .= $row['vendor'];
 		$items .= '</td> <td>';
 		$items .= $row['committee'];
 		$items .= '</td> <td>';
-		$items .= $row['category'];
-		$items .= '</td> <td><a href=';
-		$items .= $row['receipt'];
-		$items .= '>here</a></td> <td>';
-		$items .= $row['status'];
+		$items .= $row['approvedby'];
 		$items .= '</td> <td>';
-		$items .= $row['amount'];
+		$items .= $row['category'];
+		$items .= '</td> <td>';
+		$items .= $row['status'];
+		$items .= '</td> <td>$';
+		$items .= $row['cost'];
 		$items .= '</td> <td>';
 		$items .= $row['comments'];
-		
-		
+
+
 		$items .= '</td></tr>';
 
-		
+
 	}
 		//echo $items;
-		
-	
+
+
 	}
 catch(PDOException $e)
 	{
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 ?>
 
-<div class="container">          
+<div class="container">
 	<table class="table">
 		<thead>
 			<tr>
@@ -73,8 +77,8 @@ $conn = null;
 				<th>Reason</th>
 				<th>Vendor</th>
 				<th>Committee</th>
+				<th>Reviewed By</th>
 				<th>Category</th>
-				<th>Receipt</th>
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
@@ -88,7 +92,7 @@ $conn = null;
 
 
 
-		
-<?php 
+
+<?php
 	include '../smallfooter.php';
 ?>

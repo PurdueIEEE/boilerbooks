@@ -13,33 +13,6 @@ $dbname = "ieee-money";
 $stuff = '';
 $item = $_SESSION['item'];
 
-/*
-try {
-
-	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-	// set the PDO error mode to exception
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT item, modifydate, purchaseID FROM Purchases P WHERE item = '$item'
-			ORDER BY modifydate DESC LIMIT 1";
-
-
-	foreach ($conn->query($sql) as $row) {
-
-
-		$currentitem = $row['purchaseID'];
-
-	}
-
-
-}
-
-catch(PDOException $e)
-	{
-	echo $sql . "<br>" . $e->getMessage();
-	}
-
-$conn = null;
-*/
 
 
 $currentitemid = $_SESSION['itemid'];

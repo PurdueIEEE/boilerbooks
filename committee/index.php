@@ -39,7 +39,7 @@
 </form>
 
 
-<div class="container">          
+<div class="container">
 	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Expenses</h3>
 	<table class="table">
 		<thead>
@@ -48,9 +48,9 @@
 				<th>Item</th>
 				<th>Reason</th>
 				<th>Vendor</th>
-				<th>Committee</th>
+				<th>Purchased By</th>
+				<th>Reviewed By</th>
 				<th>Category</th>
-				<th>Receipt</th>
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
@@ -63,7 +63,7 @@
 </div>
 
 
-		
-<?php 
+
+<?php
 	include '../smallfooter.php';
 ?>
