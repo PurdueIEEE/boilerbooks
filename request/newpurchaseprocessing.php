@@ -1,4 +1,4 @@
-<?php 
+<?php
 	session_start();
 	if (!isset($_SESSION['user']))
 	{
@@ -31,7 +31,7 @@ function test_input($data) {
   $data = htmlspecialchars($data);
   return $data;
 }
- 
+
 
 try {
 	$cost = test_input(str_replace('$','',$cost));
@@ -39,10 +39,18 @@ try {
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $sql = "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,fundsource,comments)
-    VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$category', '$cost', 'Requested', 'BOSO', '$comments')";
-	
+    VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$category', '$cost', 'Requested', 'BOSO', '$comments');
+		";
+
 	// use exec() because no results are returned
-    $conn->exec($sql);
+  $conn->exec($sql);
+	$sql = "SELECT @@IDENTITY AS PID;";
+	foreach ($conn->query($sql) as $row) {
+
+
+		$currentitemid = $row['PID'];
+
+	}
     echo "New record created successfully";
     }
 catch(PDOException $e)
@@ -50,8 +58,10 @@ catch(PDOException $e)
     echo $sql . "<br>" . $e->getMessage();
     }
 
-$conn = null; 
+$conn = null;
 
 
 $_SESSION['item'] = $item;
+$_SESSION['itemid'] = $currentitemid;
+
 ?>
