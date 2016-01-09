@@ -74,17 +74,23 @@
   </div>
 </div>
 
-<!-- Select Basic -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="category">Category</label>
-  <div class="col-md-4">
-    <select id="category" name="category" class="form-control">
-      <option value="Electrical">Electrical</option>
-      <option value="Mechanical">Mechanical</option>
-      <option value="Software">Software</option>
-    </select>
+
+
+		<div class="form-group">
+		  <label class="col-md-4 control-label" for="category">Category</label>
+		  <div class="col-md-4">
+		  <input id="category" name="category" type="text" placeholder="Electrical, Mechanical, Software, etc." class="form-control input-md" required="">
+
+		  </div>
+		</div>
+
+<!--
   </div>
+	<div class="col-md-2">
+			<a href="categories.php"><button type="button" id="categories" name="categories" class="btn btn-primary">Show Categories</button></a>
+	</div>
 </div>
+-->
 
 <!-- Button -->
 <div class="form-group">

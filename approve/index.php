@@ -12,7 +12,7 @@ $password = "password123";
 $dbname = "ieee-money";
 $items = '';
 $usr = $_SESSION['user'];
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -28,8 +28,8 @@ try {
 								WHERE ap.username = '$usr'
 									AND ap.committee = p.committee)";
 	//$stmt->execute();
-	
-	
+
+
 	foreach ($conn->query($sql) as $row) {
 		$items .= '<option value="';
 		$items .= $row['purchaseID'];
@@ -39,15 +39,15 @@ try {
 
 	}
 		//echo $items;
-		
-	
+
+
 	}
 catch(PDOException $e)
 	{
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 ?>
 
     <!-- Page Content -->
@@ -95,7 +95,7 @@ $conn = null;
 			<h4 class='text-left'>Purchase Request by:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['name']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['name']; ?></em></h4>
 		</div>
 </div>
 
@@ -117,61 +117,58 @@ $conn = null;
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="item">Item Being Purchased</label>  
+  <label class="col-md-4 control-label" for="item">Item Being Purchased</label>
   <div class="col-md-4">
   <input id="item" name="item" type="text" placeholder="Select item above to view" class="form-control input-md" value="<?php echo $_SESSION['item']; ?>" required="">
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="reason">Reason Being Purchased</label>  
+  <label class="col-md-4 control-label" for="reason">Reason Being Purchased</label>
   <div class="col-md-4">
   <input id="reason" name="reason" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['reason']; ?>">
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="vendor">Vendor</label>  
+  <label class="col-md-4 control-label" for="vendor">Vendor</label>
   <div class="col-md-4">
   <input id="vendor" name="vendor" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['vendor']; ?>">
-    
+
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Cost</label>  
+  <label class="col-md-4 control-label" for="cost">Cost</label>
   <div class="col-md-4">
   <input id="cost" name="cost" type="number" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>">
-    
+
   </div>
 </div>
 
 <!-- Textarea -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="comments">Comments</label>
-  <div class="col-md-4">                     
+  <div class="col-md-4">
     <textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['comments']; ?></textarea>
   </div>
 </div>
 
-<!-- Select Basic -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="category">Category</label>
   <div class="col-md-4">
-    <select id="category" name="category" class="form-control">
-      <option value="Electrical">TBD</option>
-      <option value="Mechanical">Electrical</option>
-      <option value="Software">Mechanical</option>
-	  <option value="Software">Software</option>
-    </select>
+    <textarea class="form-control" id="category" name="category"><?php echo $_SESSION['category']; ?></textarea>
   </div>
 </div>
+
+
+
 
 <!-- Select Basic -->
 <div class="form-group">
@@ -206,7 +203,7 @@ $conn = null;
 </fieldset>
 </form>
 
-		
-<?php 
+
+<?php
 	include '../smallfooter.php';
 ?>
