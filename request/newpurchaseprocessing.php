@@ -28,7 +28,7 @@ $usr = $_SESSION['user'];
 function test_input($data) {
   $data = trim($data);
   $data = stripslashes($data);
-  $data = htmlspecialchars($data);
+  $data = htmlspecialchars($data, $flags=ENT_QUOTES| ENT_HTML401);
   return $data;
 }
 
