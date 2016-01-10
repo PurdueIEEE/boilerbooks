@@ -29,6 +29,7 @@ try {
 , p.status
 , p.cost
 , p.comments
+, p.username
 ,(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 ,(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
 FROM Purchases p
@@ -55,9 +56,11 @@ ORDER BY p.purchasedate";
 		$items .= $row['vendor'];
 		$items .= '</td> <td>';
 		$items .= $row['committee'];
-		$items .= '</td> <td>';
+		$items .= "</td> <td><a href='user.php?usrlookup=";
+		$items .= $row['username'];
+		$items .= "'>";
 		$items .= $row['purchasedby'];
-		$items .= '</td> <td>';
+		$items .= '</a></td> <td>';
 		$items .= $row['approvedby'];
 		$items .= '</td> <td>';
 		$items .= $row['status'];
