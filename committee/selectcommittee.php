@@ -11,6 +11,7 @@ $username = "testuser";
 $password = "password123";
 $dbname = "ieee-money";
 $items = '';
+$items2 = '';
 $usr = $_SESSION['user'];
 $committee = test_input($_POST["committee"]);
 
@@ -79,6 +80,57 @@ catch(PDOException $e)
 	}
 
 $conn = null;
+
+
+
+// income
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	// anyone with approval status in a committee for any amount can view the entire committee
+	$sql = "SELECT *
+	 FROM Income I
+			INNER JOIN approval a ON a.committee = I.committee
+			WHERE I.committee = '$committee'
+			AND a.username = '$usr'
+			ORDER BY I.updated";
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+		$items2.= '<tr> <td>';
+		$items2 .= $row['updated'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['source'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['type'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['amount'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['item'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['status'];
+		$items2 .= '</td> <td>';
+		$items2 .= $row['comments'];
+
+
+		$items2 .= '</td></tr>';
+
+
+	}
+	$_SESSION['commiteeincome'] = $items2;
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+
 
 
 header("Location: index.php");

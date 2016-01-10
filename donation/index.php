@@ -14,7 +14,7 @@
 <!-- Text input-->
 <!-- Select Basic -->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="Committee">Committee</label>
+  <label class="col-md-4 control-label" for="committee">Committee</label>
   <div class="col-md-4">
     <select id="committee" name="committee" class="form-control">
       <option value="Aerial Robotics">Aerial Robotics</option>
@@ -29,28 +29,28 @@
 </div>
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="item">Source</label>  
+  <label class="col-md-4 control-label" for="source">Source</label>
   <div class="col-md-4">
   <input id="source" name="source" type="text" placeholder="Provost, PESC, Northrop, etc." class="form-control input-md" required="">
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="reason">Amount</label>  
+  <label class="col-md-4 control-label" for="amount">Amount</label>
   <div class="col-md-4">
   <input id="amount" name="amount" type="number" placeholder="$1500.00" class="form-control input-md" required="">
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="vendor">Item</label>  
+  <label class="col-md-4 control-label" for="item">Item</label>
   <div class="col-md-4">
-  <input id="vendor" name="vendor" type="text" placeholder="If donation list item" class="form-control input-md">
-    
+  <input id="item" name="item" type="text" placeholder="If donation list item" class="form-control input-md">
+
   </div>
 </div>
 
@@ -71,9 +71,9 @@
 
 <!-- Select Basic -->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="category">Status</label>
+  <label class="col-md-4 control-label" for="status">Status</label>
   <div class="col-md-4">
-    <select id="category" name="category" class="form-control">
+    <select id="status" name="status" class="form-control">
       <option value="Received">Received</option>
       <option value="Expected">Expected</option>
     </select>
@@ -83,7 +83,7 @@
 <!-- Textarea -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="comments">Comments</label>
-  <div class="col-md-4">                     
+  <div class="col-md-4">
     <textarea class="form-control" id="comments" name="comments"></textarea>
   </div>
 </div>
@@ -100,7 +100,7 @@
 </form>
 
 
-		
-<?php 
+
+<?php
 	include '../smallfooter.php';
 ?>

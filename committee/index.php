@@ -64,6 +64,28 @@
 
 
 
+<div class="container">
+	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Income</h3>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Source</th>
+				<th>Type</th>
+				<th>Amount</th>
+				<th>Item (if donated)</th>
+				<th>Status</th>
+				<th>Comments</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php echo $_SESSION['commiteeincome'] ?>
+		</tbody>
+	</table>
+</div>
+
+
+
 <?php
 	include '../smallfooter.php';
 ?>

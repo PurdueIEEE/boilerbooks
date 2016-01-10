@@ -130,7 +130,6 @@ $conn = null;
 		</thead>
 		<tbody>
 			<?php echo $items ?>
-			Coming Soon
 		</tbody>
 	</table>
 </div>
