@@ -1,4 +1,4 @@
-<?php 
+<?php
 	session_start();
 	if (!isset($_SESSION['user']))
 	{
@@ -6,7 +6,7 @@
 		die();
 	}
 ?>
-<?php 
+<?php
 	include 'header.php';
 ?>
 
@@ -16,9 +16,10 @@
   <ul class="nav nav-tabs">
     <li class = <?php echo $requestactive?>><a href="/request/">Request Purchase</a></li>
     <li class = <?php echo $approveactive?>><a href="/approve/">Approve Purchase</a></li>
-	<li class = <?php echo $completeactive?>><a href="/complete/">Complete Purchase</a></li>
     <li class = <?php echo $mypurchasesactive?>><a href="/mypurchases/">View My Purchases</a></li>
+		<li class = <?php echo $completeactive?>><a href="/complete/">Complete Purchase</a></li>
 	<li class = <?php echo $committeeactive?>><a href="/committee/">View Committee Expenses</a></li>
 	<li class = <?php echo $donationactive?>><a href="/donation/">Receive Donation</a></li>
-  </ul>
+	<li class = <?php echo $treasuereactive?>><a href="/treasurer/">Treasurer</a></li>
+	</ul>
 </div>
