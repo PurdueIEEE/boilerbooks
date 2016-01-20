@@ -1,14 +1,11 @@
-<?php 
+<?php
 	$title = 'Boiler Books';
 	include '../header.php';
 	include '../menu.php';
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 
 // define variables and set to empty values
 $oldpassword = $password1 = $password2 = "";
@@ -22,7 +19,7 @@ if ($password1 != $password2)
 {
 	echo "Passwords must match";
 }
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -30,13 +27,13 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$stmt = $conn->prepare("SELECT password FROM Users WHERE Users.username = '$usr'");
 	$stmt->execute();
-	
+
 	$results = $stmt->fetchAll();
 	foreach ($results as $pswd) {
 		$dbpsw = $pswd['password'];
 	}
-	
-	
+
+
 
 	if (password_verify($oldpassword,$dbpsw))
 	{
@@ -47,21 +44,21 @@ try {
 
 		// use exec() because no results are returned
 		$conn->exec($sql);
-		$conn = null; 
+		$conn = null;
 
-		
+
 		header("Location: ../loggedin.php");
 	}
 	else
 	{
 		header("Location: changepassword.php");
 	}
-	
+
 	}
 catch(PDOException $e)
 	{
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 ?>

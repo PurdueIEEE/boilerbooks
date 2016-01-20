@@ -1,14 +1,11 @@
-<?php 
+<?php
 	$title = 'Boiler Books';
 	include '../header.php';
 	include '../menu.php';
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 
 // define variables and set to empty values
 $first = $last = $email = $address = $city = $state = $zip = $usr = $cert = $password1 = $password2 = "";
@@ -24,12 +21,6 @@ $usr = test_input($_POST["username"]);
 $curusr =   $_SESSION['user'];
 $uploaderr = '';
 
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
 
 
 if ($_FILES["fileToUpload"]["name"] != '')
@@ -72,7 +63,7 @@ if ($_FILES["fileToUpload"]["name"] != '')
 }
 else {
 	//keep same cert
-		
+
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		// set the PDO error mode to exception
@@ -82,7 +73,7 @@ else {
 
 		foreach ($conn->query($sql) as $row) {
 			$cert = $row['cert'];
-			
+
 		}
 		}
 	catch(PDOException $e)
@@ -90,7 +81,7 @@ else {
 		echo $sql . "<br>" . $e->getMessage();
 		}
 
-	$conn = null; 
+	$conn = null;
 
 }
 
@@ -113,10 +104,10 @@ try {
 catch(PDOException $e) {
     echo $sql . "<br>" . $e->getMessage();
 }
-	
 
 
-	
+
+
 
 
 
@@ -130,19 +121,19 @@ catch(PDOException $e) {
 
 
 if ($uploaderr == '' and $sqlerr == '') {
-	
+
 	echo $first ."<br>";
 	echo $last ."<br>";
 	echo $email ."<br>";
 	echo $address ."<br>";
 	echo $city ."<br>";
-	echo $state ."<br>"; 
-	echo $zip ."<br>"; 
+	echo $state ."<br>";
+	echo $zip ."<br>";
 	echo $cert ."<br>";
-	echo "usr: " . $usr ."<br>"; 
+	echo "usr: " . $usr ."<br>";
 	echo "curusr: " . $curusr ."<br>";
-	
-	
+
+
 	//header("Location: ../loggedin.php");
 }
 else {

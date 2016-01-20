@@ -1,16 +1,13 @@
-<?php 
+<?php
 	$title = 'Boiler Books';
 	include '../header.php';
 	include '../menu.php';
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 $usr = $_SESSION['user'];
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -29,18 +26,18 @@ try {
 		$zip = $row['zip'];
 		$cert = $row['cert'];
 		$usr = $row['username'];
-		
+
 	}
 		//echo $items;
-		
-	
+
+
 	}
 catch(PDOException $e)
 	{
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 ?>
 
 <body>
@@ -74,86 +71,86 @@ $conn = null;
 
 <!-- Text input-->
 <div class="form-group">
-	
-  <label class="col-md-4 control-label" for="item">Current First Name</label>  
+
+  <label class="col-md-4 control-label" for="item">Current First Name</label>
   <div class="col-md-4">
   <input id="first" name="first" type="text" placeholder="Mitch" class="form-control input-md" required="" value = '<?php echo $first ?>'>
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="reason">Current Last Name</label>  
+  <label class="col-md-4 control-label" for="reason">Current Last Name</label>
   <div class="col-md-4">
   <input id="last" name="last" type="text" placeholder="Daniels" class="form-control input-md" required="" value = '<?php echo $last ?>'>
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="vendor">Current Email</label>  
+  <label class="col-md-4 control-label" for="vendor">Current Email</label>
   <div class="col-md-4">
   <input id="email" name="email" type="text" placeholder="president@purdue.edu " class="form-control input-md" required=""  value = '<?php echo $email ?>'>
-    
+
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Current Address</label>  
+  <label class="col-md-4 control-label" for="cost">Current Address</label>
   <div class="col-md-4">
   <input id="address" name="address" type="text" placeholder="610 Purdue Mall" class="form-control input-md" required=""  value = '<?php echo $address ?>'>
-    
+
   </div>
 </div>
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Current City</label>  
+  <label class="col-md-4 control-label" for="cost">Current City</label>
   <div class="col-md-4">
   <input id="city" name="city" type="text" placeholder="West Lafayette"" class="form-control input-md" required=""  value = '<?php echo $city ?>'>
-    
+
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Current State</label>  
+  <label class="col-md-4 control-label" for="cost">Current State</label>
   <div class="col-md-4">
   <input id="state" name="state" type="text" placeholder="IN" class="form-control input-md" required=""  value = '<?php echo $state ?>'>
-    
+
   </div>
 </div>
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Current ZIP</label>  
+  <label class="col-md-4 control-label" for="cost">Current ZIP</label>
   <div class="col-md-4">
   <input id="zip" name="zip" type="text" placeholder="47907" class="form-control input-md" required=""  value = '<?php echo $zip ?>'>
-    
+
   </div>
 </div>
 
 
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost"><a href="http://www.purdue.edu/business/boso/pdf/forms/checkRequestReimbursementCertification.pdf">Reimbursement Certificate</a></label>  
+  <label class="col-md-4 control-label" for="cost"><a href="http://www.purdue.edu/business/boso/pdf/forms/checkRequestReimbursementCertification.pdf">Reimbursement Certificate</a></label>
   <div class="col-md-4">
   <input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default">
-    
+
   </div>
 </div>
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Current Username</label>  
+  <label class="col-md-4 control-label" for="cost">Current Username</label>
   <div class="col-md-4">
   <input id="username" name="username" type="text" placeholder="mdaniels" class="form-control input-md" required=""  value = '<?php echo $usr ?>'>
-    
+
   </div>
 </div>
 
@@ -170,8 +167,8 @@ $conn = null;
 </form>
 
 
-		
 
-	
+
+
 
 <?php include '../smallfooter.php';?>
