@@ -1,7 +1,7 @@
 <?php
-	$title = 'Boiler Books';
-	$completeactive = "active";
-	include '../menu.php';
+$title = 'Boiler Books';
+$completeactive = "active";
+include '../menu.php';
 ?>
 
 
@@ -18,9 +18,9 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
 	$sql = "SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
-			INNER JOIN approval a on p.committee = a.committee
-			WHERE p.status = 'Approved'
-				AND p.username = '$usr'";
+	INNER JOIN approval a on p.committee = a.committee
+	WHERE p.status = 'Approved'
+	AND p.username = '$usr'";
 	//$stmt->execute();
 
 
@@ -32,152 +32,152 @@ try {
 		$items .= '</option>\n';
 
 	}
-		//echo $items;
+	//echo $items;
 
 
-	}
+}
 catch(PDOException $e)
-	{
+{
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 ?>
 
-    <!-- Page Content -->
+<!-- Page Content -->
 
-	<form class="form-horizontal" action="finditem.php" method="post">>
-<fieldset>
+<form class="form-horizontal" action="finditem.php" method="post">>
+	<fieldset>
 
-<!-- Form Name -->
-<legend></legend>
+		<!-- Form Name -->
+		<legend></legend>
 
-<div class="form-group">
-  <label class="col-md-4 control-label" for="Committee">Item to Complete</label>
-  <div class="col-md-4">
-    <select id="currentitem" name="currentitem" class="form-control" value="113">
-      <?php echo $items; ?>
-    </select>
-  </div>
-</div>
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="Committee">Item to Complete</label>
+			<div class="col-md-4">
+				<select id="currentitem" name="currentitem" class="form-control" value="113">
+					<?php echo $items; ?>
+				</select>
+			</div>
+		</div>
 
 
-<!-- Button -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="submit"></label>
-  <div class="col-md-4">
-    <button id="submit" name="submit" class="btn btn-primary">Search</button>
-  </div>
-</div>
+		<!-- Button -->
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="submit"></label>
+			<div class="col-md-4">
+				<button id="submit" name="submit" class="btn btn-primary">Search</button>
+			</div>
+		</div>
 
-</fieldset>
+	</fieldset>
 </form>
 
 
 
 <!-- Page Content -->
 
-	<form class="form-horizontal" action="completeprocessing.php" method="post" enctype="multipart/form-data">
-<fieldset>
+<form class="form-horizontal" action="completeprocessing.php" method="post" enctype="multipart/form-data">
+	<fieldset>
 
-<!-- Form Name -->
-<legend></legend>
+		<!-- Form Name -->
+		<legend></legend>
 
 
-<!-- Text input-->
-<div class="container">
-	<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-3">
-			<h4 class='text-left'>Committee:</h4>
+		<!-- Text input-->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-3">
+					<h4 class='text-left'>Committee:</h4>
+				</div>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['committeec']; ?></em></h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-3">
+					<h4 class='text-left'>Item Being Purchased:</h4>
+				</div>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['itemc']; ?></em></h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-3">
+					<h4 class='text-left'>Reason Being Purchased:</h4>
+				</div>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['reasonc']; ?></em></h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-3">
+					<h4 class='text-left'>Vendor:</h4>
+				</div>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['vendorc']; ?></em></h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-3">
+					<h4 class='text-left'>Category:</h4>
+				</div>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['categoryc']; ?></em></h4>
+				</div>
+			</div>
+
+
 		</div>
-		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['committeec']; ?></em></h4>
+
+
+
+		<!-- Text input-->
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>
+			<div class="col-md-4">
+				<input id="cost" name="cost" type="number" placeholder="<?php echo $_SESSION['costc']; ?>" class="form-control input-md" required="" value="$<?php echo $_SESSION['costc']; ?>">
+
+			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-3">
-			<h4 class='text-left'>Item Being Purchased:</h4>
+
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="cost">Receipt</label>
+			<div class="col-md-4">
+				<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
+
+			</div>
 		</div>
-		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['itemc']; ?></em></h4>
+
+
+		<!-- Textarea -->
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="comments">Comments</label>
+			<div class="col-md-4">
+				<textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['commentsc']; ?></textarea>
+			</div>
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-3">
-			<h4 class='text-left'>Reason Being Purchased:</h4>
+
+
+
+		<!-- Button -->
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="submit"></label>
+			<div class="col-md-4">
+				<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+			</div>
 		</div>
-		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['reasonc']; ?></em></h4>
-		</div>
-	</div>
-		<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-3">
-			<h4 class='text-left'>Vendor:</h4>
-		</div>
-		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['vendorc']; ?></em></h4>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-3">
-			<h4 class='text-left'>Category:</h4>
-		</div>
-		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['categoryc']; ?></em></h4>
-		</div>
-	</div>
 
-
-</div>
-
-
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>
-  <div class="col-md-4">
-  <input id="cost" name="cost" type="number" placeholder="$123.45" class="form-control input-md" required="" value="$<?php echo $_SESSION['costc']; ?>">
-
-  </div>
-</div>
-
-<div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Receipt</label>
-  <div class="col-md-4">
-  <input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
-
-  </div>
-</div>
-
-
-<!-- Textarea -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="comments">Comments</label>
-  <div class="col-md-4">
-    <textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['commentsc']; ?></textarea>
-  </div>
-</div>
-
-
-
-<!-- Button -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="submit"></label>
-  <div class="col-md-4">
-    <button id="submit" name="submit" class="btn btn-primary">Submit</button>
-  </div>
-</div>
-
-</fieldset>
+	</fieldset>
 </form>
 
 
 
 <?php
-	include '../smallfooter.php';
+include '../smallfooter.php';
 ?>
