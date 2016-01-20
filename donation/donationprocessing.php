@@ -8,10 +8,7 @@
 ?>
 <?php //header('Location: /request/newpurchasesubmitted.php '); ?>
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 
 // define variables and set to empty values
 $item = $reason = $vendor = $committee = $cost = $comments = $category = "";
@@ -25,15 +22,6 @@ $status = test_input($_POST["status"]);
 $comments = test_input($_POST["comments"]);
 
 $usr = $_SESSION['user'];
-
-
-
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data, $flags=ENT_QUOTES| ENT_HTML401);
-  return $data;
-}
 
 
 

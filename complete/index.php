@@ -6,13 +6,11 @@
 
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
+
 $items = '';
 $usr = $_SESSION['user'];
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -24,8 +22,8 @@ try {
 			WHERE p.status = 'Approved'
 				AND p.username = '$usr'";
 	//$stmt->execute();
-	
-	
+
+
 	foreach ($conn->query($sql) as $row) {
 		$items .= '<option value="';
 		$items .= $row['purchaseID'];
@@ -35,15 +33,15 @@ try {
 
 	}
 		//echo $items;
-		
-	
+
+
 	}
 catch(PDOException $e)
 	{
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 ?>
 
     <!-- Page Content -->
@@ -94,7 +92,7 @@ $conn = null;
 			<h4 class='text-left'>Committee:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['committee']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['committee']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -103,7 +101,7 @@ $conn = null;
 			<h4 class='text-left'>Item Being Purchased:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['item']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['item']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -112,7 +110,7 @@ $conn = null;
 			<h4 class='text-left'>Reason Being Purchased:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['reason']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['reason']; ?></em></h4>
 		</div>
 	</div>
 		<div class="row">
@@ -121,7 +119,7 @@ $conn = null;
 			<h4 class='text-left'>Vendor:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['vendor']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['vendor']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -130,29 +128,29 @@ $conn = null;
 			<h4 class='text-left'>Category:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['category']; ?></em></h4> 
+			<h4><em><?php echo $_SESSION['category']; ?></em></h4>
 		</div>
 	</div>
 
-	
+
 </div>
 
 
 
 <!-- Text input-->
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>  
+  <label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>
   <div class="col-md-4">
   <input id="cost" name="cost" type="number" placeholder="$123.45" class="form-control input-md" required="" value="$<?php echo $_SESSION['cost']; ?>">
-    
+
   </div>
 </div>
 
 <div class="form-group">
-  <label class="col-md-4 control-label" for="cost">Receipt</label>  
+  <label class="col-md-4 control-label" for="cost">Receipt</label>
   <div class="col-md-4">
   <input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
-    
+
   </div>
 </div>
 
@@ -160,7 +158,7 @@ $conn = null;
 <!-- Textarea -->
 <div class="form-group">
   <label class="col-md-4 control-label" for="comments">Comments</label>
-  <div class="col-md-4">                     
+  <div class="col-md-4">
     <textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['comments']; ?></textarea>
   </div>
 </div>
@@ -179,7 +177,7 @@ $conn = null;
 </form>
 
 
-		
-<?php 
+
+<?php
 	include '../smallfooter.php';
 ?>
