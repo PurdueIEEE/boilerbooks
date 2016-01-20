@@ -6,21 +6,13 @@
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 $items = '';
 $items2 = '';
 $usr = $_SESSION['user'];
 $committee = test_input($_POST["committee"]);
 
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);

@@ -5,21 +5,11 @@
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 $usr = $_SESSION['user'];
 
 
 $usrlookup = test_input($_GET['usrlookup']);
-
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data, $flags=ENT_QUOTES| ENT_HTML401);
-  return $data;
-}
 
 
 try {

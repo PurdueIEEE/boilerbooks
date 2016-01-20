@@ -6,14 +6,11 @@
 
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 $stuff = '';
 $currentitem = $_POST["currentitem"];
 $_SESSION['currentitem'] = $currentitem;
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -21,11 +18,11 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT username, purchaseID, item, purchasereason, vendor, committee, category, cost, status, comments FROM Purchases WHERE Purchases.purchaseID = '$currentitem'";
 	//$stmt->execute();
-	
-	
+
+
 	foreach ($conn->query($sql) as $row) {
 
-		
+
 		$_SESSION['username'] = $row['username'];
 		$_SESSION['item'] =  $row['item'];
 		$_SESSION['reason'] =  $row['purchasereason'];
@@ -45,7 +42,7 @@ catch(PDOException $e)
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 
 $_SESSION['aerialactive'] = '';
 $_SESSION['computersocietyactive'] = '';

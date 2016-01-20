@@ -6,9 +6,7 @@
 
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
+include '../dbinfo.php';
 $dbname = "ieee-money";
 $stuff = '';
 $item = $_SESSION['item'];

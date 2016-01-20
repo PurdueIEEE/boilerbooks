@@ -1,4 +1,4 @@
-<?php 
+<?php
 	session_start();
 	if (!isset($_SESSION['user']))
 	{
@@ -9,14 +9,11 @@
 
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 $stuff = '';
 $currentitem = $_POST["currentitem"];
 $_SESSION['currentitem'] = $currentitem;
- 
+
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -26,11 +23,11 @@ try {
 			INNER JOIN Users U ON U.username = P.username
 			WHERE P.purchaseID = '$currentitem'";
 	//$stmt->execute();
-	
-	
+
+
 	foreach ($conn->query($sql) as $row) {
 
-		
+
 		$_SESSION['username'] = $row['username'];
 		$_SESSION['name'] = $row['name'];
 		$_SESSION['item'] =  $row['item'];
@@ -49,7 +46,7 @@ catch(PDOException $e)
 	echo $sql . "<br>" . $e->getMessage();
 	}
 
-$conn = null; 
+$conn = null;
 
 $_SESSION['aerialactive'] = '';
 $_SESSION['computersocietyactive'] = '';

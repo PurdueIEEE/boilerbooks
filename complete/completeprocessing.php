@@ -4,11 +4,8 @@
 	include '../menu.php';
 ?>
 
-<?php 
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+<?php
+include '../dbinfo.php';
 
 
 
@@ -21,17 +18,6 @@ $purchaseID = $_SESSION['purchaseID'];
 $sqler = $uploaderr = '';
 $comments = test_input($_POST["comments"]);
 $cost = test_input($_POST["cost"]);
-
-
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
-
-
- 
 
 $receipt = "money.krakos.net/";
 
@@ -73,17 +59,17 @@ if ($uploadOk == 0) {
 	}
 }
 
- 
+
 
 try {
 	$cost = test_input(str_replace('$','',$cost));
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $sql = "UPDATE Purchases SET modifydate = NOW(), purchasedate = NOW(),cost='$cost', status='Purchased', comments='$comments', 
+    $sql = "UPDATE Purchases SET modifydate = NOW(), purchasedate = NOW(),cost='$cost', status='Purchased', comments='$comments',
 	receipt='$receipt' WHERE Purchases.purchaseID = '$purchaseID'";
-	
-	
+
+
 	// use exec() because no results are returned
     $conn->exec($sql);
     echo "New record created successfully";
@@ -93,7 +79,7 @@ catch(PDOException $e)
     $sqler =  $sql . "<br>" . $e->getMessage();
     }
 
-$conn = null; 
+$conn = null;
 
 
 $_SESSION['username'] = '';
@@ -111,7 +97,7 @@ $_SESSION['purchaseID']= '';
 
 
 if ($uploaderr == '' and $sqler == '') {
-	header('Location: index.php'); 
+	header('Location: index.php');
 }
 else {
 	echo "There were errors <br> '";

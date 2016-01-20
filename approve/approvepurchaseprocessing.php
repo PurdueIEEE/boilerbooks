@@ -1,4 +1,4 @@
-<?php 
+<?php
 	session_start();
 	if (!isset($_SESSION['user']))
 	{
@@ -8,10 +8,7 @@
 ?>
 
 <?php
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+include '../dbinfo.php';
 
 // define variables and set to empty values
 $item = $reason = $vendor = $committee = $cost = $comments = $category = "";
@@ -28,13 +25,7 @@ $fundsource = test_input($_POST["fundsource"]);
 $usr = $_SESSION['user'];
 $purchaseid = $_SESSION['currentitem'];
 
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
- 
+
 
 try {
 	$cost = test_input(str_replace('$','',$cost));
@@ -44,10 +35,10 @@ try {
     $sql = "UPDATE Purchases SET modifydate = NOW(), approvedby='$usr', item='$item', purchasereason='$reason', vendor='$vendor',
 	committee='$committee', category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
 	comments='$comments' WHERE Purchases.purchaseID = '$purchaseid'";
-	
-    //$sql = "INSERT INTO Purchases (item) 
+
+    //$sql = "INSERT INTO Purchases (item)
 	//VALUES ('$item')";
-	
+
 	// use exec() because no results are returned
     $conn->exec($sql);
     echo "New record created successfully";
@@ -57,7 +48,7 @@ catch(PDOException $e)
     echo $sql . "<br>" . $e->getMessage();
     }
 
-$conn = null; 
+$conn = null;
 
 // Reset all values
 $_SESSION['currentitem'] = '';
