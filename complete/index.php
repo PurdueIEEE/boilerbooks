@@ -92,7 +92,7 @@ $conn = null;
 			<h4 class='text-left'>Committee:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['committee']; ?></em></h4>
+			<h4><em><?php echo $_SESSION['committeec']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -101,7 +101,7 @@ $conn = null;
 			<h4 class='text-left'>Item Being Purchased:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['item']; ?></em></h4>
+			<h4><em><?php echo $_SESSION['itemc']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -110,7 +110,7 @@ $conn = null;
 			<h4 class='text-left'>Reason Being Purchased:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['reason']; ?></em></h4>
+			<h4><em><?php echo $_SESSION['reasonc']; ?></em></h4>
 		</div>
 	</div>
 		<div class="row">
@@ -119,7 +119,7 @@ $conn = null;
 			<h4 class='text-left'>Vendor:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['vendor']; ?></em></h4>
+			<h4><em><?php echo $_SESSION['vendorc']; ?></em></h4>
 		</div>
 	</div>
 	<div class="row">
@@ -128,7 +128,7 @@ $conn = null;
 			<h4 class='text-left'>Category:</h4>
 		</div>
 		<div class="col-sm-6">
-			<h4><em><?php echo $_SESSION['category']; ?></em></h4>
+			<h4><em><?php echo $_SESSION['categoryc']; ?></em></h4>
 		</div>
 	</div>
 
@@ -141,7 +141,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>
   <div class="col-md-4">
-  <input id="cost" name="cost" type="number" placeholder="$123.45" class="form-control input-md" required="" value="$<?php echo $_SESSION['cost']; ?>">
+  <input id="cost" name="cost" type="number" placeholder="$123.45" class="form-control input-md" required="" value="$<?php echo $_SESSION['costc']; ?>">
 
   </div>
 </div>
@@ -159,7 +159,7 @@ $conn = null;
 <div class="form-group">
   <label class="col-md-4 control-label" for="comments">Comments</label>
   <div class="col-md-4">
-    <textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['comments']; ?></textarea>
+    <textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['commentsc']; ?></textarea>
   </div>
 </div>
 

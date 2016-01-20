@@ -9,7 +9,7 @@
 include '../dbinfo.php';
 $stuff = '';
 $currentitem = $_POST["currentitem"];
-$_SESSION['currentitem'] = $currentitem;
+$_SESSION['currentitemc'] = $currentitem;
 
 
 try {
@@ -23,17 +23,17 @@ try {
 	foreach ($conn->query($sql) as $row) {
 
 
-		$_SESSION['username'] = $row['username'];
-		$_SESSION['item'] =  $row['item'];
-		$_SESSION['reason'] =  $row['purchasereason'];
-		$_SESSION['vendor'] = $row['vendor'];
-		$_SESSION['committee'] = $row['committee'];
-		$_SESSION['category'] = $row['category'];
-		$_SESSION['cost'] = $row['cost'];
-		$_SESSION['status']= $row['status'];
-		$_SESSION['comments']= $row['comments'];
-		$_SESSION['status']= $row['status'];
-		$_SESSION['purchaseID']= $row['purchaseID'];
+		$_SESSION['usernamec'] = $row['username'];
+		$_SESSION['itemc'] =  $row['item'];
+		$_SESSION['reasonc'] =  $row['purchasereason'];
+		$_SESSION['vendorc'] = $row['vendor'];
+		$_SESSION['committeec'] = $row['committee'];
+		$_SESSION['categoryc'] = $row['category'];
+		$_SESSION['costc'] = $row['cost'];
+		$_SESSION['statusc']= $row['status'];
+		$_SESSION['commentsc']= $row['comments'];
+		$_SESSION['statusc']= $row['status'];
+		$_SESSION['purchaseIDc']= $row['purchaseID'];
 	}
 
 	}

@@ -4,7 +4,7 @@ include 'header.php';
 ?>
 
 <div class="container">
-	<h1 class = "text-center">Boiler Books</h1>
+	<h1 class = "text-center"><a href="/loggedin.php">Boiler Books</a></h1>
 	<h4 class = "text-center">The ultimate expense and income tracking system for student organizations</h4>
 	<ul class="nav nav-tabs">
 		<li class="disabled disabledTab"><a href="#">Request Purchase</a></li>

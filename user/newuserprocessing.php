@@ -1,4 +1,5 @@
 <?php
+include '../header.php';
 include '../dbinfo.php';
 
 // define variables and set to empty values
@@ -22,79 +23,79 @@ $target_dir = "certs/";
 $target_file = $target_dir . $first . "_" . $last . "_" . $usr . ".pdf";
 $uploadOk = 1;
 
-
-$FileType = pathinfo($target_dir . basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION);
-// Check if image file is a actual image or fake image
-
-// Check if file already exists
-if (file_exists($target_file)) {
-  $uploaderr = $uploaderr . "Sorry, file already exists.";
-  $uploadOk = 0;
-}
-// Check file size
-if ($_FILES["fileToUpload"]["size"] > 500000) {
-  $uploaderr = $uploaderr . "Sorry, your reimbursement cert is too large.";
-  $uploadOk = 0;
-}
-// Allow certain file formats
-if($FileType != "pdf") {
-  $uploaderr = $uploaderr . "Sorry, only PDFs are allowed for the reimbursement cert.";
-  $uploadOk = 0;
-}
-// Check if $uploadOk is set to 0 by an error
-if ($uploadOk == 0) {
-  $uploaderr = $uploaderr . "Sorry, your file was not uploaded.";
-  // if everything is ok, try to upload file
-} else {
-  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-    echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-    $cert = $target_file;
-  } else {
-    $uploaderr = $uploaderr . "Sorry, there was an error uploading your file.";
-  }
-}
-
-
-
 if ($password1 != $password2)
 {
-
-
-  echo "Passwords must match";
+  $uploaderr = $uploaderr . "Passwords must match <br>";
 }
 
-else
-{
-  $password1 = password_hash($password1,PASSWORD_DEFAULT);
-  $password2 = password_hash($password1,PASSWORD_DEFAULT);
-  try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $sql = "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password)
-    VALUES ('$first', '$last', '$email', '$address', '$city', '$state', '$zip', '$cert', '$usr', '$password1')";
+else {
+  $FileType = pathinfo($target_dir . basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION);
+  // Check if image file is a actual image or fake image
 
-
-    // use exec() because no results are returned
-    $conn->exec($sql);
-    $sqlerr = '';
+  // Check if file already exists
+  if (file_exists($target_file)) {
+    $uploaderr = $uploaderr . "Username already in use, please select a different name.<br>";
+    $uploadOk = 0;
   }
-  catch(PDOException $e)
-  {
-    $sqlerr = $sql . "<br>" . $e->getMessage();
+  // Check file size
+  if ($_FILES["fileToUpload"]["size"] > 1500000) {
+    $uploaderr = $uploaderr . "Please keep the upload under 1.5MB";
+    $uploadOk = 0;
+  }
+  // Allow certain file formats
+  if($FileType != "pdf") {
+    $uploaderr = $uploaderr . "Only PDFs are allowed for the reimbursement cert.<br>";
+    $uploadOk = 0;
+  }
+  // Check if $uploadOk is set to 0 by an error
+  if ($uploadOk == 1) {
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+      //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+      $cert = $target_file;
+    } else {
+      $uploaderr = $uploaderr . "Sorry, there was an unknown error uploading your file.<br>";
+      $uploadOk = 0;
+    }
   }
 
-  $conn = null;
+  if ($uploadOk == 1) {
+      $password1 = password_hash($password1,PASSWORD_DEFAULT);
+      $password2 = password_hash($password1,PASSWORD_DEFAULT);
+      try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password)
+        VALUES ('$first', '$last', '$email', '$address', '$city', '$state', '$zip', '$cert', '$usr', '$password1')";
+
+
+        // use exec() because no results are returned
+        $conn->exec($sql);
+        $sqlerr = '';
+      }
+      catch(PDOException $e)
+      {
+        $sqlerr = $sql . "<br>" . $e->getMessage();
+        $uploaderr = $uploaderr . "There was an unknown error updating the database; refresh and try again.<br>";
+      }
+
+      $conn = null;
+
+  }
 }
+
 
 
 if ($uploaderr == '' and $sqlerr == '') {
   header("Location: ../index.php");
 }
 else {
-  echo "There was an error. View the messages below and try again";
+  echo "There was an error. Please view the messages below, go back, and try again <br>";
+  //echo $uploaderr . "<br><br>";
+  //echo $sqlerr . "<br><br>";
   echo $uploaderr;
-  echo $sqlerr;
   //header("Location: newuser.php");
 }
+
+include '../smallfooter.php';
 ?>
