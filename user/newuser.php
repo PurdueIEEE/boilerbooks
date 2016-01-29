@@ -133,6 +133,14 @@ include '../header.php';
 				</div>
 			</div>
 
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="cost">IEEE Code</label>
+				<div class="col-md-4">
+					<input id="ieeecode" name="ieeecode" type="password" placeholder="Enter the code given by IEEE to enable account creation" class="form-control input-md" required="">
+
+				</div>
+			</div>
+
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>

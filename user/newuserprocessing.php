@@ -3,7 +3,7 @@ include '../header.php';
 include '../dbinfo.php';
 
 // define variables and set to empty values
-$first = $last = $email = $address = $city = $state = $zip = $usr = $cert = $password1 = $password2 = "";
+$first = $last = $email = $address = $city = $state = $zip = $usr = $cert = $password1 = $password2 = $ieeecode = "";
 
 $first = test_input($_POST["first"]);
 $last = test_input($_POST["last"]);
@@ -13,6 +13,7 @@ $city = test_input($_POST["city"]);
 $state = test_input($_POST["state"]);
 $zip = test_input($_POST["zip"]);
 $usr = test_input($_POST["username"]);
+$ieeecode = test_input($_POST["ieeecode"]);
 $password1 = ($_POST["password1"]);
 $password2 = ($_POST["password2"]);
 
@@ -23,7 +24,12 @@ $target_dir = "certs/";
 $target_file = $target_dir . $first . "_" . $last . "_" . $usr . ".pdf";
 $uploadOk = 1;
 
-if ($password1 != $password2)
+echo $ieeecode;
+echo " the code";
+if ($ieeecode != $uploadcode) {
+  $uploaderr = $uploaderr . "Improper upload code <br>";
+}
+else if ($password1 != $password2)
 {
   $uploaderr = $uploaderr . "Passwords must match <br>";
 }

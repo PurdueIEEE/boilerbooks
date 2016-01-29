@@ -1,9 +1,10 @@
 <?php
 session_start();
-$servername = "localhost";
-$username = "testuser";
-$password = "password123";
-$dbname = "ieee-money";
+$servername = "";
+$username = "";
+$password = "";
+$dbname = "";
+$uploadcode = "";
 
 function test_input($data) {
   $data = trim($data);
