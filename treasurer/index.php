@@ -37,7 +37,7 @@ AND '$usr' = (
     INNER JOIN approval A ON U3.username = A.username
     WHERE A.role = 'treasurer')
 
-ORDER BY p.purchasedate";
+ORDER BY p.purchasedate DESC";
 	//$stmt->execute();
 
 

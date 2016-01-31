@@ -61,7 +61,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Cost</label>
   <div class="col-md-4">
-  <input id="cost" name="cost" type="number" placeholder="$156.56" class="form-control input-md" required="">
+  <input id="cost" name="cost" type="number" step = "0.01" placeholder="$156.56" class="form-control input-md" required="">
 
   </div>
 </div>

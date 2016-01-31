@@ -40,7 +40,7 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="amount">Amount</label>
   <div class="col-md-4">
-  <input id="amount" name="amount" type="number" placeholder="$1500.00" class="form-control input-md" required="">
+  <input id="amount" name="amount" type="number" step="0.01" placeholder="$1500.00" class="form-control input-md" required="">
 
   </div>
 </div>
