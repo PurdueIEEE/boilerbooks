@@ -18,10 +18,10 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT * FROM Users U
 		WHERE U.username = '$usrlookup'
-		AND '$usr' = (
+		AND '$usr' in (
 		    SELECT U3.username FROM Users U3
 		    INNER JOIN approval A ON U3.username = A.username
-		    WHERE A.role = 'treasurer')";
+		    WHERE (A.role = 'treasurer' OR A.role = 'president'))";
 
 	foreach ($conn->query($sql) as $row) {
 		$first = $row['first'];

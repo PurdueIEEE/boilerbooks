@@ -4,7 +4,7 @@
 	include '../menu.php';
 ?>
 
-<form class="form-horizontal" action="selectcommittee.php" method="post">>
+<form class="form-horizontal" action="selectcommittee.php" method="post">
 <fieldset>
 
 <!-- Form Name -->

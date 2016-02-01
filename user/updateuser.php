@@ -146,6 +146,7 @@ $conn = null;
   </div>
 </div>
 
+<!--
 <div class="form-group">
   <label class="col-md-4 control-label" for="cost">Current Username</label>
   <div class="col-md-4">
@@ -153,7 +154,7 @@ $conn = null;
 
   </div>
 </div>
-
+-->
 
 <!-- Button -->
 <div class="form-group">

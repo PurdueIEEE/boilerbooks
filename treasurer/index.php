@@ -32,10 +32,10 @@ try {
 ,(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
 FROM Purchases p
 WHERE p.status in ('Purchased','Processing Reimbursement', 'Reimbursed')
-AND '$usr' = (
+AND '$usr' in (
     SELECT U3.username FROM Users U3
     INNER JOIN approval A ON U3.username = A.username
-    WHERE A.role = 'treasurer')
+    WHERE (A.role = 'treasurer' OR A.role = 'president'))
 
 ORDER BY p.purchasedate DESC";
 	//$stmt->execute();

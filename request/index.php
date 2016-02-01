@@ -6,7 +6,7 @@
 
     <!-- Page Content -->
 
-	<form class="form-horizontal" action="newpurchaseprocessing.php" method="post">>
+	<form class="form-horizontal" action="newpurchaseprocessing.php" method="post">
 <fieldset>
 
 <!-- Form Name -->

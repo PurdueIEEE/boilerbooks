@@ -17,7 +17,8 @@ $address = test_input($_POST["address"]);
 $city = test_input($_POST["city"]);
 $state = test_input($_POST["state"]);
 $zip = test_input($_POST["zip"]);
-$usr = test_input($_POST["username"]);
+//$usr = test_input($_POST["username"]);
+$usr = $_SESSION['user'];
 $curusr =   $_SESSION['user'];
 $uploaderr = '';
 

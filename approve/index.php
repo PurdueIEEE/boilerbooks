@@ -49,7 +49,7 @@ $conn = null;
 
 <!-- Page Content -->
 
-<form class="form-horizontal" action="finditem.php" method="post">>
+<form class="form-horizontal" action="finditem.php" method="post">
 	<fieldset>
 
 		<!-- Form Name -->

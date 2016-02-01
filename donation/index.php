@@ -5,7 +5,7 @@
 ?>
 
 
-	<form class="form-horizontal" action="donationprocessing.php" method="post">>
+	<form class="form-horizontal" action="donationprocessing.php" method="post">
 <fieldset>
 
 <!-- Form Name -->
