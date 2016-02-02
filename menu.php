@@ -11,7 +11,14 @@ include 'header.php';
 ?>
 
 <div class="container">
+
+
+	<div class = "containter">
 	<h1 class = "text-center"><a href="/loggedin.php">Boiler Books</a></h1>
+	</div>
+
+
+
 	<h4 class = "text-center">The ultimate expense and income tracking system for student organizations</h4>
 	<ul class="nav nav-tabs">
 		<li class = <?php echo $requestactive?>><a href="/request/">Request Purchase</a></li>
