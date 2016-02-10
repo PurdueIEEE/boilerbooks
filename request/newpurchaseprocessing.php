@@ -29,8 +29,8 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,fundsource,comments)
-	VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$category', '$cost', 'Requested', 'BOSO', '$comments');
+	$sql = "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,comments)
+	VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$category', '$cost', 'Requested', '$comments');
 	";
 
 	// use exec() because no results are returned

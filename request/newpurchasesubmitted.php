@@ -11,6 +11,8 @@ $dbname = "ieee-money";
 $stuff = '';
 $item = $_SESSION['item'];
 
+$names = '';
+$emails = '';
 
 
 $currentitemid = $_SESSION['itemid'];
@@ -18,7 +20,7 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT CONCAT(U.first, ' ', U.last) name FROM approval a
+	$sql = "SELECT CONCAT(U.first, ' ', U.last) name, U.email, a.committee FROM approval a
 INNER JOIN Users U
 ON U.username = a.username
 
@@ -38,10 +40,15 @@ AND (a.category = (
 
 		$names .= $row['name'];
 		$names .= ', ';
+		
+		$emails .= $row['email'];
+		$emails .= ', ';
+		
+		$committee = $row['committee'];
 
 	}
 	$names = rtrim($names,', ');
-
+	$emails = rtrim($emails,', ');
 
 
 }
@@ -55,13 +62,30 @@ $conn = null;
 
 
 
-
+         $to = $emails;
+         $subject = "New Purchase from $committee";
+         
+         $message = "<b>A request to buy $item has been made. 
+		 Please visit money.pieee.org at your earliest convenience to approve or deny the request.</b>";
+         
+         $header = "From:ieeeboilerbooks@gmail.com \r\n";
+         $header .= "MIME-Version: 1.0\r\n";
+         $header .= "Content-type: text/html\r\n";
+         
+         $retval = mail ($to,$subject,$message,$header);
+         
+         if( $retval == true ) {
+            //echo "Message sent successfully...";
+         }else {
+            //echo "Message could not be sent...";
+         }
 ?>
 
 <div class = "container">
 <h2>Purchase successfully submitted!</h2>
 <p>Your purchase request for <?php echo $_SESSION['item']; ?> will soon be approved or denied.</p>
 <p>It can be reviewed by: <?php echo $names; ?>.</p>
+
 </div>
 
 
