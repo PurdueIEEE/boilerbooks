@@ -58,6 +58,59 @@ catch(PDOException $e)
     }
 
 $conn = null;
+
+
+
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$sql = "SELECT U.email, item, committee, status FROM Purchases P
+			INNER JOIN Users U ON U.username = P.username
+			WHERE P.purchaseID = '$purchaseid'";
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+
+
+		$email = $row['email'];
+		$item = $row['item'];
+		$committee =  $row['committee'];
+		$status =  $row['status'];
+	}
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+
+
+ $to = $email;
+ $subject = "Your purchased item is now $stat";
+ 
+ $message = "<p>$item for $committee is now $stat. 
+ Feel free to visit money.pieee.org or contact the IEEE treasurere for more information.</p>";
+ 
+ $header = "From:ieeeboilerbooks@gmail.com \r\n";
+ $header .= "MIME-Version: 1.0\r\n";
+ $header .= "Content-type: text/html\r\n";
+ 
+ $retval = mail ($to,$subject,$message,$header);
+ 
+ if( $retval == true ) {
+	//echo "Message sent successfully...";
+ }else {
+	//echo "Message could not be sent...";
+ }
+	
+
+
 header('Location: /treasurer/index.php');
 
 ?>
