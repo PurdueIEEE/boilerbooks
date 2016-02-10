@@ -38,7 +38,7 @@ try {
 	}
 	else
 	{
-		header("Location: index.php");
+		header("Location: index.php?fail=Incorrect Username or Password");
 	}
 
 	}

@@ -1,6 +1,7 @@
 <?php
 $title = 'Boiler Books';
 include 'header.php';
+include 'dbinfo.php';
 ?>
 
 <div class="container">
@@ -20,6 +21,7 @@ include 'header.php';
 
 	<form class="form-signin" action="login.php" method="post">
 		<h3 class="form-signin-heading">Please sign in</h3>
+		<font color="blue"><em><?php echo test_input($_GET["fail"]); ?></em></font>
 		<label for="inputEmail" class="sr-only">Username</label>
 		<input type="text" id="usr" name="usr" class="form-control" placeholder="Your Boiler Books user account" required autofocus>
 		<label for="inputPassword" class="sr-only">Password</label>
