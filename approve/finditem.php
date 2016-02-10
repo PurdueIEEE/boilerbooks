@@ -19,7 +19,7 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT P.username, CONCAT(U.first, ' ', U.last) name, item, purchasereason, vendor, committee, category, cost, status, comments FROM Purchases P
+	$sql = "SELECT P.username, CONCAT(U.first, ' ', U.last) name, U.email, item, purchasereason, vendor, committee, category, cost, status, comments FROM Purchases P
 			INNER JOIN Users U ON U.username = P.username
 			WHERE P.purchaseID = '$currentitem'";
 	//$stmt->execute();
@@ -36,8 +36,9 @@ try {
 		$_SESSION['committee'] = $row['committee'];
 		$_SESSION['category'] = $row['category'];
 		$_SESSION['cost'] = $row['cost'];
-		$_SESSION['status']= $row['status'];
-		$_SESSION['comments']= $row['comments'];
+		$_SESSION['status'] = $row['status'];
+		$_SESSION['comments'] = $row['comments'];
+		$_SESSION['email'] = $row['email'];
 	}
 
 	}
