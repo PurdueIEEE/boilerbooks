@@ -47,7 +47,7 @@
     border: none;
   }
   body {
-    padding-top: 65px;
+    padding-top: 0px;
   }
   .disabledTab{
     pointer-events: none;
@@ -57,22 +57,16 @@
 
 <body>
   <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
-    <div class="container topnav">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand topnav" href="http://pieee.org">IEEE</a>
-        <a class="navbar-brand navbar-right" href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a>
-      </div>
-      <!-- Collect the nav links, forms, and other content for toggling -->
-
-      <!-- /.navbar-collapse -->
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="http://purdueieee.org">IEEE</a>
     </div>
+    <ul class="nav navbar-nav">
+      <li><a href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a></li>
+      <li><a href="/user/signout.php"><?php if ($_SESSION['user'] != '') {echo "Sign-out";}?></li>
+    </ul>
+  </div>
+
     <!-- /.container -->
   </nav>

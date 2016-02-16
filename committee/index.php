@@ -71,6 +71,7 @@
 	</script>
 </div>
 
+<br> <br> <br>
 
 <div class="container">
 	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Income</h3>

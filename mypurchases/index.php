@@ -66,7 +66,7 @@ $conn = null;
 ?>
 
 <div class="container">
-	<table class="table">
+	<table id="mypurchasestable" class="display">
 		<thead>
 			<tr>
 				<th>Purchase Date</th>
@@ -85,6 +85,15 @@ $conn = null;
 			<?php echo $items ?>
 		</tbody>
 	</table>
+	<script>
+	$(document).ready(function() {
+			$('#mypurchasestable').DataTable( {
+					createdRow: function ( row ) {
+							$('td', row).attr('tabindex', 0);
+					}
+			} );
+	} );
+	</script>
 </div>
 
 
