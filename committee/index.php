@@ -41,7 +41,7 @@
 
 <div class="container">
 	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Expenses</h3>
-	<table class="table">
+	<table id="expensestable" class="display">
 		<thead>
 			<tr>
 				<th>Purchase Date</th>
@@ -60,13 +60,21 @@
 			<?php echo $_SESSION['commiteepurchases'] ?>
 		</tbody>
 	</table>
+	<script>
+	$(document).ready(function() {
+	    $('#expensestable').DataTable( {
+	        createdRow: function ( row ) {
+	            $('td', row).attr('tabindex', 0);
+	        }
+	    } );
+	} );
+	</script>
 </div>
-
 
 
 <div class="container">
 	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Income</h3>
-	<table class="table">
+	<table id="incometable" class="display">
 		<thead>
 			<tr>
 				<th>Date</th>
@@ -82,6 +90,15 @@
 			<?php echo $_SESSION['commiteeincome'] ?>
 		</tbody>
 	</table>
+	<script>
+	$(document).ready(function() {
+	    $('#incometable').DataTable( {
+	        createdRow: function ( row ) {
+	            $('td', row).attr('tabindex', 0);
+	        }
+	    } );
+	} );
+	</script>
 </div>
 
 

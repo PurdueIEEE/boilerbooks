@@ -16,7 +16,7 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT DATE(p.purchasedate) as date
+	$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date
 , p.item
 , p.purchaseID
 , p.purchasereason
@@ -66,31 +66,21 @@ ORDER BY p.purchasedate DESC";
 		$items .= $row['cost'];
 		$items .= '</td> <td>';
 		$items .= $row['comments'];
-		$items .= '</td> <td>';
 
-		$items .= "<form class='form' action='update.php' method='post'>
-		<fieldset>";
-	  $items .= "<label><input type='radio' name='processing' id='processing' value='";
+
+		$items .= "</td> <td><a href='update.php?reimbursed=-1&processing=";
 		$items .= $row['purchaseID'];
-		$items .= "'></label>";
-		$items .= '</td> <td>';
+		$items .= "'>Mark Processing";
+		$items .= '</a></td> <td>';
 
-
-
-
-		$items .= "<label><input type='radio' name='reimbursed' id='reimbursed' value='";
+		$items .= "<a href='update.php?processing=-1&reimbursed=";
 		$items .= $row['purchaseID'];
-		$items .= "'></label>";
+		$items .= "'>Mark Reimbursed";
+		$items .= '</a></td>';
 
 
 
-		$items .= '</td> <td>';
-		$items .= "<div class='form-group'>
-		  <label class='col-md-4 control-label' for='submit'></label>
-		  <div class='col-md-4'>
-		    <button id='submit' name='submit' class='btn btn-primary'>Update</button>
-		  </div>
-		</div>";
+
 
 		$items .= "</fieldset>
 		</form>";
@@ -111,7 +101,7 @@ $conn = null;
 ?>
 
 <div class="container">
-	<table class="table">
+	<table id="treasurertable" class="display">
 		<thead>
 			<tr>
 				<th>Purchase Date</th>
@@ -126,13 +116,21 @@ $conn = null;
 				<th>Comments</th>
 				<th>Processing</th>
 				<th>Reimbursed</th>
-				<th>Update</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php echo $items ?>
 		</tbody>
 	</table>
+	<script>
+	$(document).ready(function() {
+	    $('#treasurertable').DataTable( {
+	        createdRow: function ( row ) {
+	            $('td', row).attr('tabindex', 0);
+	        }
+	    } );
+	} );
+	</script>
 </div>
 
 

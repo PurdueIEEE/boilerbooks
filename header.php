@@ -20,7 +20,7 @@
 
   <!-- Custom Fonts -->
   <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="/text/css">
-  <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="/text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="/text/css">
 
   <!--favicon link-->
 	<link rel="SHORTCUT ICON" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_favicon.ico">
@@ -33,7 +33,10 @@
   <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
   <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.12.0.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.js"></script>
 
   <style>
   legend {

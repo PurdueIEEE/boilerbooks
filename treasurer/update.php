@@ -13,17 +13,20 @@ include '../dbinfo.php';
 // define variables and set to empty values
 $item = $reason = $vendor = $committee = $cost = $comments = $category = "";
 
-$processing = test_input($_POST["processing"]);
-$reimbursed = test_input($_POST["reimbursed"]);
+$processing = test_input($_GET["processing"]);
+$reimbursed = test_input($_GET["reimbursed"]);
 $usr = $_SESSION['user'];
 echo $processing;
+echo "<br>";
 echo $reimbursed;
+echo "<br>";
 
-if ($processing != '') {
+
+if ($processing != '-1') {
 	$stat = 'Processing Reimbursement';
 	$purchaseid = $processing;
 }
-else if ($reimbursed != '') {
+else if ($reimbursed != '-1') {
 	$stat = 'Reimbursed';
 	$purchaseid = $reimbursed;
 
@@ -93,22 +96,22 @@ $conn = null;
 
  $to = $email;
  $subject = "Your purchased item is now $stat";
- 
- $message = "<p>$item for $committee is now $stat. 
+
+ $message = "<p>$item for $committee is now $stat.
  Feel free to visit money.pieee.org or contact the IEEE treasurere for more information.</p>";
- 
+
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
  $header .= "MIME-Version: 1.0\r\n";
  $header .= "Content-type: text/html\r\n";
- 
+
  $retval = mail ($to,$subject,$message,$header);
- 
+
  if( $retval == true ) {
 	//echo "Message sent successfully...";
  }else {
 	//echo "Message could not be sent...";
  }
-	
+
 
 
 header('Location: /treasurer/index.php');
