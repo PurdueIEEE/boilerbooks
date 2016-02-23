@@ -24,8 +24,8 @@ $target_dir = "certs/";
 $target_file = $target_dir . $first . "_" . $last . "_" . $usr . ".pdf";
 $uploadOk = 1;
 
-echo $ieeecode;
-echo " the code";
+echo "The upload code you entered is: ";
+echo $ieeecode . "<br>";
 if ($ieeecode != $uploadcode) {
   $uploaderr = $uploaderr . "Improper upload code <br>";
 }
@@ -49,7 +49,7 @@ else {
     $uploadOk = 0;
   }
   // Allow certain file formats
-  if($FileType != "pdf" || $FileType != "PDF") {
+  if($FileType != "pdf" && $FileType != "PDF") {
     $uploaderr = $uploaderr . "Only PDFs are allowed for the reimbursement cert.<br>";
     $uploadOk = 0;
   }

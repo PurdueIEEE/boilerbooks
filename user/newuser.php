@@ -74,7 +74,7 @@ include '../header.php';
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="cost">City</label>
 				<div class="col-md-4">
-					<input id="city" name="city" type="text" placeholder="West Lafayette"" class="form-control input-md" required="">
+					<input id="city" name="city" type="text" placeholder="West Lafayette" class="form-control input-md" required="">
 
 				</div>
 			</div>
