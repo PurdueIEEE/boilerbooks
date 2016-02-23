@@ -10,7 +10,7 @@ include '../dbinfo.php';
 
 
 // define variables and set to empty values
-$cost = $comments = $receipt = "";
+$cost = $comments = $receipt = $purchasedate = "";
 $committee = $_SESSION['committeec'];
 $item = $_SESSION['itemc'];
 $purchaseID = $_SESSION['purchaseIDc'];
@@ -22,6 +22,8 @@ else {
 	$sqler = $uploaderr = '';
 	$comments = test_input($_POST["comments"]);
 	$cost = test_input($_POST["cost"]);
+	$purchasedate = test_input($_POST["purchasedate"]);
+	$purchasedatetemp = $purchasedate;
 
 	$receipt = "money.krakos.net/";
 
@@ -71,7 +73,7 @@ else {
 			    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 			    // set the PDO error mode to exception
 			    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			    $sql = "UPDATE Purchases SET modifydate = NOW(), purchasedate = NOW(),cost='$cost', status='Purchased', comments='$comments',
+			    $sql = "UPDATE Purchases SET modifydate = NOW(), purchasedate='$purchasedate', cost='$cost', status='Purchased', comments='$comments',
 				receipt='$receipt' WHERE Purchases.purchaseID = '$purchaseID'";
 
 
@@ -86,25 +88,25 @@ else {
 
 			$conn = null;
 
-			
-						
+
+
 			 $to = "purdue.ieee.treasurer@gmail.com";
 			 $subject = "New purchase by $committee";
-			 
+
 			 $message = "<b>Please visit money.pieee.org at your earliest convenience to begin the reimbursement process for $item.</b>";
-			 
+
 			 $header = "From:ieeeboilerbooks@gmail.com \r\n";
 			 $header .= "MIME-Version: 1.0\r\n";
 			 $header .= "Content-type: text/html\r\n";
-			 
+
 			 $retval = mail ($to,$subject,$message,$header);
-			 
+
 			 if( $retval == true ) {
 				//echo "Message sent successfully...";
 			 }else {
 				//echo "Message could not be sent...";
 			 }
- 
+
 
 			$_SESSION['usernamec'] = '';
 			$_SESSION['itemc'] =  '';
@@ -120,8 +122,13 @@ else {
 
 
 
-			if ($uploaderr == '' and $sqler == '') {
-				header('Location: index.php');
+			if ($uploaderr == '' && $sqler == '') {
+				//header('Location: index.php');
+				echo "<br>";
+				echo $purchasedatetemp;
+				echo "<br>";
+				echo $purchasedate;
+				echo "<br>";
 			}
 			else {
 				echo "There were errors <br> '";

@@ -40,10 +40,10 @@ AND (a.category = (
 
 		$names .= $row['name'];
 		$names .= ', ';
-		
+
 		$emails .= $row['email'];
 		$emails .= ', ';
-		
+
 		$committee = $row['committee'];
 
 	}
@@ -64,16 +64,16 @@ $conn = null;
 
  $to = $emails;
  $subject = "New Purchase from $committee";
- 
- $message = "<b>A request to buy $item has been made. 
+
+ $message = "<b>A request to buy $item has been made.
  Please visit money.pieee.org at your earliest convenience to approve or deny the request.</b>";
- 
+
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
  $header .= "MIME-Version: 1.0\r\n";
  $header .= "Content-type: text/html\r\n";
- 
+
  $retval = mail ($to,$subject,$message,$header);
- 
+
  if( $retval == true ) {
 	//echo "Message sent successfully...";
  }else {

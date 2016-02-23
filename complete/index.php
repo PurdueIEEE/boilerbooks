@@ -146,6 +146,15 @@ $conn = null;
 			</div>
 		</div>
 
+		<!-- Button -->
+		<div class="form-group">
+			<label class="col-md-4 control-label" for="purchasedate">Purchase Date</label>
+			<div class="col-md-4">
+				<input id="purchasedate" name="purchasedate" type="date" class="form-control input-md" required="">
+			</div>
+		</div>
+
+		
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Receipt</label>
 			<div class="col-md-4">

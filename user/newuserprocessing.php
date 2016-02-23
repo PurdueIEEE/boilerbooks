@@ -49,7 +49,7 @@ else {
     $uploadOk = 0;
   }
   // Allow certain file formats
-  if($FileType != "pdf") {
+  if($FileType != "pdf" || $FileType != "PDF") {
     $uploaderr = $uploaderr . "Only PDFs are allowed for the reimbursement cert.<br>";
     $uploadOk = 0;
   }
