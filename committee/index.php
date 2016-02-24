@@ -4,17 +4,12 @@
 	include '../menu.php';
 ?>
 
-<form class="form-horizontal" action="selectcommittee.php" method="post">
-<fieldset>
 
-<!-- Form Name -->
-<legend></legend>
 
-<div class="form-group">
-  <label class="col-md-4 control-label" for="Committee">Committee</label>
-  <div class="col-md-4">
-    <select id="committee" name="committee" class="form-control">
-      <option value="General IEEE">General IEEE</option>
+<div class="container">
+    <select id="committee" name="committee" class="form-control" onchange="selectcommittee()">
+      <option value="">Select Committee</option>
+	  <option value="General IEEE">General IEEE</option>
 	  <option value="Aerial Robotics">Aerial Robotics</option>
       <option value="Computer Society">Computer Society</option>
       <option value="EMBS">EMBS</option>
@@ -23,24 +18,16 @@
       <option value="ROV">ROV</option>
       <option value="Rocket">Rocket</option>
     </select>
-  </div>
-</div>
+ 
+<div>
 
 
-<!-- Button -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="submit"></label>
-  <div class="col-md-4">
-    <button id="submit" name="submit" class="btn btn-primary">Search</button>
-  </div>
-</div>
 
-</fieldset>
-</form>
 
 
 <div class="container">
-	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Expenses</h3>
+	<h3 class="text-center">
+	<?php echo $_SESSION['committee'];?> Expenses</h3>
 	<table id="expensestable" class="display">
 		<thead>
 			<tr>
@@ -102,7 +89,14 @@
 	</script>
 </div>
 
-
+<script>
+	function selectcommittee() {
+		var com = document.getElementById('committee').value;
+		var title = "selectcommittee.php?committee=";
+		var full = title.concat(com);
+		window.location = full;
+	}
+</script>
 
 <?php
 	include '../smallfooter.php';
