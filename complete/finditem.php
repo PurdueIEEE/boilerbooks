@@ -8,7 +8,7 @@
 <?php
 include '../dbinfo.php';
 $stuff = '';
-$currentitem = $_POST["currentitem"];
+$currentitem = $_GET["currentitem"];
 $_SESSION['currentitemc'] = $currentitem;
 
 

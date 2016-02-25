@@ -79,6 +79,7 @@ $_SESSION['cost'] = '';
 $_SESSION['status']= '';
 $_SESSION['comments']= '';
 $_SESSION['email']= '';
+$_SESSION['name'] = '';
 ?>
 
 <?php header('Location: index.php'); ?>

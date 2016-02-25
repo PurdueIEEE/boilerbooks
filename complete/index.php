@@ -44,34 +44,18 @@ catch(PDOException $e)
 $conn = null;
 ?>
 
-<!-- Page Content -->
 
-<form class="form-horizontal" action="finditem.php" method="post">
-	<fieldset>
+<div class="container">
 
-		<!-- Form Name -->
-		<legend></legend>
+		<select id="currentitem" name="currentitem" class="form-control" onchange="selectitem()">
+			<option value="">Select Item</option>
+			<?php echo $items; ?>
+		</select>
 
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="Committee">Item to Complete</label>
-			<div class="col-md-4">
-				<select id="currentitem" name="currentitem" class="form-control" value="113">
-					<?php echo $items; ?>
-				</select>
-			</div>
-		</div>
+</div>
 
 
-		<!-- Button -->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="submit"></label>
-			<div class="col-md-4">
-				<button id="submit" name="submit" class="btn btn-primary">Search</button>
-			</div>
-		</div>
 
-	</fieldset>
-</form>
 
 
 
@@ -185,7 +169,14 @@ $conn = null;
 	</fieldset>
 </form>
 
-
+<script>
+	function selectitem() {
+		var com = document.getElementById('currentitem').value;
+		var title = "finditem.php?currentitem=";
+		var full = title.concat(com);
+		window.location = full;
+	}
+</script>
 
 <?php
 include '../smallfooter.php';
