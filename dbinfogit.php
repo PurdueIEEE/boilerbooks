@@ -6,7 +6,11 @@ $password = "";
 $dbname = "";
 $uploadcode = "";
 
+$sendemail = 1;
+
 function test_input($data) {
+  $data = str_replace('/','-',$data);
+  $data = str_replace('&','-',$data);
   $data = trim($data);
   $data = stripslashes($data);
   $data = htmlspecialchars($data, $flags=ENT_QUOTES| ENT_HTML401);

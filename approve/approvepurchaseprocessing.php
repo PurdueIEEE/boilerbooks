@@ -53,19 +53,22 @@ $conn = null;
  $to = $_SESSION['email'];
  $subject = "Your request has been $stat";
 
- $message = "<b>Please visit money.pieee.org at your earliest convenience to finish the purchase for $item.</b>";
+ $message = "<p>Please visit money.pieee.org at your earliest convenience to finish the purchase for $item.</p>";
 
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
  $header .= "MIME-Version: 1.0\r\n";
  $header .= "Content-type: text/html\r\n";
 
- $retval = mail ($to,$subject,$message,$header);
+ if ($sendemail == 1) {
+	 $retval = mail ($to,$subject,$message,$header);
 
- if( $retval == true ) {
-	//echo "Message sent successfully...";
- }else {
-	//echo "Message could not be sent...";
+	 if( $retval == true ) {
+	 //echo "Message sent successfully...";
+	 }else {
+	 //echo "Message could not be sent...";
+	 }
  }
+
 
 // Reset all values
 $_SESSION['currentitem'] = '';

@@ -65,20 +65,23 @@ $conn = null;
  $to = $emails;
  $subject = "New Purchase from $committee";
 
- $message = "<b>A request to buy $item has been made.
- Please visit money.pieee.org at your earliest convenience to approve or deny the request.</b>";
+ $message = "<p>A request to buy $item has been made.
+ Please visit money.pieee.org at your earliest convenience to approve or deny the request.</p>";
 
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
  $header .= "MIME-Version: 1.0\r\n";
  $header .= "Content-type: text/html\r\n";
 
- $retval = mail ($to,$subject,$message,$header);
+ if ($sendemail == 1) {
+	 $retval = mail ($to,$subject,$message,$header);
 
- if( $retval == true ) {
-	//echo "Message sent successfully...";
- }else {
-	//echo "Message could not be sent...";
+	 if( $retval == true ) {
+	 //echo "Message sent successfully...";
+	 }else {
+	 //echo "Message could not be sent...";
+	 }
  }
+
 ?>
 
 <div class = "container">
@@ -92,5 +95,6 @@ $conn = null;
 
 
 <?php
+	$_SESSION['item'] = '';
 	include '../smallfooter.php';
 ?>
