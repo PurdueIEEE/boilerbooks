@@ -125,9 +125,12 @@ $conn = null;
 	<script>
 	$(document).ready(function() {
 	    $('#treasurertable').DataTable( {
+
 	        createdRow: function ( row ) {
 	            $('td', row).attr('tabindex', 0);
+							stateSave: true
 	        }
+
 	    } );
 	} );
 	</script>

@@ -42,11 +42,10 @@ catch(PDOException $e)
 
 $conn = null;
 
-echo $validuser;
-echo "<br>";
 
 
-if ($validuser == 1) {
+echo "Valid User: ".$validuser."<br>";
+if ($validuser >= 1) {
 	// define variables and set to empty values
 	$item = $reason = $vendor = $committee = $cost = $comments = $category = "";
 
