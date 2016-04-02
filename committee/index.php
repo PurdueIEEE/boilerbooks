@@ -18,8 +18,55 @@
       <option value="ROV">ROV</option>
       <option value="Rocket">Rocket</option>
     </select>
- 
+
 <div>
+
+	<div class="container">
+		<div class = "row">
+			<div class="col-sm-3">
+				<h4 class="text-left">Balance: $<?php echo number_format($_SESSION['left'],2);?></h4>
+			</div>
+			<div class="col-sm-3">
+				<h4 class="text-center">Income: $<?php echo number_format($_SESSION['incometotal'],2);?></h4>
+			</div>
+			<div class="col-sm-3">
+				<h4 class="text-center">Spent: $<?php echo number_format($_SESSION['spent'],2);?></h4>
+			</div>
+			<div class="col-sm-3">
+				<h4 class="text-right">Budget: $<?php echo number_format($_SESSION['totalbudget'],2);?></h4>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<h3 class="text-center">
+		<?php echo $_SESSION['committee'];?> Expenses Summary</h3>
+		<table id="expensestablesummary" class="display">
+			<thead>
+				<tr>
+					<th>Category</th>
+					<th>Spent</th>
+					<th>Budget</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php echo $_SESSION['commiteepurchasessummary'] ?>
+			</tbody>
+		</table>
+		<script>
+		$(document).ready(function() {
+		    $('#expensestablesummary').DataTable( {
+
+		        createdRow: function ( row ) {
+		            $('td', row).attr('tabindex', 0);
+		        }
+
+		    } );
+		} );
+		</script>
+	</div>
+
+	<br> <br> <br>
 
 
 

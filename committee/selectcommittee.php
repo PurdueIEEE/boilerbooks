@@ -125,8 +125,140 @@ catch(PDOException $e)
 $conn = null;
 
 
+$items = "";
+// Summary of expenses table
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	// anyone with approval status in a committee for any amount can view the entire committee
+	$sql = "SELECT B.category, SUM(CASE WHEN P.status in ('Purchased','Processing Reimbursement','Reimbursed',NULL) THEN P.cost ELSE 0 END) AS 'Spent'
+        ,B.amount AS 'Budget' FROM Budget B
+				LEFT JOIN Purchases P ON B.category = P.category
+				WHERE B.committee = '$committee' GROUP BY B.category";
+	//$stmt->execute();
 
 
+	foreach ($conn->query($sql) as $row) {
+		$items .= '<tr> <td>';
+		$items .= $row['category'];
+		$items .= '</td> <td>';
+		$items .= $row['Spent'];
+		$items .= '</td> <td>';
+		$items .= $row['Budget'];
+		$items .= '</td></tr>';
+
+
+	}
+	$_SESSION['commiteepurchasessummary'] = $items;
+	$_SESSION['committee'] = $committee;
+		//echo $items;
+
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+
+
+
+$items = "";
+// Total budget
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	// anyone with approval status in a committee for any amount can view the entire committee
+	$sql = "SELECT SUM(Budget.amount) AS 'Budget' FROM Budget
+	WHERE Budget.committee = '$committee'";
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+		$items .= $row['Budget'];
+	}
+	$_SESSION['totalbudget'] = $items;
+	$_SESSION['committee'] = $committee;
+		//echo $items;
+
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+
+$items = "";
+// Total expenses
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	// anyone with approval status in a committee for any amount can view the entire committee
+	$sql = "SELECT SUM(Purchases.cost) AS 'Spent' FROM Purchases
+	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed',NULL)";
+
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+		$items .= $row['Spent'];
+	}
+	$_SESSION['spent'] = $items;
+	$_SESSION['committee'] = $committee;
+		//echo $items;
+
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+
+$items = "";
+// Total income
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	// anyone with approval status in a committee for any amount can view the entire committee
+	$sql = "SELECT SUM(amount) AS income FROM Income
+WHERE type in ('BOSO', 'Cash') AND committee = '$committee'";
+
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+		$items .= $row['income'];
+	}
+	$_SESSION['incometotal'] = $items;
+	$_SESSION['committee'] = $committee;
+		//echo $items;
+
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
+$_SESSION['left'] = $_SESSION['incometotal'] - $_SESSION['spent'];
 
 header("Location: index.php");
 
