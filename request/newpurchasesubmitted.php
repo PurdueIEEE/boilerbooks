@@ -65,7 +65,8 @@ $conn = null;
  $to = $emails;
  $subject = "New Purchase from $committee";
 
- $message = "<p>A request to buy $item has been made.
+ $user = $_SESSION['user'];
+ $message = "<p>A request to buy $item has been made by $user.
  Please visit money.pieee.org at your earliest convenience to approve or deny the request.</p>";
 
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
