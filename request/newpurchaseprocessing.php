@@ -22,6 +22,9 @@ $comments = test_input($_POST["comments"]);
 $category = test_input($_POST["category"]);
 $usr = $_SESSION['user'];
 
+// Maybe do something with a REST API and JSON in the future
+$jsonArray = compact("item", "reason", "vendor", "committee", "cost", "comments", "category", "usr");
+
 
 
 try {
