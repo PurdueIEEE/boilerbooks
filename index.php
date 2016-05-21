@@ -2,6 +2,8 @@
 $title = 'Boiler Books';
 include 'header.php';
 include 'dbinfo.php';
+$returnto = test_input2($_GET['returnto']);
+$verifylogin = "login.php?returnto=" . $returnto;
 ?>
 
 <div class="container">
@@ -9,17 +11,18 @@ include 'dbinfo.php';
 	<h4 class = "text-center">The ultimate expense and income tracking system for student organizations</h4>
 	<ul class="nav nav-tabs">
 		<li class="disabled disabledTab"><a href="#">Request Purchase</a></li>
-		<li class="disabled disabledTab"><a href="#">Complete Purchase</a></li>
 		<li class="disabled disabledTab"><a href="#">Approve Purchase</a></li>
+		<li class="disabled disabledTab"><a href="#">Complete Purchase</a></li>
 		<li class="disabled disabledTab"><a href="#">View My Purchases</a></li>
 		<li class="disabled disabledTab"><a href="#">View Committee Expenses</a></li>
 		<li class="disabled disabledTab"><a href="#">Receive Donation</a></li>
+		<li class="disabled disabledTab"><a href="#">Treasurer</a></li>
 	</ul>
 </div>
 
 <div class="container">
 
-	<form class="form-signin" action="login.php" method="post">
+	<form class="form-signin" action=<?php echo $verifylogin ?> method="post">
 		<h3 class="form-signin-heading">Please sign in</h3>
 		<font color="blue"><em><?php echo test_input($_GET["fail"]); ?></em></font>
 		<label for="inputEmail" class="sr-only">Username</label>

@@ -2,12 +2,15 @@
 session_start();
 if (!isset($_SESSION['user']))
 {
-	header("Location: /index.php");
+	$headerinfo = "Location: /index.php?returnto=" . $_SERVER['REQUEST_URI'];
+	header($headerinfo);
+
 	die();
 }
 ?>
 <?php
 include 'header.php';
+
 ?>
 
 <div class="container">

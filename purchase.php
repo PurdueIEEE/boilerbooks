@@ -20,7 +20,14 @@
 
 <div>
 	<div class="well">
-		<h3 class="text-center">Purchase#<?php echo $purchaseid?>: <?php echo $_SESSION['item']?></h3>
+		<div class="col-sm-6">
+			<h3 class="text-right">Purchase #<?php echo $purchaseid?>:</h3>
+		</div>
+		<div class="col-sm-6">
+			<h3 class="text-left" contenteditable="true"><?php echo $_SESSION['item']?></h3>
+		</div>
+
+		
 		<p class="text-center"><em>Last updated <?php echo $_SESSION['mdate']?> EST</em></p>
 	</div>
 

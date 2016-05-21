@@ -106,7 +106,8 @@ $conn = null;
 
  $user = $_SESSION['user'];
  $message = "<p>A request to buy $item has been made by $user.
- Please visit money.pieee.org at your earliest convenience to approve or deny the request.</p>";
+ Please visit <a href='https://money.pieee.org/approve/'>money.pieee.org</a> at your earliest convenience to approve or deny the request.</p>
+ <p>You always view the most up-to-date stauts of the purchase <a href=https://money.pieee.org/purchase.php?purchaseid=" . $currentitemid . "> here</a>.</p>";
 
  $header = "From:ieeeboilerbooks@gmail.com \r\n";
  $header .= "MIME-Version: 1.0\r\n";

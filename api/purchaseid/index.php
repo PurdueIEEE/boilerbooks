@@ -1,13 +1,27 @@
 <?php
+	/* This API provides info on a purchase for display. It also formats an ifram of the receipt
+	/* Consider adding additional security to prevent certain people from seeing all receipts */
+
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
 	include '../../menu.php';
-?>
-
-<?php
 
 	include '../../dbinfo.php';
 	$usr = $_SESSION['user'];
+
+	// Clear old variables
+	$_SESSION['date'] = '';
+	$_SESSION['mdate'] = '';
+	$_SESSION['receipt'] = '';
+	$_SESSION['item'] = '';
+	$_SESSION['purchasereason'] = '';
+	$_SESSION['vendor'] = '';
+	$_SESSION['purchaseby'] = '';
+	$_SESSION['approvedby'] = '';
+	$_SESSION['category'] = '';
+	$_SESSION['status'] = '';
+	$_SESSION['cost'] = '';
+	$_SESSION['comments'] = '';
 
 	$purchaseid = test_input($_GET["purchaseid"]);
 	$_SESSION['purchaseid'] = $purchaseid;
@@ -22,7 +36,8 @@
 		p.cost, p.comments
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
-		 FROM Purchases p WHERE p.purchaseID = $purchaseid";
+		 FROM Purchases p 
+		 WHERE p.purchaseID = $purchaseid";
 		//$stmt->execute();
 
 

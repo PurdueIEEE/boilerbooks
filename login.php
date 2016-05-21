@@ -25,8 +25,6 @@ try {
 
 
 
-	//echo $dbpsw."<br>";
-	//echo $usr, " entered ", $psw."<br>";
 
 
 	if (password_verify($psw,$dbpsw))
@@ -34,7 +32,14 @@ try {
 
 		$_SESSION['user'] = $usr;
 		//echo $_SESSION['user'];
-		header("Location: loggedin.php");
+		$returnto = test_input2($_GET['returnto']);
+		if ($returnto != '') {
+			$headerinfo = "Location: " . $returnto;
+		}
+		else {
+			$headerinfo = "Location: loggedin.php";
+		}
+		header($headerinfo);
 	}
 	else
 	{

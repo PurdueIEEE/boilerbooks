@@ -79,6 +79,7 @@
 		<thead>
 			<tr>
 				<th>Purchase Date</th>
+				<th>Purchase Number</th>
 				<th>Item</th>
 				<th>Reason</th>
 				<th>Vendor</th>

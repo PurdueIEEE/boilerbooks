@@ -22,7 +22,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
-	$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+	$sql = "SELECT p.purchaseid, DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 	p.cost, p.comments
 	, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 	, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
@@ -37,11 +37,19 @@ try {
 	foreach ($conn->query($sql) as $row) {
 		$items.= '<tr> <td>';
 		$items .= $row['date'];
+
+		$items .= '</td> <td><a href=/purchase.php?purchaseid=';
+		$items .= $row['purchaseid'];
+		$items .= '>';
+		$items .= $row['purchaseid'];
+		$items .= '</a>';
+
 		$items .= '</td> <td><a href=';
 		$items .= $row['receipt'];
 		$items .= '>';
 		$items .= $row['item'];
 		$items .= '</a></td> <td>';
+
 		$items .= $row['purchasereason'];
 		$items .= '</td> <td>';
 		$items .= $row['vendor'];
