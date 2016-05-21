@@ -1,6 +1,7 @@
 <?php
 /*** This api inserts information into the database that is needed for a purchase request, provides info
-/*** to the requestor, and sends an email to the potential approver ***/
+/*** to the requestor through a session variable (name, and item), redirects to seperate page, 
+/*** and sends an email to the potential approver ***/
 
 session_start();
 if (!isset($_SESSION['user']))

@@ -11,7 +11,8 @@ include '../menu.php';
     <div class="form-group">
       <label class="col-md-4 control-label" for="Committee">Committee</label>
       <div class="col-md-4">
-        <select id="committee" name="committee" class="form-control">
+        <select id="committee" name="committee" class="form-control" required="">
+          <option value=""></option>
           <option value="General IEEE">General IEEE</option>
           <option value="Aerial Robotics">Aerial Robotics</option>
           <option value="Computer Society">Computer Society</option>

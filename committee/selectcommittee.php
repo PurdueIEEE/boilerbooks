@@ -10,7 +10,7 @@ include '../dbinfo.php';
 $items = '';
 $items2 = '';
 $usr = $_SESSION['user'];
-$committee = test_input($_POST["committee"]);
+//$committee = test_input($_POST["committee"]);
 
 if ($committee == '') {
 	$committee = test_input($_GET["committee"]);

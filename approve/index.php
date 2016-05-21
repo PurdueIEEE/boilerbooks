@@ -163,7 +163,8 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="category">Approve/Deny</label>
 			<div class="col-md-4">
-				<select id="status" name="status" class="form-control">
+				<select id="status" name="status" class="form-control" required="">
+					<option></option>
 					<option value="Denied">Deny</option>
 					<option value="Approved">Approve</option>
 				</select>

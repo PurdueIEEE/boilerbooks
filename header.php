@@ -12,7 +12,7 @@
   <title><?php echo $title;?></title>
 
   <!-- Bootstrap Core CSS -->
-  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap.css" rel="stylesheet">
 
   <!-- Custom CSS -->
   <link href="/css/landing-page.css" rel="stylesheet">
