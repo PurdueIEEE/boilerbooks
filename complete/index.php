@@ -119,24 +119,41 @@ $conn = null;
 
 		</div> 
 
-
-
 		<!-- Text input-->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Final Cost (Shipping and all)</label>
 			<div class="col-md-4">
-				<input id="cost" name="cost" type="number" step = "0.01" placeholder="<?php echo $_SESSION['costc']; ?>" class="form-control input-md" required="" value="$<?php echo $_SESSION['costc']; ?>">
+				<input id="cost" name="cost" type="number" step = "0.01" placeholder="<?php echo $_SESSION['costc']; ?>" class="form-control input-md" required="" value="<?php echo $_SESSION['costc']; ?>">
 
 			</div>
 		</div>
+
+
+
+
+
+		
+
+
 
 		<!-- Button -->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="purchasedate">Purchase Date</label>
 			<div class="col-md-4">
-				<input id="purchasedate" name="purchasedate" type="date" class="form-control input-md" required="">
+				<input id="purchasedate" name="purchasedate" type="text" class="form-control input-md" required="">
 			</div>
 		</div>
+		
+
+		<script>
+		    $('input[name="purchasedate"]').daterangepicker({
+		        singleDatePicker: true,
+		        showDropdowns: true
+		    });
+		</script>
+		
+
+
 
 		
 		<div class="form-group">
