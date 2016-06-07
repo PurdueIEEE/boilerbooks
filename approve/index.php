@@ -1,4 +1,5 @@
 <?php
+// approval form
 $title = 'Boiler Books';
 $approveactive = "active";
 include '../menu.php';
@@ -61,7 +62,7 @@ $conn = null;
 
 <!-- Page Content -->
 
-<form class="form-horizontal" action="approvepurchaseprocessing.php" method="post">
+<form class="form-horizontal" action="/api/approve/" method="post">
 	<fieldset>
 
 		<!-- Form Name -->
