@@ -37,7 +37,7 @@ try {
 		$_SESSION['category'] = $row['category'];
 		$_SESSION['cost'] = $row['cost'];
 		$_SESSION['status'] = $row['status'];
-		$_SESSION['comments'] = $row['email'];
+		$_SESSION['comments'] = $row['comments'];
 		$_SESSION['email'] = $row['email'];
 	}
 

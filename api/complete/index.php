@@ -8,7 +8,7 @@
 		header("Location: ../index.php");
 		die();
 	}
-	header('Location: /complete/');
+	//header('Location: /complete/');
 	?>
 
 	<?php
@@ -45,7 +45,7 @@
 		$FileType = pathinfo($target_dir . basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION);
 		$target_file = $target_dir . $committee . "_" . $item . "_" . $purchaseID . "." . $FileType;
 		$target_file_save = $target_dir_save . $committee . "_" . $item . "_" . $purchaseID . "." . $FileType;
-
+		echo $target_file_save;
 
 		// Check if file already exists
 		if (file_exists($target_file)) {

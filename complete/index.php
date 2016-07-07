@@ -61,7 +61,7 @@ $conn = null;
 
 <!-- Page Content -->
 
-<form class="form-horizontal" action="/api/complete/" method="post" enctype="multipart/form-data">
+<form class="form-horizontal" action="completeprocessing.php" method="post" enctype="multipart/form-data">
 	<fieldset>
 
 		<!-- Form Name -->
