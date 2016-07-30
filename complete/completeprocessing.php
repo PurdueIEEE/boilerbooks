@@ -6,12 +6,14 @@
 
 <?php
 include '../dbinfo.php';
+echo '<div>';
 // define variables and set to empty values
 $cost = $comments = $receipt = $purchasedate = "";
 $committee = $_SESSION['committeec'];
 $item = $_SESSION['itemc'];
 $purchaseID = $_SESSION['purchaseIDc'];
 if ($purchaseID == '') {
+	echo 'no purchase';
 	header("Location: index.php");
 }
 else {
@@ -19,6 +21,10 @@ else {
 	$comments = test_input($_POST["comments"]);
 	$cost = test_input($_POST["cost"]);
 	$purchasedate = test_input($_POST["purchasedate"]);
+	echo 'Original date' . $purchasedate . '<br>';
+	$purchasedate = str_replace('-','/',$purchasedate);
+	$purchasedate = date('Y-m-d H:i:s', strtotime($purchasedate));  
+	echo 'Changed date' . $purchasedate . '<br>';
 	$purchasedatetemp = $purchasedate;
 	$receipt = "money.krakos.net/";
 	$target_dir = "../receipts/";
@@ -33,7 +39,7 @@ else {
 		$uploadOk = 0;
 	}
 	// Check file size
-	if ($_FILES["fileToUpload"]["size"] > 500000) {
+	if ($_FILES["fileToUpload"]["size"] > 5000000) {
 		$uploaderr = $uploaderr . "Sorry, your reimbursement cert is too large.";
 		$uploadOk = 0;
 	}
@@ -49,7 +55,7 @@ else {
 	// if everything is ok, try to upload file
 	} else {
 		if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-			echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+			echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
 			$receipt = str_replace(' ', '%20', $target_file_save);
 		} else {
 			$uploaderr = $uploaderr . "Sorry, there was an error uploading your file.";
@@ -67,6 +73,7 @@ else {
 				// use exec() because no results are returned
 			    $conn->exec($sql);
 			    echo "New record created successfully";
+			    //echo $sql;
 			    }
 			catch(PDOException $e)
 			    {
@@ -98,21 +105,24 @@ else {
 			$_SESSION['commentsc']= '';
 			$_SESSION['statusc']= '';
 			$_SESSION['purchaseIDc']= '';
-			if ($uploaderr == '' && $sqler == '') {
+			
+	}
+}
+if ($uploaderr == '' && $sqler == '') {
 				//header('Location: index.php');
 				echo "<br>";
 				echo $purchasedatetemp;
 				echo "<br>";
 				echo $purchasedate;
 				echo "<br>";
+				header('Location: index.php');
 			}
 			else {
 				echo "There were errors <br> '";
 				echo $uploaderr . "'<br>'";
 				echo $sqler . "'<br>";
+				
 			}
-	}
-}
+
 ?>
 
-<?php header('Location: index.php'); ?>

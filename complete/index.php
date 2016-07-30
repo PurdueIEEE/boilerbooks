@@ -146,7 +146,10 @@ $conn = null;
 		
 
 		<script>
-		    $('input[name="purchasedate"]').daterangepicker({
+		    $('input[name="purchasedate"]').daterangepicker(
+		    
+		    
+    		{
 		        singleDatePicker: true,
 		        showDropdowns: true
 		    });
