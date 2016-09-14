@@ -1,0 +1,12 @@
+<option value="">Select Committee</option>
+<option value="General IEEE">General IEEE</option>
+<option value="Aerial Robotics">Aerial Robotics</option>
+<option value="Computer Society">Computer Society</option>
+<option value="EMBS">EMBS</option>
+<option value="MTT-S">MTT-S</option>
+<option value="Orbital">Orbital</option>
+<option value="Professional">Professional</option>
+<option value="Learning">Learning</option>
+<option value="Racing">Racing</option>
+<option value="ROV">ROV</option>
+<option value="Social">Social</option>

@@ -81,16 +81,9 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="Committee">Committee</label>
 			<div class="col-md-4">
-				<select id="committee" name="committee" class="form-control">
-					<option <?php echo $_SESSION['generalieee']; ?> value="General IEEE">General IEEE</option>
-					<option <?php echo $_SESSION['aerialactive']; ?> value="Aerial Robotics">Aerial Robotics</option>
-					<option <?php echo $_SESSION['computersocietyactive']; ?> value="Computer Society">Computer Society</option>
-					<option <?php echo $_SESSION['embsactive']; ?> value="EMBS">EMBS</option>
-					<option <?php echo $_SESSION['learningactive']; ?> value="Learning">Learning</option>
-					<option <?php echo $_SESSION['racingactive']; ?> value="Racing">Racing</option>
-					<option <?php echo $_SESSION['rovactive']; ?> value="ROV">ROV</option>
-					<option <?php echo $_SESSION['rocketactive']; ?> value="Rocket">Rocket</option>
-				</select>
+				<div class="col-sm-6">
+					<h4><em><?php echo $_SESSION['committee']; ?></em></h4>
+				</div>
 			</div>
 		</div>
 

@@ -1,21 +1,10 @@
 <?php 
 	$title = 'Boiler Books';
-	include '../header.php';
+	include '../menu.php';
 ?>
 
 <body>
-<div class="container">
-  <h1 class = "text-center"><a href="../loggedin.php">Boiler Books</a></h1>
-  <h4 class = "text-center">The ultimate expense and income tracking system for student organizations</h4>
-  <ul class="nav nav-tabs">
-    <li><a href="../newpurchase.php">Request Purchase</a></li>
-    <li><a href="../completepurchase.php">Complete Purchase</a></li>
-    <li><a href="../approvepurchase.php">Approve Purchase</a></li>
-    <li><a href="../viewmypurchases.php">View My Purchases</a></li>
-	<li><a href="../committeeexpenses.php">View Committee Expenses</a></li>
-	<li><a href="../donation.php">Receive Donation</a></li>
-  </ul>
-</div>
+
    
     <!-- Page Content -->
 

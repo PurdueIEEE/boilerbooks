@@ -17,13 +17,7 @@
   <label class="col-md-4 control-label" for="committee">Committee</label>
   <div class="col-md-4">
     <select id="committee" name="committee" class="form-control">
-      <option value="Aerial Robotics">Aerial Robotics</option>
-      <option value="Computer Society">Computer Society</option>
-      <option value="EMBS">EMBS</option>
-      <option value="Learning">Learning</option>
-      <option value="Racing">Racing</option>
-      <option value="ROV">ROV</option>
-      <option value="Rocket">Rocket</option>
+      <?php include '../committees.php'; ?>
     </select>
   </div>
 </div>
