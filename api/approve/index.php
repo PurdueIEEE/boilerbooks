@@ -25,7 +25,6 @@
 	$item = test_input($_POST["item"]);
 	$reason = test_input($_POST["reason"]);
 	$vendor = test_input($_POST["vendor"]);
-	$committee = test_input($_POST["committee"]);
 	$cost = test_input($_POST["cost"]);
 	$comments = test_input($_POST["comments"]);
 	$category = test_input($_POST["category"]);
@@ -42,7 +41,7 @@
 	    // set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$sql = "UPDATE Purchases SET modifydate = NOW(), approvedby='$usr', item='$item', purchasereason='$reason', vendor='$vendor',
-		committee='$committee', category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
+		category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
 		comments='$comments' WHERE Purchases.purchaseID = '$purchaseid'";
 		$conn->exec($sql);
 		echo "New record created successfully";
