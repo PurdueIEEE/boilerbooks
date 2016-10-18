@@ -7,9 +7,23 @@
 
 
 <div class="container">
-    <select id="committee" name="committee" class="form-control" onchange="selectcommittee()">
-      <?php include '../committees.php'; ?>
-    </select>
+	<div class="row">
+		<div class="col-sm-6">
+		    <select id="committee" name="committee" class="form-control" onchange="selectcommittee()">
+		      <?php include '../committees.php'; ?>
+		    </select>
+		</div>
+		<div class="col-sm-6">
+		    <select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectyear()">
+		    	<option value="2016-2017">Select Year</option>
+		    	<option value="2016-2017">2016 - 2017</option>
+		    	<option value="2015-2016">2015 - 2016</option>
+		    </select>
+		</div>
+	</div>
+</div>
+
+<div>
 
 </div>
 
@@ -32,7 +46,7 @@
 
 	<div class="container">
 		<h3 class="text-center">
-		<?php echo $_SESSION['committee'];?> Expenses Summary</h3>
+		<?php echo $_SESSION['fiscalyear'] . ' ' . $_SESSION['committee'];?> Expenses Summary</h3>
 		<table id="expensestablesummary" class="display">
 			<thead>
 				<tr>
@@ -66,7 +80,7 @@
 
 <div class="container">
 	<h3 class="text-center">
-	<?php echo $_SESSION['committee'];?> Expenses</h3>
+	<?php echo $_SESSION['fiscalyear'] . ' ' . $_SESSION['committee'];?> Expenses</h3>
 	<table id="expensestable" class="display">
 		<thead>
 			<tr>
@@ -101,7 +115,7 @@
 <br> <br> <br>
 
 <div class="container">
-	<h3 class="text-center"><?php echo $_SESSION['committee'] ?> Income</h3>
+	<h3 class="text-center"><?php echo $_SESSION['fiscalyear'] . ' ' . $_SESSION['committee'] ?> Income</h3>
 	<table id="incometable" class="display">
 		<thead>
 			<tr>
@@ -133,6 +147,15 @@
 	function selectcommittee() {
 		var com = document.getElementById('committee').value;
 		var title = "selectcommittee.php?committee=";
+		var full = title.concat(com);
+		window.location = full;
+	}
+</script>
+
+<script>
+	function selectyear() {
+		var com = document.getElementById('fiscalyear').value;
+		var title = "selectyear.php?fiscalyear=";
 		var full = title.concat(com);
 		window.location = full;
 	}
