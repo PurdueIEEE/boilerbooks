@@ -1,6 +1,8 @@
 <?php
 	$title = 'Boiler Books';
 	include 'menu.php';
+	$_SESSION['fiscalyear'] = '2016-2017'; // initilize
+
 ?>
 
 
