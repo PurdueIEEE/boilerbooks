@@ -155,7 +155,7 @@ try {
 				LEFT JOIN Purchases P ON B.category = P.category
 				WHERE B.committee = '$committee' 
 				AND B.year = '$fiscalyear'
-				AND P.fiscalyear = '$fiscalyear'
+				AND (P.fiscalyear = '$fiscalyear' OR P.fiscalyear IS NULL)
 				GROUP BY B.category
 				";
 
