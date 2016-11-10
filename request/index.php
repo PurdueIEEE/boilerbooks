@@ -3,6 +3,44 @@
 $title = 'Boiler Books';
 $requestactive = "active";
 include '../menu.php';
+include '../dbinfo.php';
+?>
+
+<?php
+  if (isset($_GET['committee'])) {
+    $committee = test_input($_GET['committee']);
+    if ($committee == "General IEEE") {
+      $general = "selected";
+    }
+    else if ($committee == "Aerial Robotics") {
+      $aerial = "selected";
+    }
+    else if ($committee == "Computer Society") {
+      $computer = "selected";
+    }
+    else if ($committee == "EMBS") {
+      $embs = "selected";
+    }
+    else if ($committee == "MTT-S") {
+      $mtts = "selected";
+    }
+    else if ($committee == "Professional") {
+      $professional = "selected";
+    }
+    else if ($committee == "Learning") {
+      $learning = "selected";
+    }
+    else if ($committee == "Racing") {
+      $racing = "selected";
+    }
+    else if ($committee == "ROV") {
+      $rov = "selected";
+    }
+    else if ($committee == "Social") {
+      $social = "selected";
+    }
+}
+
 ?>
 
 <form class="form-horizontal" action="/api/request/" method="post">
@@ -12,7 +50,7 @@ include '../menu.php';
     <div class="form-group">
       <label class="col-md-4 control-label" for="Committee">Committee</label>
       <div class="col-md-4">
-        <select id="committee" name="committee" class="form-control" required="">
+        <select id="committee" name="committee" class="form-control" required="" onchange="categories()">
           <?php include '../committees.php'; ?>
         </select>
       </div>
@@ -71,5 +109,13 @@ include '../menu.php';
   </fieldset>
 </form>
 
+<script>
+  function categories() {
+    var com = document.getElementById('committee').value;
+    var title = "index.php?committee=";
+    var full = title.concat(com);
+    window.location = full;
+  }
+</script>
 
 <?php include '../smallfooter.php';?>
