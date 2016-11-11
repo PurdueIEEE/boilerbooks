@@ -41,7 +41,47 @@ include '../dbinfo.php';
     }
 }
 
+
+
+$categorylist = '';
+
+//$committee = 'ROV';
+	if ($committee != "") {
+	try {
+		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+		// set the PDO error mode to exception
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
+		$sql = "SELECT category FROM `Budget`
+		WHERE committee='$committee' AND year='2016-2017'";
+		//$stmt->execute();
+
+
+		foreach ($conn->query($sql) as $row) {
+			$categorylist .= '<option value="';
+			$categorylist .= $row['category'];
+			$categorylist .= '">';
+			$categorylist .= $row['category'];
+			$categorylist .= '</option>\n';
+
+		}
+		//echo $categorylist;
+
+
+	}
+	catch(PDOException $e)
+	{
+		echo $sql . "<br>" . $e->getMessage();
+	}
+}
+
+$conn = null;
 ?>
+
+
+
+
+
 
 <form class="form-horizontal" action="/api/request/" method="post">
   <fieldset>
@@ -91,10 +131,32 @@ include '../dbinfo.php';
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="col-md-4 control-label" for="category">Category</label>
+  
+
+
+
+
+
+
+
+
+
+
+<div class="form-group">
+<label class="col-md-4 control-label" for="category">Category</label>
       <div class="col-md-4">
-        <input id="category" name="category" type="text" placeholder="Electrical, Mechanical, Software, etc." class="form-control input-md" required="">
+
+		<select id="category" name="category" class="form-control input-md" required="">
+			<option value="">Select Item</option>
+			<?php echo $categorylist; ?>
+		</select>
+
+</div>
+
+
+
+
+
 
       </div>
     </div>
