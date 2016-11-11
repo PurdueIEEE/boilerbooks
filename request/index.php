@@ -3,7 +3,85 @@
 $title = 'Boiler Books';
 $requestactive = "active";
 include '../menu.php';
+include '../dbinfo.php';
 ?>
+
+<?php
+  if (isset($_GET['committee'])) {
+    $committee = test_input($_GET['committee']);
+    if ($committee == "General IEEE") {
+      $general = "selected";
+    }
+    else if ($committee == "Aerial Robotics") {
+      $aerial = "selected";
+    }
+    else if ($committee == "Computer Society") {
+      $computer = "selected";
+    }
+    else if ($committee == "EMBS") {
+      $embs = "selected";
+    }
+    else if ($committee == "MTT-S") {
+      $mtts = "selected";
+    }
+    else if ($committee == "Professional") {
+      $professional = "selected";
+    }
+    else if ($committee == "Learning") {
+      $learning = "selected";
+    }
+    else if ($committee == "Racing") {
+      $racing = "selected";
+    }
+    else if ($committee == "ROV") {
+      $rov = "selected";
+    }
+    else if ($committee == "Social") {
+      $social = "selected";
+    }
+}
+
+
+
+$categorylist = '';
+
+//$committee = 'ROV';
+	if ($committee != "") {
+	try {
+		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+		// set the PDO error mode to exception
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
+		$sql = "SELECT category FROM `Budget`
+		WHERE committee='$committee' AND year='2016-2017'";
+		//$stmt->execute();
+
+
+		foreach ($conn->query($sql) as $row) {
+			$categorylist .= '<option value="';
+			$categorylist .= $row['category'];
+			$categorylist .= '">';
+			$categorylist .= $row['category'];
+			$categorylist .= '</option>\n';
+
+		}
+		//echo $categorylist;
+
+
+	}
+	catch(PDOException $e)
+	{
+		echo $sql . "<br>" . $e->getMessage();
+	}
+}
+
+$conn = null;
+?>
+
+
+
+
+
 
 <form class="form-horizontal" action="/api/request/" method="post">
   <fieldset>
@@ -12,7 +90,7 @@ include '../menu.php';
     <div class="form-group">
       <label class="col-md-4 control-label" for="Committee">Committee</label>
       <div class="col-md-4">
-        <select id="committee" name="committee" class="form-control" required="">
+        <select id="committee" name="committee" class="form-control" required="" onchange="categories()">
           <?php include '../committees.php'; ?>
         </select>
       </div>
@@ -53,10 +131,32 @@ include '../menu.php';
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="col-md-4 control-label" for="category">Category</label>
+  
+
+
+
+
+
+
+
+
+
+
+<div class="form-group">
+<label class="col-md-4 control-label" for="category">Category</label>
       <div class="col-md-4">
-        <input id="category" name="category" type="text" placeholder="Electrical, Mechanical, Software, etc." class="form-control input-md" required="">
+
+		<select id="category" name="category" class="form-control input-md" required="">
+			<option value="">Select Item</option>
+			<?php echo $categorylist; ?>
+		</select>
+
+</div>
+
+
+
+
+
 
       </div>
     </div>
@@ -71,5 +171,13 @@ include '../menu.php';
   </fieldset>
 </form>
 
+<script>
+  function categories() {
+    var com = document.getElementById('committee').value;
+    var title = "index.php?committee=";
+    var full = title.concat(com);
+    window.location = full;
+  }
+</script>
 
 <?php include '../smallfooter.php';?>
