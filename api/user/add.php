@@ -10,7 +10,6 @@
      */
 
     // Extract the data out of the JSON and break if any fields are missing.
-    $username = $_PARAMS["username"] ?: "";
     $password = $_PARAMS["password"] ?: "";
     $first = $_PARAMS["first"] ?: "";
     $last = $_PARAMS["last"] ?: "";
@@ -23,29 +22,28 @@
     if (!isset($username) || !isset($password) || !isset($first) ||
         !isset($last) || !isset($email) || !isset($address) ||
         !isset($city) || !isset($state) || !isset($zip) || !isset($cert)) {
-        return http_return(400, ["error" => "missing fields"]);
+        return Flight::json(["error" => "missing fields"], 400);
     }
+
+    $user = [
+        "username" => $username,
+        "password" => password_hash($password, PASSWORD_DEFAULT),
+        "first" => $first,
+        "last" => $last,
+        "email" => $email,
+        "address" => $address,
+        "city" => $city,
+        "state" => $state,
+        "zip" => $zip,
+        "cert" => $cert,
+    ];
 
     // Execute the actual SQL query after confirming its formedness.
     try {
-        $database->insert("Users", [
-                          "username" => $username,
-                          "password" => password_hash($password, PASSWORD_DEFAULT),
-                          "first" => $first,
-                          "last" => $last,
-                          "email" => $email,
-                          "address" => $address,
-                          "city" => $city,
-                          "state" => $state,
-                          "zip" => $zip,
-                          "cert" => $cert,
-                          ]);
+        Flight::db()->insert("Users", $user);
 
-        return http_return(200, ["result" => JWT::encode([
-            "username" => $username,
-            "root" => false,
-        ], $token_secret)]);
+        return Flight::json(["result" => $user], 201);
     } catch(PDOException $e) {
-        return http_return(400, ["error" => $e->getMessage()]);
+        return Flight::json(["error" => $e->getMessage()], 500);
     }
 ?>

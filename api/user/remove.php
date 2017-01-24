@@ -9,29 +9,23 @@
      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
      */
 
-    // Extract the data out of the JSON and break if any fields are missing.
-    $username = $_PARAMS["username"];
-    $selector = null;
-    if (isset($username)) {
-        $selector = ["username" => $username];
-
-        // Make sure we have rights to view the username given (or all users).
-        if ($_TOKEN["username"] != $username && !$_TOKEN["root"]) {
-            return http_return(401, ["error" => "insufficient privileges to view other users"]);
-        }
-    } else if(!$_TOKEN["root"]) {
-        return http_return(401, ["error" => "insufficient privileges to view all users"]);
+    // Make sure we have rights to delete users.
+    if(!$_TOKEN['data']["root"]) {
+        return Flight::json(["error" => "insufficient privileges to delete users"], 401);
     }
 
     // Execute the actual SQL query after confirming its formedness.
     try {
-        $result = $database->select("Users", "*", $selector);
-        if (count($result) == 0) {
-            return http_return(400, ["error" => "no results"]);
+        $result = Flight::db()->delete("Users", ["username" => $username]);
+
+        // Make sure 1 row was acted on, otherwise the user did not exist
+        if ($result == 1) {
+            return Flight::json(["result" => $user]);
+        } else {
+            return Flight::json(["error" => "user not found"], 404);
         }
 
-        return http_return(200, ["result" => $result]);
     } catch(PDOException $e) {
-        return http_return(400, ["error" => $e->getMessage()]);
+        return Flight::json(["error" => $e->getMessage()], 500);
     }
 ?>

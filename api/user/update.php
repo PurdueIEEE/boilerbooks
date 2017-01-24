@@ -9,15 +9,9 @@
      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
      */
 
-    // Extract the data out of the JSON (any of these can be updated, only username is required).
-    $username = $_PARAMS["username"];
-    if (!isset($username)) {
-        return http_return(400, ["error" => "missing username field"]);
-    }
-
     // Make sure we have rights to update the user.
-    if ($_TOKEN["username"] != $username && !$_TOKEN["root"]) {
-        return http_return(401, ["error" => "insufficient privileges to view other users"]);
+    if ($_TOKEN["data"]["username"] != $username && !$_TOKEN["data"]["root"]) {
+        return Flight::json(["error" => "insufficient privileges to view other users"], 401);
     }
 
     // Scrub the PARAMS into an updates array. We need to do this so if PARAMS contains
@@ -56,11 +50,22 @@
         $updates["zip"] = $zip;
     }
 
+    if (count($updates) == 0) {
+        return Flight::json(["error" => "no updates supplied"], 400);
+    }
+
     // Execute the actual SQL query after confirming its formedness.
     try {
-        $database->update("Users", $updates, ["username" => $username]);
-        return http_return(200, ["result" => $updates]);
+
+        // Make sure the user exists. This needs an extra query, because update will
+        // return 0 when no changes are made, but the user still exists
+        if (Flight::db()->has("Users", ["username" => $username]) === false) {
+            return Flight::json(["error" => "user not found"], 404);
+        }
+
+        Flight::db()->update("Users", $updates, ["username" => $username]);
+        return Flight::json(["result" => $updates]);
     } catch(PDOException $e) {
-        return http_return(400, ["error" => $e->getMessage()]);
+        //return Flight::json(["error" => $e->getMessage()], 500);
     }
 ?>
