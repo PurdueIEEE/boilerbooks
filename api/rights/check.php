@@ -16,11 +16,11 @@
     
     // Extract the data out of the JSON and break if any fields are missing.
     $username = $_PARAMS["username"];
-    $orgid = $_PARAMS["orgid"];
+    $organization = $_PARAMS["organization"];
     $budget = $_PARAMS["budget"];
     $year = $_PARAMS["year"];
     $amount = $_PARAMS["amount"];
-    if (!isset($username) || !isset($orgid) || !isset($budget) ||
+    if (!isset($username) || !isset($organization) || !isset($budget) ||
         !isset($year) || !isset($amount)) {
         return http_return(400, ["error" => "missing fields"]);
     }
@@ -36,9 +36,9 @@
         // Note: amount has to be <= the given amount for the right to be validated.
         // Note: this was intentionally not done as an SQL WHERE clause.
         foreach ($result as $r) {
-            if (($r["orgid"] = "0" || $r["orgid"] == $orgid) &&
-                ($r["budget"] = "*" || $r["budget"] == $budget) &&
-                ($r["year"] = "0" || $r["year"] == $year) &&
+            if (($r["organization"] == "" || $r["organization"] == $organization) &&
+                ($r["budget"] == "*" || $r["budget"] == $budget) &&
+                ($r["year"] == 0 || $r["year"] == $year) &&
                 $r["amount"] >= $amount) {
                 return http_return(200, ["result" => true]);
             }

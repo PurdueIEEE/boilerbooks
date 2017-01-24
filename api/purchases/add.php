@@ -16,14 +16,14 @@
     
     // Extract the data out of the JSON and break if any fields are missing.
     $username = $_PARAMS["username"];
-    $organization = $_PARAMS["orgid"];
-    $category = $_PARAMS["catid"];
+    $organization = $_PARAMS["organization"];
+    $budget = $_PARAMS["budget"];
     $item = $_PARAMS["item"];
     $reason = $_PARAMS["reason"];
     $vendor = $_PARAMS["vendor"];
     $cost = $_PARAMS["cost"];
     $comments = $_PARAMS["comments"];
-    if (!isset($username) || !isset($organization) || !isset($category) ||
+    if (!isset($username) || !isset($organization) || !isset($budget) ||
         !isset($item) || !isset($reason) || !isset($vendor) || !isset($cost) || !isset($comments)) {
         return http_return(400, ["error" => "missing fields"]);
     }
@@ -37,13 +37,13 @@
     try {
         $database->insert("Purchases", [
                           "username" => $username,
-                          "orgid" => $password,
-                          "catid" => $first,
-                          "item" => $last,
-                          "reason" => $email,
-                          "vendor" => $address,
-                          "cost" => $city,
-                          "comments" => $state,
+                          "organization" => $organization,
+                          "budget" => $budget,
+                          "item" => $item,
+                          "reason" => $reason,
+                          "vendor" => $vendor,
+                          "cost" => $cost,
+                          "comments" => $comments,
                           ]);
         //SELECT @@IDENTITY AS PID;
         return http_return(200, ["result" => $_PARAMS]);

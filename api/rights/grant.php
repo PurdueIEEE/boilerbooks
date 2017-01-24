@@ -14,17 +14,17 @@
     // Note: if `orgid = 0 && budget = '*' && amount = 0 && year = 0`, this
     // is considered "root" privilege.
     $username = $_PARAMS["username"];
-    $orgid = $_PARAMS["orgid"];
+    $organization = $_PARAMS["organization"];
     $budget = $_PARAMS["budget"];
     $year = $_PARAMS["year"];
     $amount = $_PARAMS["amount"];
-    if (!isset($username) || !isset($orgid) || !isset($budget) ||
+    if (!isset($username) || !isset($organization) || !isset($budget) ||
         !isset($year) || !isset($amount)) {
         return http_return(400, ["error" => "missing fields"]);
     }
     
     // Ensure only root privilege holders can grant root privilege to others.
-    if(($orgid == 0 && $amount == 0 && $year == 0 && $budget == "*") && !$_TOKEN["root"]) {
+    if(($organization == "" && $amount == 0 && $year == 0 && $budget == "*") && !$_TOKEN["root"]) {
         return http_return(401, ["error" => "insufficient privileges to grant root privilege"]);
     }
     
@@ -37,7 +37,7 @@
     try {
         $database->insert("Rights", [
             "username" => $username,
-            "orgid" => $orgid,
+            "organization" => $organization,
             "budget" => $budget,
             "year" => $year,
             "amount" => $amount,

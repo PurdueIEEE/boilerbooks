@@ -16,10 +16,10 @@
     
     // Extract the data out of the JSON and break if any fields are missing.
     $username = $_PARAMS["username"];
-    $orgid = $_PARAMS["orgid"];
+    $organization = $_PARAMS["organization"];
     $budget = $_PARAMS["budget"];
     $year = $_PARAMS["year"];
-    if (!isset($username) || !isset($orgid) || !isset($budget) || !isset($year)) {
+    if (!isset($username) || !isset($organization) || !isset($budget) || !isset($year)) {
         return http_return(400, ["error" => "missing fields"]);
     }
     
@@ -28,7 +28,7 @@
         $result = $database->delete("Rights", [
                                     "AND" => [
                                     "username" => $username,
-                                    "orgid" => $orgid,
+                                    "organization" => $organization,
                                     "budget" => $budget,
                                     "year" => $year,
                                     ]
