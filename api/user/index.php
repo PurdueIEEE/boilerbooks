@@ -4,7 +4,6 @@
 
     Flight::route('GET /user/@username', function($username) {
         Flight::check_token();
-
         $_TOKEN = Flight::get('token');
         $_PARAMS = Flight::request()->data;
 
@@ -13,16 +12,14 @@
 
     Flight::route('POST /user/@username', function($username) {
         Flight::check_token();
-
         $_TOKEN = Flight::get('token');
         $_PARAMS = Flight::request()->data;
 
         require 'add.php';
     });
 
-    Flight::route('PUT /user/@username', function($username) {
+    Flight::route('PATCH /user/@username', function($username) {
         Flight::check_token();
-
         $_TOKEN = Flight::get('token');
         $_PARAMS = Flight::request()->data;
 
@@ -31,7 +28,6 @@
 
     Flight::route('DELETE /user/@username', function($username) {
         Flight::check_token();
-
         $_TOKEN = Flight::get('token');
         $_PARAMS = Flight::request()->data;
 
@@ -40,7 +36,6 @@
 
     Flight::route('GET /users', function() {
         Flight::check_token();
-
         $_TOKEN = Flight::get('token');
         $_PARAMS = Flight::request()->data;
 
@@ -49,7 +44,7 @@
 
     Flight::route('POST /user/@username/authenticate', function($username) {
         $_PARAMS = Flight::request()->data;
-
+        
         require 'auth.php';
     });
 ?>

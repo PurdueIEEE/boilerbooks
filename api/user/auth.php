@@ -7,7 +7,7 @@
 
     // Execute the actual SQL query after confirming its formedness.
     try {
-        $result = Flight::db()->select("Users", ["username", "password"], ["username" => $username]);
+        $result = Flight::db()->select("Users", ["username", "password", "revoke_counter"], ["username" => $username]);
         if (count($result) !== 1) {
             return Flight::json(["error" => "user does not exist"], 404);
         }
@@ -28,6 +28,7 @@
                 "username" => $username,
                 "root" => ($username === "master" || $username === "mmolo"),
                 "ip" => Flight::request()->ip,
+                "revoke_counter" => $result[0]['revoke_counter']
             ]
         ];
 
@@ -38,7 +39,7 @@
         );
 
         // Set cookie so that it can be retrieved later
-        setcookie(TOKEN_COOKIE, $token, $expire, "/", "molee.me");
+        setcookie(TOKEN_COOKIE, $token, $expire, "/", "purdueieee.org");
 
         return Flight::json(["result" => $token]);
     } catch(PDOException $e) {

@@ -1,6 +1,6 @@
 <?php
     // Make sure we have rights to view the username given (or all users).
-    if ($_TOKEN['data']["username"] != $username && !$_TOKEN['data']["root"]) {
+    if ($_TOKEN->username != $username && !$_TOKEN->root) {
         return Flight::json(["error" => "insufficient privileges to view other users"], 401);
     }
 

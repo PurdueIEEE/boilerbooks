@@ -1,15 +1,13 @@
 <?php
-
-// This file is meant to define all server constants and be included where needed
-define("DB_HOST", "localhost");
-define("DB_NAME", "ieee-money");
+    
+// This file is meant to define all server resource authentication constants.
+define("DB_HOST", "");
+define("DB_NAME", "");
 define("DB_USER", "");
 define("DB_PASS", "");
-
-// Sign JWT with this
+    
+// Sign JWT with this and store it in a cookie.
 define("TOKEN_SECRET", "");
-
-// Store the token in this cookie
-define("TOKEN_COOKIE", "BOILERBOOKS-JWT");
+define("TOKEN_COOKIE", "");
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-    if(!$_TOKEN['data']["root"]) {
+    if(!$_TOKEN->root) {
         return Flight::json(["error" => "insufficient privileges to view all users"], 401);
     }
 

@@ -1,7 +1,7 @@
 <?php
-    require 'database.php';
-    require 'token.php';
-    require 'flight/Flight.php';
+    require 'lib/meedo.php';
+    require 'lib/php-jwt/JWT.php';
+    require 'lib/flight/Flight.php';
 
     // This file contains server contants. It won't be added to versioning
     require_once '../server_info.php';
@@ -29,7 +29,7 @@
 
     // This function validates that the token is correct
     Flight::map("check_token", function() {
-        
+
         // Look for token in cookies first
         if (isset(Flight::request()->cookies[TOKEN_COOKIE])) {
             $encoded_token = Flight::request()->cookies[TOKEN_COOKIE];
@@ -47,20 +47,30 @@
 
         // Attempt to decode token
         try {
-            $token = JWT::decode($encoded_token, TOKEN_SECRET);
+            $token = JWT::decode($encoded_token, TOKEN_SECRET, array('HS512'));
+        } catch(ExpiredException $e) {
+            return Flight::json(["error" => "token has expired"], 401);
         } catch(Exception $e) {
             return Flight::json(["error" => "error decoding token"], 400);
         }
 
         // Match the IP in the token to the request IP
-        if (Flight::request()->ip !== $token['data']['ip']) {
+        if (Flight::request()->ip !== $token->data->ip) {
             return Flight::json(["error" => "ip does not match token"], 400);
         }
 
-        // TODO: Check that user exists in db and the revoke counter is the same
-        // TODO: db->has WHERE username = token[username] AND revoke_counter = token[revoke_counter]
+        $selector = [
+            "AND" => [
+                "username" => $token->data->username,
+                "revoke_counter" => $token->data->revoke_counter,
+            ]
+        ];
 
-        Flight::set('token', $token);
+        if (Flight::db()->has("Users", $selector) === false) {
+            return Flight::json(["error" => "user not found"], 404);
+        }
+
+        Flight::set('token', $token->data);
     });
 
     // Map the database to Flight::db()
