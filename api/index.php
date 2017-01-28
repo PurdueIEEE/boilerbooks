@@ -175,6 +175,7 @@
     });
     
     require 'user.php';
+    require 'organization.php';
 
     Flight::start();
 ?>
