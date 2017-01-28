@@ -86,8 +86,95 @@
         return Flight::get('token');
     });
 
+    // TODO: This needs to be moved later (to Rights, maybe?):
+    Flight::route('POST /authenticate/@username', function($username) {
+        $_PARAMS = json_decode(Flight::request()->getBody(), true);
+        
+        // Extract the data out of the JSON and break if any fields are missing.
+        $password = $_PARAMS["password"];
+        if (!isset($password)) {
+            return Flight::json(["error" => "no password provided"], 400);
+        }
 
-    require 'user/index.php';
+        // Execute the actual SQL query after confirming its formedness.
+        try {
+            $result = Flight::db()->select("Users", ["username", "password", "revoke_counter"], ["username" => $username]);
+            if (count($result) !== 1) {
+                return Flight::json(["error" => "user does not exist"], 404);
+            }
+            if (!password_verify($password, $result[0]["password"])) {
+                return Flight::json(["error" => "incorrect password"], 401);
+            }
+
+            // TODO: Need to switch to Firebase JWT Library that handles these expiration
+            $issuedAt = time();
+            $expiry = $issuedAt + (60*60*24);
+            $jwt_data = [
+                'iat'  => $issuedAt,
+                'nbf'  => $issuedAt,
+                'exp'  => $expiry, // 1 day expiry
+                "data" => [
+                    "username" => $username,
+                    "root" => ($username === "master" || $username === "mmolo"),
+                    "ip" => Flight::request()->ip,
+                    "revoke_counter" => $result[0]['revoke_counter']
+                ]
+            ];
+            
+            // Encode a token and return it, but also set it as a cookie.
+            $token = JWT::encode($jwt_data, TOKEN_SECRET, 'HS512');
+            setcookie(TOKEN_COOKIE, $token, $expiry, "/", "purdueieee.org");
+            return Flight::json(["result" => $token]);
+        } catch(PDOException $e) {
+            return Flight::json(["error" => $e->getMessage()], 401);
+        }
+    });
+    
+    // Dynamically invokes a method and maps the associative array of arguments
+    // onto the method's parameter names. If any non-optional arguments are
+    // missing, the $missing callback is invoked with the parameter name.
+    // If the $arguments array contains more arguments than method parameters exist,
+    // these leftover arguments will be automatically discarded.
+    //
+    // Usage:
+    // dynamic_invoke("User::add", ["username" => "abc", "invalidparam" => 2], function($name) {
+    //     die('Missing parameter $name!');
+    // }
+    //
+    function dynamic_invoke($method, $arguments, callable $missing) {
+        $values = [];
+        $all = (new \ReflectionMethod($method))->getParameters();
+        foreach ($all as $p) {
+            $name = $p->getName();
+            $exists = array_key_exists($name, $arguments);
+            if (!$exists && !$p->isDefaultValueAvailable()) {
+                $missing($name);
+            }
+            $values[$p->getPosition()] = $exists ? $arguments[$name] : $p->getDefaultValue();
+        }
+        call_user_func_array($method, $values);
+    }
+    
+    // Dynamically routes an HTTP endpoint to a global or static function,
+    // by using the dynamic_invoke() method above and matching parameters.
+    function dynamic_route($match, $to, $check_token = true) {
+        Flight::route($match, function(...$args) use (&$to, &$check_token) {
+            if ($check_token) { Flight::check_token(); }
+            $json_params = json_decode(Flight::request()->getBody(), true) ?: [];
+            $url_params = array_pop($args)->params; // prioritized in merge()
+            Flight::dynamic_invoke($to, array_merge($json_params, $url_params), function($name) {
+                return Flight::json(["error" => "missing paramter $name"], 400);
+            });
+        }, true);
+    }
+    Flight::map('dynamic_invoke', function($method, $arguments, callable $missing) {
+        dynamic_invoke($method, $arguments, $missing);
+    });
+    Flight::map('dynamic_route', function($match, $to, $check_token = true) {
+        dynamic_route($match, $to, $check_token);
+    });
+    
+    require 'user.php';
 
     Flight::start();
 ?>
