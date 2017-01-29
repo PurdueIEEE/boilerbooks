@@ -11,7 +11,7 @@
             
             // Make sure we have rights to update the purchase.
             if (Flight::get('token')->username != $username &&
-                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to add other users' purchases"], 401);
             }
             $income["username"] = Flight::get('token')->username;
@@ -60,7 +60,7 @@
             
             // Make sure we have rights to update the purchase.
             if (Flight::get('token')->username != $username &&
-                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to edit other users' purchases"], 401);
             }
             
@@ -111,7 +111,7 @@
         public static function search($offset = 0, $limit = 250) {
             
             // Make sure we have rights to view the income.
-            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return http_return(401, ["error" => "insufficient privileges to view all purchases"]);
             }
             

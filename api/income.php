@@ -11,7 +11,7 @@
             $income["username"] = Flight::get('token')->username;
             
             // Ensure proper privileges to create an income.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to add an income"], 401);
             }
             
@@ -31,7 +31,7 @@
             
             // FIXME: Use $incomeid to get the params and check against those first.
             // Ensure proper privileges to update an income.
-            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to update an income"], 401);
             }
             
@@ -62,7 +62,7 @@
             
             // FIXME: Use $incomeid to get the params and check against those first.
             // Make sure we have rights to view the income.
-            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return http_return(401, ["error" => "insufficient privileges to view an income"]);
             }
             
@@ -79,7 +79,7 @@
         public static function search() {
             
             // Make sure we have rights to view the income.
-            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return http_return(401, ["error" => "insufficient privileges to view an income"]);
             }
             

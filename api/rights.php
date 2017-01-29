@@ -6,19 +6,19 @@
         protected function __construct() {}
         protected function __clone() {}
         
-        // Note: if `organization = '*' && budget = '*' && amount = -1 && year = -1`, this
+        // Note: if `organization = '*' && budget = '*' && amount = -1 && year = 0`, this
         // is considered "root" privilege.
         public static function grant($username, $organization, $budget, $year, $amount) {
             $right = get_defined_vars();
             $right["granter"] = Flight::get('token')->username;
             
             // Enforce the proper schema for a root privileged right.
-            if($organization === "*" && ($budget !== "*" || $year != -1 || $amount != -1)) {
+            if($organization === "*" && ($budget !== "*" || $year != 0 || $amount != -1)) {
                 return Flight::json(["error" => "improperly formed root privileged right"], 400);
             }
             
             // Ensure proper privilege cascade to grant new rights.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, $budget, $year, $amount)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, $budget, $year, $amount)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to grant privileges"], 401);
             }
             
@@ -37,7 +37,7 @@
             
             // Ensure proper privileges to revoke rights.
             // FIXME: Confirm that -1 amount enforces [revoker > revokee].
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, $budget, $year, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, $budget, $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to revoke rights"], 401);
             }
             
@@ -77,7 +77,7 @@
                 foreach ($result as $r) {
                     if (($r["organization"] === "*" || $r["organization"] === $organization) &&
                         ($r["budget"] === "*" || $r["budget"] === $budget) &&
-                        ($r["year"] == -1 || $r["year"] == $year) &&
+                        ($r["year"] == 0 || $r["year"] == $year) &&
                         ($r["amount"] == -1 || $r["amount"] >= $amount)) {
                         return [["result" => true], 200];
                     }
@@ -91,7 +91,7 @@
         
         // Public-facing version of the _check() function.
         public static function check($username, $organization, $budget, $year, $amount) {
-            [$json, $code] = Rights::check_rights();
+            list($json, $code) = Rights::check_rights($username, $organization, $budget, $year, $amount);
             return Flight::json($json, $code);
         }
         
@@ -99,7 +99,7 @@
             
             // Make sure we have rights to view the rights given (or all users).
             if (Flight::get('token')->username != $username &&
-                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to view other users' rights"], 401);
             }
             
@@ -119,7 +119,7 @@
         public static function search() {
             
             // Make sure we have rights to view the rights given (or all users).
-            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to view all rights"], 401);
             }
             

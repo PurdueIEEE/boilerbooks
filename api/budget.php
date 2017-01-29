@@ -9,7 +9,7 @@
             $budget = get_defined_vars();
             
             // Ensure proper privileges to create a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to add a budget item"], 401);
             }
             
@@ -27,7 +27,7 @@
             $budget = get_defined_vars();
             
             // Ensure proper privileges to delete a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to delete a budget item"], 401);
             }
             
@@ -52,7 +52,7 @@
             unset($budget["amount"]);
             
             // Ensure proper privileges to update a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to update a budget item"], 401);
             }
             
@@ -92,7 +92,7 @@
             */
             
             // Ensure proper privileges to view all budgets.
-            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to view all budgets"], 401);
             }
             
