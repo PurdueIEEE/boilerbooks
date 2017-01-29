@@ -10,8 +10,8 @@
             $income = get_defined_vars();
             $income["username"] = Flight::get('token')->username;
             
-            // Ensure proper privileges to create a(n) (sub-)organization.
-            if(!Flight::get('token')->root) {
+            // Ensure proper privileges to create an income.
+            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)) {
                 return Flight::json(["error" => "insufficient privileges to add an income"], 401);
             }
             
@@ -29,8 +29,9 @@
                                       $type = null, $item = null, $status = null, $comments = null) {
             $income = get_defined_vars();
             
-            // Ensure proper privileges to create a(n) (sub-)organization.
-            if(!Flight::get('token')->root) {
+            // FIXME: Use $incomeid to get the params and check against those first.
+            // Ensure proper privileges to update an income.
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to update an income"], 401);
             }
             
@@ -59,8 +60,9 @@
         
         public static function view($incomeid) {
             
+            // FIXME: Use $incomeid to get the params and check against those first.
             // Make sure we have rights to view the income.
-            if (!Flight::get('token')->root) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return http_return(401, ["error" => "insufficient privileges to view an income"]);
             }
             
@@ -77,7 +79,7 @@
         public static function search() {
             
             // Make sure we have rights to view the income.
-            if (!Flight::get('token')->root) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return http_return(401, ["error" => "insufficient privileges to view an income"]);
             }
             

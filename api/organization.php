@@ -9,7 +9,7 @@
             $org = get_defined_vars();
             
             // Ensure proper privileges to create a(n) (sub-)organization.
-            if(!Flight::get('token')->root) {
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to create organizations"], 401);
             }
             
@@ -26,7 +26,7 @@
         public static function remove($name) {
             
             // Ensure proper privileges to create a(n) (sub-)organization.
-            if(!Flight::get('token')->root) {
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to delete organizations"], 401);
             }
             
@@ -47,6 +47,11 @@
         }
         
         public static function search() {
+            
+            // Make sure we have rights to view the organizations.
+            if (!Flight::get('token')) {
+                return http_return(401, ["error" => "insufficient privileges to organizations"]);
+            }
             
             // Execute the actual SQL query after confirming its formedness.
             try {

@@ -9,12 +9,9 @@
                                    $vendor, $cost, $comments) {
             $purchase = get_defined_vars();
             
-            // Ensure proper privileges to add a purchase.
-            if(!Flight::get('token')) {
-                return Flight::json(["error" => "insufficient privileges to add a purchase"], 401);
-            }
             // Make sure we have rights to update the purchase.
-            if (Flight::get('token')->username != $username && !Flight::get('token')->root) {
+            if (Flight::get('token')->username != $username &&
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to add other users' purchases"], 401);
             }
             $income["username"] = Flight::get('token')->username;
@@ -62,7 +59,8 @@
             $purchase = get_defined_vars();
             
             // Make sure we have rights to update the purchase.
-            if (Flight::get('token')->username != $username && !Flight::get('token')->root) {
+            if (Flight::get('token')->username != $username &&
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to edit other users' purchases"], 401);
             }
             
@@ -95,6 +93,11 @@
         
         public static function view($purchaseid) {
             
+            // Make sure we have rights to view the purchase.
+            if (!Flight::get('token')) {
+                return http_return(401, ["error" => "insufficient privileges to view a purchase"]);
+            }
+            
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Purchases", "*", ["purchaseid" => $purchaseid]);
@@ -108,7 +111,7 @@
         public static function search($offset = 0, $limit = 250) {
             
             // Make sure we have rights to view the income.
-            if (!Flight::get('token')->root) {
+            if (!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return http_return(401, ["error" => "insufficient privileges to view all purchases"]);
             }
             

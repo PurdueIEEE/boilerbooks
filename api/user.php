@@ -21,7 +21,8 @@
         
         public static function remove($username) {
             // Make sure we have rights to delete users.
-            if(!Flight::get('token')->root) {
+            if(Flight::get('token')->username != $username &&
+               !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to delete users"], 401);
             }
             
@@ -47,8 +48,9 @@
             $user = get_defined_vars();
             
             // Make sure we have rights to update the user.
-            if (Flight::get('token')->username != $username && !Flight::get('token')->root) {
-                return Flight::json(["error" => "insufficient privileges to view other users"], 401);
+            if (Flight::get('token')->username != $username &&
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
+                return Flight::json(["error" => "insufficient privileges to update other users"], 401);
             }
             
             // Scrub the parameters into an updates array.
@@ -86,7 +88,8 @@
         
         public static function view($username) {
             // Make sure we have rights to view the username given (or all users).
-            if (Flight::get('token')->username != $username && !Flight::get('token')->root) {
+            if (Flight::get('token')->username != $username &&
+                !Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to view other users"], 401);
             }
             
@@ -104,7 +107,7 @@
         }
         
         public static function search() {
-            if(!Flight::get('token')->root) {
+            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", -1, -1)) {
                 return Flight::json(["error" => "insufficient privileges to view all users"], 401);
             }
             
