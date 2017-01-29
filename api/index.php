@@ -154,6 +154,9 @@
         }
         call_user_func_array($method, $values);
     }
+    Flight::map('dynamic_invoke', function($method, $arguments, callable $missing) {
+        dynamic_invoke($method, $arguments, $missing);
+    });
     
     // Dynamically routes an HTTP endpoint to a global or static function,
     // by using the dynamic_invoke() method above and matching parameters.
@@ -167,15 +170,20 @@
             });
         }, true);
     }
-    Flight::map('dynamic_invoke', function($method, $arguments, callable $missing) {
-        dynamic_invoke($method, $arguments, $missing);
-    });
     Flight::map('dynamic_route', function($match, $to, $check_token = true) {
         dynamic_route($match, $to, $check_token);
     });
     
-    require 'user.php';
-    require 'organization.php';
+    // Dynamically include all PHP files in the current directory. This will
+    // assume that all such PHP files are API endpoints that contain supplement
+    // code which registers their applicable routes. It also assumes that they
+    // do not inter-include each other (i.e. they must be isolated).
+    $this_file = basename($_SERVER['SCRIPT_FILENAME']);
+    foreach (glob("*.php") as $filename) {
+        if ($filename !== $this_file) {
+            include $filename;
+        }
+    }
 
     Flight::start();
 ?>
