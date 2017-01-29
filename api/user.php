@@ -1,4 +1,5 @@
 <?php
+    require_once 'rights.php';
     
     class User {
         protected function __construct() {}
@@ -11,6 +12,7 @@
             $user["password"] = password_hash($password, PASSWORD_DEFAULT);
             try {
                 Flight::db()->insert("Users", $user);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $user], 201);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -29,6 +31,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $username]);
                 } else {
                     return Flight::json(["error" => "user not found"], 404);
@@ -72,6 +75,7 @@
                 }
                 
                 Flight::db()->update("Users", $updates, ["username" => $username]);
+                Flight::log(Flight::db()->last_query());
                 
                 // FIXME: "revoke_counter[+]" should be removed when returning updates.
                 return Flight::json(["result" => $updates]);

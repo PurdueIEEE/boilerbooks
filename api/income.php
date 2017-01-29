@@ -1,4 +1,5 @@
 <?php
+    require_once 'rights.php';
     
     class Income {
         protected function __construct() {}
@@ -17,6 +18,7 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Income", $income);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $income]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -45,6 +47,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $updates]);
                 } else {
                     return Flight::json(["error" => "no such income available"], 404);

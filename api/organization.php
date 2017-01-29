@@ -1,4 +1,5 @@
 <?php
+    require_once 'rights.php';
     
     class Organization {
         protected function __construct() {}
@@ -15,6 +16,7 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Organizations", ["name" => $name, "parent" => $parent]);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $org]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -34,6 +36,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $name]);
                 } else {
                     return Flight::json(["error" => "no such organization"], 404);

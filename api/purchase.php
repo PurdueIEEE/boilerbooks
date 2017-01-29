@@ -1,4 +1,5 @@
 <?php
+    require_once 'rights.php';
     
     class Purchase {
         protected function __construct() {}
@@ -22,6 +23,7 @@
             try {
                 //SELECT @@IDENTITY AS PID;
                 Flight::db()->insert("Purchases", $purchase);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $purchase]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -81,6 +83,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $purchase]);
                 } else {
                     return Flight::json(["error" => "no such purchase"], 404);

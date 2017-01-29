@@ -1,4 +1,5 @@
 <?php
+    require_once 'rights.php';
     
     class Budget {
         protected function __construct() {}
@@ -15,6 +16,7 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Budgets", $budget);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $budget]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -35,6 +37,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $budget]);
                 } else {
                     return Flight::json(["error" => "no such budget item"], 404);
@@ -59,6 +62,7 @@
                 
                 // Make sure 1 row was acted on, otherwise the budget did not exist.
                 if ($result == 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $budget]);
                 } else {
                     return Flight::json(["error" => "no such budget item"], 404);

@@ -85,6 +85,12 @@
     Flight::map("token", function() {
         return Flight::get('token');
     });
+    
+    // The internal log() function is for any database transactions to be recorded
+    // along with a timestamp of when it occurred.
+    Flight::map("log", function($log) {
+        file_put_contents('./transactions.log', "[".date("Y-m-d h:i:sa")."] ".$log."\n", FILE_APPEND);
+    });
 
     // TODO: This needs to be moved later (to Rights, maybe?):
     Flight::route('POST /authenticate/@username', function($username) {
@@ -181,7 +187,7 @@
     $this_file = basename($_SERVER['SCRIPT_FILENAME']);
     foreach (glob("*.php") as $filename) {
         if ($filename !== $this_file) {
-            include $filename;
+            require_once $filename;
         }
     }
 

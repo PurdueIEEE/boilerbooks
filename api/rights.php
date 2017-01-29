@@ -1,17 +1,18 @@
 <?php
+    //require_once 'rights.php';
     
     class Rights {
         protected function __construct() {}
         protected function __clone() {}
         
-        // Note: if `orgid = 0 && budget = '*' && amount = 0 && year = 0`, this
+        // Note: if `organization = '*' && budget = '*' && amount = -1 && year = -1`, this
         // is considered "root" privilege.
         public static function grant($username, $organization, $budget, $year, $amount) {
             $right = get_defined_vars();
             $right["granter"] = Flight::get('token')->username;
             
             // Ensure proper privileges to grant a root privilege.
-            if(($organization == "" && $amount == 0 && $year == 0 && $budget == "*") &&
+            if(($organization === "*" && $amount == -1 && $year == -1 && $budget === "*") &&
                !Flight::get('token')->root) {
                 return Flight::json(["error" => "insufficient privileges to grant root privileges"], 401);
             }
@@ -24,6 +25,7 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Rights", $right);
+                Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $username]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
@@ -43,7 +45,8 @@
                 $result = Flight::db()->delete("Rights", ["AND" => $right]);
                 
                 // Make sure 1 row was acted on, otherwise the income did not exist
-                if ($result == 1) {
+                if ($result === 1) {
+                    Flight::log(Flight::db()->last_query());
                     return Flight::json(["result" => $updates]);
                 } else {
                     return Flight::json(["error" => "no such right existed"], 404);
@@ -71,9 +74,9 @@
                 // Note: amount has to be <= the given amount for the right to be validated.
                 // Note: this was intentionally not done as an SQL WHERE clause.
                 foreach ($result as $r) {
-                    if (($r["organization"] == "" || $r["organization"] == $organization) &&
-                        ($r["budget"] == "*" || $r["budget"] == $budget) &&
-                        ($r["year"] == 0 || $r["year"] == $year) &&
+                    if (($r["organization"] === "*" || $r["organization"] === $organization) &&
+                        ($r["budget"] === "*" || $r["budget"] === $budget) &&
+                        ($r["year"] == -1 || $r["year"] == $year) &&
                         $r["amount"] >= $amount) {
                         return Flight::json(["result" => true]);
                     }
@@ -83,6 +86,10 @@
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
             }
+        }
+        
+        public static function check_root($username) {
+            return Rights::check($username, "*", "*", -1, -1);
         }
         
         public static function view($username) {
