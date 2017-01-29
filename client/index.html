@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>BoilerBooks</title>
+        <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+        <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+        <script src="https://npmcdn.com/react-router@2.4.0/umd/ReactRouter.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.2/fetch.min.js"></script>
+        
+        <style>
+        body {
+            background-color: #FFCC00;
+            padding: 20px;
+            margin: 0;
+        }
+        h1, h2, p, ul, li {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        ul.header li {
+            display: inline;
+            list-style-type: none;
+            margin: 0;
+        }
+        ul.header {
+            background-color: #111;
+            padding: 0;
+        }
+        ul.header li a {
+            color: #FFF;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 20px;
+            display: inline-block;
+        }
+        .content {
+            background-color: #FFF;
+            padding: 20px;
+        }
+        .content h2 {
+            padding: 0;
+            margin: 0;
+        }
+        .content li {
+            margin-bottom: 10px;
+        }
+        .active {
+            background-color: #0099FF;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel" src="./App.js"></script>
+    </body>
+</html>
