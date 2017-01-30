@@ -5,20 +5,22 @@ This file will contain the main client SPA page routing.
 // React + BoilerBooks
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Locations, Location, Environment } from 'react-router-component';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { Authenticate, User, Organization, Income, Budget, Rights, Purchase } from './API.js';
+import cookie from 'react-cookie'
+
+import './index.css';
+
+import Layout from './components/layout.js';
+import Me from './components/me.js';
+import UserView from './components/user.js';
+import Home from './components/home.js';
+import Login from './components/login.js';
+import Logout from './components/logout.js';
+import Dashboard from './components/dashboard.js';
 
 // MaterialUI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaisedButton from 'material-ui/RaisedButton';
-import AppBar from 'material-ui/AppBar';
-import FontIcon from 'material-ui/FontIcon';
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
-import Paper from 'material-ui/Paper';
-
-const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
-const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
-const nearbyIcon = <FontIcon className="material-icons">favorite</FontIcon>;
 
 // This is the entry-point of the App; routing and global state is
 // saved here and broken down into components below.
@@ -26,115 +28,57 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        // Restore state from local storage if we can.
-        if (localStorage.state != null) {
-            this.state = JSON.parse(localStorage.state);
-        } else {
-            this.state = { 'auth_token': null, selectedPage: 0 };
-        }
+        this.state = {loggedIn: false}
+
+        this.requireAuth = this.requireAuth.bind(this);
+        this.goToDash = this.goToDash.bind(this);
+        this.logout = this.logout.bind(this);
+    }
+
+    componentWillMount() {
+        this.setState({
+            loggedIn: cookie.load("BOILERBOOKS-JWT") != undefined
+        })
     }
 
     componentDidMount() {
         document.title = "BoilerBooks";
-        Authenticate.authenticate({username: "master", password: "poop"})
-        .then(r => console.debug(r, r.json()))
-        .catch(e => console.debug(e));
     }
 
-    // When our state is modified, cache it to local storage.
-    componentDidUpdate(prevProps, prevState) {
-        localStorage.state = JSON.stringify(this.state);
-    }
-
-    select(index) {
-        switch (index) {
-        case 0: Environment.defaultEnvironment.navigate('/');
-        case 1: Environment.defaultEnvironment.navigate('/users/abc');
-        case 2: Environment.defaultEnvironment.navigate('/contact');
+    requireAuth(nextState, replace) {
+        if (!this.state.loggedIn) {
+            replace('/login')
         }
+    }
 
-        var s = this.state;
-        s.selectedPage = index;
-        this.setState(s);
+    goToDash(nextState, replace) {
+        if (this.state.loggedIn) {
+            replace('/dashboard')
+        }
+    }
+
+    logout(nextState, replace) {
+        cookie.remove("BOILERBOOKS-JWT")
+        this.setState({loggedIn: false})
+        replace('/')
     }
 
     // Routing stuff.
     render() {
         return (
-        <MuiThemeProvider>
-            <div>
-                <AppBar title="BoilerBooks" iconClassNameRight="muidocs-icon-navigation-expand-more" />
-                <Locations>
-                    <Location path="/" handler={MainPage} />
-                    <Location path="/users/:username" handler={UserPage} />
-                    <Location path="/contact" handler={ContactPage} />
-                </Locations>
-                <Paper zDepth={1}>
-                    <BottomNavigation selectedIndex={this.state.selectedPage}>
-                        <BottomNavigationItem
-                            label="Recents"
-                            icon={recentsIcon}
-                            onTouchTap={() => this.select(0)}
-                            />
-                        <BottomNavigationItem
-                            label="Favorites"
-                            icon={favoritesIcon}
-                            onTouchTap={() => this.select(1)}
-                            />
-                        <BottomNavigationItem
-                            label="Nearby"
-                            icon={nearbyIcon}
-                            onTouchTap={() => this.select(2)}
-                            />
-                    </BottomNavigation>
-                </Paper>
-            </div>
-        </MuiThemeProvider>
-                );
-    }
-}
-
-class MainPage extends React.Component {
-    componentDidMount() {
-        document.title = "Main";
-    }
-    render() {
-        return (
-                <p>Main</p>
-                );
-    }
-}
-
-class UserPage extends React.Component {
-    componentDidMount() {
-        document.title = "User";
-    }
-    render() {
-        return (
-                <p>User</p>
-                );
-    }
-}
-
-class FriendsPage extends React.Component {
-    componentDidMount() {
-        document.title = "Friends";
-    }
-    render() {
-        return (
-                <p>Friends</p>
-                );
-    }
-}
-
-class ContactPage extends React.Component {
-    componentDidMount() {
-        document.title = "Contact";
-    }
-    render() {
-        return (
-                <p>Contact</p>
-                );
+            <Router history={browserHistory}>
+                <Route component={Layout} onEnter={this.requireAuth}>
+                    <Route path="/dashboard" component={Dashboard}></Route>
+                    <Route path="/me" component={Me}></Route>
+                    <Route path="/user/:user" component={UserView}></Route>
+                </Route>
+                <Route path="/" component={Layout} onEnter={this.goToDash}>
+                    <IndexRoute component={Home}></IndexRoute>
+                    <Route path="/login" component={Login}></Route>
+                </Route>
+                <Route path="/logout" onEnter={this.logout}></Route>
+            </Router>
+        )
     }
 }
 

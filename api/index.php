@@ -136,7 +136,7 @@
 
             // Encode a token and return it, but also set it as a cookie.
             $token = JWT::encode($jwt_data, TOKEN_SECRET, 'HS512');
-            setcookie(TOKEN_COOKIE, $token, $expiry, "/", "purdueieee.org");
+            setcookie(TOKEN_COOKIE, $token, $expiry, "/", "10.0.1.75");
             return Flight::json(["result" => $token]);
         } catch(PDOException $e) {
             return Flight::json(["error" => $e->getMessage()], 401);
