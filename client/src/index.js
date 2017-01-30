@@ -1,16 +1,29 @@
-var { Router,
-    Route,
-    IndexRoute,
-    IndexLink,
-    Link } = ReactRouter;
+/*
+This file will contain the main client SPA page routing.
+*/
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router, Route, IndexRoute, IndexLink, Link } from 'react-router';
+import {Authenticate} from './API.js';
+import './index.css';
+
+// This is the entry-point of the App; routing and global state is
+// saved here and broken down into components below.
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {items: [], text: ''};
+
+        // Restore state from local storage if we can.
+        if (localStorage.state != null) {
+            this.state = JSON.parse(localStorage.state);
+        } else {
+            this.state = { 'auth_token': null };
+        }
     }
 
     componentDidMount() {
+
         fetch('https://google.com/').then(function(response) {
           console.log("fetch done");
         }).catch(function(err) {
@@ -18,6 +31,12 @@ class App extends React.Component {
         });
     }
 
+    // When our state is modified, cache it to local storage.
+    componentDidUpdate(prevProps, prevState) {
+        localStorage.state = JSON.stringify(this.state);
+    }
+
+    // Routing stuff.
     render() {
         return (
                 <Router>
@@ -101,5 +120,5 @@ class Contact extends React.Component {
     }
 }
 
-// Root
+// This mounts our App to the root div in the HTML.
 ReactDOM.render(<App />, document.getElementById('root'));
