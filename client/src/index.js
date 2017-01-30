@@ -16,6 +16,8 @@ import Me from './components/me.js';
 import UserView from './components/user.js';
 import Home from './components/home.js';
 import Login from './components/login.js';
+import Logout from './components/logout.js';
+import Dashboard from './components/dashboard.js';
 
 // MaterialUI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -26,26 +28,16 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        const jwt = cookie.load("BOILERBOOKS-JWT")
+        this.state = {loggedIn: false}
 
-        this.state = {
-            loggedIn: jwt !== undefined
-        }
+        this.requireAuth = this.requireAuth.bind(this);
+        this.goToDash = this.goToDash.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     componentWillMount() {
-        Authenticate.authenticate({
-            username: 'mmolo',
-            password: 'password-hello2'
-        },
-        (res) => {
-            if (res.body['result']) {
-                console.log("logged in!")
-                this.setState({loggedIn: true})
-            }
-        },
-        (error) => {
-            this.setState({loggedIn: false})
+        this.setState({
+            loggedIn: cookie.load("BOILERBOOKS-JWT") != undefined
         })
     }
 
@@ -53,29 +45,38 @@ class App extends React.Component {
         document.title = "BoilerBooks";
     }
 
+    requireAuth(nextState, replace) {
+        if (!this.state.loggedIn) {
+            replace('/login')
+        }
+    }
+
+    goToDash(nextState, replace) {
+        if (this.state.loggedIn) {
+            replace('/dashboard')
+        }
+    }
+
+    logout(nextState, replace) {
+        cookie.remove("BOILERBOOKS-JWT")
+        this.setState({loggedIn: false})
+        replace('/')
+    }
+
     // Routing stuff.
     render() {
-        let authorizedRoutes = (
-            <Route path="/" component={Layout}>
-                    <IndexRoute component={Home}></IndexRoute>
-                    <Route path="/me" component={Me}></Route>
-                    <Route path="/user/:user" component={UserView}></Route>
-                    <Route path="/login" component={Login}></Route>
-            </Route>
-        )
-
-        let unAuthorizedRoutes = (
-            <Route path="/*" component={Layout}>
-                <IndexRoute component={Login}></IndexRoute>
-            </Route>
-        )
-
-        console.log(this.state.loggedIn)
-        let routes = this.state.loggedIn ? authorizedRoutes : unAuthorizedRoutes;
-
         return (
             <Router history={browserHistory}>
-                {routes}
+                <Route component={Layout} onEnter={this.requireAuth}>
+                    <Route path="/dashboard" component={Dashboard}></Route>
+                    <Route path="/me" component={Me}></Route>
+                    <Route path="/user/:user" component={UserView}></Route>
+                </Route>
+                <Route path="/" component={Layout} onEnter={this.goToDash}>
+                    <IndexRoute component={Home}></IndexRoute>
+                    <Route path="/login" component={Login}></Route>
+                </Route>
+                <Route path="/logout" onEnter={this.logout}></Route>
             </Router>
         )
     }

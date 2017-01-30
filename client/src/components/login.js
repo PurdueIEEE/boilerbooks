@@ -49,19 +49,17 @@ export default class Login extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
-        Authenticate.authenticate({
-            username: this.state.username,
-            password: this.state.password
-        },
-        (res) => {
-            if (res.body['result']) {
-                console.log("logged in!")
-                this.props.router.push('/')
-            }
-        },
-        (error) => {
-            this.setState({errorText: error.body['error']})
-        })
+        Authenticate.authenticate({username: this.state.username, password: this.state.password})
+            .then(r => r.json())
+            .then(d => {
+                if (d['error']) {
+                    this.setState({errorText: d['error']})
+                }
+                else if (d['result']){
+                    window.location = '/'
+                }
+            })
+            .catch(e => console.log(e));
     }
 
     render() {
