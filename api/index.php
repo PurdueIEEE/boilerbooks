@@ -85,17 +85,24 @@
     Flight::map("token", function() {
         return Flight::get('token');
     });
-    
+
     // The internal log() function is for any database transactions to be recorded
     // along with a timestamp of when it occurred.
     Flight::map("log", function($log) {
         file_put_contents('./transactions.log', "[".date("Y-m-d h:i:sa")."] ".$log."\n", FILE_APPEND);
     });
+    
+    // To support CORS pre-flight requests.
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    Flight::route('OPTIONS *', function() {
+        Flight::json('');
+    });
 
     // TODO: This needs to be moved later (to Rights, maybe?):
     Flight::route('POST /authenticate/@username', function($username) {
         $_PARAMS = json_decode(Flight::request()->getBody(), true);
-        
+
         // Extract the data out of the JSON and break if any fields are missing.
         $password = $_PARAMS["password"];
         if (!isset($password)) {
@@ -126,7 +133,7 @@
                     "revoke_counter" => $result[0]['revoke_counter']
                 ]
             ];
-            
+
             // Encode a token and return it, but also set it as a cookie.
             $token = JWT::encode($jwt_data, TOKEN_SECRET, 'HS512');
             setcookie(TOKEN_COOKIE, $token, $expiry, "/", "purdueieee.org");
@@ -135,7 +142,7 @@
             return Flight::json(["error" => $e->getMessage()], 401);
         }
     });
-    
+
     // Dynamically invokes a method and maps the associative array of arguments
     // onto the method's parameter names. If any non-optional arguments are
     // missing, the $missing callback is invoked with the parameter name.
@@ -163,7 +170,7 @@
     Flight::map('dynamic_invoke', function($method, $arguments, callable $missing) {
         dynamic_invoke($method, $arguments, $missing);
     });
-    
+
     // Dynamically routes an HTTP endpoint to a global or static function,
     // by using the dynamic_invoke() method above and matching parameters.
     function dynamic_route($match, $to, $check_token = true) {
@@ -179,7 +186,7 @@
     Flight::map('dynamic_route', function($match, $to, $check_token = true) {
         dynamic_route($match, $to, $check_token);
     });
-    
+
     // Dynamically include all PHP files in the current directory. This will
     // assume that all such PHP files are API endpoints that contain supplement
     // code which registers their applicable routes. It also assumes that they

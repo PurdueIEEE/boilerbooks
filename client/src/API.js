@@ -2,7 +2,7 @@
 This file will contain all the BoilerBooks API endpoints.
 */
 
-const API_PREFIX = "devmoney.krakos.net/api/";
+const API_PREFIX = "http://devmoney.krakos.net/api/";
 
 // Destructured/named parameters defaulted to this function will throw an
 // error if that parameter is missing. (Instead of marking optional/null).

@@ -23,12 +23,9 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-
-        fetch('https://google.com/').then(function(response) {
-          console.log("fetch done");
-        }).catch(function(err) {
-          console.log("fetch fail");
-        });
+        Authenticate.authenticate({username: "master", password: "poop"})
+        .then(r => console.debug(r, r.json()))
+        .catch(e => console.debug(e));
     }
 
     // When our state is modified, cache it to local storage.
@@ -41,9 +38,9 @@ class App extends React.Component {
         return (
                 <Router>
                     <Route path="/" component={MainPage}>
-                        <IndexRoute component={Home}/>
-                        <Route path="stuff" component={Stuff} />
-                        <Route path="contact" component={Contact} />
+                        <IndexRoute component={HomePage}/>
+                        <Route path="stuff" component={StuffPage} />
+                        <Route path="contact" component={ContactPage} />
                     </Route>
                 </Router>
                 );
@@ -69,53 +66,34 @@ class MainPage extends React.Component {
     }
 }
 
-class Home extends React.Component {
-
-    componentDidMount() {
-        console.log("Entering Home...");
-    }
-
-    componentWillUnmount() {
-        console.log("Leaving Home...");
-    }
-
+class HomePage extends React.Component {
     render() {
         return (
-                <p>Home!</p>
+                <p>Page</p>
                 );
     }
 }
 
-class Stuff extends React.Component {
-
-    componentDidMount() {
-        console.log("Entering Stuff...");
-    }
-
-    componentWillUnmount() {
-        console.log("Leaving Stuff...");
-    }
-
+class LoginPage extends React.Component {
     render() {
         return (
-                <p>Stuff!</p>
+                <p>Page</p>
                 );
     }
 }
 
-class Contact extends React.Component {
-
-    componentDidMount() {
-        console.log("Entering Contact...");
-    }
-
-    componentWillUnmount() {
-        console.log("Leaving Contact...");
-    }
-
+class StuffPage extends React.Component {
     render() {
         return (
-                <p>Contact!</p>
+                <p>Page</p>
+                );
+    }
+}
+
+class ContactPage extends React.Component {
+    render() {
+        return (
+                <p>Page</p>
                 );
     }
 }
