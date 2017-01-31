@@ -477,12 +477,10 @@ class Engine {
         $this->response()
             ->status($code)
             ->header('Content-Type', 'application/json; charset='.$charset)
-            ->header('Access-Control-Allow-Credentials', 'true')
-            ->header('Access-Control-Allow-Origin', 'http://10.0.1.75:3000')
             ->write($json)
             ->send();
     }
-	
+
     /**
      * Sends a JSONP response.
      *

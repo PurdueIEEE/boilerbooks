@@ -10,22 +10,28 @@ function required() {
     throw new Error('missing parameter');
 }
 
+function apiFetch(method, route, data) {
+    const options = {
+        method: method,
+        credentials: 'include'
+    }
+
+    if (data !== undefined) {
+        options.body = JSON.stringify(data)
+    }
+
+    return fetch(`${API_PREFIX}${route}`, options)
+        .then(res => res.json())
+}
+
 export class Authenticate {
 
     static authenticate({username = required(), password = required()} = {}) {
-        return fetch(`${API_PREFIX}/authenticate/${username}`, {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('POST', `/authenticate/${username}`, arguments[0])
     }
 
     static revoke({username = required()} = {}) {
-        return fetch(`${API_PREFIX}/authenticate/${username}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('DELETE', `/authenticate/${username}`, arguments[0])
     }
 }
 
@@ -34,72 +40,60 @@ export class User {
     static add({username = required(), password = required(), first = required(),
         last = required(), email = required(), address = required(), city = required(),
         state = required(), zip = required(), cert = required()} = {}) {
-        return fetch(`${API_PREFIX}/user/${username}`, {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('POST', `/user/${username}`, arguments[0])
     }
 
     static remove({username = required()} = {}) {
-        return fetch(`${API_PREFIX}/user/${username}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('DELETE', `/user/${username}`, arguments[0])
     }
 
     // FIXME: It's likely possible to auto-object the method params,
     // and then filter out null defaults to pass that to the server.
     static update({username = required(), password, first, last, email,
         address, city, state, zip} = {}) {
-        return fetch(`${API_PREFIX}/user/${username}`, {
-            method: 'PATCH',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('PATCH', `/user/${username}`, arguments[0])
     }
 
     static view({username = required()} = {}) {
-        return fetch(`${API_PREFIX}/user/${username}`, {
-            method: 'GET',
-            credentials: 'include',
-        });
+        return apiFetch('GET', `/user/${username}`)
     }
 
+    // FIXME: GET request can't have a body so data, must be passed in as query params
     static search({} = {}) {
-        return fetch(`${API_PREFIX}/users`, {
-            method: 'GET',
+        return apiFetch('GET', `/users`)
+    }
+
+    static uploadCert({username = required(), file = required()}) {
+        let data = new FormData()
+        data.append('certificate', file)
+
+        return fetch(`${API_PREFIX}/user/${username}/certificate`, {
+            method: 'POST',
             credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+            body: data
+        })
+        .then(res => res.json());
+    }
+
+    static certificateLink({username = required()}) {
+        return `${API_PREFIX}/user/${username}/certificate`;
     }
 }
 
 export class Organization {
 
     static add({name = required(), parent} = {}) {
-        return fetch(`${API_PREFIX}/organization/${name}`, {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('POST', `/organization/${name}`, arguments[0])
     }
 
     static remove({name = required()} = {}) {
-        return fetch(`${API_PREFIX}/organization/${name}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        return apiFetch('REMOVE', `/organization/${name}`, arguments[0])
     }
 
+    // FIXME: GET request can't have a body so data, must be passed in as query params
     static search() {
-        return fetch(`${API_PREFIX}/organization/${name}`, {
-            method: 'GET',
-            credentials: 'include',
-            body: JSON.stringify(arguments[0])
-        });
+        // GET request can't have a body, must be passed in as query params
+        return apiFetch('GET', `/organizations`)
     }
 }
 

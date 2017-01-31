@@ -1,18 +1,18 @@
 <?php
     require_once 'rights.php';
-    
+
     class Budget {
         protected function __construct() {}
         protected function __clone() {}
-        
+
         public static function add($organization, $name, $year, $amount) {
             $budget = get_defined_vars();
-            
+
             // Ensure proper privileges to create a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
+            if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to add a budget item"], 401);
             }
-            
+
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Budgets", $budget);
@@ -22,19 +22,19 @@
                 return Flight::json(["error" => $e->getMessage()], 500);
             }
         }
-        
+
         public static function remove($organization, $name, $year) {
             $budget = get_defined_vars();
-            
+
             // Ensure proper privileges to delete a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
+            if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to delete a budget item"], 401);
             }
-            
+
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->delete("Budgets", ["AND" => $budget]);
-                
+
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
                     Flight::log(Flight::db()->last_query());
@@ -46,20 +46,20 @@
                 return Flight::json(["error" => $e->getMessage()], 500);
             }
         }
-        
+
         public static function update($organization, $name, $year, $amount) {
             $budget = get_defined_vars();
             unset($budget["amount"]);
-            
+
             // Ensure proper privileges to update a budget.
-            if(!Rights::check_rights(Flight::get('token')->username, $organization, "*", $year, -1)[0]["result"]) {
+            if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to update a budget item"], 401);
             }
-            
+
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->update("Budgets", ["amount" => $amount], ["AND" => $budget]);
-                
+
                 // Make sure 1 row was acted on, otherwise the budget did not exist.
                 if ($result == 1) {
                     Flight::log(Flight::db()->last_query());
@@ -71,9 +71,9 @@
                 return Flight::json(["error" => $e->getMessage()], 500);
             }
         }
-        
+
         public static function search() {
-            
+
             /*
             // Build the selector so we return the right scope of budget items.
             $selector = [];
@@ -90,23 +90,23 @@
                 $selector = ["AND" => $selector];
             }
             */
-            
+
             // Ensure proper privileges to view all budgets.
-            if(!Rights::check_rights(Flight::get('token')->username, "*", "*", 0, -1)[0]["result"]) {
+            if(!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
                 return Flight::json(["error" => "insufficient privileges to view all budgets"], 401);
             }
-            
+
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Budgets", "*");
-                
+
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
                 return Flight::json(["error" => $e->getMessage()], 500);
             }
         }
     }
-    
+
     Flight::dynamic_route('POST /budget/@name', 'Budget::add');
     Flight::dynamic_route('PATCH /budget/@name', 'Budget::update');
     Flight::dynamic_route('DELETE /budget/@name', 'Budget::remove');
