@@ -39,7 +39,7 @@ export class User {
 
     static add({username = required(), password = required(), first = required(),
         last = required(), email = required(), address = required(), city = required(),
-        state = required(), zip = required(), cert = required()} = {}) {
+        state = required(), zip = required()} = {}) {
         return apiFetch('POST', `/user/${username}`, arguments[0])
     }
 

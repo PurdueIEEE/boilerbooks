@@ -23,13 +23,15 @@ export default class CertUpload extends React.Component {
                 }
                 else {
                     this.setState({uploadMessage: "Upload successful"});
+                    if (this.props.onSuccess) {
+                        this.props.onSuccess()
+                    }
                 }
             })
             .catch(err => {
                 console.warn(err);
                 this.setState({uploading: false});
             })
-
     }
 
     render() {

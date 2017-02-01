@@ -6,6 +6,7 @@
     "react-scripts": "0.8.5"
   },
   "dependencies": {
+    "flux": "^3.1.2",
     "material-ui": "^0.16.7",
     "react": "^15.4.2",
     "react-cookie": "^1.0.4",

@@ -56,7 +56,7 @@ class Login extends React.Component {
                     })
                 }
                 else if (res['result']){
-                    this.props.router.replace('/')
+                    this.props.router.replace('/dashboard')
                 }
             })
             .catch(err => {

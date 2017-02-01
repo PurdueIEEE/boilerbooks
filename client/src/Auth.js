@@ -1,5 +1,5 @@
 import cookie from 'react-cookie'
-import {Authenticate} from './API.js';
+import {Authenticate} from './API.js'
 
 const TOKEN_COOKIE = "BOILERBOOKS-JWT"
 
