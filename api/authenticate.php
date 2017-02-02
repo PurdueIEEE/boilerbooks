@@ -46,8 +46,7 @@
 
                 return Flight::json(["result" => $token]);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -64,8 +63,7 @@
 
                 return Flight::json(["result" => 'success']);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
 
         }
@@ -86,8 +84,7 @@
 
                 return Flight::json(["result" => $token]);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
     }

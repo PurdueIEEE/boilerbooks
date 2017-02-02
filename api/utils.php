@@ -11,13 +11,13 @@
     // error, which will then be sent to the administrator and the user as a ticket.
     //
     // Note: if you pass a PDOException, it will automatically log the message and SQL.
-    Flight::map("error_log", function($log) {
+    Flight::map("error_log", function($exc, $log) {
         if ($log instanceof PDOException) {
-            $log = 'ERROR ' . $log->getMessage() . ' ON STATEMENT ' . Flight::db()->last_query();
+            $log = $log->getMessage();
         }
 
         $uuid = uniqid('sql_');
-        file_put_contents('./errors.log', "[{${date("Y-m-d h:i:sa")}}] [$uuid] $log\n", FILE_APPEND);
+        file_put_contents('./errors.log', "[{${date("Y-m-d h:i:sa")}}] [$uuid] $exc => $log\n", FILE_APPEND);
         return $uuid;
     });
 
@@ -86,7 +86,7 @@
                 return Flight::json(["error" => "token is from the future"], 404);
             }
         } catch(PDOException $e) {
-            return Flight::json(["error" => Flight::error_log($e)], 500);
+            return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
         }
 
         // Phew, we made it this far, we've passed the gates of Hell!

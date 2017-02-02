@@ -25,10 +25,10 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Rights", $right);
-                Flight::log(Flight::db()->last_query());
+                Flight::transact_log(Flight::db()->last_query());
                 return Flight::json(["result" => $username]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -47,13 +47,13 @@
 
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result === 1) {
-                    Flight::log(Flight::db()->last_query());
+                    Flight::transact_log(Flight::db()->last_query());
                     return Flight::json(["result" => $updates]);
                 } else {
                     return Flight::json(["error" => "no such right existed"], 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -85,7 +85,7 @@
 
                 return [["result" => false], 200];
             } catch(PDOException $e) {
-                return [["error" => Flight::error_log($e)], 500];
+                return [["error" => Flight::error_log($e, Flight::db()->last_query())], 500];
             }
         }
 
@@ -112,7 +112,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -132,7 +132,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
     }

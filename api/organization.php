@@ -16,10 +16,10 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Organizations", ["name" => $name, "parent" => $parent]);
-                Flight::log(Flight::db()->last_query());
+                Flight::transact_log(Flight::db()->last_query());
                 return Flight::json(["result" => $org]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -36,13 +36,13 @@
 
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
-                    Flight::log(Flight::db()->last_query());
+                    Flight::transact_log(Flight::db()->last_query());
                     return Flight::json(["result" => $name]);
                 } else {
                     return Flight::json(["error" => "no such organization"], 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -59,7 +59,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e)], 500);
+                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
     }

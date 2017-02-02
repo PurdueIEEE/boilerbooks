@@ -40,6 +40,7 @@
     require_once 'income.php';
     require_once 'organization.php';
     require_once 'purchase.php';
+    require_once 'resource.php';
     require_once 'user.php';
     Flight::start();
 ?>
