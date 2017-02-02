@@ -21,7 +21,7 @@
                 Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $income]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -54,7 +54,7 @@
                     return Flight::json(["error" => "no such income available"], 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -72,7 +72,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -89,7 +89,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
     }

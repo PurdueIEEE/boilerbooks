@@ -1,11 +1,10 @@
 <?php
-    require_once 'rights.php';
 
     class Authenticate {
         protected function __construct() {}
         protected function __clone() {}
 
-        private function issue_token($username, $ip, $revoke_counter) {
+        public static function issue_token($username, $ip, $revoke_counter) {
             $issuedAt = time();
             $expiry = $issuedAt + (60*60*24*3); // 3 day expiry
             $jwt_data = [
@@ -24,6 +23,11 @@
             setcookie(TOKEN_COOKIE, $token, $expiry, "/", SERVER_HOST);
 
             return $token;
+        }
+
+        // This function is technically part of this class...
+        public static function check_token() {
+            return _check_token();
         }
 
         public static function login($username, $password) {
@@ -88,8 +92,8 @@
         }
     }
 
+    Flight::dynamic_route('GET /authenticate', 'Authenticate::check');
     Flight::dynamic_route('POST /authenticate/@username', 'Authenticate::login', $require_auth=false);
+    Flight::dynamic_route('PATCH /authenticate/@username', 'Authenticate::refresh');
     Flight::dynamic_route('DELETE /authenticate/@username', 'Authenticate::revoke');
-    Flight::dynamic_route('GET /authenticate/@username', 'Authenticate::check');
-    Flight::dynamic_route('GET /authenticate/@username/refresh', 'Authenticate::refresh');
 ?>

@@ -19,7 +19,7 @@
                 Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $org]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -42,7 +42,7 @@
                     return Flight::json(["error" => "no such organization"], 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -59,7 +59,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => $e->getMessage()], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
     }

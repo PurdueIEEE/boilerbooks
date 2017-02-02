@@ -1,22 +1,21 @@
 <?php
+
     require 'lib/meedo.php';
     require 'lib/php-jwt/JWT.php';
     require 'lib/flight/Flight.php';
 
-    // This file contains server contants. It won't be added to versioning
-    require_once '../server_info.php';
-
-
-    // Define this to be API V2
+    // By versioning the API, we ensure that clients are aware of the specific calls
+    // and will be explicit in their intent.  By default use newest API (this) if no
+    // version is specified, but return an error on older versions that aren't supported.
     define("API_VERSION", 2);
-
-    // By default use newest API (this) if no version specified, but error on wrong versions
     if (isset(getallheaders()['Version']) && getallheaders()["Version"] !== API_VERSION) {
         return http_return(400, ["error" => "incorrect API version number"]);
     }
 
-    // Connect to the database and execute the command. If there was an error,
-    // it is returned as a message; null if no error was expected.
+    // The `server_info.php` file contains database and token secrets and will not
+    // be versioned with the API. Establishing connection to the database occurs first,
+    // before any API endpoints are established.
+    require_once '../server_info.php';
     $database = new database([
         'database_type' => 'mysql',
         'database_name' => DB_NAME,
@@ -29,17 +28,18 @@
         ],
     ]);
     Flight::set('database', $database);
+    Flight::map("db", function() {
+        return Flight::get('database');
+    });
+    require_once 'utils.php';
 
-    require_once 'flight_util.php';
-
-    // API Routes
+    // Establish API endpoints and start!
+    require_once 'rights.php';
     require_once 'authenticate.php';
     require_once 'budget.php';
     require_once 'income.php';
     require_once 'organization.php';
     require_once 'purchase.php';
-    require_once 'rights.php';
     require_once 'user.php';
-
     Flight::start();
 ?>

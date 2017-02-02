@@ -19,8 +19,7 @@
                 Flight::log(Flight::db()->last_query());
                 return Flight::json(["result" => $user], 201);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -44,7 +43,7 @@
                 }
             } catch(PDOException $e) {
                 Flight::log(Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -89,8 +88,7 @@
                 // FIXME: "revoke_counter[+]" should be removed when returning updates.
                 return Flight::json(["result" => $updates]);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -110,8 +108,7 @@
 
                 return Flight::json(["result" => $result[0]], 200);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -126,8 +123,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
         }
 
@@ -205,8 +201,7 @@
 
                 Flight::db()->update("Users", ["cert" => $new_filename], ["username" => $username]);
             } catch(PDOException $e) {
-                Flight::log("Error: ". $e->getMessage() . " Query: ".Flight::db()->last_query());
-                return Flight::json(["error" => "Server error occurred. Please try again."], 500);
+                return Flight::json(["error" => Flight::error_log($e)], 500);
             }
 
             return Flight::json(['result' => "/user/$username/certificate"]);
@@ -237,6 +232,7 @@
     Flight::dynamic_route('PATCH /user/@username', 'User::update');
     Flight::dynamic_route('DELETE /user/@username', 'User::remove');
     Flight::dynamic_route('GET /users', 'User::search');
+
     Flight::dynamic_route('POST /user/@username/certificate', 'User::uploadCert');
     Flight::dynamic_route('GET /user/@username/certificate', 'User::getCert');
 ?>
