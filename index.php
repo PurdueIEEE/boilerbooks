@@ -23,7 +23,7 @@ $verifylogin = "login.php?returnto=" . $returnto;
 <div class="container">
 
 	<form class="form-signin" action=<?php echo $verifylogin ?> method="post">
-		<h3 class="form-signin-heading">Please sign in</h3>
+		<h3 class="form-signin-heading">Please Sign In</h3>
 		<font color="blue"><em><?php echo test_input($_GET["fail"]); ?></em></font>
 		<label for="inputEmail" class="sr-only">Username</label>
 		<input type="text" id="usr" name="usr" class="form-control" placeholder="Your Boiler Books user account" required autofocus>
