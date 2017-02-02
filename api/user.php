@@ -101,12 +101,12 @@
             try {
 
                 // Make sure the user exists. This needs an extra query, because update will
-                // return 0 when no changes are made, but the user still exists
+                // return 0 when no changes are made, but the user still exists.
                 if (Flight::db()->has("Users", ["username" => $username]) === false) {
                     return Flight::json(["error" => "user not found"], 404);
                 }
 
-                Flight::db()->update("Users", $updates, ["username" => $username]);
+                $result = Flight::db()->update("Users", $updates, ["username" => $username]);
                 Flight::transact_log(Flight::db()->last_query());
 
                 unset($updates["revoke_counter[+]"]);

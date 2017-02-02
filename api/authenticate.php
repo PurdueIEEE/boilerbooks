@@ -53,9 +53,10 @@
         public static function revoke($username) {
             try {
                 $result = Flight::db()->update("Users", ["revoke_counter[+]" => 1], ["username" => $username]);
-
                 if (count($result) !== 1) {
                     return Flight::json(["error" => "user does not exist"], 404);
+                } else {
+                    Flight::transact_log(Flight::db()->last_query());
                 }
 
                 //Remove the data in the cookie and expire it
@@ -68,7 +69,7 @@
 
         }
 
-        public static function check($username) {
+        public static function check() {
             return Flight::json(["result" => true]);
         }
 
