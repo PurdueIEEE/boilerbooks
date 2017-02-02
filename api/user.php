@@ -151,6 +151,11 @@
                 return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
+
+        // Required to turn a token's user into a tangible User for a client.
+        public static function me() {
+            return User::view(Flight::get('user'));
+        }
     }
 
     Flight::dynamic_route('GET /user/@username', 'User::view');
@@ -158,4 +163,5 @@
     Flight::dynamic_route('PATCH /user/@username', 'User::update');
     Flight::dynamic_route('DELETE /user/@username', 'User::remove');
     Flight::dynamic_route('GET /users', 'User::search');
+    Flight::dynamic_route('GET /users/me', 'User::me');
 ?>
