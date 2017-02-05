@@ -10,7 +10,7 @@
         public static function add($username, $password, $first, $last,
                                    $email, $address, $city, $state, $zip) {
 
-            $user = get_defined_vars();
+            $user = dynamic_uninvoke(__METHOD__, func_get_args());
             $user["password"] = password_hash($password, PASSWORD_DEFAULT);
 
             // Make sure any cert file is a valid Resource.
@@ -61,7 +61,7 @@
         public static function update($username, $password = null, $first = null, $last = null,
                                       $email = null, $address = null, $city = null, $state = null,
                                       $zip = null, $cert = null) {
-            $user = get_defined_vars();
+            $user = dynamic_uninvoke(__METHOD__, func_get_args());
 
             // Make sure we have rights to update the user.
             if (Flight::get('user') != $username &&
@@ -117,7 +117,7 @@
         }
 
         /**
-         * @filter $username alfanum
+         * @filter $username words
          */
         public static function view($username) {
             // Short-circuit a special username "me" to mean the authed user.
@@ -162,7 +162,7 @@
     }
 
     Flight::dynamic_route('GET /user/@username', 'User::view');
-    Flight::dynamic_route('POST /user/@username', 'User::add', $require_auth=false);
+    Flight::dynamic_route('POST /user/@username', 'User::add', false);
     Flight::dynamic_route('PATCH /user/@username', 'User::update');
     Flight::dynamic_route('DELETE /user/@username', 'User::remove');
     Flight::dynamic_route('GET /users', 'User::search');

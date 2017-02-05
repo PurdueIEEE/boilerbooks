@@ -50,7 +50,8 @@
             }
         }
 
-        public static function revoke($username) {
+        public static function revoke() {
+            $username = Flight::get('user');
             try {
                 $result = Flight::db()->update("Users", ["revoke_counter[+]" => 1], ["username" => $username]);
                 if (count($result) !== 1) {
@@ -66,14 +67,14 @@
             } catch(PDOException $e) {
                 return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
-
         }
 
         public static function check() {
             return Flight::json(["result" => true]);
         }
 
-        public static function refresh($username) {
+        public static function refresh() {
+            $username = Flight::get('user');
             try {
                 $result = Flight::db()->select("Users", ["revoke_counter"], ["username" => $username]);
 
@@ -91,7 +92,7 @@
     }
 
     Flight::dynamic_route('GET /authenticate', 'Authenticate::check');
-    Flight::dynamic_route('POST /authenticate/@username', 'Authenticate::login', $require_auth=false);
-    Flight::dynamic_route('PATCH /authenticate/@username', 'Authenticate::refresh');
-    Flight::dynamic_route('DELETE /authenticate/@username', 'Authenticate::revoke');
+    Flight::dynamic_route('POST /authenticate', 'Authenticate::login', false);
+    Flight::dynamic_route('PATCH /authenticate', 'Authenticate::refresh');
+    Flight::dynamic_route('DELETE /authenticate', 'Authenticate::revoke');
 ?>

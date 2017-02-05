@@ -38,7 +38,7 @@
         return Flight::json(["error" => "api endpoint does not exist"], 404);
     });
     Flight::map('error', function($e) {
-        return Flight::json(["error" => $e->getMessage()], 500);
+        return Flight::json(["error" => "$e"], 500);
     });
 
     // Establish API endpoints and start!

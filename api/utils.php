@@ -1,6 +1,14 @@
 <?php
 
+    // A special exception subclass to be used by API endpoints; when thrown, causes
+    // the API vendor (this code) to return the HTTP error code given by $e->getCode()
+    // with JSON, where "error" will be set to $e->getMessage().
+    class HTTPException extends Exception {}
+
+    // A static container class for logging functions.
     class log {
+        protected function __construct() {}
+        protected function __clone() {}
 
         // The internal sys_log() function is for any non-database logs to be recorded
         // along with a timestamp of when it occurred. Should be used sparingly.
@@ -102,33 +110,34 @@
     // TODO: Defines a set of validation functions for API input.
     $_FILTERS = [
         'date' => function($x) {
-            return (preg_match("^[0-9]{4}[-/][0-9]{1,2}[-/][0-9]{1,2}\$", $x) == true);
+            return (preg_match("/^[0-9]{4}[-/][0-9]{1,2}[-/][0-9]{1,2}\$/", $x) == true);
         }, 'amount' => function($x) {
-            return (preg_match("^[-]?[0-9]+\$", $x) == true);
+            return (preg_match("/^[-]?[0-9]+\$/", $x) == true);
         }, 'number' => function($x) {
-            return (preg_match("^[-]?[0-9,]+\$", $x) == true);
+            return (preg_match("/^[-]?[0-9,]+\$/", $x) == true);
         }, 'alfanum' => function($x) {
-            return (preg_match("^[0-9a-zA-Z ,.-_\\s\?\!]+\$", $x) == true);
+            return (preg_match("/^[0-9a-zA-Z ,.-_\\s\?\!]+\$/", $x) == true);
         }, 'not_empty' => function($x) {
-            return (preg_match("[a-z0-9A-Z]+", $x) == true);
+            return (preg_match("/[a-z0-9A-Z]+/", $x) == true);
         }, 'words' => function($x) {
-            return (preg_match("^[A-Za-z]+[A-Za-z \\s]*\$", $x) == true);
+            return (preg_match("/^[A-Za-z]+[A-Za-z \\s]*\$/", $x) == true);
         }, 'phone' => function($x) {
-            return (preg_match("^[0-9]{10,11}\$", $x) == true);
+            return (preg_match("/^[0-9]{10,11}\$/", $x) == true);
         }, 'zipcode' => function($x) {
-            return (preg_match("^[1-9][0-9]{3}[a-zA-Z]{2}\$", $x) == true);
+            return (preg_match("/^[1-9][0-9]{3}[a-zA-Z]{2}\$/", $x) == true);
         }, 'plate' => function($x) {
-            return (preg_match("^([0-9a-zA-Z]{2}[-]){2}[0-9a-zA-Z]{2}\$", $x) == true);
+            return (preg_match("/^([0-9a-zA-Z]{2}[-]){2}[0-9a-zA-Z]{2}\$/", $x) == true);
         }, 'price' => function($x) {
-            return (preg_match("^[0-9.,]*(([.,][-])|([.,][0-9]{2}))?\$", $x) == true);
+            return (preg_match("/^[0-9.,]*(([.,][-])|([.,][0-9]{2}))?\$/", $x) == true);
         }, '2digitopt' => function($x) {
-            return (preg_match("^\d+(\,\d{2})?\$", $x) == true);
+            return (preg_match("/^\d+(\,\d{2})?\$/", $x) == true);
         }, '2digitforce' => function($x) {
-            return (preg_match("^\d+\,\d\d\$", $x) == true);
+            return (preg_match("/^\d+\,\d\d\$/", $x) == true);
         }, 'anything' => function($x) {
-            return (preg_match("^[\d\D]{1,}\$", $x) == true);
-        }, //'is_array' => is_array,
+            return (preg_match("/^[\d\D]{1,}\$/", $x) == true);
+        } //'is_array' => is_array,
     ];
+    Flight::set('FILTERS', $_FILTERS);
 
     // Extracts all `@filter $name comment` strings from docstrings.
     // TODO: Support ReflectionFunction as well.
@@ -153,17 +162,13 @@
     function dynamic_filter($method, $arguments, callable $failed) {
         // ["param1" => func1, "param2" => func2]
         $from_filter = array_filter(get_filters($method), function($v) {
-            return isset($_FILTERS[$v]);
+            return array_key_exists($v, Flight::get('FILTERS'));
         });
-        // ["param1" => val1, "param2" => val2]
-        $to_filter = array_filter($arguments, function($k) {
-            return isset($filters[$k]);
-        }, ARRAY_FILTER_USE_KEY);
-
+        //return Flight::json(["error" => ["from" => get_filters($method), "to" => $from_filter]], 400);
         foreach ($from_filter as $param => $filter_name) {
-            $filter_func = $_FILTERS[$filter_name];
-            if (!(array_key_exists($param, $to_filter) && $filter_func($to_filter[$param]))) {
-                $failed($name);
+            $filter_func = Flight::get('FILTERS')[$filter_name];
+            if (!(array_key_exists($param, $from_filter) && $filter_func($arguments[$param]))) {
+                $failed($param);
                 return false;
             }
         }
@@ -195,6 +200,22 @@
             $values[$p->getPosition()] = $exists ? $arguments[$name] : $p->getDefaultValue();
         }
         return call_user_func_array($method, $values);
+    }
+
+    // Unpacks a function's arguments from their positions into an associative
+    // array; the inverse of dynamically invoking a function. This MUST be used
+    // with the current method name and arguments passed in. If it is not used
+    // in this exact way, or a method's argument does not exist, it will fail.
+    //
+    // Usage:
+    // $res = dynamic_uninvoke(__METHOD__, func_get_args());
+    function dynamic_uninvoke($method, $arguments) {
+        $values = [];
+        $all = (new \ReflectionMethod($method))->getParameters();
+        foreach ($all as $p) {
+            $values[$p->getName()] = $arguments[$p->getPosition()];
+        }
+        return $values;
     }
 
     // Dynamically routes an HTTP endpoint to a global or static function,
