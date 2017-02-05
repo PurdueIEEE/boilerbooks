@@ -10,16 +10,16 @@
 
             // Ensure proper privileges to create a(n) (sub-)organization.
             if(!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to create organizations"], 401);
+                throw new HTTPException("insufficient privileges to create organizations", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Organizations", ["name" => $name, "parent" => $parent]);
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["result" => $org]);
+                return $org;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -27,7 +27,7 @@
 
             // Ensure proper privileges to create a(n) (sub-)organization.
             if(!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to delete organizations"], 401);
+                throw new HTTPException("insufficient privileges to delete organizations", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -37,12 +37,12 @@
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $name]);
+                    return $name;
                 } else {
-                    return Flight::json(["error" => "no such organization"], 404);
+                    throw new HTTPException("no such organization", 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -57,9 +57,9 @@
             try {
                 $result = Flight::db()->select("Organizations", "*");
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
     }

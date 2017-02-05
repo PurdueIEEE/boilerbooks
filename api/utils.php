@@ -66,7 +66,7 @@
             $encoded_token = $matches[1];
         }
         if (isset($encoded_token) === false) {
-            return Flight::json(["error" => "no token supplied"], 401);
+            throw new HTTPException("no token supplied", 401);
         }
 
         // Decode the token and ensure it hasn't expired or that the IP address
@@ -75,12 +75,12 @@
         try {
             $token = JWT::decode($encoded_token, TOKEN_SECRET, ['HS512']);
         } catch(ExpiredException $e) {
-            return Flight::json(["error" => "token has expired"], 401);
+            throw new HTTPException("token has expired", 401);
         } catch(Exception $e) {
-            return Flight::json(["error" => "error decoding token"], 400);
+            throw new HTTPException("error decoding token", 400);
         }
         if (Flight::request()->ip !== $token->data->ip) {
-            return Flight::json(["error" => "ip does not match token"], 400);
+            throw new HTTPException("ip does not match token", 400);
         }
 
         // Obtain the user and verify the revoke_counter to match the token's.
@@ -89,15 +89,15 @@
             $user = Flight::db()->get("Users", ["username", "revoke_counter"],
                                     ["username" => $token->data->username]);
             if (!isset($user)) {
-                return Flight::json(["error" => "user not found"], 404);
+                throw new HTTPException("user not found", 404);
             }
             if ($user['revoke_counter'] > $token->data->revoke_counter) {
-                return Flight::json(["error" => "token has been revoked"], 404);
+                throw new HTTPException("token has been revoked", 404);
             } else if ($user['revoke_counter'] < $token->data->revoke_counter) {
-                return Flight::json(["error" => "token is from the future"], 404);
+                throw new HTTPException("token is from the future", 404);
             }
         } catch(PDOException $e) {
-            return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+            throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
         }
 
         // Phew, we made it this far, we've passed the gates of Hell!
@@ -164,7 +164,7 @@
         $from_filter = array_filter(get_filters($method), function($v) {
             return array_key_exists($v, Flight::get('FILTERS'));
         });
-        //return Flight::json(["error" => ["from" => get_filters($method), "to" => $from_filter]], 400);
+        //throw new HTTPException(["from" => get_filters($method), "to" => $from_filter], 400);
         foreach ($from_filter as $param => $filter_name) {
             $filter_func = Flight::get('FILTERS')[$filter_name];
             if (!(array_key_exists($param, $from_filter) && $filter_func($arguments[$param]))) {
@@ -227,15 +227,18 @@
             $url_params = array_pop($args)->params; // prioritized in merge()
             $all_params = array_merge($json_params, $url_params);
 
-            // First filter the parameters of the function.
-            $valid = dynamic_filter($to, $all_params, function($name) {
-                return Flight::json(["error" => "invalid type of parameter $name"], 400);
-            });
-
-            // Now actually invoke the function.
-            $res = dynamic_invoke($to, $all_params, function($name) {
-                return Flight::json(["error" => "missing paramter $name"], 400);
-            });
+            // First filter the parameters of the function, then invoke the function.
+            try {
+                $valid = dynamic_filter($to, $all_params, function($name) {
+                    throw new HTTPException("invalid type of parameter $name", 400);
+                });
+                $res = dynamic_invoke($to, $all_params, function($name) {
+                    throw new HTTPException("missing paramter $name", 400);
+                });
+                return Flight::json(["result" => $res]);
+            } catch (HTTPException $e) {
+                return Flight::json(["error" => $e->getMessage()], $e->getCode());
+            }
         }, true);
     }
     Flight::map('dynamic_route', function($match, $to, $require_auth = true) {

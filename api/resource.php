@@ -4,25 +4,25 @@ class Resource {
 
     public static function upload($filename) {
         if (!isset($_FILES['resource'])) {
-            return Flight::json(["error" => "no resource present"], 400);
+            throw new HTTPException("no resource present", 400);
         }
 
         // Undefined | Multiple Files | $_FILES Corruption Attack
         // If this request falls under any of them, treat it invalid.
         // Check $_FILES['resource']['error'] value.
         if (!isset($_FILES['resource']['error']) || is_array($_FILES['resource']['error'])) {
-            return Flight::json(["error" => "invalid parameters"], 400);
+            throw new HTTPException("invalid parameters", 400);
         }
         switch ($_FILES['resource']['error']) {
             case UPLOAD_ERR_OK:
                 break;
             case UPLOAD_ERR_NO_FILE:
-                return Flight::json(["error" => "no resource present"], 400);
+                throw new HTTPException("no resource present", 400);
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                return Flight::json(["error" => "resource exceeded max file size"], 400);
+                throw new HTTPException("resource exceeded max file size", 400);
             default:
-                return Flight::json(["error" => "unknown resource error occurred"], 500);
+                throw new HTTPException("unknown resource error occurred", 500);
         }
 
         // Extract the relevant variables from $_FILES.
@@ -35,7 +35,7 @@ class Resource {
         // Prevent uploads larger than 5MB.
         $MAX_SIZE = 5 * 1024 * 1024;
         if ($file_size > $MAX_SIZE) {
-            return Flight::json(["error" => "exceeded max file size"], 400);
+            throw new HTTPException("exceeded max file size", 400);
         }
 
         // Extract the MIME type of the file.
@@ -47,7 +47,7 @@ class Resource {
         // FIXME: Prevent just checking the file extension...
         $TYPES = ['application\/pdf', 'application\/jpeg', 'application\/png'];
         if (in_array($fmime, $TYPES)) {
-            return Flight::json(["error" => "resource is not PDF"], 400);
+            throw new HTTPException("resource is not PDF", 400);
         }
 
         // Set the new file name and location and move the file over.
@@ -58,7 +58,7 @@ class Resource {
             date('Y-m-d-His')
         );
         if (!move_uploaded_file($file_tmp, $new_filename)) {
-            return Flight::json(["error" => "error moving resource"], 500);
+            throw new HTTPException("error moving resource", 500);
         }
 
         // Return the new resource name.

@@ -14,21 +14,21 @@
 
             // Enforce the proper schema for a root privileged right.
             if($organization === "*" && ($budget !== "*" || $year != 0 || $amount != -1)) {
-                return Flight::json(["error" => "improperly formed root privileged right"], 400);
+                throw new HTTPException("improperly formed root privileged right", 400);
             }
 
             // Ensure proper privilege cascade to grant new rights.
             if(!Rights::check_rights(Flight::get('user'), $organization, $budget, $year, $amount)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to grant privileges"], 401);
+                throw new HTTPException("insufficient privileges to grant privileges", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Rights", $right);
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["result" => $username]);
+                return $username;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -38,7 +38,7 @@
             // Ensure proper privileges to revoke rights.
             // FIXME: Confirm that -1 amount enforces [revoker > revokee].
             if(!Rights::check_rights(Flight::get('user'), $organization, $budget, $year, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to revoke rights"], 401);
+                throw new HTTPException("insufficient privileges to revoke rights", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -48,12 +48,12 @@
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result === 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $updates]);
+                    return $updates;
                 } else {
-                    return Flight::json(["error" => "no such right existed"], 404);
+                    throw new HTTPException("no such right existed", 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -100,19 +100,19 @@
             // Make sure we have rights to view the rights given (or all users).
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to view other users' rights"], 401);
+                throw new HTTPException("insufficient privileges to view other users' rights", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Rights", "*", ["username" => $username]);
                 if (count($result) < 1) {
-                    return Flight::json(["error" => "no results"], 404);
+                    throw new HTTPException("no results", 404);
                 }
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -120,19 +120,19 @@
 
             // Make sure we have rights to view the rights given (or all users).
             if (!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to view all rights"], 401);
+                throw new HTTPException("insufficient privileges to view all rights", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Rights", "*");
                 if (count($result) < 1) {
-                    return Flight::json(["error" => "no results"], 404);
+                    throw new HTTPException("no results", 404);
                 }
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
     }

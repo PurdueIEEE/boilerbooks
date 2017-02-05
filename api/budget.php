@@ -10,16 +10,16 @@
 
             // Ensure proper privileges to create a budget.
             if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to add a budget item"], 401);
+                throw new HTTPException("insufficient privileges to add a budget item", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Budgets", $budget);
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["result" => $budget]);
+                return $budget;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -28,7 +28,7 @@
 
             // Ensure proper privileges to delete a budget.
             if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to delete a budget item"], 401);
+                throw new HTTPException("insufficient privileges to delete a budget item", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -38,12 +38,12 @@
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $budget]);
+                    return $budget;
                 } else {
-                    return Flight::json(["error" => "no such budget item"], 404);
+                    throw new HTTPException("no such budget item", 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -53,7 +53,7 @@
 
             // Ensure proper privileges to update a budget.
             if(!Rights::check_rights(Flight::get('user'), $organization, "*", $year, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to update a budget item"], 401);
+                throw new HTTPException("insufficient privileges to update a budget item", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -63,12 +63,12 @@
                 // Make sure 1 row was acted on, otherwise the budget did not exist.
                 if ($result == 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $budget]);
+                    return $budget;
                 } else {
-                    return Flight::json(["error" => "no such budget item"], 404);
+                    throw new HTTPException("no such budget item", 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -93,16 +93,16 @@
 
             // Ensure proper privileges to view all budgets.
             if(!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to view all budgets"], 401);
+                throw new HTTPException("insufficient privileges to view all budgets", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Budgets", "*");
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
     }

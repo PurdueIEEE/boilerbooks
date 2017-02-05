@@ -12,7 +12,7 @@
             // Make sure we have rights to update the purchase.
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to add other users' purchases"], 401);
+                throw new HTTPException("insufficient privileges to add other users' purchases", 401);
             }
             $income["username"] = Flight::get('user');
 
@@ -21,9 +21,9 @@
                 //SELECT @@IDENTITY AS PID;
                 Flight::db()->insert("Purchases", $purchase);
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["result" => $purchase]);
+                return $purchase;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -61,7 +61,7 @@
             // Make sure we have rights to update the purchase.
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to edit other users' purchases"], 401);
+                throw new HTTPException("insufficient privileges to edit other users' purchases", 401);
             }
 
             // Scrub the parameters into an updates array.
@@ -69,7 +69,7 @@
             unset($updates["purchaseid"]);
             unset($updates["username"]);
             if (count($updates) == 0) {
-                return Flight::json(["error" => "no updates to commit"], 400);
+                throw new HTTPException("no updates to commit", 400);
             }
             $updates["#modify"] = "NOW()";
 
@@ -82,12 +82,12 @@
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result == 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $purchase]);
+                    return $purchase;
                 } else {
-                    return Flight::json(["error" => "no such purchase"], 404);
+                    throw new HTTPException("no such purchase", 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -102,9 +102,9 @@
             try {
                 $result = Flight::db()->select("Purchases", "*", ["purchaseid" => $purchaseid]);
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -119,9 +119,9 @@
             try {
                 $result = Flight::db()->select("Purchases", "*");
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
     }

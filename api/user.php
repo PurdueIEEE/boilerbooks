@@ -15,16 +15,16 @@
 
             // Make sure any cert file is a valid Resource.
             if(!Resource::exists($cert)) {
-                return Flight::json(["error" => "certificate was not a valid resource"], 400);
+                throw new HTTPException("certificate was not a valid resource", 400);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Users", $user);
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["result" => $user], 201);
+                return $user;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -32,7 +32,7 @@
             // Make sure we have rights to delete users.
             if(Flight::get('user') != $username &&
                !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to delete users"], 401);
+                throw new HTTPException("insufficient privileges to delete users", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -48,13 +48,13 @@
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
                     log::transact(Flight::db()->last_query());
-                    return Flight::json(["result" => $username]);
+                    return $username;
                 } else {
-                    return Flight::json(["error" => "user not found"], 404);
+                    throw new HTTPException("user not found", 404);
                 }
             } catch(PDOException $e) {
                 log::transact(Flight::db()->last_query());
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -66,13 +66,13 @@
             // Make sure we have rights to update the user.
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to update other users"], 401);
+                throw new HTTPException("insufficient privileges to update other users", 401);
             }
 
             // Make sure any cert file is a valid Resource. If so, delete the old one.
             try {
                 if(!Resource::exists($cert)) {
-                    return Flight::json(["error" => "certificate was not a valid resource"], 400);
+                    throw new HTTPException("certificate was not a valid resource", 400);
                 } else {
                     $cert = Flight::db()->get("Users", "cert", ["username" => $username]);
                     if (isset($cert)) {
@@ -80,14 +80,14 @@
                     }
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
 
             // Scrub the parameters into an updates array.
             $updates = array_filter($user, function($v, $k) { return !is_null($v); }, ARRAY_FILTER_USE_BOTH);
             unset($updates["username"]);
             if (count($updates) == 0) {
-                return Flight::json(["error" => "no updates to commit"], 400);
+                throw new HTTPException("no updates to commit", 400);
             }
 
             // If the password is being modified (even to the same thing), you *must* increment the
@@ -103,16 +103,16 @@
                 // Make sure the user exists. This needs an extra query, because update will
                 // return 0 when no changes are made, but the user still exists.
                 if (Flight::db()->has("Users", ["username" => $username]) === false) {
-                    return Flight::json(["error" => "user not found"], 404);
+                    throw new HTTPException("user not found", 404);
                 }
 
                 $result = Flight::db()->update("Users", $updates, ["username" => $username]);
                 log::transact(Flight::db()->last_query());
 
                 unset($updates["revoke_counter[+]"]);
-                return Flight::json(["result" => $updates]);
+                return $updates;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
@@ -128,7 +128,7 @@
             // Make sure we have rights to view the username given (or all users).
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to view other users"], 401);
+                throw new HTTPException("insufficient privileges to view other users", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
@@ -136,27 +136,27 @@
                 $selector = ["username", "first", "last", "email", "address", "city", "state", "zip", "cert"];
                 $result = Flight::db()->select("Users", $selector, ["username" => $username]);
                 if (count($result) == 0) {
-                    return Flight::json(["error" => "no such user"], 404);
+                    throw new HTTPException("no such user", 404);
                 }
 
-                return Flight::json(["result" => $result[0]], 200);
+                return $result[0];
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
 
         public static function search() {
             if(!Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
-                return Flight::json(["error" => "insufficient privileges to view all users"], 401);
+                throw new HTTPException("insufficient privileges to view all users", 401);
             }
 
             // Execute the actual SQL query after confirming its formedness.
             try {
                 $result = Flight::db()->select("Users", ["username", "first", "last", "email", "address", "city", "state", "zip"]);
 
-                return Flight::json(["result" => $result]);
+                return $result;
             } catch(PDOException $e) {
-                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
+                throw new HTTPException(log::err($e, Flight::db()->last_query()), 500);
             }
         }
     }

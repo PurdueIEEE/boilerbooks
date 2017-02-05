@@ -35,10 +35,10 @@
     // Load our dynamics and utilities and set up 404, 500 response.
     require_once 'utils.php';
     Flight::map('notFound', function() {
-        return Flight::json(["error" => "api endpoint does not exist"], 404);
+        throw new HTTPException("api endpoint does not exist", 404);
     });
     Flight::map('error', function($e) {
-        return Flight::json(["error" => "$e"], 500);
+        throw new HTTPException("$e", 500);
     });
 
     // Establish API endpoints and start!
