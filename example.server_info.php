@@ -10,7 +10,7 @@ define("DB_PASS", "");
 define("SERVER_HOST", "");
 
 // Where uploadeds are kept
-define("UPLOAD_DIR", "./uploads");
+define("UPLOAD_DIR", ".");
 
 // Sign JWT with this and store it in a cookie.
 define("TOKEN_SECRET", "");

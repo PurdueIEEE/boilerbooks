@@ -38,7 +38,7 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 // Make sure any cert file is a valid Resource. If so, delete it.
-                $cert = (Flight::db()->get("Users", "cert", ["username" => $username])
+                $cert = Flight::db()->get("Users", "cert", ["username" => $username]);
                 if (isset($cert)) {
                     Resource::delete($cert);
                 }
@@ -74,7 +74,7 @@
                 if(!Resource::exists($cert)) {
                     return Flight::json(["error" => "certificate was not a valid resource"], 400);
                 } else {
-                    $cert = (Flight::db()->get("Users", "cert", ["username" => $username])
+                    $cert = Flight::db()->get("Users", "cert", ["username" => $username]);
                     if (isset($cert)) {
                         Resource::delete($cert);
                     }
@@ -116,7 +116,15 @@
             }
         }
 
+        /**
+         * @filter $username alfanum
+         */
         public static function view($username) {
+            // Short-circuit a special username "me" to mean the authed user.
+            if($username === 'me') {
+                $username = Flight::get('user');
+            }
+
             // Make sure we have rights to view the username given (or all users).
             if (Flight::get('user') != $username &&
                 !Rights::check_rights(Flight::get('user'), "*", "*", 0, -1)[0]["result"]) {
@@ -151,11 +159,6 @@
                 return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
             }
         }
-
-        // Required to turn a token's user into a tangible User for a client.
-        public static function me() {
-            return User::view(Flight::get('user'));
-        }
     }
 
     Flight::dynamic_route('GET /user/@username', 'User::view');
@@ -163,5 +166,4 @@
     Flight::dynamic_route('PATCH /user/@username', 'User::update');
     Flight::dynamic_route('DELETE /user/@username', 'User::remove');
     Flight::dynamic_route('GET /users', 'User::search');
-    Flight::dynamic_route('GET /users/me', 'User::me');
 ?>

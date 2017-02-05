@@ -25,12 +25,11 @@ class Resource {
                 return Flight::json(["error" => "unknown resource error occurred"], 500);
         }
 
-        [ // Extract the relevant variables from $_FILES.
-            'size' => $file_size,
-            'tmp_name' => $file_tmp,
-            'type' => $file_type,
-            'name' => $file_name
-        ] = $_FILES['resource'];
+        // Extract the relevant variables from $_FILES.
+        $file_size = $_FILES['resource']['size'];
+        $file_tmp = $_FILES['resource']['tmp_name'];
+        $file_type = $_FILES['resource']['type'];
+        $file_name = $_FILES['resource']['name'];
         $file_ext = strtolower(end(explode('.', $file_name)));
 
         // Prevent uploads larger than 5MB.
