@@ -142,7 +142,7 @@
     // Extracts all `@filter $name comment` strings from docstrings.
     // TODO: Support ReflectionFunction as well.
     function get_filters($method_name) {
-        $str = (new ReflectionMethod($method_name))->getDocComment();
+        $str = (new \ReflectionMethod($method_name))->getDocComment();
         if (preg_match_all('/(@filter \$)(\w+)\s+(.*)\r?\n/m', $str, $matches)) {
             return array_combine($matches[2], $matches[3]);
         }
@@ -235,6 +235,8 @@
                 $res = dynamic_invoke($to, $all_params, function($name) {
                     throw new HTTPException("missing paramter $name", 400);
                 });
+
+                // Now we either return result or error if an HTTPException was thrown.
                 return Flight::json(["result" => $res]);
             } catch (HTTPException $e) {
                 return Flight::json(["error" => $e->getMessage()], $e->getCode());
