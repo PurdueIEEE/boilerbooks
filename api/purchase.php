@@ -20,10 +20,10 @@
             try {
                 //SELECT @@IDENTITY AS PID;
                 Flight::db()->insert("Purchases", $purchase);
-                Flight::transact_log(Flight::db()->last_query());
+                log::transact(Flight::db()->last_query());
                 return Flight::json(["result" => $purchase]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -81,13 +81,13 @@
 
                 // Make sure 1 row was acted on, otherwise the income did not exist
                 if ($result == 1) {
-                    Flight::transact_log(Flight::db()->last_query());
+                    log::transact(Flight::db()->last_query());
                     return Flight::json(["result" => $purchase]);
                 } else {
                     return Flight::json(["error" => "no such purchase"], 404);
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -104,7 +104,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -121,7 +121,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
     }

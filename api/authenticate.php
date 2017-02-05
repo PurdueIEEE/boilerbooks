@@ -46,7 +46,7 @@
 
                 return Flight::json(["result" => $token]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -56,7 +56,7 @@
                 if (count($result) !== 1) {
                     return Flight::json(["error" => "user does not exist"], 404);
                 } else {
-                    Flight::transact_log(Flight::db()->last_query());
+                    log::transact(Flight::db()->last_query());
                 }
 
                 //Remove the data in the cookie and expire it
@@ -64,7 +64,7 @@
 
                 return Flight::json(["result" => 'success']);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
 
         }
@@ -85,7 +85,7 @@
 
                 return Flight::json(["result" => $token]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
     }

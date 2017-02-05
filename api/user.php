@@ -21,10 +21,10 @@
             // Execute the actual SQL query after confirming its formedness.
             try {
                 Flight::db()->insert("Users", $user);
-                Flight::transact_log(Flight::db()->last_query());
+                log::transact(Flight::db()->last_query());
                 return Flight::json(["result" => $user], 201);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -47,14 +47,14 @@
 
                 // Make sure 1 row was acted on, otherwise the user did not exist
                 if ($result == 1) {
-                    Flight::transact_log(Flight::db()->last_query());
+                    log::transact(Flight::db()->last_query());
                     return Flight::json(["result" => $username]);
                 } else {
                     return Flight::json(["error" => "user not found"], 404);
                 }
             } catch(PDOException $e) {
-                Flight::transact_log(Flight::db()->last_query());
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                log::transact(Flight::db()->last_query());
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -80,7 +80,7 @@
                     }
                 }
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
 
             // Scrub the parameters into an updates array.
@@ -107,12 +107,12 @@
                 }
 
                 $result = Flight::db()->update("Users", $updates, ["username" => $username]);
-                Flight::transact_log(Flight::db()->last_query());
+                log::transact(Flight::db()->last_query());
 
                 unset($updates["revoke_counter[+]"]);
                 return Flight::json(["result" => $updates]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -136,12 +136,12 @@
                 $selector = ["username", "first", "last", "email", "address", "city", "state", "zip", "cert"];
                 $result = Flight::db()->select("Users", $selector, ["username" => $username]);
                 if (count($result) == 0) {
-                    return Flight::json(["error" => "no results"], 404);
+                    return Flight::json(["error" => "no such user"], 404);
                 }
 
                 return Flight::json(["result" => $result[0]], 200);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
 
@@ -156,7 +156,7 @@
 
                 return Flight::json(["result" => $result]);
             } catch(PDOException $e) {
-                return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+                return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
             }
         }
     }

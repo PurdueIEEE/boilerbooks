@@ -1,31 +1,34 @@
 <?php
 
-    // The internal sys_log() function is for any non-database logs to be recorded
-    // along with a timestamp of when it occurred. Should be used sparingly.
-    Flight::map("sys_log", function($log) {
-        file_put_contents('./sys.log', "[{${date("Y-m-d h:i:sa")}}] $log\n", FILE_APPEND);
-    });
+    class log {
 
-    // The internal error_log() function is for any database errors to be recorded
-    // along with a timestamp of when it occurred. It should return a UUID of the
-    // error, which will then be sent to the administrator and the user as a ticket.
-    //
-    // Note: if you pass a PDOException, it will automatically log the message and SQL.
-    Flight::map("error_log", function($exc, $log) {
-        if ($log instanceof PDOException) {
-            $log = $log->getMessage();
+        // The internal sys_log() function is for any non-database logs to be recorded
+        // along with a timestamp of when it occurred. Should be used sparingly.
+        public static function sys($log) {
+            file_put_contents('./sys.log', "[{${date("Y-m-d h:i:sa")}}] $log\n", FILE_APPEND);
         }
 
-        $uuid = uniqid('sql_');
-        file_put_contents('./errors.log', "[{${date("Y-m-d h:i:sa")}}] [$uuid] $exc => $log\n", FILE_APPEND);
-        return $uuid;
-    });
+        // The internal error_log() function is for any database errors to be recorded
+        // along with a timestamp of when it occurred. It should return a UUID of the
+        // error, which will then be sent to the administrator and the user as a ticket.
+        //
+        // Note: if you pass a PDOException, it will automatically log the message and SQL.
+        public static function err($exc, $log) {
+            if ($log instanceof Exception) {
+                $log = $log->getMessage();
+            }
 
-    // The internal transact_log() function is for any database transactions to be recorded
-    // along with a timestamp of when it occurred.
-    Flight::map("transact_log", function($log) {
-        file_put_contents('./transactions.log', "[{${date("Y-m-d h:i:sa")}}] $log\n", FILE_APPEND);
-    });
+            $uuid = uniqid('sql_');
+            file_put_contents('./errors.log', "[{${date("Y-m-d h:i:sa")}}] [$uuid] $exc => $log\n", FILE_APPEND);
+            return $uuid;
+        }
+
+        // The internal transact_log() function is for any database transactions to be recorded
+        // along with a timestamp of when it occurred.
+        public static function transact() {
+            file_put_contents('./transactions.log', "[{${date("Y-m-d h:i:sa")}}] $log\n", FILE_APPEND);
+        }
+    }
 
     // Modified version of Flight::json(...) from Flight\Engine to allow setting
     // CORS headers for client consumption. Use this function ALWAYS!
@@ -86,7 +89,7 @@
                 return Flight::json(["error" => "token is from the future"], 404);
             }
         } catch(PDOException $e) {
-            return Flight::json(["error" => Flight::error_log($e, Flight::db()->last_query())], 500);
+            return Flight::json(["error" => log::err($e, Flight::db()->last_query())], 500);
         }
 
         // Phew, we made it this far, we've passed the gates of Hell!
