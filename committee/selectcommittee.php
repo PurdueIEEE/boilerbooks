@@ -150,7 +150,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
-	$sql = "SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed',NULL) AND (P.committee = '$committee') AND (P.fiscalyear = '$fiscalyear')) THEN P.cost ELSE 0 END) AS 'Spent'
+	$sql = "SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = '$committee') AND (P.fiscalyear = '$fiscalyear')) THEN P.cost ELSE 0 END) AS 'Spent'
 
         ,B.amount AS 'Budget' FROM Budget B
 				LEFT JOIN Purchases P ON B.category = P.category
@@ -226,7 +226,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
 	$sql = "SELECT SUM(Purchases.cost) AS 'Spent' FROM Purchases
-	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed',NULL)
+	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL)
 	AND Purchases.fiscalyear = '$fiscalyear'";
 
 
@@ -292,7 +292,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
 	$sql = "SELECT SUM(Purchases.cost) AS 'Spent' FROM Purchases
-	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed',NULL)
+	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed','Approved',NULL)
 	";
 
 
