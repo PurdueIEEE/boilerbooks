@@ -1,7 +1,7 @@
 <?php
 	$title = 'Boiler Books';
 	include 'menu.php';
-	$_SESSION['fiscalyear'] = '2016-2017'; // initilize
+	$_SESSION['fiscalyear'] = '2017-2018'; // initilize for viewing committee expenses
 
 ?>
 

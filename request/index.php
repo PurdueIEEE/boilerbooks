@@ -53,7 +53,7 @@ $categorylist = '';
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
 		$sql = "SELECT category FROM `Budget`
-		WHERE committee='$committee' AND year='2016-2017'";
+		WHERE committee='$committee' AND year='2017-2018'";
 		//$stmt->execute();
 
 
