@@ -36,7 +36,7 @@ try {
 			WHERE p.committee = '$committee'
 			AND a.username = '$usr'
 			AND p.fiscalyear = '$fiscalyear'
-			ORDER BY p.purchasedate";
+			ORDER BY p.purchaseid DESC";
 
 
 	foreach ($conn->query($sql) as $row) {

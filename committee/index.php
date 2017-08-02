@@ -64,9 +64,7 @@
 		$(document).ready(function() {
 		    $('#expensestablesummary').DataTable( {
 
-		        createdRow: function ( row ) {
-		            $('td', row).attr('tabindex', 0);
-		        }
+		        "order": [[ 0, "asc" ]]
 
 		    } );
 		} );
@@ -105,9 +103,7 @@
 	<script>
 	$(document).ready(function() {
 	    $('#expensestable').DataTable( {
-	        createdRow: function ( row ) {
-	            $('td', row).attr('tabindex', 0);
-	        }
+	        "order": [[ 1, "desc" ]]
 	    } );
 	} );
 	</script>
@@ -136,9 +132,7 @@
 	<script>
 	$(document).ready(function() {
 	    $('#incometable').DataTable( {
-	        createdRow: function ( row ) {
-	            $('td', row).attr('tabindex', 0);
-	        }
+	       "order": [[ 0, "desc" ]]
 	    } );
 	} );
 	</script>

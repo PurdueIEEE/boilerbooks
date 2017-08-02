@@ -28,6 +28,7 @@ try {
 , p.cost
 , p.comments
 , p.username
+, p.fundsource
 ,(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 ,(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
 FROM Purchases p
@@ -42,14 +43,19 @@ ORDER BY p.purchasedate DESC";
 
 
 	foreach ($conn->query($sql) as $row) {
-		$items.= '<tr> <td>';
+		$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+		$items .= $row['purchaseID'];
+		$items .= '>';
+		$items .= $row['purchaseID'];
+		$items .= '</a>';
+		$items.= '</td> <td>';
 		$items .= $row['date'];
 		$items .= '</td> <td><a href=';
 		$items .= $row['receipt'];
 		$items .= '>';
 		$items .= $row['item'];
 		$items .= '</a></td> <td>';
-		$items .= $row['purchasereason'];
+		$items .= $row['fundsource'];
 		$items .= '</td> <td>';
 		$items .= $row['vendor'];
 		$items .= '</td> <td>';
@@ -59,8 +65,6 @@ ORDER BY p.purchasedate DESC";
 		$items .= "'>";
 		$items .= $row['purchasedby'];
 		$items .= '</a></td> <td>';
-		$items .= $row['approvedby'];
-		$items .= '</td> <td>';
 		$items .= $row['status'];
 		$items .= '</td> <td>';
 		$items .= $row['cost'];
@@ -104,13 +108,13 @@ $conn = null;
 	<table id="treasurertable" class="display">
 		<thead>
 			<tr>
+				<th>Purchase ID</th>
 				<th>Purchase Date</th>
 				<th>Item</th>
-				<th>Reason</th>
+				<th>Fund Source</th>
 				<th>Vendor</th>
 				<th>Committee</th>
 				<th>Purchased By</th>
-				<th>Reviewed By</th>
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
@@ -125,11 +129,9 @@ $conn = null;
 	<script>
 	$(document).ready(function() {
 	    $('#treasurertable').DataTable( {
-	        createdRow: function ( row ) {
-	            $('td', row).attr('tabindex', 0);
-	        },
+	        "order": [[ 1, "desc" ]]
 	    } );
-			stateSave: true
+			stateSave: true 
 
 	} );
 	</script>

@@ -11,12 +11,8 @@ $verifylogin = "login.php?returnto=" . $returnto;
 	<h4 class = "text-center">The ultimate expense and income tracking system for student organizations</h4>
 	<ul class="nav nav-tabs">
 		<li class="disabled disabledTab"><a href="#">Request Purchase</a></li>
-		<li class="disabled disabledTab"><a href="#">Approve Purchase</a></li>
 		<li class="disabled disabledTab"><a href="#">Complete Purchase</a></li>
 		<li class="disabled disabledTab"><a href="#">View My Purchases</a></li>
-		<li class="disabled disabledTab"><a href="#">View Committee Expenses</a></li>
-		<li class="disabled disabledTab"><a href="#">Receive Donation</a></li>
-		<li class="disabled disabledTab"><a href="#">Treasurer</a></li>
 	</ul>
 </div>
 
