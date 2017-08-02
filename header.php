@@ -22,9 +22,9 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="/text/css">
 
   <!--favicon link-->
-  	<link rel="SHORTCUT ICON" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_favicon.ico">
-  	<link rel="icon" type="image/vnd.microsoft.icon" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_favicon.ico">
-  	<link rel="apple-touch-icon" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_apple_touch_icon.png">
+    <link rel="SHORTCUT ICON" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_apple_touch_icon.png">
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

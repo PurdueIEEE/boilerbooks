@@ -66,7 +66,7 @@
 
 	// Prepare receipt iframe
 	if ($_SESSION['receipt'] != '') {
-		$pdfreceipt = "https://money.pieee.org" . $_SESSION['receipt'];
+		$pdfreceipt = "https://" . $_SERVER[HTTP_HOST] . $_SESSION['receipt'];
 		$_SESSION['iframestuff'] = '<div class="row">
 		<div class="col-sm-4"></div>
 		<div class="col-sm-6">

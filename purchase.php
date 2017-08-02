@@ -15,13 +15,13 @@
 	}
 
 
-
 ?>
 
 <div>
 	<div class="well">
 		<div class="col-sm-6">
 			<h3 class="text-right">Purchase #<?php echo $purchaseid?>:</h3>
+
 		</div>
 		<div class="col-sm-6">
 			<h3 class="text-left" contenteditable="true"><?php echo $_SESSION['item']?></h3>
