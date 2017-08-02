@@ -31,7 +31,72 @@ try {
 	{
 
 		$_SESSION['user'] = $usr;
-		//echo $_SESSION['user'];
+		
+		/***** Figures out what options to display to user ******/
+		$usr = $_SESSION['user'];
+
+		try {
+			$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+			$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sql2 = "SELECT COUNT(*) AS count FROM Users U3
+				    INNER JOIN approval A ON U3.username = A.username
+				    WHERE (A.role = 'treasurer' OR A.role = 'president')
+				    AND U3.username = '$usr'";
+
+			foreach ($conn2->query($sql2) as $row2) {
+				$item2 = $row2['count'];
+			}
+				
+			$_SESSION['viewTreasurer'] = $item2;
+
+			}
+		catch(PDOException $e)
+			{
+			echo $sql2 . "<br>" . $e->getMessage();
+			}
+
+
+
+		try {
+			$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+			$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr'";
+
+			foreach ($conn2->query($sql2) as $row2) {
+				$item2 = $row2['count'];
+			}
+				
+			$_SESSION['viewCommitteeExpenses'] = $item2;
+			$_SESSION['viewReceiveDonation'] = $item2;
+
+			}
+		catch(PDOException $e)
+			{
+			echo $sql2 . "<br>" . $e->getMessage();
+			}
+
+
+		try {
+			$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+			$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr' AND A.ammount > 0";
+
+			foreach ($conn2->query($sql2) as $row2) {
+				$item2 = $row2['count'];
+			}
+				
+			$_SESSION['viewApprovePurchase'] = $item2;
+
+			}
+		catch(PDOException $e)
+			{
+			echo $sql2 . "<br>" . $e->getMessage();
+			}
+		/***** Figures out what options to display to user ******/
+
+
+
+
 		$returnto = test_input2($_GET['returnto']);
 		if ($returnto != '') {
 			$headerinfo = "Location: " . $returnto;
