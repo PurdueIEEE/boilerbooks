@@ -88,9 +88,7 @@ $conn = null;
 	<script>
 	$(document).ready(function() {
 			$('#mypurchasestable').DataTable( {
-					createdRow: function ( row ) {
-							$('td', row).attr('tabindex', 0);
-					}
+					"order": [[ 0, "desc" ]]
 			} );
 	} );
 	</script>

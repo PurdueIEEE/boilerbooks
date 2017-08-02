@@ -25,7 +25,7 @@ include 'menu.php';
 
 				<div class="container">
 					<h3>Standard Purchase Process</h3>
-					<img src="process.jpg" class="img" alt="Standard Process" style="width:70%">
+					<img src="images/process.jpg" class="img" alt="Standard Process" style="width:70%">
 
 				</div>
 
@@ -56,7 +56,7 @@ include 'menu.php';
 
 						<div class="container">
 							<h3>Additional Tools</h3>
-							<img src="tracking.png" class="img" alt="Tracking expenses" style="width:50%">
+							<img src="images/tracking.png" class="img" alt="Tracking expenses" style="width:50%">
 
 						</div>
 

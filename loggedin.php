@@ -7,10 +7,8 @@
 
 
 <div class = "container">
-<h2>Welcome to Boiler Books Beta!</h2>
-<p>This is IEEE's new expense and income tracking system. This will initially be used to keep track of ROV purchases.
-You should be able to submit expenses for approval and reimbursment. If you have the appropriate level of permissions
-you can also approve purchases, process donations, and view committee expenses. If you have any questions please send us an
+<h2>Welcome to Boiler Books!</h2>
+<p>This is IEEE's expense and income tracking system. If you are going to make a purchase on behalf of Purdue IEEE, you will be required to use this system to claim your reimbursement. If you have the appropriate level of permissions you can also approve purchases, process donations, and view your committee's expenses. If you have any questions please send us an
 <a href="mailto:ieee-officers@purdueieee.org">email</a> and also view the guide below.</p>
 </div>
 

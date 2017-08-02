@@ -65,17 +65,31 @@
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default navbar-inverse bg-inverse" >
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="http://purdueieee.org">IEEE</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li><a href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a></li>
-      <li><a href="/user/signout.php"><?php if ($_SESSION['user'] != '') {echo "Sign-out";}?></li>
-    </ul>
-  </div>
 
-    <!-- /.container -->
-  </nav>
+      <a class="navbar-brand" href="<?php echo 'https://' . $_SERVER[HTTP_HOST] . '/loggedin.php'?>">Purdue IEEE</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a></li>
+        
+      </ul>
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        <li><a href="http://purdueieee.org"><img src="/images/ieee.png" alt="" height="16" width="16"></a></li>
+
+        <li><a href="/user/updateuser.php"><span class="glyphicon glyphicon-cog"></span></a></li>
+        <li><a href="/user/signout.php"><?php if ($_SESSION['user'] != '') {echo "Sign-out";}?></a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+  </div>
+</nav>

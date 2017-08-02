@@ -1,7 +1,7 @@
 <?php
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
-	include '../menu.php';
+
 
 ?>
 
@@ -36,7 +36,7 @@ try {
 			WHERE p.committee = '$committee'
 			AND a.username = '$usr'
 			AND p.fiscalyear = '$fiscalyear'
-			ORDER BY p.purchaseid DESC";
+			";
 
 
 	foreach ($conn->query($sql) as $row) {
@@ -88,7 +88,6 @@ catch(PDOException $e)
 	}
 
 $conn = null;
-
 
 
 
