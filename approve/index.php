@@ -149,6 +149,7 @@ $conn = null;
 				<select id="fundsource" name="fundsource" class="form-control">
 					<option value="BOSO">BOSO</option>
 					<option value="Cash">Cash</option>
+					<option value="SOGA">SOGA</option>
 				</select>
 			</div>
 		</div>
