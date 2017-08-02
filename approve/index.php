@@ -170,7 +170,7 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="submit"></label>
 			<div class="col-md-4">
-				<button id="submit" name="submit" class="btn btn-primary">Approve/Deny</button>
+				<button id="submit" name="submit" class="btn btn-primary">Submit</button>
 			</div>
 		</div>
 
