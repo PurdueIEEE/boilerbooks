@@ -10,3 +10,5 @@ It is also important to setup a mysqldump cron job for database backups (I sugge
 Also use rsync (or a better solution) to make remote backups of the mysqldump's, certs, and the uploaded receipts
 
 Also auto renew the ssl cert
+
+Also setup ssmtp (http://www.havetheknowhow.com/Configure-the-server/Install-ssmtp.html)
