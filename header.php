@@ -8,7 +8,16 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title><?php echo $title;?></title>
+  <title>
+  <?php 
+    if ($title == '') {
+      echo 'Boiler Books';
+    }
+    else {
+      echo $title;
+    }
+  ?>
+  </title>
 
   <!-- Bootstrap Components -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
