@@ -59,8 +59,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
          <li><a href="http://purdueieee.org"><img src="/images/ieeeLogo.svg" alt="" height="16" width="16"> Purdue IEEE</a></li>
-         <li><a href="/user/updateuser.php"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-        <li><a href="/user/signout.php"><span class="glyphicon glyphicon-log-in"></span> <?php if ($_SESSION['user'] != '') {echo "Sign-out";}?></a></li>
+         <li><a href="/user/updateuser.php"><?php if ($_SESSION['user'] != '') {echo "<span class='glyphicon glyphicon-cog'></span></span> Settings";}?></a></li>
+        <li><a href="/user/signout.php"> <?php if ($_SESSION['user'] != '') {echo "<span class='glyphicon glyphicon-log-in'></span>Sign-out";}?></a></li>
       </ul>
     </div>
   </div>
