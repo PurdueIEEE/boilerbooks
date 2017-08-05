@@ -25,7 +25,7 @@
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="/text/css">
 
   <!--favicon link-->
-  <link rel="SHORTCUT ICON" href="/images/favicon.ico">
+  <link rel="SHORTCUT ICON" href="/favicon.ico">
   <link rel="apple-touch-icon" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_apple_touch_icon.png">
 
   <!-- Stuff for datatables -->

@@ -1,11 +1,11 @@
 <?php
-	include '../dbinfo.php';
-	//header('Location: /request/submitted.php '); 
+	include '../../dbinfo.php';
+	include '../../header.php';
 
 
 	$email = $items = "";
-	$email = test_input($_GET["email"]); //change back to POST
-	
+	$email = test_input2($_POST["email"]); //change back to POST
+	//echo $email . '<br>';
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		// set the PDO error mode to exception
@@ -25,7 +25,7 @@
 		}
 
 		$conn = null;
-		echo '<br>The users are:<br>' . $items . '<br>';
+		//echo '<br>The users are:<br>' . $items . '<br>';
 
 
 	if ($items != '') {
@@ -43,10 +43,16 @@
 			 $retval = mail ($to,$subject,$message,$header);
 
 			 if( $retval == true ) {
-			 	echo "Message sent successfully...";
+			 	//echo "Message sent successfully...";
 			 }else {
-			 	echo "Message could not be sent...";
+			 	//echo "Message could not be sent...";
 			 }
+			 $header = 'Location: /user/forgotusername.php?found=1&email=' . $email;
+		header($header); 
+	}
+	else {
+		$header = 'Location: /user/forgotusername.php?found=0&email=' . $email;
+		header($header); 
 	}
 
 
