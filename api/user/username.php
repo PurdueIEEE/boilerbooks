@@ -4,7 +4,7 @@
 
 
 	$email = $items = "";
-	$email = test_input2($_POST["email"]); //change back to POST
+	$email = test_input($_POST["email"]); //change back to POST
 	//echo $email . '<br>';
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -34,7 +34,7 @@
 		 $subject = "Boiler Books Username";
 
 		 $user = $_SESSION['user'];
-		 $message = "<p>Hello! A remainder of your username was requested. The following username(s) are associated with this email:<br>" . $items . ". <br>Please visit <a href='https://" . $_SERVER[HTTP_HOST] . "'>https://" . $_SERVER[HTTP_HOST] . "</a> to login with your username. You can also request a password reset on the Boiler Books homepage.<br><br>Thanks,<br>Boiler Books Team";
+		 $message = "<p>Hello! A remainder of your username was requested. The following username(s) are associated with this email:<br>" . $items . ". <br><br>Please visit <a href='https://" . $_SERVER[HTTP_HOST] . "'>https://" . $_SERVER[HTTP_HOST] . "</a> to login with your username. You can also request a password reset on the Boiler Books homepage.<br><br>Thanks,<br>Boiler Books Team";
 
 		 $header = "From:ieeeboilerbooks@gmail.com \r\n";
 		 $header .= "MIME-Version: 1.0\r\n";
