@@ -11,7 +11,7 @@
 <?php
 include '../dbinfo.php';
 $stuff = '';
-$currentitem = $_GET["currentitem"];
+$currentitem = test_input($_GET["currentitem"]);
 $_SESSION['currentitem'] = $currentitem;
 
 
