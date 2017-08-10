@@ -59,6 +59,21 @@ $conn = null;
 
 </div>
 
+<div class="container">
+	<h4>
+	<?php 
+		if ($_SESSION['balance'] < $_SESSION['cost']) {
+			echo "<font color='red'>Warning! You only have $" . $_SESSION['balance'] . " left in your account. </font>";
+			echo "<font color='red'>Please talk to the IEEE treasurer before approving this purchase!</font>";
+		}
+		else if ($_SESSION['balance'] < 200) {
+			echo "<font color='orange'>Warning! You only have $" . $_SESSION['balance'] . " left in your account!</font>";
+		}
+
+
+	?>
+	</h4>
+</div>
 
 <!-- Page Content -->
 
@@ -67,7 +82,7 @@ $conn = null;
 
 		<!-- Form Name -->
 		<legend></legend>
-
+		
 		<div class="row">
 			<div class="col-sm-4"></div>
 			<div class="col-sm-2">
