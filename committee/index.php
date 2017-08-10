@@ -5,7 +5,6 @@
 ?>
 
 
-
 <div class="container">
 	<div class="row">
 		<div class="col-sm-6">
@@ -31,7 +30,31 @@
 	<div class="container">
 		<div class = "row">
 			<div class="col-sm-3">
-				<h4 class="text-left">Balance: $<?php echo number_format($_SESSION['left'],2);?></h4>
+				<h4 class="text-left">Balance: 
+				<?php 
+					if ($_SESSION['left'] < 0) {
+						echo "<span class='blink_text'>";
+					}
+					else if ($_SESSION['left'] < 100) {
+						echo "<font color='red'>";
+					}
+					else if ($_SESSION['left'] < 200) {
+						echo "<font color='orange'>";
+					}
+					echo "$";
+					echo number_format($_SESSION['left'],2);
+					if ($_SESSION['left'] < 0) {
+						echo "</span>";
+					}
+					else if ($_SESSION['left'] < 100) {
+						echo "</font>";
+					}
+					else if ($_SESSION['left'] < 200) {
+						echo "</font>";
+					}
+				?>
+					
+				</h4>
 			</div>
 			<div class="col-sm-3">
 				<h4 class="text-center">Income: $<?php echo number_format($_SESSION['incometotal'],2);?></h4>
@@ -159,3 +182,33 @@
 <?php
 	include '../smallfooter.php';
 ?>
+
+
+<style>
+.blink_text {
+
+    animation:1s blinker linear infinite;
+    -webkit-animation:1s blinker linear infinite;
+    -moz-animation:1s blinker linear infinite;
+
+     color: red;
+    }
+
+    @-moz-keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+     }
+
+    @-webkit-keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+     }
+
+    @keyframes blinker {  
+     0% { opacity: 1.0; }
+     50% { opacity: 0.0; }
+     100% { opacity: 1.0; }
+     }
+</style>

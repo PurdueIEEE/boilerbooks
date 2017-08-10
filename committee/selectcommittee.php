@@ -37,7 +37,7 @@ try {
 			AND a.username = '$usr'
 			AND p.fiscalyear = '$fiscalyear'
 			";
-
+	echo "<br><br>" . $sql . "<br><br>";
 
 	foreach ($conn->query($sql) as $row) {
 		$items.= '<tr> <td>';
