@@ -4,6 +4,7 @@
 	include '../menu.php';
 ?>
 
+<br>
 
 <div class="container">
 	<div class="row">
@@ -23,10 +24,7 @@
 	</div>
 </div>
 
-<div>
-
-</div>
-
+<br>
 	<div class="container">
 		<div class = "row">
 			<div class="col-sm-3">

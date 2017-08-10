@@ -104,6 +104,28 @@ catch(PDOException $e)
 $conn = null;
 ?>
 
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <select id="committee" name="committee" class="form-control" onchange="selectcommittee()">
+              <?php include '../committees.php'; ?>
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectyear()">
+                <option value="2017-2018">Select Year</option>
+                <option value="2017-2018">2017 - 2018</option>
+                <option value="2016-2017">2016 - 2017</option>
+                <option value="2015-2016">2015 - 2016</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<br>
+
 <div class="container">
 	<table id="treasurertable" class="display">
 		<thead>
