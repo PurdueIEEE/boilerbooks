@@ -91,6 +91,33 @@
 
 
 
+			$randNum = base64_encode(random_bytes(64));
+
+			// string replace because I'm sturgling with URL encoding 
+	  		$randNum = str_replace('+','_',$randNum);
+	  		$randNum = str_replace('/','-',$randNum);
+	  		$randNum = str_replace('=','-',$randNum);
+
+			$randNumEn = password_hash($randNum,PASSWORD_DEFAULT);
+
+			try {
+				$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+				// set the PDO error mode to exception
+				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$sql = "UPDATE Users SET apikeygentime = NOW(), apikey='$randNumEn', modifydate=NOW() WHERE username = '$usr'";
+				$conn->exec($sql);
+				$_SESSION['apikey'] = $randNum;
+			}
+		catch(PDOException $e)
+		{
+			echo $sql . "<br>" . $e->getMessage();
+		}
+
+		$conn = null;
+
+
+
+
 		$_SESSION['fiscalyear'] = '2017-2018'; // initilize for viewing committee expenses
 
 		$returnto = test_input2($_GET['returnto']);
