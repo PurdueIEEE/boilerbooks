@@ -13,7 +13,7 @@ $usr = $_SESSION['user'];
 
 $committee = test_input($_GET["committee"]);
 if ($committee == '') {
-   $committee = 'ROV';
+   $committee = '%';
 }
 
 
@@ -49,7 +49,7 @@ AND '$usr' in (
     SELECT U3.username FROM Users U3
     INNER JOIN approval A ON U3.username = A.username
     WHERE (A.role = 'treasurer' OR A.role = 'president'))
-AND p.committee = '$committee' AND p.fiscalyear = '$fiscalyear'
+AND p.committee LIKE '$committee' AND p.fiscalyear LIKE '$fiscalyear'
 
 ORDER BY p.purchasedate DESC";
     //$stmt->execute();
@@ -172,7 +172,7 @@ $conn = null;
 
     function selectcommitteeyear() {
 
-            var com = document.getElementById('committee').value;
+        var com = document.getElementById('committee').value;
         if (com == '') {
             com = "<?php echo $committee ?>";
         }
