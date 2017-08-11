@@ -16,7 +16,7 @@
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		
 		$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.modifydate as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-		p.cost, p.comments, p.fundsource, p.fiscalyear
+		p.cost, p.comments, p.fundsource, p.fiscalyear, p.username
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
 		 FROM Purchases p 
@@ -40,9 +40,10 @@
 			$fundsource = $row['fundsource'];
 			$fiscalyear = $row['fiscalyear'];
 			$committee = $row['committee'];
+			$usrn = $row['username'];
 		}
 
-		$resultArray = array("date" => $date, "mdate" => $mdate, "receipt" => $receipt, "item" => $item, "purchasereason" => $purchasereason, "vendor" => $vendor, "purchasedby" => $purchasedby, "approvedby" => $approvedby, "category" => $category, "status" => $status, "cost" => $cost, "comments" => $comments, "fundsource" => $fundsource, "fiscalyear" => $fiscalyear, "committee" => $committee);
+		$resultArray = array("date" => $date, "mdate" => $mdate, "receipt" => $receipt, "item" => $item, "purchasereason" => $purchasereason, "vendor" => $vendor, "purchasedby" => $purchasedby, "approvedby" => $approvedby, "category" => $category, "status" => $status, "cost" => $cost, "comments" => $comments, "fundsource" => $fundsource, "fiscalyear" => $fiscalyear, "committee" => $committee, "username" => $usrn);
 		$resultArray = json_encode($resultArray);
 		echo $resultArray;
 		$decoded = json_decode($resultArray);

@@ -28,7 +28,7 @@
 		<div class="col-sm-3">
 		</div>
 		<div class="col-sm-4" class="text-center">
-			<p><strong>Purchased by:</strong> <?php echo $values['purchasedby']?></p>
+			<p><strong>Purchased by:</strong> <a href=<?php echo "treasurer/user.php?usrlookup=" . $values['username']?>><?php echo $values['purchasedby']?></a></p>
 		</div>
 		<div class="col-sm-5" class="text-center">
 			<p><strong>Purchase date:</strong> <?php echo $values['date']?></p>
