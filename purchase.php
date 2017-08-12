@@ -19,9 +19,11 @@
 			<h3 class="text-right">Purchase #<?php echo $purchaseid?>:</h3>
 		</div>
 		<div class="col-sm-6">
-			<h3 class="text-left" contenteditable="true"><?php echo $values['item']?></h3>
+			<h3 class="text-left"><?php echo $values['item']?></h3>
 		</div>
 		<p class="text-center"><em>Last updated <?php echo $values['mdate']?> EST</em></p>
+      	<p class="text-center"><a class="btn btn-info" href = <?php echo "treasurer/updatepurchase.php?purchaseid=" . $purchaseid?> roll = "button">Edit Purchase</a></p>
+
 	</div>
 
 	<div class="row">

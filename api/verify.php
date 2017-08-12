@@ -1,20 +1,43 @@
 <?php
-	/* This file is included before beginning other API calls in order to ensure the user is properly logged in. Future functionality will add specific permission checking as well (hopefully)  */
+	/* This file is included before beginning other API calls in order to ensure the user is properly logged in.
+	* Variables are passed using GET. There is no response, as the user is redirected to the login page if they 
+	* do not have the appropriate permissions
+	* Required:
+	*	apikey: The api key that is generated upon login for each user
+	*	user: The currently logged in user. This will be verified against the API key
+	* Optional:
+	*	role1: If you would like to verify the user has a certain role you may pass this variable (eg. 
+	* treasurer)
+	*	role2: If you would like to verify the user has another certain role you may pass this variable (eg. 
+	* 	president). Options will be successfully returned if either role1 OR role2 are fulfilled 
+	*/
 	
 
 	include '../../dbinfo.php';
 	
 	// define variables and set to empty values
-	$apikey = $user = "";
+	$apikey = $user = $role1 = $role2 = "";
 
 	$apikey = test_input($_GET["apikey"]); 
 	$user = test_input($_GET["user"]); 
+	$role1 = test_input($_GET["role1"]); 
+	$role2 = test_input($_GET["role2"]); 
+
 
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		// set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT apikey, apikeygentime FROM Users WHERE Users.username = '$user'";
+		$sql = "SELECT apikey, apikeygentime 
+			FROM Users U 
+			WHERE U.username = '$user'
+			AND U.username in (
+				SELECT A.username 
+				    FROM approval A 
+				    WHERE A.username = U.username
+				    AND (A.role = '$role1' OR A.role = '$role2' OR ('$role1'='' AND '$role2'=''))
+			)
+			";
 		$stmt = $conn->prepare($sql);
 		$stmt->execute();
 

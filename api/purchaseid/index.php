@@ -68,27 +68,6 @@
 
 	$conn = null;
 
-	// Prepare receipt iframe
-	/*if ($_SESSION['receipt'] != '') {
-		$pdfreceipt = "https://" . $_SERVER[HTTP_HOST] . $_SESSION['receipt'];
-		$_SESSION['iframestuff'] = '<div class="row">
-		<div class="col-sm-4"></div>
-		<div class="col-sm-6">
-			<iframe src= ' . $pdfreceipt . ' width="500" height="700">
-				<a href=' . $pdfreceipt . '>Download receipt</a>
-			</iframe>
-		</div>
-		<div class="col-sm-2"></div>
-	</div>';
-
-	}
-	else {
-		$_SESSION['iframestuff'] = '';
-	}*/
-
-
-
-
 
 	$headerStuff = "Location: /purchase.php?purchaseid=" . $purchaseid;
 	//header($headerStuff); 
