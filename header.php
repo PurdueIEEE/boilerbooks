@@ -66,7 +66,7 @@
 
 			<div class="collapse navbar-collapse" id="myNavbar">
 				<ul class="nav navbar-nav">
-					<li><a href=""><?php echo $_SESSION['user'] ?></a></li> 
+					<li><a href="/user/updateuser.php"><?php echo $_SESSION['user'] ?></a></li> 
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">

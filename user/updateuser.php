@@ -40,17 +40,16 @@ $conn = null;
 ?>
 
 <body>
-
-   <div class="container">
+<br>
+<div class="container">
 	<div class = "row">
-		<div class="col-md-1">
-			<a class="btn btn-info" href = "/user/changepassword.php" roll = "button">Change Password</a>
+		<div class="col-md-5">
 		</div>
-		<div class="col-md-10">
-			<p>.</p>
+		<div class="col-md-2">
+      <a class="btn btn-info" href = "/user/changepassword.php" roll = "button">Change Password</a>
+			<p> </p>
 		</div>
-		<div class="col-md-1">
-			<a href = "/user/signout.php" class="btn btn-info" roll="button">Sign Out</a>
+		<div class="col-md-5">
 		</div>
 	</div>
 </div>
@@ -63,8 +62,6 @@ $conn = null;
 	<form class="form-horizontal" action="updateuserprocessing.php" method="post" enctype="multipart/form-data">
 <fieldset>
 
-<!-- Form Name -->
-<legend></legend>
 
 <!-- Select Basic -->
 
