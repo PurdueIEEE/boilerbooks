@@ -57,7 +57,6 @@
 
 
 	/*** Get info of person to approve purchase ***/
-	include '../dbinfo.php';
 	$names = '';
 	$emails = '';
 

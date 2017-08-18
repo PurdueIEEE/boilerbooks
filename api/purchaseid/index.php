@@ -2,30 +2,13 @@
 	/* This API provides info on a purchase for display. It also formats an ifram of the receipt
 	/* Consider adding additional security to prevent certain people from seeing all receipts */
 
-	$title = 'Boiler Books';
-	$mypurchasesactive = "active";
-	include '../../menu.php';
+	include '../verify.php';
 
-	include '../../dbinfo.php';
+	$decode = 0;
+
 	$usr = $_SESSION['user'];
 
-	// Clear old variables
-	$_SESSION['date'] = '';
-	$_SESSION['mdate'] = '';
-	$_SESSION['receipt'] = '';
-	$_SESSION['item'] = '';
-	$_SESSION['purchasereason'] = '';
-	$_SESSION['vendor'] = '';
-	$_SESSION['purchaseby'] = '';
-	$_SESSION['approvedby'] = '';
-	$_SESSION['category'] = '';
-	$_SESSION['status'] = '';
-	$_SESSION['cost'] = '';
-	$_SESSION['comments'] = '';
-
 	$purchaseid = test_input($_GET["purchaseid"]);
-	$_SESSION['purchaseid'] = $purchaseid;
-	echo "For purchaseid " . $purchaseid .  ":<br><br>";
 
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -33,7 +16,7 @@
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		
 		$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.modifydate as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-		p.cost, p.comments
+		p.cost, p.comments, p.fundsource, p.fiscalyear, p.username
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
 		 FROM Purchases p 
@@ -42,19 +25,40 @@
 
 
 		foreach ($conn->query($sql) as $row) {
-			$_SESSION['date'] = $row['date'];
-			$_SESSION['mdate'] = $row['mdate'];
-			$_SESSION['receipt'] = $row['receipt'];
-			$_SESSION['item'] = $row['item'];
-			$_SESSION['purchasereason'] = $row['purchasereason'];
-			$_SESSION['vendor'] = $row['vendor'];
-			$_SESSION['purchaseby'] = $row['purchasedby'];
-			$_SESSION['approvedby'] = $row['approvedby'];
-			$_SESSION['category'] = $row['category'];
-			$_SESSION['status'] = $row['status'];
-			$_SESSION['cost'] = $row['cost'];
-			$_SESSION['comments'] = $row['comments'];
+			$date = $row['date'];
+			$mdate = $row['mdate'];
+			$receipt = $row['receipt'];
+			$item = $row['item'];
+			$purchasereason = $row['purchasereason'];
+			$vendor = $row['vendor'];
+			$purchasedby = $row['purchasedby'];
+			$approvedby = $row['approvedby'];
+			$category = $row['category'];
+			$status = $row['status'];
+			$cost = $row['cost'];
+			$comments = $row['comments'];
+			$fundsource = $row['fundsource'];
+			$fiscalyear = $row['fiscalyear'];
+			$committee = $row['committee'];
+			$usrn = $row['username'];
 		}
+
+		$resultArray = array("date" => $date, "mdate" => $mdate, "receipt" => $receipt, "item" => $item, "purchasereason" => $purchasereason, "vendor" => $vendor, "purchasedby" => $purchasedby, "approvedby" => $approvedby, "category" => $category, "status" => $status, "cost" => $cost, "comments" => $comments, "fundsource" => $fundsource, "fiscalyear" => $fiscalyear, "committee" => $committee, "username" => $usrn);
+		$resultArray = json_encode($resultArray);
+		echo $resultArray;
+		$decoded = json_decode($resultArray);
+
+		if ($decode == 1) {
+			echo "<br><br>";
+		    foreach($decoded as $key => $val)
+		    {
+		        //echo $row;
+		        echo $key . ': ' . $val;
+		        echo '<br>';
+		    }
+		}
+		
+
 
 	}
 	catch(PDOException $e)
@@ -64,30 +68,12 @@
 
 	$conn = null;
 
-	// Prepare receipt iframe
-	if ($_SESSION['receipt'] != '') {
-		$pdfreceipt = "https://money.pieee.org" . $_SESSION['receipt'];
-		$_SESSION['iframestuff'] = '<div class="row">
-		<div class="col-sm-4"></div>
-		<div class="col-sm-6">
-			<iframe src= ' . $pdfreceipt . ' width="500" height="700">
-				<a href=' . $pdfreceipt . '>Download receipt</a>
-			</iframe>
-		</div>
-		<div class="col-sm-2"></div>
-	</div>';
-
-	}
-	else {
-		$_SESSION['iframestuff'] = '';
-	}
-
-
-
-
 
 	$headerStuff = "Location: /purchase.php?purchaseid=" . $purchaseid;
-	header($headerStuff); 
+	//header($headerStuff); 
+	
+
+
 ?>
 
 

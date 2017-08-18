@@ -1,0 +1,21 @@
+/*!
+ * Some custom CSS by Kyle Rakos for the website
+ */
+
+p {
+	margin: 0 0 10px;
+	font-weight: 500;
+}
+legend {
+	display: block;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding-top: 48px;
+	border: none;
+}
+body {
+	padding-top: 0px;
+}
+.disabledTab{
+	pointer-events: none;
+}

@@ -59,6 +59,21 @@ $conn = null;
 
 </div>
 
+<div class="container">
+	<h4>
+	<?php 
+		if ($_SESSION['balance'] < $_SESSION['cost']) {
+			echo "<font color='red'>Warning! You only have $" . $_SESSION['balance'] . " left in your account. </font>";
+			echo "<font color='red'>Please talk to the IEEE treasurer before approving this purchase!</font>";
+		}
+		else if ($_SESSION['balance'] < 200) {
+			echo "<font color='orange'>Warning! You only have $" . $_SESSION['balance'] . " left in your account!</font>";
+		}
+
+
+	?>
+	</h4>
+</div>
 
 <!-- Page Content -->
 
@@ -67,7 +82,7 @@ $conn = null;
 
 		<!-- Form Name -->
 		<legend></legend>
-
+		
 		<div class="row">
 			<div class="col-sm-4"></div>
 			<div class="col-sm-2">
@@ -149,6 +164,7 @@ $conn = null;
 				<select id="fundsource" name="fundsource" class="form-control">
 					<option value="BOSO">BOSO</option>
 					<option value="Cash">Cash</option>
+					<option value="SOGA">SOGA</option>
 				</select>
 			</div>
 		</div>
@@ -169,7 +185,7 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="submit"></label>
 			<div class="col-md-4">
-				<button id="submit" name="submit" class="btn btn-primary">Approve/Deny</button>
+				<button id="submit" name="submit" class="btn btn-primary">Submit</button>
 			</div>
 		</div>
 

@@ -1,7 +1,7 @@
 <?php
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
-	include '../menu.php';
+
 
 ?>
 
@@ -36,8 +36,8 @@ try {
 			WHERE p.committee = '$committee'
 			AND a.username = '$usr'
 			AND p.fiscalyear = '$fiscalyear'
-			ORDER BY p.purchasedate";
-
+			";
+	echo "<br><br>" . $sql . "<br><br>";
 
 	foreach ($conn->query($sql) as $row) {
 		$items.= '<tr> <td>';
@@ -88,7 +88,6 @@ catch(PDOException $e)
 	}
 
 $conn = null;
-
 
 
 
@@ -154,8 +153,10 @@ try {
 
         ,B.amount AS 'Budget' FROM Budget B
 				LEFT JOIN Purchases P ON B.category = P.category
+				INNER JOIN approval a ON a.committee = P.committee AND a.committee = B.committee
 				WHERE B.committee = '$committee' 				
 				AND B.year = '$fiscalyear'
+				AND a.username = '$usr'
 				GROUP BY B.category
 				";
 

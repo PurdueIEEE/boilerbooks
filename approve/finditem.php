@@ -11,7 +11,7 @@
 <?php
 include '../dbinfo.php';
 $stuff = '';
-$currentitem = $_GET["currentitem"];
+$currentitem = test_input($_GET["currentitem"]);
 $_SESSION['currentitem'] = $currentitem;
 
 
@@ -79,9 +79,40 @@ elseif ($_SESSION['committee'] == 'ROV') {
 elseif ($_SESSION['committee'] == 'Rocket') {
 	$_SESSION['rocketactive'] = 'selected';
 }
-elseif ($_SESSION['generalieee'] == 'General IEEE') {
+elseif ($_SESSION['committee'] == 'General IEEE') {
 	$_SESSION['generalieee'] = 'selected';
 }
+
+
+// Figure out how much money committee has
+$committee = $_SESSION['committee'];
+
+try {
+	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+	// set the PDO error mode to exception
+	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$sql = "SELECT 
+	(SELECT SUM(amount) AS income FROM Income
+	WHERE type in ('BOSO', 'Cash') AND committee = '$committee')
+    -
+    (SELECT SUM(Purchases.cost) AS 'Spent' FROM Purchases
+	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed','Approved',NULL)) AS Balance";
+	//$stmt->execute();
+
+
+	foreach ($conn->query($sql) as $row) {
+		$_SESSION['balance'] = $row['Balance'];
+	}
+
+	}
+catch(PDOException $e)
+	{
+	echo $sql . "<br>" . $e->getMessage();
+	}
+
+$conn = null;
+
+
 header("Location: index.php");
 
 

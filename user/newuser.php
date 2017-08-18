@@ -11,10 +11,7 @@ include '../header.php';
 		<ul class="nav nav-tabs">
 			<li class="disabled disabledTab"><a href="#">Request Purchase</a></li>
 			<li class="disabled disabledTab"><a href="#">Complete Purchase</a></li>
-			<li class="disabled disabledTab"><a href="#">Approve Purchase</a></li>
 			<li class="disabled disabledTab"><a href="#">View My Purchases</a></li>
-			<li class="disabled disabledTab"><a href="#">View Committee Expenses</a></li>
-			<li class="disabled disabledTab"><a href="#">Receive Donation</a></li>
 		</ul>
 	</div>
 
@@ -102,7 +99,7 @@ include '../header.php';
 
 
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="cost"><a href="http://www.purdue.edu/business/boso/pdf/forms/paymentRequestReimbursementCertification.pdf">Reimbursement Cert (upload PDF only)</a></label>
+				<label class="col-md-4 control-label" for="cost"><a href="http://www.purdue.edu/business/boso/pdf/forms/paymentRequestReimbursementCertification.pdf">Reimbursement Cert (click here to download it, then upload as a PDF)</a></label>
 				<div class="col-md-4">
 					<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" accept="application/pdf">
 
