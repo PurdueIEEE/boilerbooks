@@ -150,10 +150,9 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
 	$sql = "SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = '$committee') AND (P.fiscalyear = '$fiscalyear')) THEN P.cost ELSE 0 END) AS 'Spent'
-
         ,B.amount AS 'Budget' FROM Budget B
 				LEFT JOIN Purchases P ON B.category = P.category
-				INNER JOIN approval a ON a.committee = P.committee AND a.committee = B.committee
+				INNER JOIN approval a ON a.committee = P.committee OR a.committee = B.committee
 				WHERE B.committee = '$committee' 				
 				AND B.year = '$fiscalyear'
 				AND a.username = '$usr'
