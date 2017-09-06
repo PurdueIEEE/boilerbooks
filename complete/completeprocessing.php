@@ -26,7 +26,7 @@ else {
 	$purchasedate = date('Y-m-d H:i:s', strtotime($purchasedate));  
 	echo 'Changed date' . $purchasedate . '<br>';
 	$purchasedatetemp = $purchasedate;
-	$receipt = "money.krakos.net/";
+	$receipt = "money.pieee.org/";
 	$target_dir = "../receipts/";
 	$target_dir_save = "/receipts/";
 	$uploadOk = 1;

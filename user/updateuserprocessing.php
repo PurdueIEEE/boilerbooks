@@ -1,10 +1,5 @@
 <?php
-	$title = 'Boiler Books';
-	include '../header.php';
-	include '../menu.php';
-?>
-
-<?php
+include '../menu.php';
 include '../dbinfo.php';
 
 // define variables and set to empty values
@@ -70,17 +65,17 @@ else {
 		// set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$sql = "SELECT cert FROM Users U
-			WHERE U.username = '$curusr'";
+		WHERE U.username = '$curusr'";
 
 		foreach ($conn->query($sql) as $row) {
 			$cert = $row['cert'];
 
 		}
-		}
+	}
 	catch(PDOException $e)
-		{
+	{
 		echo $sql . "<br>" . $e->getMessage();
-		}
+	}
 
 	$conn = null;
 
@@ -93,25 +88,18 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	$sql = "UPDATE Users SET modifydate = NOW(), first='$first', last='$last', email = '$email', address = '$address',
-			city='$city', state = '$state', zip='$zip', cert='$cert', username='$usr' WHERE username='$curusr'";
+	city='$city', state = '$state', zip='$zip', cert='$cert', username='$usr' WHERE username='$curusr'";
 
 	// Prepare statement
-    $stmt = $conn->prepare($sql);
+	$stmt = $conn->prepare($sql);
 
     // execute the query
-    $stmt->execute();
+	$stmt->execute();
 	$_SESSION['user'] = $usr;
 }
 catch(PDOException $e) {
-    echo $sql . "<br>" . $e->getMessage();
+	echo $sql . "<br>" . $e->getMessage();
 }
-
-
-
-
-
-
-
 
 
 
@@ -123,6 +111,9 @@ catch(PDOException $e) {
 
 if ($uploaderr == '' and $sqlerr == '') {
 
+	echo "<div class='container'>";
+	echo "<h3>Your updated information:</h3>";
+	echo "<br> <p>";
 	echo $first ."<br>";
 	echo $last ."<br>";
 	echo $email ."<br>";
@@ -132,8 +123,8 @@ if ($uploaderr == '' and $sqlerr == '') {
 	echo $zip ."<br>";
 	echo $cert ."<br>";
 	echo "usr: " . $usr ."<br>";
-	echo "curusr: " . $curusr ."<br>";
-
+	echo "curusr: " . $curusr ."</p>";
+	echo "</div>";
 
 	//header("Location: ../loggedin.php");
 }

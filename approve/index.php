@@ -66,7 +66,7 @@ $conn = null;
 			echo "<font color='red'>Warning! You only have $" . $_SESSION['balance'] . " left in your account. </font>";
 			echo "<font color='red'>Please talk to the IEEE treasurer before approving this purchase!</font>";
 		}
-		else if ($_SESSION['balance'] < 200) {
+		else if (($_SESSION['balance'] < 200) && ($_SESSION['balance'] != 0)) { // also != 0 to prevent showing before variable is set. Slight issue if actually 0 balance but presumably the cost would be greater than 0, thus still showing a warning
 			echo "<font color='orange'>Warning! You only have $" . $_SESSION['balance'] . " left in your account!</font>";
 		}
 
