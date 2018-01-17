@@ -93,7 +93,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT 
 	(SELECT SUM(amount) AS income FROM Income
-	WHERE type in ('BOSO', 'Cash') AND committee = '$committee')
+	WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = '$committee')
     -
     (SELECT SUM(Purchases.cost) AS 'Spent' FROM Purchases
 	WHERE Purchases.committee = '$committee' AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed','Approved',NULL)) AS Balance";
