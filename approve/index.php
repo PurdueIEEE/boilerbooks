@@ -17,7 +17,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
-	$sql = "SELECT p.purchaseID, p.item FROM Purchases p
+	$sql = "SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
 	INNER JOIN approval a on p.committee = a.committee
 	WHERE p.status = 'Requested'
 	AND a.username = '$usr'
