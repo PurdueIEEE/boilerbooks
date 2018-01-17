@@ -256,7 +256,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
 	$sql = "SELECT SUM(amount) AS income FROM Income
-	WHERE type in ('BOSO', 'Cash') AND committee = '$committee'
+	WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = '$committee'
 	AND fiscalyear = '$fiscalyear'";
 
 	foreach ($conn->query($sql) as $row) {
@@ -321,7 +321,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
 	$sql = "SELECT SUM(amount) AS income FROM Income
-	WHERE type in ('BOSO', 'Cash') AND committee = '$committee'
+	WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = '$committee'
 	";
 
 	foreach ($conn->query($sql) as $row) {
