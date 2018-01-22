@@ -39,6 +39,9 @@ include '../dbinfo.php';
     else if ($committee == "Social") {
       $social = "selected";
     }
+    else if ($committee == "SOGA") {
+      $soga = "selected";
+    }
 }
 
 

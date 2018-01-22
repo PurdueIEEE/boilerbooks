@@ -9,4 +9,4 @@
 <option <?php echo $racing ?> value="Racing">Racing</option>
 <option <?php echo $rov ?> value="ROV">ROV</option>
 <option <?php echo $social ?> value="Social">Social</option>
-<option <?php echo $social ?> value="SOGA">SOGA</option>
+<option <?php echo $soga ?> value="SOGA">SOGA</option>
