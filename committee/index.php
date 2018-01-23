@@ -28,7 +28,7 @@
 	<div class="container">
 		<div class = "row">
 			<div class="col-sm-3">
-				<h4 class="text-left">Balance: 
+				<h4 class="text-left" title="Balance = Income - Total (for all years)">Balance: 
 				<?php 
 					if ($_SESSION['left'] < 0) {
 						echo "<span class='blink_text'>";
@@ -55,13 +55,13 @@
 				</h4>
 			</div>
 			<div class="col-sm-3">
-				<h4 class="text-center">Income: $<?php echo number_format($_SESSION['incometotal'],2);?></h4>
+				<h4 class="text-center" title='Income = Sum of  BOSO, SOGA, & Cash income (for current fiscal year)'>Income: $<?php echo number_format($_SESSION['incometotal'],2);?></h4>
 			</div>
 			<div class="col-sm-3">
-				<h4 class="text-center">Spent: $<?php echo number_format($_SESSION['spent'],2);?></h4>
+				<h4 class="text-center" title='Spent = Sum of reimbursed, processing, purchased, & approved purchases (for current fiscal year)'>Spent: $<?php echo number_format($_SESSION['spent'],2);?></h4>
 			</div>
 			<div class="col-sm-3">
-				<h4 class="text-right">Budget: $<?php echo number_format($_SESSION['totalbudget'],2);?></h4>
+				<h4 class="text-right" title='Budget = Sum of budget items (for current fiscal year)'>Budget: $<?php echo number_format($_SESSION['totalbudget'],2);?></h4>
 			</div>
 		</div>
 	</div>
