@@ -88,7 +88,7 @@
 	<div class='container'>
 		<label class="col-md-4">ZIP</label>
 		<div class="col-md-4">
-			<?php echo $zip ?>
+			<?php sprintf("%05d", $zip) ?>
 		</div>
 	</div>
 
