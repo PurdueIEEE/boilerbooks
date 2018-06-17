@@ -21,10 +21,10 @@ else {
 	$comments = test_input($_POST["comments"]);
 	$cost = test_input($_POST["cost"]);
 	$purchasedate = test_input($_POST["purchasedate"]);
-	echo 'Original date' . $purchasedate . '<br>';
+	echo 'Original date ' . $purchasedate . '<br>';
 	$purchasedate = str_replace('-','/',$purchasedate);
 	$purchasedate = date('Y-m-d H:i:s', strtotime($purchasedate));  
-	echo 'Changed date' . $purchasedate . '<br>';
+	echo 'Changed date ' . $purchasedate . '<br>';
 	$purchasedatetemp = $purchasedate;
 	$receipt = "money.pieee.org/";
 	$target_dir = "../receipts/";
