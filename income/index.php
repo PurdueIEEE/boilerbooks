@@ -25,7 +25,14 @@
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT *
+		$sql = "SELECT DATE_FORMAT(i.updated,'%Y-%m-%d') as date,
+		i.source,
+		i.type,
+		i.amount,
+		i.item,
+		i.incomeid,
+		i.status
+
 		FROM Income i
 		ORDER BY i.updated DESC";
 
@@ -33,6 +40,8 @@
 		foreach ($conn->query($sql) as $row) {
 			$items .= '<tr> <td>';
 			$items .= $row['source'];
+			$items .= '</td> <td>';
+			$items .= $row['date'];
 			$items .= '</td> <td>';
 			$items .= $row['type'];
 			$items .= '</td> <td>';
@@ -42,19 +51,19 @@
 			$items .= '</td> <td>';
 			$items .= $row['status'];
 			$items .= '</td> <td>';
-			$items .= "<a href='update.php?processing=-1&reimbursed=";
+			$items .= "<a href='update.php?incomeid=";
 			$items .= $row['incomeid'];
-			$items .= "'>";
+			$items .= "&status=";
+			
 			if(strcmp($row['status'],'Expected') == 0) {
+				$items .= "Received'>";
 				$items .= 'Mark Received';
 			} else {
+				$items .= "Expected'>";
 				$items .= 'Mark Expected';
 			}
 			$items .= '</a></td>';
-
-			$items .= "</fieldset>
-		</form>";
-		$items .= '</td></tr>';
+			$items .= '</tr>';
 
 		}
 
@@ -80,10 +89,11 @@
 <br>
 
 <div class="container">
-	<table id="treasurertable" class="display">
+	<table id="incometable" class="display">
 		<thead>
 			<tr>
 				<th>Source</th>
+				<th>Date Entered</th>
 				<th>Type</th>
 				<th>Amount</th>
 				<th>Item</th>
@@ -96,34 +106,15 @@
 		</tbody>
 	</table>
 	<script>
-		$(document).ready(function() {
-			$('#treasurertable').DataTable( {
+			$(document).ready(function() {
+			$('#incometable').DataTable({
 				"order": [[ 1, "desc" ]]
-			} );
+			});
 			stateSave: true
 
 		} );
 
-		function selectcommitteeyear() {
-
-			var com = document.getElementById('committee').value;
-			if (com == '') {
-				com = "<?php echo $committee ?>";
-			}
-			var title = "index.php?committee=";
-			var partial  = title.concat(com);
-			var com2 = document.getElementById('fiscalyear').value;
-
-			if (com2 == '') {
-				com2 = "<?php echo $fiscalyear ?>";
-			}
-			var fiscalyear = "&fiscalyear=";
-			var tempFinal = fiscalyear.concat(com2);
-			fullFinal = partial.concat(tempFinal);
-
-			window.location = fullFinal;
-		}
-
+	
 	</script>
 </div>
 

@@ -49,40 +49,22 @@ if ($validuser >= 1) {
 	// define variables and set to empty values
 	$item = $reason = $vendor = $committee = $cost = $comments = $category = "";
 
-	$processing = test_input($_GET["processing"]);
-	$reimbursed = test_input($_GET["reimbursed"]);
+	$incomeid = test_input($_GET["incomeid"]);
+	$status = test_input($_GET["status"]);
+
 	$usr = $_SESSION['user'];
 	echo $processing;
 	echo "<br>";
-	echo $reimbursed;
-	echo "<br>";
 
 
-	if ($processing != '-1') {
-		$stat = 'Processing Reimbursement';
-		$purchaseid = $processing;
-	}
-	else if ($reimbursed != '-1') {
-		$stat = 'Reimbursed';
-		$purchaseid = $reimbursed;
-
-	}
-	else {
-		$stat = '';
-		echo 'None';
-		header('Location: /income/index.php');
-		return 1;
-	}
 	echo $stat;
-
-
 
 	try {
 		$cost = test_input(str_replace('$','',$cost));
 	    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	    // set the PDO error mode to exception
 	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	    $sql = "UPDATE Income SET modifydate = NOW(), status='$stat' WHERE Purchases.purchaseID = '$purchaseid'";
+	    $sql = "UPDATE Income SET status='$status' WHERE Income.incomeid = '$incomeid'";
 
 	    //$sql = "INSERT INTO Purchases (item)
 		//VALUES ('$item')";
@@ -97,37 +79,6 @@ if ($validuser >= 1) {
 	    }
 
 	$conn = null;
-
-
-
-	try {
-		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-		// set the PDO error mode to exception
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT U.email, item, committee, status FROM Purchases P
-				INNER JOIN Users U ON U.username = P.username
-				WHERE P.purchaseID = '$purchaseid'";
-		//$stmt->execute();
-
-
-		foreach ($conn->query($sql) as $row) {
-
-
-			$email = $row['email'];
-			$item = $row['item'];
-			$committee =  $row['committee'];
-			$status =  $row['status'];
-		}
-
-		}
-	catch(PDOException $e)
-		{
-		echo $sql . "<br>" . $e->getMessage();
-		}
-
-	$conn = null;
-
-
 
 
 
@@ -153,6 +104,6 @@ if ($validuser >= 1) {
 }
 
 
-header('Location: /treasurer/index.php');
+header('Location: /income/index.php');
 
 ?>
