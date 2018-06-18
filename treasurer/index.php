@@ -25,7 +25,7 @@
 	try {
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date
+		$sql = "SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date
 		, p.item
 		, p.purchaseID
 		, p.purchasereason
