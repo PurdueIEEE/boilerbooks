@@ -28,6 +28,7 @@
 		$sql = "SELECT DATE_FORMAT(i.updated,'%Y-%m-%d') as date,
 		i.source,
 		i.type,
+		i.committee,
 		i.amount,
 		i.item,
 		i.incomeid,
@@ -44,6 +45,8 @@
 			$items .= $row['date'];
 			$items .= '</td> <td>';
 			$items .= $row['type'];
+			$items .= '</td> <td>';
+			$items .= $row['committee'];
 			$items .= '</td> <td>';
 			$items .= $row['amount'];
 			$items .= '</td> <td>';
@@ -95,6 +98,7 @@
 				<th>Source</th>
 				<th>Date Entered</th>
 				<th>Type</th>
+				<th>Committee</th>
 				<th>Amount</th>
 				<th>Item</th>
 				<th>Status</th>
