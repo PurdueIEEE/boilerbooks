@@ -31,8 +31,26 @@
 
 
 		foreach ($conn->query($sql) as $row) {
+			$items .= '<tr> <td>';
 			$items .= $row['source'];
-		
+			$items .= '</td> <td>';
+			$items .= $row['type'];
+			$items .= '</td> <td>';
+			$items .= $row['amount'];
+			$items .= '</td> <td>';
+			$items .= $row['item'];
+			$items .= '</td> <td>';
+			$items .= $row['status'];
+			$items .= '</td> <td>';
+			$items .= "<a href='update.php?processing=-1&reimbursed=";
+			$items .= $row['incomeid'];
+			$items .= "'>";
+			if(strcmp($row['status'],'Expected') == 0) {
+				$items .= 'Mark Received';
+			} else {
+				$items .= 'Mark Expected';
+			}
+			$items .= '</a></td>';
 
 			$items .= "</fieldset>
 		</form>";
@@ -66,7 +84,11 @@
 		<thead>
 			<tr>
 				<th>Source</th>
-
+				<th>Type</th>
+				<th>Amount</th>
+				<th>Item</th>
+				<th>Status</th>
+				<th>Change Status</th>
 			</tr>
 		</thead>
 		<tbody>

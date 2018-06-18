@@ -54,7 +54,7 @@
 		?>
 
 		<?php 
-		if ($_SESSION['viewIncome'] >= 1) {
+		if ($_SESSION['viewReceiveDonation'] >= 1) {
 			echo '<li class = ' . $incomeeactive . '><a href="/income/">Income</a></li>';
 		}
 		?>
