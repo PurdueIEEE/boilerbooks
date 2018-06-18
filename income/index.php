@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$treasuereactive = "active";
+	$incomeeactive = "active";
 	include '../menu.php';
 	include '../dbinfo.php';
 
