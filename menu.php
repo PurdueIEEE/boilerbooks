@@ -52,6 +52,12 @@
 			echo '<li class = ' . $treasuereactive . '><a href="/treasurer/">Treasurer</a></li>';
 		}
 		?>
+
+		<?php 
+		if ($_SESSION['viewIncome'] >= 1) {
+			echo '<li class = ' . $incomeeactive . '><a href="/income/">Income</a></li>';
+		}
+		?>
 		
 	</ul>
 </div>
