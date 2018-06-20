@@ -36,25 +36,20 @@
 		<li class = <?php echo $mypurchasesactive?>><a href="/mypurchases/">View Purchases</a></li>
 		
 		<?php 
+		
 		if ($_SESSION['viewCommitteeExpenses'] >= 1) {
 			echo '<li class = ' . $committeeactive . '><a href="/committee/">Committee Expenses</a></li>';
 		}
-		?>
 		
-		<?php 
 		if ($_SESSION['viewReceiveDonation'] >= 1) {
 			echo '<li class = ' . $donationactive . '><a href="/donation/">Receive Donation</a></li>';
 		}
-		?>
 
-		<?php 
 		if ($_SESSION['viewTreasurer'] >= 1) {
 			echo '<li class = ' . $treasuereactive . '><a href="/treasurer/">Treasurer</a></li>';
 		}
-		?>
 
-		<?php 
-		if ($_SESSION['viewReceiveDonation'] >= 1) {
+		if ($_SESSION['viewIncome'] >= 1) {
 			echo '<li class = ' . $incomeeactive . '><a href="/income/">Income</a></li>';
 		}
 		?>

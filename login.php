@@ -44,6 +44,7 @@
 				}
 
 				$_SESSION['viewTreasurer'] = $item2;
+				$_SESSION['viewIncome'] = $item2;
 
 			}
 			catch(PDOException $e)

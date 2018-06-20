@@ -1,7 +1,7 @@
 <?php
 	$title = 'Boiler Books';
 	$completeactive = "active";
-	include '../menu.php';
+	
 ?>
 
 
