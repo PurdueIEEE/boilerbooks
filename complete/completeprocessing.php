@@ -18,7 +18,6 @@
             echo 'no purchase';
             header("Location: index.php");
         } else {
-            $sqler = $uploaderr = '';
             $comments = test_input($_POST["comments"]);
             $cost = test_input($_POST["cost"]);
             $purchasedate = test_input($_POST["purchasedate"]);
@@ -37,6 +36,7 @@
 
             $isUploadError = false;
             $uploadErrMessage = "";
+            $sqlErr = "";
 
             $okayFileTypes = ['pdf', 'jpeg', 'jpg'];
             $maxFileSize = 2 * 1024 * 1024; // MB * KB * B
