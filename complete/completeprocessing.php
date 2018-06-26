@@ -73,7 +73,6 @@
                     //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
                     $receipt = str_replace(' ', '%20', $target_file_save);
                 } else {
-
                     $uploadErrMessage = $uploadErrMessage . "Could not transfer file to destination on server<br>";
                     $isUploadError = true;
                     break;
@@ -101,23 +100,30 @@
                     break;
                 }
 
+                // TODO: What is this doing, also why is it here? 
                 $conn = null;
-                $to = "purdue.ieee.treasurer@gmail.com";
-                $subject = "New purchase by $committee";
-                $message = "<p>Please visit money.pieee.org at your earliest convenience to begin the reimbursement process for $item.</p>";
-                $header = "From:ieeeboilerbooks@gmail.com \r\n";
-                $header .= "MIME-Version: 1.0\r\n";
-                $header .= "Content-type: text/html\r\n";
 
                 if ($sendemail == 1) {
+                    $to = "purdue.ieee.treasurer@gmail.com";
+                    $subject = "New purchase by $committee";
+                    $message = "<p>Please visit money.pieee.org at your earliest convenience to begin the reimbursement process for $item.</p>";
+                    $header = "From:ieeeboilerbooks@gmail.com \r\n";
+                    $header .= "MIME-Version: 1.0\r\n";
+                    $header .= "Content-type: text/html\r\n";
+
                     $retval = mail($to, $subject, $message, $header);
+
                     if ($retval == true ) {
-                    //echo "Message sent successfully...";
+                        //echo "Message sent successfully...";
                     } else {
-                    //echo "Message could not be sent...";
+                        //echo "Message could not be sent...";
+
+                        // TODO: Should we break here to not clear the session variables at the bottom?? idk
+                        // break?
                     }
                 }
 
+                // TODO: What is this doing? Can we clear it all the time? Only if errors? Only if success?
                 $_SESSION['usernamec'] = '';
                 $_SESSION['itemc'] =  '';
                 $_SESSION['reasonc'] =  '';
@@ -144,20 +150,21 @@
                 echo "<h2> $uploadErrMessage </h2>";
 
                 echo "<h2> Debug Info </h2>";
-                echo "<h4>";
-                echo "Purchase Date Original: $purchasedateorig <br><br>";
-                echo "Changed Purchase Date: $purchasedate <br><br>";
-                echo "File Type: $FileType <br><br>";
-                echo "File Size: " . $_FILES["fileToUpload"]["size"] . "<br><br>";
-                echo "Receipt: $receipt <br><br>";
-                echo "Target File: $target_file <br><br>";
-                echo "Target File Save: $target_file_save <br><br>";
-                echo "Temp File Name: " . $_FILES["fileToUpload"]["tmp_name"] . "<br><br>";
 
-                if (!empty($sqlErr)) {
-                    echo "SQL Error: <br><br>";
-                    echo "$sqlErr <br>";
-                }
+                echo "<h4>";
+                    echo "Purchase Date Original: $purchasedateorig <br><br>";
+                    echo "Changed Purchase Date: $purchasedate <br><br>";
+                    echo "File Type: $FileType <br><br>";
+                    echo "File Size: " . $_FILES["fileToUpload"]["size"] . "<br><br>";
+                    echo "Receipt: $receipt <br><br>";
+                    echo "Target File: $target_file <br><br>";
+                    echo "Target File Save: $target_file_save <br><br>";
+                    echo "Temp File Name: " . $_FILES["fileToUpload"]["tmp_name"] . "<br><br>";
+
+                    if (!empty($sqlErr)) {
+                        echo "SQL Error: <br><br>";
+                        echo "$sqlErr <br>";
+                    }
                 echo "</h4>";
             }
         ?>
