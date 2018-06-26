@@ -1,7 +1,8 @@
 <?php
+	session_start();
+	header("Location: index.php");
 	$title = 'Boiler Books';
-	$completeactive = "active";
-	
+	$completeactive = "active";	
 ?>
 
 
@@ -74,10 +75,4 @@ elseif ($_SESSION['committee'] == 'ROV') {
 elseif ($_SESSION['committee'] == 'Rocket') {
 	$_SESSION['rocketactive'] = 'selected';
 }
-header("Location: index.php");
-
-
-
-
-
 ?>

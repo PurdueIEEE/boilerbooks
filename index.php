@@ -1,6 +1,5 @@
-<!-- The main login page -->
-
 <?php
+	session_start();
 	$title = 'Boiler Books';
 	include 'header.php';
 	include 'dbinfo.php';
