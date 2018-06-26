@@ -39,9 +39,9 @@ else {
 		$uploadOk = 0;
 	}
 	// Check file size
-	// file size must be less than 5MB
-	if ($_FILES["fileToUpload"]["size"] > 5000000) {
-		$uploaderr = $uploaderr . "Your reimbursement cert is larger than 5MB";
+	// file size must be less than 2MB
+	if ($_FILES["fileToUpload"]["size"] > 2048000 || $_FILES["fileToUpload"]["size"] == 0) {
+		$uploaderr = $uploaderr . "Your reimbursement cert is larger than 2MB";
 		$uploadOk = 0;
 	}
 	// Allow certain file formats
@@ -50,16 +50,14 @@ else {
 		//echo $FileType;
 		$uploadOk = 0;
 	}
-	// Check if $uploadOk is set to 0 by an error
-	if ($uploadOk == 0) {
-		;
-	// if everything is ok, try to upload file
-	} else {
+	
+	if ($uploadOk != 0)  {
 		if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 			//echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
 			$receipt = str_replace(' ', '%20', $target_file_save);
 		} else {
 			$uploaderr = $uploaderr . "There was an error uploading your file";
+			$uploadOk = 0;
 		}
 	}
 	if ($uploadOk != 0)
@@ -131,6 +129,7 @@ if ($uploaderr == '' && $sqler == '') {
 				echo "Receipt: " . $receipt . "<br><br>";
 				echo "Target File: " . $target_file . "<br><br>";
 				echo "Target File Save: " . $target_file_save . "<br><br>";
+				echo "Temp File Name: " . $_FILES["fileToUpload"]["tmp_name"] . "<br><br>";
 
 				if ($sqler != '') {
 					echo "SQL Statement <br><br>";
