@@ -5,6 +5,8 @@
 		header("Location: ../index.php");
 		die();
 	}
+	header("Location: index.php");
+
 ?>
 
 
@@ -113,7 +115,6 @@ catch(PDOException $e)
 $conn = null;
 
 
-header("Location: index.php");
 
 
 
