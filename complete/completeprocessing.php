@@ -35,18 +35,18 @@ else {
 	$target_file_save = $target_dir_save . $committee . "_" . $item . "_" . $purchaseID . "." . $FileType;
 	// Check if file already exists
 	if (file_exists($target_file)) {
-		$uploaderr = $uploaderr . " Your file already exists on the server";
+		$uploaderr = $uploaderr . " Your file already exists on the server<br>";
 		$uploadOk = 0;
 	}
 	// Check file size
 	// file size must be less than 2MB
 	if ($_FILES["fileToUpload"]["size"] > 2048000 || $_FILES["fileToUpload"]["size"] == 0) {
-		$uploaderr = $uploaderr . "Your reimbursement cert is larger than 2MB";
+		$uploaderr = $uploaderr . "Your reimbursement cert is larger than 2MB<br>";
 		$uploadOk = 0;
 	}
 	// Allow certain file formats
 	if($FileType != "pdf" and $FileType != "PDF" and $FileType != "jpg" and $FileType != "jpeg"and $FileType != "JPG"and $FileType != "JPEG") {
-		$uploaderr = $uploaderr . "Only PDFs and JPEGs are allowed";
+		$uploaderr = $uploaderr . "Only PDFs and JPEGs are allowed<br>";
 		//echo $FileType;
 		$uploadOk = 0;
 	}
@@ -56,7 +56,7 @@ else {
 			//echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
 			$receipt = str_replace(' ', '%20', $target_file_save);
 		} else {
-			$uploaderr = $uploaderr . "There was an error uploading your file";
+			$uploaderr = $uploaderr . "Could not transfer file to destination on server<br>";
 			$uploadOk = 0;
 		}
 	}
@@ -118,7 +118,7 @@ if ($uploaderr == '' && $sqler == '') {
 				
 				echo "<h1> Oops... something went wrong</h1>";
 				
-				echo "<h2>" . $uploaderr . "</h2><br>";
+				echo "<h2>" . $uploaderr . "</h2>";
 
 				echo "<h2> Debug Info </h2>";
 				echo "<h4>";
