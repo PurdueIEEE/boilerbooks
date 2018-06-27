@@ -14,7 +14,6 @@
         $item = $_SESSION['itemc'];
         $purchaseID = $_SESSION['purchaseIDc'];
         $user = $_SESSION['usernamec'];
-        var_dump($_SESSION);
 
         if (!empty($purchaseID)) {
             $comments = test_input($_POST["comments"]);
