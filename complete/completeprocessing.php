@@ -13,26 +13,28 @@
         $committee = $_SESSION['committeec'];
         $item = $_SESSION['itemc'];
         $purchaseID = $_SESSION['purchaseIDc'];
+        $user = $_SESSION['usernamec'];
+        var_dump($_SESSION);
 
-        if ($purchaseID == '') {
-            echo 'no purchase';
-            header("Location: index.php");
-        } else {
+        if (!empty($purchaseID)) {
             $comments = test_input($_POST["comments"]);
             $cost = test_input($_POST["cost"]);
             $purchasedate = test_input($_POST["purchasedate"]);
             $purchasedateorig = $purchasedate;
 
             $purchasedate = str_replace('-','/',$purchasedate);
-            $purchasedate = date('Y-m-d H:i:s', strtotime($purchasedate));  
+            $purchasedate = date('Y-m-d H:i:s', strtotime($purchasedate));
             $purchasedatetemp = $purchasedate;
             $receipt = $servername . "/";
             $target_dir = "../receipts/";
             $target_dir_save = "/receipts/";
             $FileType = pathinfo($target_dir . basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION);
-            $target_file = $target_dir . $committee . "_" . $item . "_" . $purchaseID . "." . $FileType;
-            $target_file_save = $target_dir_save . $committee . "_" . $item . "_" . $purchaseID . "." . $FileType;
 
+            $file_save_name = $committee . "_" . $user . "_" . $item . "_" . $purchaseID . "." . $FileType;
+            $file_save_name = str_replace(' ', '_', $file_save_name);
+
+            $target_file = $target_dir . $file_save_name;
+            $target_file_save = $target_dir_save . $file_save_name;
 
             $isUploadError = false;
             $uploadErrMessage = "";
@@ -43,9 +45,11 @@
 
             // Make sure it actually uploaded
             if ($_FILES["fileToUpload"]["size"] == 0) {
-                $uploadErrMessage = $uploadErrMessage . "Your receipt file size is 0 bytes<br>";
+                $uploadErrMessage = $uploadErrMessage . "Your receipt file size is 0 bytes.<br>";
+                $uploadErrMessage = $uploadErrMessage . "This may be because your file was greater than the max upload size.<br>";
+                $uploadErrMessage = $uploadErrMessage . "Make sure your receipt is smaller than 2MB.<br>";
                 $isUploadError = true;
-            } 
+            }
 
             // Check file size
             if ($_FILES["fileToUpload"]["size"] > $maxFileSize) {
@@ -57,13 +61,13 @@
             if (!in_array(strtolower($FileType), $okayFileTypes)) {
                 $uploadErrMessage = $uploadErrMessage . "Only PDFs and JPEGs are allowed<br>";
                 $isUploadError = true;
-            } 
+            }
 
             // Check if file already exists
             if (file_exists($target_file)) {
                 $uploadErrMessage = $uploadErrMessage . " Your file already exists on the server<br>";
                 $isUploadError = true;
-            } 
+            }
 
             // Only run if we succeed in passing the file checks
             if ($isUploadError === false)  {
@@ -75,9 +79,10 @@
                 } else {
                     $uploadErrMessage = $uploadErrMessage . "Could not transfer file to destination on server<br>";
                     $isUploadError = true;
-                    break;
                 }
+            }
 
+            if ($isUploadError === false)  {
                 // Update sql database with the file and purchase info
                 try {
                     $cost = test_input(str_replace('$', '', $cost));
@@ -97,11 +102,10 @@
 
                     $uploadErrMessage = $uploadErrMessage . "There was an error inserting the row into the database<br>";
                     $isUploadError = true;
-                    break;
                 }
+            }
 
-                // TODO: What is this doing, also why is it here? 
-                $conn = null;
+            if ($isUploadError === false)  {
 
                 if ($sendemail == 1) {
                     $to = "purdue.ieee.treasurer@gmail.com";
@@ -122,31 +126,39 @@
                         // break?
                     }
                 }
-
-                // TODO: What is this doing? Can we clear it all the time? Only if errors? Only if success?
-                $_SESSION['usernamec'] = '';
-                $_SESSION['itemc'] =  '';
-                $_SESSION['reasonc'] =  '';
-                $_SESSION['vendorc'] = '';
-                $_SESSION['committeec'] = '';
-                $_SESSION['categoryc'] = '';
-                $_SESSION['costc'] = '';
-                $_SESSION['statusc']= '';
-                $_SESSION['commentsc']= '';
-                $_SESSION['statusc']= '';
-                $_SESSION['purchaseIDc']= '';
             }
+
+            // TODO: What is this doing, also why is it here?
+            $conn = null;
+
+            // TODO: What is this doing? Can we clear it all the time? Only if errors? Only if success?
+            $_SESSION['usernamec'] = '';
+            $_SESSION['itemc'] =  '';
+            $_SESSION['reasonc'] =  '';
+            $_SESSION['vendorc'] = '';
+            $_SESSION['committeec'] = '';
+            $_SESSION['categoryc'] = '';
+            $_SESSION['costc'] = '';
+            $_SESSION['statusc']= '';
+            $_SESSION['commentsc']= '';
+            $_SESSION['statusc']= '';
+            $_SESSION['purchaseIDc']= '';
+
         }
     ?>
 
     <div style='text-align:center; line-height: 2.5em'>
         <?php
-            if ($isUploadError == false) {
+            if (!empty($purchaseID) && $isUploadError == false) {
                 //header('Location: index.php');
                 echo "<h1> Your purchase was successful </h1>";
             } else {
                 echo "<h1> Oops... something went wrong</h1>";
-                
+
+                if (empty($purchaseID)) {
+                    echo '<h4>Bad form data - Please go back and reselect the purchase</h4>';
+                }
+
                 echo "<h2> $uploadErrMessage </h2>";
 
                 echo "<h2> Debug Info </h2>";
