@@ -3,6 +3,7 @@
 <option <?php echo $aerial ?> value="Aerial Robotics">Aerial Robotics</option>
 <option <?php echo $computer ?> value="Computer Society">Computer Society</option>
 <option <?php echo $embs ?> value="EMBS">EMBS</option>
+<option <?php echo $ge ?> value="GE">Growth and Engagement</option>
 <option <?php echo $mtts ?> value="MTT-S">MTT-S</option>
 <option <?php echo $professional ?> value="Professional">Professional</option>
 <option <?php echo $learning ?> value="Learning">Learning</option>
