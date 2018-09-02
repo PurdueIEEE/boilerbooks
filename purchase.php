@@ -108,9 +108,15 @@
 	<div class="col-sm-2">
 	</div>
 	<div class="col-sm-8">
+		<?php 
+			if($values['receipt'] == '') :
+				echo '<h1> <center> There is no receipt for this purchase. </center> </h1>';
+			else :
+		?>
 		<iframe src= "<?php echo 'https://' . $_SERVER[HTTP_HOST] . $values['receipt']?>" style="position: relative; width: 100%;" height="700">
 			<a href="<?php echo 'https://' . $_SERVER[HTTP_HOST] . $values['receipt']?>">Download receipt</a>
 		</iframe>
+		<?php 	endif ?>
 	</div>
 	<div class="col-sm-2">
 	</div>
