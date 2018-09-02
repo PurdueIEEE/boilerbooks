@@ -39,7 +39,7 @@
             $uploadErrMessage = "";
             $sqlErr = "";
 
-            $okayFileTypes = ['pdf', 'jpeg', 'jpg'];
+            $okayFileTypes = ['pdf', 'jpeg', 'jpg', 'png'];
             $maxFileSize = 2 * 1024 * 1024; // MB * KB * B
 
             // Make sure it actually uploaded
@@ -58,7 +58,7 @@
 
             // Allow certain file formats
             if (!in_array(strtolower($FileType), $okayFileTypes)) {
-                $uploadErrMessage = $uploadErrMessage . "Only PDFs and JPEGs are allowed<br>";
+                $uploadErrMessage = $uploadErrMessage . "Only PDFs, JPEGs, and PNGs are allowed<br>";
                 $isUploadError = true;
             }
 
@@ -75,6 +75,20 @@
                 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
                     //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
                     $receipt = str_replace(' ', '%20', $target_file_save);
+
+            	    // Convert png to jpg
+            	    if (strtolower($FileType) == 'png') {
+			$im = new Imagick($target_file);	
+			$im->setImageFormat('jpg');
+			
+			$delete_file = $target_file;
+			$target_file = str_replace('png', 'jpg', $target_file);		
+
+			$im->writeImage($target_file);
+			
+			$receipt = str_replace('png', 'jpg', $receipt);		
+			unlink($delete_file);
+            	    }
                 } else {
                     $uploadErrMessage = $uploadErrMessage . "Could not transfer file to destination on server<br>";
                     $isUploadError = true;
