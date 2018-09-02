@@ -76,7 +76,7 @@
                     //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.<br>";
                     $receipt = str_replace(' ', '%20', $target_file_save);
 
-            	    // Allow certain file formats
+            	    // Convert png to jpg
             	    if (strtolower($FileType) == 'png') {
 			$im = new Imagick($target_file);	
 			$im->setImageFormat('jpg');
