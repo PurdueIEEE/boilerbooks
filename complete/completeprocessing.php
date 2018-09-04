@@ -83,10 +83,12 @@
 			
 			$delete_file = $target_file;
 			$target_file = str_replace('png', 'jpg', $target_file);		
+			$target_file = str_replace('PNG', 'jpg', $target_file);		
 
 			$im->writeImage($target_file);
 			
 			$receipt = str_replace('png', 'jpg', $receipt);		
+			$receipt = str_replace('PNG', 'jpg', $receipt);		
 			unlink($delete_file);
             	    }
                 } else {
