@@ -1,44 +1,37 @@
 <?php
-	session_start();
-	if (!isset($_SESSION['user']))
-	{
-		header("Location: ../index.php");
-		die();
-	}
+session_start();
+if (!isset($_SESSION['user']))
+{
+	header("Location: ../index.php");
+	die();
+}
 ?>
 <?php //header('Location: /request/newpurchasesubmitted.php '); ?>
 <?php
 include '../dbinfo.php';
-
-
-
-
+include '../helper/email.php';
 
 $validuser = '';
 $usr = $_SESSION['user'];
-
 
 try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT COUNT(U3.username) AS validuser FROM Users U3
-    INNER JOIN approval A ON U3.username = A.username
-    WHERE (A.role = 'treasurer' OR A.role = 'president')
-		AND U3.username = '$usr'";
+	INNER JOIN approval A ON U3.username = A.username
+	WHERE (A.role = 'treasurer' OR A.role = 'president')
+	AND U3.username = '$usr'";
 	//$stmt->execute();
-
 
 	foreach ($conn->query($sql) as $row) {
 		$validuser .= $row['validuser'];
-
 	}
-
-	}
+}
 catch(PDOException $e)
-	{
+{
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -75,26 +68,21 @@ if ($validuser >= 1) {
 	}
 	echo $stat;
 
-
-
 	try {
 		$cost = test_input(str_replace('$','',$cost));
-	    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	    // set the PDO error mode to exception
-	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	    $sql = "UPDATE Purchases SET modifydate = NOW(), status='$stat' WHERE Purchases.purchaseID = '$purchaseid'";
-
-	    //$sql = "INSERT INTO Purchases (item)
-		//VALUES ('$item')";
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$sql = "UPDATE Purchases SET modifydate = NOW(), status='$stat' WHERE Purchases.purchaseID = '$purchaseid'";
 
 		// use exec() because no results are returned
-	    $conn->exec($sql);
-	    echo "Updated";
-	    }
+		$conn->exec($sql);
+		echo "Updated";
+	}
 	catch(PDOException $e)
-	    {
-	    echo $sql . "<br>" . $e->getMessage();
-	    }
+	{
+		echo $sql . "<br>" . $e->getMessage();
+	}
 
 	$conn = null;
 
@@ -105,51 +93,33 @@ if ($validuser >= 1) {
 		// set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$sql = "SELECT U.email, item, committee, status FROM Purchases P
-				INNER JOIN Users U ON U.username = P.username
-				WHERE P.purchaseID = '$purchaseid'";
+		INNER JOIN Users U ON U.username = P.username
+		WHERE P.purchaseID = '$purchaseid'";
 		//$stmt->execute();
 
-
+		error_log("hello");
 		foreach ($conn->query($sql) as $row) {
-
-
 			$email = $row['email'];
 			$item = $row['item'];
 			$committee =  $row['committee'];
 			$status =  $row['status'];
+			error_log($email);
 		}
 
-		}
+	}
 	catch(PDOException $e)
-		{
+	{
 		echo $sql . "<br>" . $e->getMessage();
-		}
+	}
 
 	$conn = null;
 
 
+	$subject = "Your purchased item is now $stat";
+	$message = "<p>$item for $committee is now $stat.</p>
+	<p>Please stop by EE 14 to pick up your check.</p>";
 
-
-
-	 $to = $email;
-	 $subject = "Your purchased item is now $stat";
-
-	 $message = "<p>$item for $committee is now $stat.
-	 Feel free to visit money.pieee.org or contact the IEEE treasurer for more information.</p>";
-
-	 $header = "From:ieeeboilerbooks@gmail.com \r\n";
-	 $header .= "MIME-Version: 1.0\r\n";
-	 $header .= "Content-type: text/html\r\n";
-
-	 if ($sendmail == 1) {
-		 $retval = mail ($to,$subject,$message,$header);
-
-		 if( $retval == true ) {
-			//echo "Message sent successfully...";
-		 }else {
-			//echo "Message could not be sent...";
-	 		}
- 	}
+	send_email($email, $subject, $message);
 }
 
 
