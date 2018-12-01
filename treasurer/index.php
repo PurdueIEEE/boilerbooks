@@ -190,9 +190,6 @@
 	</script>
 </div>
 
-
-
-
 <?php
 	include '../smallfooter.php';
 ?>
