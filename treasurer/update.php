@@ -116,8 +116,14 @@ if ($validuser >= 1) {
 
 
 	$subject = "Your purchased item is now $stat";
-	$message = "<p>$item for $committee is now $stat.</p>
-	<p>Please stop by EE 14 to pick up your check.</p>";
+
+	if($reimbursed != '-1') {
+		$message = "<p>$item for $committee is now $stat.</p>
+		<p>Please stop by EE 14 to pick up your check.</p>";
+	} else {
+		$message = "<p>$item for $committee is now $stat.</p>
+		<p>Check money.pieee.org or contact the treasurer.</p>";
+	}
 
 	send_email($email, $subject, $message);
 }
