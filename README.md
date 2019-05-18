@@ -1,14 +1,19 @@
 # boilerbooks
 The ultimate IEEE record keeping system!
 
-This program is written using PHP. The website is displayed using the bootstrap framework. It is currently hosted at money.pieee.org.
+This program is written using PHP. The website is displayed using the bootstrap framework. 
 
-In order to properly develop code you will likely need access to the database. 
+Boilerbooks is hosted at [money.pieee.org](https://money.pieee.org).
 
-It is also important to setup a mysqldump cron job for database backups (I suggest removing backups after 30 days to save space)
 
-Also use rsync (or a better solution) to make remote backups of the mysqldump's, certs, and the uploaded receipts
+### Database
+If you need to manually update the database go to [admin.purdueieee.org](https://admin.purdueieee.org).
 
-Also auto renew the ssl cert
+### Backups
+To perform backups we use a mysqldump cron job. Then rsync can be used to copy these backups to a remote location for safe storage.
 
-Also setup ssmtp (http://www.havetheknowhow.com/Configure-the-server/Install-ssmtp.html)
+### SSL
+SSL certs are auto renewed with Let's Encrypt using a cron job.
+
+### Mail
+Boilerbooks offers the option to email users with updates on their purchases. You will need to configure a proper mail server if you want to enable this feature.
