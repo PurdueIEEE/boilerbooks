@@ -10,7 +10,7 @@ Boilerbooks is hosted at [money.pieee.org](https://money.pieee.org).
 If you need to manually update the database go to [admin.purdueieee.org](https://admin.purdueieee.org).
 
 ### Backups
-To perform backups we use a mysqldump cron job. Then rsync can be used to copy these backups to a remote location for safe storage.
+Backups occur daily and are uploaded automatically to offsite storage.
 
 ### SSL
 SSL certs are auto renewed with Let's Encrypt using a cron job.
