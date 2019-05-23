@@ -95,16 +95,7 @@ include '../header.php';
 
 				</div>
 			</div>
-
-
-
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="cost"><a href="https://engineering.purdue.edu/PPI/docs/CheckRequestReimbursementCertification.pdf">Reimbursement Cert (click here to download it, then upload as a PDF)</a></label>
-				<div class="col-md-4">
-					<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" accept="application/pdf">
-
-				</div>
-			</div>
+			
 
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="cost">Username</label>
