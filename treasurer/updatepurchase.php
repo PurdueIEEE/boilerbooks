@@ -134,10 +134,10 @@
 		<div class="col-sm-2">
 		</div>
 		<div class="col-sm-2">
-			<p title="Must be 2018-2019, 2017-2018, 2016-2017, or 2015-2016"><strong style="color:red">Fiscal Year:</strong></p>
+			<p title="Must be 2019-2020, 2018-2019, 2017-2018, 2016-2017, or 2015-2016"><strong style="color:red">Fiscal Year:</strong></p>
 		</div>
 		<div class="col-sm-3">
-			<p title="Must be 2018-2019, 2017-2018, 2016-2017, or 2015-2016" style="color:blue" contenteditable="true"><?php echo $values['fiscalyear']?></p>
+			<p title="Must be 2019-2020, 2018-2019, 2017-2018, 2016-2017, or 2015-2016" style="color:blue" contenteditable="true"><?php echo $values['fiscalyear']?></p>
 		</div>
 		<div class="col-sm-2">
 			<p><strong>Comments:</strong></p>

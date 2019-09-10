@@ -16,7 +16,7 @@
 
 	$fiscalyear = test_input($_GET["fiscalyear"]);
 	if ($fiscalyear == '') {
-		$fiscalyear = '2018-2019';
+		$fiscalyear = '2019-2020';
 	}
 
 	$items = '';
@@ -124,7 +124,8 @@
 		</div>
 		<div class="col-sm-6">
 			<select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectcommitteeyear()">
-				<option value="2018-2019">Select Year</option>
+				<option value="2019-2020">Select Year</option>
+				<option value="2019-2020">2019 - 2020</option>
 				<option value="2018-2019">2018 - 2019</option>
 				<option value="2017-2018">2017 - 2018</option>
 				<option value="2016-2017">2016 - 2017</option>
