@@ -137,35 +137,16 @@ $conn = null;
       </div>
     </div>
 
-  
-
-
-
-
-
-
-
-
-
 
 <div class="form-group">
-<label class="col-md-4 control-label" for="category">Category</label>
-      <div class="col-md-4">
-
+	<label class="col-md-4 control-label" for="category">Category</label>
+	<div class="col-md-4">
 		<select id="category" name="category" class="form-control input-md" required="">
 			<option value="">Select Item</option>
 			<?php echo $categorylist; ?>
 		</select>
-
+	</div>
 </div>
-
-
-
-
-
-
-      </div>
-    </div>
 
     <div class="form-group">
       <label class="col-md-4 control-label" for="submit"></label>
