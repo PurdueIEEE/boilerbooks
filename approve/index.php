@@ -155,11 +155,9 @@ $conn = null;
 		</div>
 
 
-
-
 		<!-- Select Basic -->
 		<div class="form-group">
-			<label class="col-md-4 control-label" for="category">Funding Source</label>
+			<label class="col-md-4 control-label" for="fundsource">Funding Source</label>
 			<div class="col-md-4">
 				<select id="fundsource" name="fundsource" class="form-control">
 					<option value="BOSO">BOSO</option>
@@ -169,9 +167,8 @@ $conn = null;
 			</div>
 		</div>
 
-		<!-- Select Basic -->
-		<div class="form-group">
-			<label class="col-md-4 control-label" for="category">Approve/Deny</label>
+		<div class="form-group" style="display: none">
+			<label class="col-md-4 control-label" for="status">Approve/Deny</label>
 			<div class="col-md-4">
 				<select id="status" name="status" class="form-control" required="">
 					<option></option>
@@ -181,11 +178,11 @@ $conn = null;
 			</div>
 		</div>
 
-		<!-- Button -->
 		<div class="form-group">
-			<label class="col-md-4 control-label" for="submit"></label>
+		    <label class="col-md-4 control-label" for="btnApprove">Approve/Deny</label>
 			<div class="col-md-4">
-				<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+				<button type="submit" id="btnApprove" name="approve" class="btn btn-success" onclick="setStatus('Approved')">Approve</button>
+				<button type="submit" id="btnDeny"    name="deny"    class="btn btn-danger"  onclick="setStatus('Denied')"   >Deny</button>
 			</div>
 		</div>
 
@@ -199,6 +196,10 @@ $conn = null;
 		var title = "finditem.php?currentitem=";
 		var full = title.concat(com);
 		window.location = full;
+	}
+
+	function setStatus(status) {
+	    document.getElementById("status").value = status;
 	}
 </script>
 

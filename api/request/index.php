@@ -1,6 +1,6 @@
 <?php
 /*** This api inserts information into the database that is needed for a purchase request, provides info
-/*** to the requestor through a session variable (name, and item), redirects to seperate page, 
+/*** to the requester through a session variable (name, and item), redirects to separate page,
 /*** and sends an email to the potential approver ***/
 
 	session_start();
@@ -17,7 +17,7 @@
 	$returnStat = "200";
 
 	/*** Add purchase request to database ***/
-	// At some point consider accepting all info using JSON formating 
+	// At some point consider accepting all info using JSON formatting
 	$item = $reason = $vendor = $committee = $cost = $comments = $category = "";
 	$item = test_input($_POST["item"]);
 	$reason = test_input($_POST["reason"]);
@@ -26,7 +26,7 @@
 	$cost = test_input($_POST["cost"]);
 	$comments = test_input($_POST["comments"]);
 	$category = test_input($_POST["category"]);
-	$usr = $_SESSION['user']; // eventually make this a passed parameeter (maybe)
+	$usr = $_SESSION['user']; // eventually make this a passed parameter (maybe)
 
 	try {
 		$cost = test_input(str_replace('$','',$cost));
