@@ -119,7 +119,7 @@
 
 
 
-		$_SESSION['fiscalyear'] = '2019-2020'; // initilize for viewing committee expenses
+		$_SESSION['fiscalyear'] = '2020-2021'; // initilize for viewing committee expenses
 
 		$returnto = test_input2($_GET['returnto']);
 
