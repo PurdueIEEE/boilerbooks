@@ -69,8 +69,8 @@
   <label class="col-md-4 control-label" for="status">Status</label>
   <div class="col-md-4">
     <select id="status" name="status" class="form-control">
-      <option value="Received">Received</option>
       <option value="Expected">Expected</option>
+      <option value="Received">Received</option>
     </select>
   </div>
 </div>
