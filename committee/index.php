@@ -2,6 +2,7 @@
 	$title = 'Boiler Books';
 	$committeeactive = "active";
 	include '../menu.php';
+	include '../dbinfo.php';
 ?>
 
 <br>
@@ -15,13 +16,7 @@
 		</div>
 		<div class="col-sm-6">
 		    <select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectyear()">
-		    	<option value="2020-2021">Select Year</option>
-		    	<option value="2020-2021">2020 - 2021</option>
-			<option value="2019-2020">2019 - 2020</option>
-		    	<option value="2018-2019">2018 - 2019</option>
-		    	<option value="2017-2018">2017 - 2018</option>
-		    	<option value="2016-2017">2016 - 2017</option>
-		    	<option value="2015-2016">2015 - 2016</option>
+		        <?php echo $year_options_select; ?>
 		    </select>
 		</div>
 	</div>
