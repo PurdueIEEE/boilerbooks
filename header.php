@@ -40,6 +40,17 @@
 	<link rel="SHORTCUT ICON" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="https://www.ieee.org/ucm/groups/webassets/@ieee/@web/@org/documents/images/ieee_apple_touch_icon.png">
 
+    <script>
+        try {
+            $.get("/is_dev.txt").done(function() {
+                var link = document.querySelector("link[rel*='icon']");
+                link.href = "/dev-favicon.ico";
+                document.getElementsByTagName("head")[0].appendChild(link);
+            });
+        } catch(err) {
+        }
+    </script>
+
 	<!-- Stuff for datatables -->
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 	<script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>

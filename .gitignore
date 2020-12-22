@@ -3,3 +3,4 @@ dbinfo.php
 /user/certs/
 .DS_Store
 .idea/*
+is_dev.txt
