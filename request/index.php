@@ -105,7 +105,7 @@ $conn = null;
     <div class="form-group">
       <label class="col-md-4 control-label" for="item">Item Being Purchased</label>
       <div class="col-md-4">
-        <input id="item" name="item" type="text" placeholder="Resistors, screws, etc." class="form-control input-md" required="">
+        <input id="item" name="item" type="text" placeholder="Resistors, screws, etc." class="form-control input-md" required="" maxlength="100">
       </div>
     </div>
 
