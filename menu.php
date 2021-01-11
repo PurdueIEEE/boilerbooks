@@ -12,7 +12,7 @@
 ?>
 
 <!-- The menu that is displayed on (nearly) every page -->
-<!-- it also contains code to test if one is logged in and if not doesn't allow page access -->
+<!-- it also contains code to test if one is logged in and if not does not allow page access -->
 <!-- It should be included on every page (or other suitable login checking code) -->
 
 

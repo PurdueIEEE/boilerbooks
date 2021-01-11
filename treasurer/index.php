@@ -107,7 +107,7 @@
 
 <div class="container">
 	<div class="text-center">
-		<h3>Currently viewing <?php echo $committeeDisplay ?> for fiscal year <?php echo $fiscalyear ?></h3>
+		<h3>Currently viewing <?php echo $committeeDisplay; ?> for fiscal year <?php echo $fiscalyear; ?></h3>
 	</div>
 </div>
 

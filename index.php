@@ -29,14 +29,14 @@
 			</div>
 
 
-			<a href = "user/newuser.php" class="btn btn-lg btn-block">New User</a></button>
+			<a href = "user/newuser.php" class="btn btn-lg btn-block">New User</a>
 			<br>
 			<div>
 				<div class="col-sm-6">
-					<a href = "user/forgotusername.php" class="btn btn-lg btn-block">Forgot username?</a></button>
+					<a href = "user/forgotusername.php" class="btn btn-lg btn-block">Forgot username?</a>
 				</div>
 				<div class="col-sm-6">
-					<a href = "user/forgotpassword.php" class="btn btn-lg btn-block">Forgot password?</a></button>
+					<a href = "user/forgotpassword.php" class="btn btn-lg btn-block">Forgot password?</a>
 				</div>
 			</div>
 		</form>
