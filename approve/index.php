@@ -13,36 +13,50 @@ $usr = $_SESSION['user'];
 
 
 try {
-	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-	// set the PDO error mode to exception
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	//$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
-	$sql = "SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
-	INNER JOIN approval a on p.committee = a.committee
-	WHERE p.status = 'Requested'
-	AND a.username = '$usr'
-	AND (a.category = p.category OR a.category = '*')
-	AND p.cost <= (SELECT MAX(ap.ammount) FROM approval ap
-	WHERE ap.username = '$usr'
-	AND ap.committee = p.committee)";
-	//$stmt->execute();
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    //$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
+    $sql = "SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
+    INNER JOIN approval a on p.committee = a.committee
+    WHERE p.status = 'Requested'
+    AND a.username = '$usr'
+    AND (a.category = p.category OR a.category = '*')
+    AND p.cost <= (SELECT MAX(ap.ammount) FROM approval ap
+    WHERE ap.username = '$usr'
+    AND ap.committee = p.committee)";
+    //$stmt->execute();
 
 
-	foreach ($conn->query($sql) as $row) {
-		$items .= '<option value="';
-		$items .= $row['purchaseID'];
-		$items .= '">';
-		$items .= $row['item'];
-		$items .= '</option>\n';
+    foreach ($conn->query($sql) as $row) {
+        $items .= '<option value="';
+        $items .= $row['purchaseID'];
+        $items .= '">';
+        $items .= $row['item'];
+        $items .= '</option>\n';
+    }
+    //echo $items;
 
-	}
-	//echo $items;
+    $categorylist = "";
+    $committee = $_SESSION['committee'];
+    $sql = "SELECT category FROM `Budget` WHERE committee='$committee' AND year='$current_fiscal_year'";
 
+    foreach ($conn->query($sql) as $row) {
+        $categorylist .= '<option value="';
+        $categorylist .= $row['category'];
+        $categorylist .= '"';
+        if($row['category'] == $_SESSION['category']) {
+            $categorylist .= ' selected';
+        }
+        $categorylist .= '>';
+        $categorylist .= $row['category'];
+        $categorylist .= '</option>\n';
+    }
 
 }
 catch(PDOException $e)
 {
-	echo $sql . "<br>" . $e->getMessage();
+    echo $sql . "<br>" . $e->getMessage();
 }
 
 $conn = null;
@@ -52,27 +66,27 @@ $conn = null;
 
 <div class="container">
 
-		<select id="currentitem" name="currentitem" class="form-control" onchange="selectitem()">
-			<option value="">Select Item</option>
-			<?php echo $items; ?>
-		</select>
+        <select id="currentitem" name="currentitem" class="form-control" onchange="selectitem()">
+            <option value="">Select Item</option>
+            <?php echo $items; ?>
+        </select>
 
 </div>
 
 <div class="container">
-	<h4>
-	<?php 
-		if ($_SESSION['balance'] < $_SESSION['cost']) {
-			echo "<font color='red'>Warning! You only have $" . $_SESSION['balance'] . " left in your account. </font>";
-			echo "<font color='red'>Please talk to the IEEE treasurer before approving this purchase!</font>";
-		}
-		else if (($_SESSION['balance'] < 200) && ($_SESSION['balance'] != 0)) { // also != 0 to prevent showing before variable is set. Slight issue if actually 0 balance but presumably the cost would be greater than 0, thus still showing a warning
-			echo "<font color='orange'>Warning! You only have $" . $_SESSION['balance'] . " left in your account!</font>";
-		}
+    <h4>
+    <?php
+        if ($_SESSION['balance'] < $_SESSION['cost']) {
+            echo "<font color='red'>Warning! You only have $" . $_SESSION['balance'] . " left in your account. </font>";
+            echo "<font color='red'>Please talk to the IEEE treasurer before approving this purchase!</font>";
+        }
+        else if (($_SESSION['balance'] < 200) && ($_SESSION['balance'] != 0)) { // also != 0 to prevent showing before variable is set. Slight issue if actually 0 balance but presumably the cost would be greater than 0, thus still showing a warning
+            echo "<font color='orange'>Warning! You only have $" . $_SESSION['balance'] . " left in your account!</font>";
+        }
 
 
-	?>
-	</h4>
+    ?>
+    </h4>
 </div>
 
 <!-- Page Content -->
@@ -106,8 +120,7 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="item">Item Being Purchased</label>
 			<div class="col-md-4">
-				<input id="item" name="item" type="text" placeholder="Select item above to view" class="form-control input-md" value="<?php echo $_SESSION['item']; ?>" required=""  maxlength="100>
-
+				<input id="item" name="item" type="text" placeholder="Select item above to view" class="form-control input-md" value="<?php echo $_SESSION['item']; ?>" required="" maxlength="100>
 			</div>
 		</div>
 
@@ -116,7 +129,6 @@ $conn = null;
 			<label class="col-md-4 control-label" for="reason">Reason Being Purchased</label>
 			<div class="col-md-4">
 				<input id="reason" name="reason" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['reason']; ?>">
-
 			</div>
 		</div>
 
@@ -125,17 +137,14 @@ $conn = null;
 			<label class="col-md-4 control-label" for="vendor">Vendor</label>
 			<div class="col-md-4">
 				<input id="vendor" name="vendor" type="text" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['vendor']; ?>">
-
 			</div>
 		</div>
-
 
 		<!-- Text input-->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Cost</label>
 			<div class="col-md-4">
 				<input id="cost" name="cost" type="number" step = "0.01" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>">
-
 			</div>
 		</div>
 
@@ -148,11 +157,13 @@ $conn = null;
 		</div>
 
 		<div class="form-group">
-			<label class="col-md-4 control-label" for="category">Category</label>
-			<div class="col-md-4">
-				<textarea class="form-control" id="category" name="category"><?php echo $_SESSION['category']; ?></textarea>
-			</div>
-		</div>
+            <label class="col-md-4 control-label" for="category">Category</label>
+            <div class="col-md-4">
+                <select class="form-control" id="category" name="category" required="">
+                    <?php echo $categorylist; ?>
+                </select>
+            </div>
+        </div>
 
 
 		<!-- Select Basic -->
@@ -185,8 +196,8 @@ $conn = null;
 				<button type="submit" id="btnDeny"    name="deny"    class="btn btn-danger"  onclick="setStatus('Denied')"   >Deny</button>
 			</div>
 		</div>
-
 	</fieldset>
+
 </form>
 
 
