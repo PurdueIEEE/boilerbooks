@@ -9,7 +9,7 @@
 		header("Location: ../index.php");
 		die();
 	}
-	header('Location: /request/submitted.php '); 
+	header('Location: /request/submitted.php ');
 ?>
 
 <?php
@@ -103,7 +103,7 @@
 	 $subject = "New Purchase from $committee";
 
 	 $user = $_SESSION['user'];
-	 $message = "<p>A request to buy $item has been made by $user.
+	 $message = "<p>A request to buy $item for \$$cost has been made by $user.
 	 Please visit <a href='https://money.purdueieee.org/approve/'>money.pieee.org</a> at your earliest convenience to approve or deny the request.</p>
 	 <p>You always view the most up-to-date status of the purchase <a href=https://money.purdueieee.org/purchase.php?purchaseid=" . $currentitemid . "> here</a>.</p>";
 
