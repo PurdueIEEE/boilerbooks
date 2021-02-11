@@ -32,7 +32,8 @@
 		i.amount,
 		i.item,
 		i.incomeid,
-		i.status
+		i.status,
+		i.refnumber
 
 		FROM Income i
 		ORDER BY i.updated DESC";
@@ -54,15 +55,17 @@
 			$items .= '</td> <td>';
 			$items .= $row['status'];
 			$items .= '</td> <td>';
-			$items .= "<a href='update.php?incomeid=";
+			$items .= $row['refnumber'];
+			$items .= '</td> <td>';
+			$items .= "<a href='javascript:updateIncome(\"";
 			$items .= $row['incomeid'];
-			$items .= "&status=";
-			
+			$items .= "\", \"";
+
 			if(strcmp($row['status'],'Expected') == 0) {
-				$items .= "Received'>";
+				$items .= "Received\")'>";
 				$items .= 'Mark Received';
 			} else {
-				$items .= "Expected'>";
+				$items .= "Expected\")'>";
 				$items .= 'Mark Expected';
 			}
 			$items .= '</a></td>';
@@ -79,6 +82,16 @@
 	$conn = null;
 ?>
 
+<script>
+	function updateIncome(incomeid, newStatus) {
+		let refnumber = '';
+		if(newStatus == "Received") {
+			refnumber = prompt("Enter the reference number for this income:");
+		}
+		let title = "update.php?incomeid=" + incomeid + "&status=" + newStatus + "&refnumber=" + refnumber;
+		window.location = title;
+	}
+</script>
 
 <div class="container">
 	<div class="text-center">
@@ -102,6 +115,7 @@
 				<th>Amount</th>
 				<th>Item</th>
 				<th>Status</th>
+				<th>Ref Number</th>
 				<th>Change Status</th>
 			</tr>
 		</thead>
@@ -118,7 +132,7 @@
 
 		} );
 
-	
+
 	</script>
 </div>
 
