@@ -51,6 +51,7 @@ if ($validuser >= 1) {
 
 	$incomeid = test_input($_GET["incomeid"]);
 	$status = test_input($_GET["status"]);
+	$refnumber = test_input($_GET["refnumber"]);
 
 	$usr = $_SESSION['user'];
 	echo $processing;
@@ -64,7 +65,7 @@ if ($validuser >= 1) {
 	    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	    // set the PDO error mode to exception
 	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	    $sql = "UPDATE Income SET status='$status' WHERE Income.incomeid = '$incomeid'";
+	    $sql = "UPDATE Income SET status='$status', refnumber='$refnumber' WHERE Income.incomeid = '$incomeid'";
 
 	    //$sql = "INSERT INTO Purchases (item)
 		//VALUES ('$item')";
