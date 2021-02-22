@@ -121,6 +121,8 @@ try {
 		$items2 .= '</td> <td>';
 		$items2 .= $row['status'];
 		$items2 .= '</td> <td>';
+		$items2 .= $row['refnumber'];
+		$items2 .= '</td> <td>';
 		$items2 .= $row['comments'];
 
 
@@ -153,7 +155,7 @@ try {
         ,B.amount AS 'Budget' FROM Budget B
 				LEFT JOIN Purchases P ON B.category = P.category
 				INNER JOIN approval a ON a.committee = P.committee OR a.committee = B.committee
-				WHERE B.committee = '$committee' 				
+				WHERE B.committee = '$committee'
 				AND B.year = '$fiscalyear'
 				AND a.username = '$usr'
 				GROUP BY B.category

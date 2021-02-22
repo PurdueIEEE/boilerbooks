@@ -26,8 +26,8 @@
 	<div class="container">
 		<div class = "row">
 			<div class="col-sm-3">
-				<h4 class="text-left" title="Balance = Income - Total (for all years)">Balance: 
-				<?php 
+				<h4 class="text-left" title="Balance = Income - Total (for all years)">Balance:
+				<?php
 					if ($_SESSION['left'] < 0) {
 						echo "<span class='blink_text'>";
 					}
@@ -49,7 +49,7 @@
 						echo "</font>";
 					}
 				?>
-					
+
 				</h4>
 			</div>
 			<div class="col-sm-3">
@@ -141,6 +141,7 @@
 				<th>Amount</th>
 				<th>Item (if donated)</th>
 				<th>Status</th>
+				<th>Ref Number</th>
 				<th>Comments</th>
 			</tr>
 		</thead>
@@ -190,19 +191,19 @@
      color: red;
     }
 
-    @-moz-keyframes blinker {  
+    @-moz-keyframes blinker {
      0% { opacity: 1.0; }
      50% { opacity: 0.0; }
      100% { opacity: 1.0; }
      }
 
-    @-webkit-keyframes blinker {  
+    @-webkit-keyframes blinker {
      0% { opacity: 1.0; }
      50% { opacity: 0.0; }
      100% { opacity: 1.0; }
      }
 
-    @keyframes blinker {  
+    @keyframes blinker {
      0% { opacity: 1.0; }
      50% { opacity: 0.0; }
      100% { opacity: 1.0; }
