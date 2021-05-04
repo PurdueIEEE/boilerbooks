@@ -52,23 +52,27 @@ try {
 		$items .= $row['cost'];
 		$items .= '</td> <td>';
 		$items .= $row['comments'];
-
+		$items .= '</td> <td>';
+		if($row['status'] == "Requested" || $row['status'] == "Approved" || $row['status'] == "Purchased") {
+			$items .= "<a href='javascript:cancelPurchase(\"" . $row['purchaseid'] . "\")'>Cancel</a>";
+		}
 
 		$items .= '</td></tr>';
-
-
 	}
 		//echo $items;
-
-
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 ?>
+
+<script>
+	function cancelPurchase(purchaseid) {
+		let title = "update.php?purchaseid=" + purchaseid + "&status=Denied";
+		window.location = title;
+	}
+</script>
 
 <div class="container">
 	<table id="mypurchasestable" class="display">
@@ -85,6 +89,7 @@ $conn = null;
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
+				<th>Cancel</th>
 			</tr>
 		</thead>
 		<tbody>
