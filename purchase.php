@@ -37,8 +37,8 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-3">
 		</div>
@@ -50,8 +50,8 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-3">
 		</div>
@@ -63,8 +63,8 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-3">
 		</div>
@@ -89,8 +89,8 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-3">
 		</div>
@@ -102,13 +102,21 @@
 		</div>
 	</div>
 
-	<br>	
+	<div class="row">
+		<div class="col-sm-3">
+		</div>
+		<div class="col-sm-4">
+			<p><a href="<?php echo $values['receipt'] ?>">Open receipt in full tab</p>
+		</div>
+	</div>
+
+	<br>
 
 	<div class="row">
 	<div class="col-sm-2">
 	</div>
 	<div class="col-sm-8">
-		<?php 
+		<?php
 			if($values['receipt'] == '') :
 				echo '<h1> <center> There is no receipt for this purchase. </center> </h1>';
 			else :
