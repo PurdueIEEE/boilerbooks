@@ -71,21 +71,15 @@ try {
 		$items .= '</td> <td>';
 		$items .= $row['comments'];
 
-
 		$items .= '</td></tr>';
-
-
 	}
 	$_SESSION['commiteepurchases'] = $items;
 	$_SESSION['committee'] = $committee;
-		//echo $items;
+	//echo $items;
 
-
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -125,18 +119,13 @@ try {
 		$items2 .= '</td> <td>';
 		$items2 .= $row['comments'];
 
-
 		$items2 .= '</td></tr>';
-
-
 	}
 	$_SESSION['commiteeincome'] = $items2;
 
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -171,16 +160,13 @@ try {
 		$items .= $row['Budget'];
 		$items .= '</td></tr>';
 
-
 	}
 	$_SESSION['commiteepurchasessummary'] = $items;
 	$_SESSION['committee'] = $committee;
 
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -200,20 +186,16 @@ try {
 	AND Budget.year = '$fiscalyear'";
 	//$stmt->execute();
 
-
 	foreach ($conn->query($sql) as $row) {
 		$items .= $row['Budget'];
 	}
 	$_SESSION['totalbudget'] = $items;
 	$_SESSION['committee'] = $committee;
-		//echo $items;
+	//echo $items;
 
-
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -238,11 +220,10 @@ try {
 	$_SESSION['spent'] = $items;
 	$_SESSION['committee'] = $committee;
 
-	}
-catch(PDOException $e)
-	{
+}
+catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -266,21 +247,14 @@ try {
 	}
 	$_SESSION['incometotal'] = $items;
 	$_SESSION['committee'] = $committee;
-		//echo $items;
+	//echo $items;
 
 
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
-
-
-
-
-
 
 
 
@@ -303,11 +277,9 @@ try {
 	}
 	$_SESSION['spentall'] = $items;
 
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -332,12 +304,9 @@ try {
 	$_SESSION['incometotalall'] = $items;
 		//echo $items;
 
-
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
@@ -345,6 +314,6 @@ $conn = null;
 
 $_SESSION['left'] = $_SESSION['incometotalall'] - $_SESSION['spentall'];
 
-header("Location: index.php");
+header("Location: index.php?committee=$committee");
 
 ?>
