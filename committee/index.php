@@ -76,7 +76,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php echo $_SESSION['commiteepurchasessummary'] ?>
+				<?php echo $_SESSION['committeepurchasessummary'] ?>
 			</tbody>
 		</table>
 		<script>
@@ -116,7 +116,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php echo $_SESSION['commiteepurchases'] ?>
+			<?php echo $_SESSION['committeepurchases'] ?>
 		</tbody>
 	</table>
 	<script>
@@ -146,7 +146,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php echo $_SESSION['commiteeincome'] ?>
+			<?php echo $_SESSION['committeeincome'] ?>
 		</tbody>
 	</table>
 	<script>

@@ -28,7 +28,7 @@
 		if (password_verify($psw,$dbpsw))
 		{
 			$_SESSION['user'] = $usr;
-			
+
 			/***** Figures out what options to display to user ******/
 
 			try {
@@ -75,7 +75,7 @@
 			try {
 				$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 				$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr' AND A.ammount > 0";
+				$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr' AND A.amount > 0";
 
 				foreach ($conn2->query($sql2) as $row2) {
 					$item2 = $row2['count'];
@@ -94,7 +94,7 @@
 
 			$randNum = base64_encode(random_bytes(64));
 
-			// string replace because I'm sturgling with URL encoding 
+			// string replace because I'm sturgling with URL encoding
 	  		$randNum = str_replace('+','_',$randNum);
 	  		$randNum = str_replace('/','-',$randNum);
 	  		$randNum = str_replace('=','-',$randNum);
