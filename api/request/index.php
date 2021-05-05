@@ -70,7 +70,7 @@
 
 	WHERE a.committee = (
 		SELECT P.committee FROM Purchases P WHERE P.purchaseID = '$currentitemid')
-	AND a.ammount >= (
+	AND a.amount >= (
 		SELECT P.cost FROM Purchases P WHERE P.purchaseID = '$currentitemid')
 	AND (a.category = (
 		SELECT P.category FROM Purchases P WHERE P.purchaseID = '$currentitemid')

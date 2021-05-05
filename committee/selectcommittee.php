@@ -76,7 +76,7 @@ try {
 
 
 	}
-	$_SESSION['commiteepurchases'] = $items;
+	$_SESSION['committeepurchases'] = $items;
 	$_SESSION['committee'] = $committee;
 		//echo $items;
 
@@ -130,7 +130,7 @@ try {
 
 
 	}
-	$_SESSION['commiteeincome'] = $items2;
+	$_SESSION['committeeincome'] = $items2;
 
 	}
 catch(PDOException $e)
@@ -173,7 +173,7 @@ try {
 
 
 	}
-	$_SESSION['commiteepurchasessummary'] = $items;
+	$_SESSION['committeepurchasessummary'] = $items;
 	$_SESSION['committee'] = $committee;
 
 	}
