@@ -91,7 +91,7 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	// anyone with approval status in a committee for any amount can view the entire committee
-	$sql = "SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date
+	$sql = "SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date, I.amount as income_amount
 	 FROM Income I
 			INNER JOIN approval a ON a.committee = I.committee
 			WHERE I.committee = '$committee'
@@ -109,7 +109,7 @@ try {
 		$items2 .= '</td> <td>';
 		$items2 .= $row['type'];
 		$items2 .= '</td> <td>';
-		$items2 .= $row['amount'];
+		$items2 .= $row['income_amount'];
 		$items2 .= '</td> <td>';
 		$items2 .= $row['item'];
 		$items2 .= '</td> <td>';
