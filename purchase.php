@@ -27,8 +27,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4" class="text-center">
 			<p><strong>Purchased by:</strong> <a href=<?php echo "treasurer/user.php?usrlookup=" . $values['username']?>><?php echo $values['purchasedby']?></a></p>
 		</div>
@@ -40,8 +39,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Purchase reason:</strong> <?php echo $values['purchasereason']?></p>
 		</div>
@@ -53,8 +51,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Cost:</strong> $<?php echo $values['cost']?></p>
 		</div>
@@ -66,8 +63,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Category:</strong> <?php echo $values['category']?></p>
 		</div>
@@ -79,8 +75,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Committee:</strong> <?php echo $values['committee']?></p>
 		</div>
@@ -92,8 +87,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Fiscal Year:</strong> <?php echo $values['fiscalyear']?></p>
 		</div>
@@ -115,6 +109,11 @@
 	<div class="row">
 	<div class="col-sm-2">
 	</div>
+
+	<br>
+
+	<div class="row">
+	<div class="col-sm-2"></div>
 	<div class="col-sm-8">
 		<?php
 			if($values['receipt'] == '') :

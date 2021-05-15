@@ -2,7 +2,7 @@
 	session_start();
 	header("Location: index.php");
 	$title = 'Boiler Books';
-	$completeactive = "active";	
+	$completeactive = "active";
 ?>
 
 
@@ -56,23 +56,17 @@ $_SESSION['rocketactive'] = '';
 
 if ($_SESSION['committee'] == 'Aerial Robotics') {
 	$_SESSION['aerialactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'Computer Society') {
+} elseif ($_SESSION['committee'] == 'Computer Society') {
 	$_SESSION['computersocietyactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'EMBS') {
+} elseif ($_SESSION['committee'] == 'EMBS') {
 	$_SESSION['embsactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'Learning') {
+} elseif ($_SESSION['committee'] == 'Learning') {
 	$_SESSION['learningactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'Racing') {
+} elseif ($_SESSION['committee'] == 'Racing') {
 	$_SESSION['racingactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'ROV') {
+} elseif ($_SESSION['committee'] == 'ROV') {
 	$_SESSION['rovactive'] = 'selected';
-}
-elseif ($_SESSION['committee'] == 'Rocket') {
+} elseif ($_SESSION['committee'] == 'Rocket') {
 	$_SESSION['rocketactive'] = 'selected';
 }
 ?>

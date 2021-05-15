@@ -117,7 +117,7 @@ $conn = null;
 			</div>
 
 
-		</div> 
+		</div>
 
 		<!-- Text input-->
 		<div class="form-group">
@@ -132,7 +132,7 @@ $conn = null;
 
 
 
-		
+
 
 
 
@@ -143,22 +143,19 @@ $conn = null;
 				<input id="purchasedate" name="purchasedate" type="text" class="form-control input-md" required="">
 			</div>
 		</div>
-		
+
 
 		<script>
-		    $('input[name="purchasedate"]').daterangepicker(
-		    
-		    
-    		{
+		    $('input[name="purchasedate"]').daterangepicker({
 		        singleDatePicker: true,
 		        showDropdowns: true
 		    });
 		</script>
-		
 
 
 
-		
+
+
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Receipt</label>
 			<div class="col-md-4">

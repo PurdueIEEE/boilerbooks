@@ -16,11 +16,11 @@ try {
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$sql = "SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-	p.cost, p.comments, p.username purchasedby
-	, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
-	FROM Purchases p
-			WHERE p.username = '$usr'
-			ORDER BY p.purchasedate";
+		p.cost, p.comments, p.username purchasedby
+		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.username = '$usr'
+		ORDER BY p.purchasedate";
 	//$stmt->execute();
 
 
