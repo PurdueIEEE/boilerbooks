@@ -107,7 +107,14 @@
 	<br>
 
 	<div class="row">
-	<div class="col-sm-2">
+		<form class="form-inline" action="/api/purchase.php" method="post" enctype="multipart/form-data">
+			<div class="col-sm-3"></div>
+			<div class="col-sm-6" class="form-group">
+				<label class="control-label" for="cost">Change Receipt</label>
+				<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" style="display: inline-block;">
+				<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</form>
 	</div>
 
 	<br>
