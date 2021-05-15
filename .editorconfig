@@ -1,0 +1,5 @@
+# Makes github display tabs with the chosen width
+[*]  # Choose the types of files here
+indent_style = tab
+indent_size = 4
+# Learned from https://stackoverflow.com/questions/8833953/how-to-change-tab-size-on-github/33831598#33831598

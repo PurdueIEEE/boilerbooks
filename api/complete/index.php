@@ -9,14 +9,14 @@
 		die();
 	}
 	//header('Location: /complete/');
-	?>
+?>
 
-	<?php
+<?php
 	include '../../dbinfo.php';
 	$returnStat = "200";
 
 	/*** Add completion info to database ***/
-	// At some point consider accepting all info using JSON formating 
+	// At some point consider accepting all info using JSON formating
 	// define variables and set to empty values
 	$cost = $comments = $receipt = $purchasedate = $committee = $item = $purchaseID = $usr = "";
 	$committee = $_SESSION['committeec'];
