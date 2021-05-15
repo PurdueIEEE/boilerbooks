@@ -57,19 +57,16 @@
 			$items .= '</td> <td>';
 			$items .= $row['refnumber'];
 			$items .= '</td> <td>';
-			$items .= "<a href='javascript:updateIncome(\"";
-			$items .= $row['incomeid'];
-			$items .= "\", \"";
-
-			if(strcmp($row['status'],'Expected') == 0) {
-				$items .= "Received\")'>";
-				$items .= 'Mark Received';
-			} else {
-				$items .= "Expected\")'>";
-				$items .= 'Mark Expected';
+			if($row['status'] !== "Expected") {
+				$items .= "<a href='javascript:updateIncome(\"" . $row['incomeid'] . "\", \"Expected\")'>Mark Expected</a> ";
 			}
-			$items .= '</a></td>';
-			$items .= '</tr>';
+			if($row['status'] !== "Received") {
+				$items .= "<a href='javascript:updateIncome(\"" . $row['incomeid'] . "\", \"Received\")'>Mark Received</a> ";
+			}
+			if($row['status'] !== "Unreceived") {
+				$items .= "<a href='javascript:updateIncome(\"" . $row['incomeid'] . "\", \"Unreceived\")'>Mark Unreceived</a>";
+			}
+			$items .= '</td> </tr>';
 
 		}
 
