@@ -19,6 +19,9 @@ $amount = test_input($_POST["amount"]);
 $item = test_input($_POST["item"]);
 $category = test_input($_POST["category"]);
 $status = test_input($_POST["status"]);
+if($category === "BOSO" && $status === "Received") {
+    $status = "Expected";
+}
 $comments = test_input($_POST["comments"]);
 
 $usr = $_SESSION['user'];
@@ -45,6 +48,6 @@ catch(PDOException $e)
     }
 
 $conn = null;
-header('Location: index.php'); 
+header('Location: index.php');
 
 ?>
