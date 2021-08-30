@@ -31,6 +31,8 @@
 
             $file_save_name = $committee . "_" . $user . "_" . $item . "_" . $purchaseID . "." . $FileType;
             $file_save_name = str_replace(' ', '_', $file_save_name);
+            $disallowed_chars = str_split("'\"!?#%&{}/<>$:@+`|=");
+            $file_save_name = str_replace($disallowed_chars, '', $file_save_name);
 
             $target_file = $target_dir . $file_save_name;
             $target_file_save = $target_dir_save . $file_save_name;
@@ -78,17 +80,17 @@
 
             	    // Convert png to jpg
             	    if (strtolower($FileType) == 'png') {
-			$im = new Imagick($target_file);	
+			$im = new Imagick($target_file);
 			$im->setImageFormat('jpg');
-			
+
 			$delete_file = $target_file;
-			$target_file = str_replace('png', 'jpg', $target_file);		
-			$target_file = str_replace('PNG', 'jpg', $target_file);		
+			$target_file = str_replace('png', 'jpg', $target_file);
+			$target_file = str_replace('PNG', 'jpg', $target_file);
 
 			$im->writeImage($target_file);
-			
-			$receipt = str_replace('png', 'jpg', $receipt);		
-			$receipt = str_replace('PNG', 'jpg', $receipt);		
+
+			$receipt = str_replace('png', 'jpg', $receipt);
+			$receipt = str_replace('PNG', 'jpg', $receipt);
 			unlink($delete_file);
             	    }
                 } else {
