@@ -53,6 +53,15 @@ $categorylist = '';
 		}
 		//echo $categorylist;
 
+        $sql = "SELECT p.purchaseid, p.committee
+            FROM Purchases p
+            WHERE p.username = '$usr'
+            ORDER BY p.purchaseid DESC";
+
+        $committee = '';
+        foreach ($conn-query($sql) as $row) {
+            $prefered_committee = $row["committee"];
+        }
 
 	}
 	catch(PDOException $e)
