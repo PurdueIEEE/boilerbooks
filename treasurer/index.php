@@ -51,7 +51,7 @@
 
 
 		foreach ($conn->query($sql) as $row) {
-			$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+			$items .= '<tr> <td><a href=/purchase/index.php?purchaseid=';
 			$items .= $row['purchaseID'];
 			$items .= '>';
 			$items .= $row['purchaseID'];

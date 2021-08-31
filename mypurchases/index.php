@@ -25,7 +25,7 @@ try {
 
 
 	foreach ($conn->query($sql) as $row) {
-		$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+		$items .= '<tr> <td><a href=/purchase/index.php?purchaseid=';
 		$items .= $row['purchaseid'];
 		$items .= '>';
 		$items .= $row['purchaseid'];

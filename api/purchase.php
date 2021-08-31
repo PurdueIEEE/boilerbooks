@@ -1,13 +1,11 @@
 <?php
-    /*** Yada yada ydad */
+    /*** Yada yada yada */
 
     session_start();
-	if (!isset($_SESSION['user']))
-	{
+	if (!isset($_SESSION['user'])) {
 		header("Location: ../index.php");
 		die();
 	}
-	//header('Location: /complete/');
 ?>
 
 <?php

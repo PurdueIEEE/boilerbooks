@@ -41,7 +41,7 @@ try {
 		$items.= '<tr> <td>';
 		$items .= $row['date'];
 
-		$items .= '</td> <td><a href=/purchase.php?purchaseid=';
+		$items .= '</td> <td><a href=/purchase/index.php?purchaseid=';
 		$items .= $row['purchaseid'];
 		$items .= '>';
 		$items .= $row['purchaseid'];
