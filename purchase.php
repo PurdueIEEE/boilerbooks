@@ -106,7 +106,7 @@
 		<div class="col-sm-3">
 		</div>
 		<div class="col-sm-4">
-			<p><a href="<?php echo $values['receipt'] ?>">Open receipt in full tab</p>
+			<p><a href="<?php echo $values['receipt'] ?>">Open receipt in full tab</a></p>
 		</div>
 	</div>
 
