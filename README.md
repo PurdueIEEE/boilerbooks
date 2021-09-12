@@ -3,7 +3,7 @@ The ultimate IEEE record keeping system!
 
 This program is written using PHP. The website is displayed using the bootstrap framework. 
 
-Boilerbooks is hosted at [money.pieee.org](https://money.pieee.org).
+Boilerbooks is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
 
 ### Database
