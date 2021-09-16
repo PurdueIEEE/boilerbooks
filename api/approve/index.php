@@ -18,7 +18,7 @@
 	$returnStat = "200";
 
 	/*** Add approval info to database ***/
-	// At some point consider accepting all info using JSON formating 
+	// At some point consider accepting all info using JSON formating
 	// define variables and set to empty values
 	$item = $reason = $vendor = $committee = $cost = $comments = $category = $stat = $fundsource = $usr = $purchaseid = "";
 

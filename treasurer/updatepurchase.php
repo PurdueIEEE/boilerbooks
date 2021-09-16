@@ -25,8 +25,8 @@
 			<h3 class="text-left" style="color:blue" contenteditable="true"><?php echo $values['item']?></h3>
 		</div>
 		<p class="text-center"><em>Last updated <?php echo $values['mdate']?> EST</em></p>
-      	<p class="text-center"><a class="btn btn-info" href = <?php echo "../purchase.php?purchaseid=" . $purchaseid?> roll = "button">Exit Edit Purchase Mode</a></p>
-      	<p class="text-left"><em>Note: The president and treasurer should only use this mode when there was a mistake or unexpected change of a purchase. In general, purchases should be updated through the Request, Approve, and Complete steps (and reimbursed through the treasurer tab). When using this form, you only have the option to change items in blue. Titles that are in red have special care that needs to be taken when editing (highlight the mouse of the relevant section for more details). Always ensure proper data entry, or this form may not properly update the database.</em>
+		<p class="text-center"><a class="btn btn-info" href = <?php echo "../purchase/index.php?purchaseid=" . $purchaseid?> roll = "button">Exit Edit Purchase Mode</a></p>
+		<p class="text-left"><em>Note: The president and treasurer should only use this mode when there was a mistake or unexpected change of a purchase. In general, purchases should be updated through the Request, Approve, and Complete steps (and reimbursed through the treasurer tab). When using this form, you only have the option to change items in blue. Titles that are in red have special care that needs to be taken when editing (highlight the mouse of the relevant section for more details). Always ensure proper data entry, or this form may not properly update the database.</em>
 
 	</div>
 
@@ -48,7 +48,7 @@
 	</div>
 
 	<br>
-	
+
 	<div class="row">
 		<div class="col-sm-2">
 		</div>
@@ -58,7 +58,7 @@
 		<div class="col-sm-3">
 			<p style="color:blue" contenteditable="true"><?php echo $values['purchasereason']?></p>
 		</div>
-		
+
 		<div class="col-sm-2">
 			<p title="Must be Requested, Approved, Denied, Purchased, Processing Reimbursement, or Reimbursed"><strong style="color:red">Status:</strong></p>
 		</div>
@@ -68,8 +68,8 @@
 	</div>
 
 	<br>
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-2">
 		</div>
@@ -88,8 +88,8 @@
 	</div>
 
 	<br>
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-2">
 		</div>
@@ -128,8 +128,8 @@
 	</div>
 
 	<br>
-	
-	
+
+
 	<div class="row">
 		<div class="col-sm-2">
 		</div>
@@ -147,7 +147,7 @@
 		</div>
 	</div>
 
-	<br>	
+	<br>
 
 	<div class="row">
 	<div class="col-sm-2">
@@ -161,9 +161,7 @@
 	</div>
 	</div>
 	<br>
-
 </div>
-
 
 
 <?php

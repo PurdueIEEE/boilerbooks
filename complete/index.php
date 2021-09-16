@@ -130,12 +130,6 @@ $conn = null;
 
 
 
-
-
-
-
-
-
 		<!-- Button -->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="purchasedate">Purchase Date</label>
