@@ -1,8 +1,8 @@
 <?php
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
-	include 'menu.php';
-	include 'dbinfo.php';
+	include '../menu.php';
+	include '../dbinfo.php';
 	$decode = 1;
 
 	$purchaseid = test_input($_GET["purchaseid"]);
@@ -10,6 +10,8 @@
 	//echo $url;
 	$jsonObj = file_get_contents($url);
 	$values = json_decode($jsonObj, TRUE);
+
+	$userIsTreasurer = $_SESSION["userIsTreasurer"];
 ?>
 
 
@@ -106,9 +108,23 @@
 
 	<br>
 
-	<div class="row">
-	<div class="col-sm-2">
-	</div>
+	<?php
+		if ($userIsTreasurer === true) {
+	?>
+		<div class="row">
+			<form class="form-inline" action="/purchase/reuploadprocessing.php" method="post" enctype="multipart/form-data">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6" class="form-group">
+					<input id="purchaseNumberReup" name="purchaseNumberReup" type="" style="display: none;" value=<?php echo $purchaseid; ?> >
+					<label class="control-label" for="cost">Change Receipt</label>
+					<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" style="display: inline-block;">
+					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</form>
+		</div>
+	<?php
+		}
+	?>
 
 	<br>
 

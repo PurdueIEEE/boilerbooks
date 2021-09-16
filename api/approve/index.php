@@ -57,7 +57,7 @@
 	$subject = "Your request has been $stat";
 
 	$message = "<p>Please visit money.pieee.org at your earliest convenience to finish the purchase for $item.</p>" .
-	"<p>You always view the most up-to-date status of the purchase <a href=https://money.purdueieee.org/purchase.php?purchaseid=" . $purchaseid . "> here</a>.</p>";
+	"<p>You always view the most up-to-date status of the purchase <a href=https://money.purdueieee.org/purchase/index.php?purchaseid=" . $purchaseid . "> here</a>.</p>";
 
 	$header = "From:ieeeboilerbooks@gmail.com \r\n";
 	$header .= "MIME-Version: 1.0\r\n";

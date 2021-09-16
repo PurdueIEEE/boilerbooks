@@ -65,7 +65,7 @@
 	$conn = null;
 
 
-	$headerStuff = "Location: /purchase.php?purchaseid=" . $purchaseid;
+	$headerStuff = "Location: /purchase/index.php?purchaseid=" . $purchaseid;
 	//header($headerStuff);
 
 ?>

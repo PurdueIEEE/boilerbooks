@@ -15,6 +15,11 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT a.username, a.role FROM approval a WHERE a.username = '$usr' AND a.role = 'treasurer'";
+    $_SESSION["userIsTreasurer"] = $conn->query($sql)->rowCount() > 0;
+
+
 	$sql = "SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 		p.cost, p.comments, p.username purchasedby
 		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
@@ -25,7 +30,7 @@ try {
 
 
 	foreach ($conn->query($sql) as $row) {
-		$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+		$items .= '<tr> <td><a href=/purchase/index.php?purchaseid=';
 		$items .= $row['purchaseid'];
 		$items .= '>';
 		$items .= $row['purchaseid'];
