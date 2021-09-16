@@ -99,13 +99,11 @@ $conn = null;
 	<script>
 	$(document).ready(function() {
 			$('#mypurchasestable').DataTable( {
-					"order": [[ 0, "desc" ]]
+				"order": [[ 0, "desc" ]]
 			} );
 	} );
 	</script>
 </div>
-
-
 
 
 <?php
