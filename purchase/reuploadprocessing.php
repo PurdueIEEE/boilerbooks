@@ -4,7 +4,7 @@
     include '../dbinfo.php';
     // define variables and set to empty values
     $purchaseID = test_input($_POST['purchaseNumberReup']);
-    $user = $_SESSION['user'];
+    $usr = $_SESSION['user'];
 
     $receipt = "";
     try {
@@ -14,12 +14,11 @@
 
         // Make sure it is a treasurer making the request
         $sql = "SELECT a.username, a.role FROM approval a WHERE a.username = '$usr' AND a.role = 'treasurer'";
-        if($conn->query($sql)->rowCount() === 0) {
+        $connQuery = $conn->query($sql);
+        if($connQuery->rowCount() === 0) {
             exit;
         }
-
-        // use exec() because no results are returned
-        $conn->exec($sql);
+        $connQuery->fetchall();  // I think I need to do this so that the query "finishes".
     } catch (PDOException $e) {
         $sqlErr =  "SQL Statement: $sql <br>";
         $sqlErr .= "SQL Error: " . $e->getMessage();
@@ -31,12 +30,12 @@
 
     if (!empty($purchaseID)) {
         $sql = "SELECT p.purchaseID, p.receipt FROM Purchases p WHERE p.purchaseID = '$purchaseID'";
-        $connQuery = $conn->query($sql)
+        $connQuery = $conn->query($sql);
         if($connQuery->rowCount() !== 1) {
             exit;
         } else {
             foreach ($connQuery as $row) {
-                $receipt_old = $row['receipt']
+                $receipt_old = $row['receipt'];
             }
         }
 
@@ -53,7 +52,7 @@
         $target_dir = "../receipts/";
         $FileType = pathinfo(basename($_FILES["fileToUpload"]["name"]), PATHINFO_EXTENSION);
 
-        $target_file_save = $matches["pre"] . "_reupload_ " . $reup_number . "." . $matches["exten"];
+        $target_file_save = $matches["pre"] . "_reupload_" . $reup_number . "." . strtolower($FileType);
         $target_file = ".." . $target_file_save;
 
         $isUploadError = false;
@@ -94,6 +93,7 @@
 
             // Attempts to move file to the server
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+                $receipt = $target_file_save;
 
                 // Convert png to jpg
                 if (strtolower($FileType) == 'png') {
@@ -119,11 +119,6 @@
         if ($isUploadError === false)  {
             // Update sql database with the file and purchase info
             try {
-                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-
-                // set the PDO error mode to exception
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
                 $sql = "UPDATE Purchases SET receipt='$receipt' WHERE Purchases.purchaseID = '$purchaseID'";
 
                 // use exec() because no results are returned

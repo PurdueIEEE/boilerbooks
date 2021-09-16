@@ -115,7 +115,7 @@
 			<form class="form-inline" action="/purchase/reuploadprocessing.php" method="post" enctype="multipart/form-data">
 				<div class="col-sm-3"></div>
 				<div class="col-sm-6" class="form-group">
-					<input id="purchaseNumberReup" name="purchaseNumberReup" type="" style="visibility: none;" value=<?php echo $purchaseid; ?> >
+					<input id="purchaseNumberReup" name="purchaseNumberReup" type="" style="display: none;" value=<?php echo $purchaseid; ?> >
 					<label class="control-label" for="cost">Change Receipt</label>
 					<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" style="display: inline-block;">
 					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
