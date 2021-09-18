@@ -116,7 +116,6 @@ $conn = null;
 				</div>
 			</div>
 
-
 		</div>
 
 		<!-- Text input-->
@@ -127,7 +126,6 @@ $conn = null;
 
 			</div>
 		</div>
-
 
 
 		<!-- Button -->
@@ -147,14 +145,10 @@ $conn = null;
 		</script>
 
 
-
-
-
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Receipt</label>
 			<div class="col-md-4">
-				<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
-
+				<input id="fileToUpload" name="fileToUpload" type="file" accept=".png,.jpg,.jpeg,.pdf" class="btn btn-default" required="">
 			</div>
 		</div>
 
@@ -166,7 +160,6 @@ $conn = null;
 				<textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['commentsc']; ?></textarea>
 			</div>
 		</div>
-
 
 
 		<!-- Button -->

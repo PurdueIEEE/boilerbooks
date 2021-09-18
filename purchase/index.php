@@ -117,7 +117,7 @@
 				<div class="col-sm-6" class="form-group">
 					<input id="purchaseNumberReup" name="purchaseNumberReup" type="" style="display: none;" value=<?php echo $purchaseid; ?> >
 					<label class="control-label" for="cost">Change Receipt</label>
-					<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="" style="display: inline-block;">
+					<input id="fileToUpload" name="fileToUpload" type="file" accept=".png,.jpg,.jpeg,.pdf" class="btn btn-default" required="" style="display: inline-block;">
 					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
 				</div>
 			</form>
