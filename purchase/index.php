@@ -10,8 +10,6 @@
 	//echo $url;
 	$jsonObj = file_get_contents($url);
 	$values = json_decode($jsonObj, TRUE);
-
-	$userIsTreasurer = $_SESSION["userIsTreasurer"];
 ?>
 
 
@@ -109,7 +107,7 @@
 	<br>
 
 	<?php
-		if ($userIsTreasurer === true) {
+		if ($_SESSION['viewTreasurer'] >= 1) {
 	?>
 		<div class="row">
 			<form class="form-inline" action="/purchase/reuploadprocessing.php" method="post" enctype="multipart/form-data">

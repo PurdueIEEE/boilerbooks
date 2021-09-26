@@ -12,13 +12,9 @@
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Make sure it is a treasurer making the request
-        $sql = "SELECT a.username, a.role FROM approval a WHERE a.username = '$usr' AND a.role = 'treasurer'";
-        $connQuery = $conn->query($sql);
-        if($connQuery->rowCount() === 0) {
+        if($_SESSION['viewTreasurer'] < 1) {
             exit;
         }
-        $connQuery->fetchall();  // I think I need to do this so that the query "finishes".
     } catch (PDOException $e) {
         $sqlErr =  "SQL Statement: $sql <br>";
         $sqlErr .= "SQL Error: " . $e->getMessage();
