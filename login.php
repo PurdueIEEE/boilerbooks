@@ -15,12 +15,13 @@
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		// set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$stmt = $conn->prepare("SELECT password FROM Users WHERE Users.username = '$usr'");
+		$stmt = $conn->prepare("SELECT password, email FROM Users WHERE Users.username = '$usr'");
 		$stmt->execute();
 
 		$results = $stmt->fetchAll();
 		foreach ($results as $pswd) {
 			$dbpsw = $pswd['password'];
+			$user_email = $pswd['email'];
 		}
 
 
@@ -28,6 +29,7 @@
 		if (password_verify($psw,$dbpsw))
 		{
 			$_SESSION['user'] = $usr;
+			$_SESSION['user_email'] = $user_email;
 
 			/***** Figures out what options to display to user ******/
 
