@@ -7,6 +7,24 @@
 
 <?php
 include '../dbinfo.php';
+
+function accordion_top(id_insert, name) {
+    return "
+    <div class='accordion-item'>
+        <h2 class='accordion-header' id='ca-$id_insert-head'>
+            <button class='accordion-button' type='button' data-toggle='collapse' data-target='#ca-$id_insert-body' aria-expanded='true' aria-controls='ca-$id_insert-body'>
+                $name
+            </button>
+        </h2>
+        <div id='ca-$id_insert-body' class='accordion-collapse collapse show' aria-labelledby='ca-$id_insert-head'>
+            <div class='accordion-body'>
+    ";
+}
+
+function accordion_bottom() {
+    return "</div></div></div>";
+}
+
 $my_dues_items = '';
 $committee_dues_items = '';
 $committee_member_summary = '';
@@ -155,305 +173,251 @@ $conn = null;
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
 
-<div class="accordion container" id="constitution-accordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="ca-my-dues-head">
-            <button class="accordion-button" type="button" data-toggle="collapse" data-target="#ca-my-dues-body" aria-expanded="true" aria-controls="ca-my-dues-body">
-                My Dues
-            </button>
-        </h2>
-        <div id="ca-my-dues-body" class="accordion-collapse collapse show" aria-labelledby="ca-my-dues-head">
-            <div class="accordion-body">
-
-                <div class="container">
-                    <table id="tblPersonDues" class="display">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Committee(s)</th>
-                                <th>Year</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $my_dues_items ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+<div class="accordion container" id="dues-accordion">
+    <?php echo accordion_top("my-dues", "My Dues"); ?>
+        <div class="container">
+            <table id="tblPersonDues" class="display">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Committee(s)</th>
+                        <th>Year</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $my_dues_items ?>
+                </tbody>
+            </table>
         </div>
-    </div>
+    <?php echo accordion_bottom(); ?>
 
     <!--
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="ca-my-add-head">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-my-add-body" aria-expanded="true" aria-controls="ca-my-add-body">
-                Add Myself
-            </button>
-        </h2>
-        <div id="ca-my-add-body" class="accordion-collapse collapse show" aria-labelledby="ca-my-add-head">
-            <div class="accordion-body">
-
-                <div class="container">
-                    <div class="form-group text-dark">
-                        <label for="name-input" style="font-size: 45px;">Name:</label>
-                        <input class="form-control input-lg" id="txt-my-name-input" type="text" required maxlength="100" value="<?php echo $my_name ?>" disabled>
-                    </div>
-
-                    <div class="form-group text-dark">
-                        <label for="email-input" style="font-size: 45px;">Email:</label>
-                        <input class="form-control input-lg" id="txt-my-email-input" type="email" required maxlength="100" value="<?php echo $my_email ?>" disabled>
-                    </div>
-
-                    <div class="form-group text-dark">
-                        <label for="id-input" style="font-size: 45px;">Purdue ID:</label>
-                        <input class="form-control input-lg" id="nud-my-id-input" type="number" max="0099999999">
-                        <p>This may be blank if your ID is already in the database. Don't worry: it is hashed and stored securely.</p>
-                    </div>
-
-                    <div class="form-group text-dark" id="committees" style="font-size: 20px;">
-                        <label for="id-input" style="font-size: 45px;">Committees: </label><br />
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Aerial Robotics">Aerial Robotics</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Computer Society">Computer Society</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="EMBS">EMBS</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="MTT-S">MTT-S</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Racing">Racing</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="ROV">ROV</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Software Saturdays">Software Saturdays</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Growth and Engagement">Growth and Engagement</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Industrial Relations">Industrial Relations</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Learning">Learning</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Social">Social</input>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-primary btn-lg" id="btn-add-me-submit">Submit</button>
-                </div>
-
+    <?php echo accordion_top("my-add", "Add Myself"); ?>
+        <div class="container">
+            <div class="form-group text-dark">
+                <label for="name-input" style="font-size: 45px;">Name:</label>
+                <input class="form-control input-lg" id="txt-my-name-input" type="text" required maxlength="100" value="<?php echo $my_name ?>" disabled>
             </div>
+
+            <div class="form-group text-dark">
+                <label for="email-input" style="font-size: 45px;">Email:</label>
+                <input class="form-control input-lg" id="txt-my-email-input" type="email" required maxlength="100" value="<?php echo $my_email ?>" disabled>
+            </div>
+
+            <div class="form-group text-dark">
+                <label for="id-input" style="font-size: 45px;">Purdue ID:</label>
+                <input class="form-control input-lg" id="nud-my-id-input" type="number" max="0099999999">
+                <p>This may be blank if your ID is already in the database. Don't worry: it is hashed and stored securely.</p>
+            </div>
+
+            <div class="form-group text-dark" id="committees" style="font-size: 20px;">
+                <label for="id-input" style="font-size: 45px;">Committees: </label><br />
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Aerial Robotics">Aerial Robotics</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Computer Society">Computer Society</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="EMBS">EMBS</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="MTT-S">MTT-S</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Racing">Racing</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="ROV">ROV</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Software Saturdays">Software Saturdays</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Growth and Engagement">Growth and Engagement</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Industrial Relations">Industrial Relations</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Learning">Learning</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Social">Social</input>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-lg" id="btn-add-me-submit">Submit</button>
         </div>
-    </div>
+    <?php echo accordion_bottom(); ?>
 
     <?php
         if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
+            echo accordion_top("committee-dues");
     ?>
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="ca-committee-dues-head">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-committee-dues-body" aria-expanded="true" aria-controls="ca-committee-dues-body">
-                Committee Dues
-            </button>
-        </h2>
-        <div id="ca-committee-dues-body" class="accordion-collapse collapse show" aria-labelledby="ca-committee-dues-head">
-            <div class="accordion-body">
+        <div class="container">
+            <?php
+                if($_SESSION['viewTreasurer'] >= 1) {
+                    echo "<input type='number' id='nud-mark-paid-amount' class='form-control input-lg' min='0' max='100'>";
+                }
+            ?>
+            <table id="tblCommitteeDues" class="display">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Committee(s)</th>
+                        <th>Year</th>
+                        <th>Amount</th>
+                        <?php if($_SESSION['viewTreasurer'] >= 1) { echo "<th>Mark as paid</th>"; } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $committee_dues_items ?>
+                </tbody>
+            </table>
 
-                <div class="container">
-                    <?php
-                        if($_SESSION['viewTreasurer'] >= 1) {
-                            echo "<input type='number' id='nud-mark-paid-amount' class='form-control input-lg' min='0' max='100'>";
-                        }
-                    ?>
-                    <table id="tblCommitteeDues" class="display">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Committee(s)</th>
-                                <th>Year</th>
-                                <th>Amount</th>
-                                <?php if($_SESSION['viewTreasurer'] >= 1) { echo "<th>Mark as paid</th>"; } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $committee_dues_items ?>
-                        </tbody>
-                    </table>
-
-                    <table id="tblCommitteeSummary" class="display">
-                        <thead>
-                            <tr>
-                                <th>Committee</th>
-                                <th>Year</th>
-                                <th>Paying Members</th>
-                                <th>Total Members</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $committee_member_summary ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+            <table id="tblCommitteeSummary" class="display">
+                <thead>
+                    <tr>
+                        <th>Committee</th>
+                        <th>Year</th>
+                        <th>Paying Members</th>
+                        <th>Total Members</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $committee_member_summary ?>
+                </tbody>
+            </table>
         </div>
-    </div>
+    <?php echo accordion_bottom(); ?>
 
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="ca-committee-add-head">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-committee-add-body" aria-expanded="true" aria-controls="ca-committee-add-body">
-                Add to Committee (New Member)
-            </button>
-        </h2>
-        <div id="ca-committee-add-body" class="accordion-collapse collapse show" aria-labelledby="ca-committee-add-head">
-            <div class="accordion-body">
+    <?php echo accordion_top("committee-add", "Add to Committee (New Member)"); ?>
+        <div class="container">
 
-                <div class="container">
-
-                    <div class="form-group text-dark">
-                        <label for="txt-comte-name-input" style="font-size: 45px;">Name:</label>
-                        <input class="form-control input-lg" id="txt-comte-name-input" type="text" required maxlength="100">
-                    </div>
-
-                    <div class="form-group text-dark">
-                        <label for="txt-comte-email-input" style="font-size: 45px;">Email:</label>
-                        <input class="form-control input-lg" id="txt-comte-email-input" type="email" required maxlength="100">
-                    </div>
-
-                    <div class="form-group text-dark">
-                        <label for="nud-comte-id-input" style="font-size: 45px;">Purdue ID:</label>
-                        <input class="form-control input-lg" id="nud-comte-id-input" type="number" max="0099999999">
-                        <p>This may be blank if your ID is already in the database. Don't worry: it is hashed and stored securely.</p>
-                    </div>
-
-                    <div class="form-group text-dark" id="committees" style="font-size: 20px;">
-                        <label for="id-input" style="font-size: 45px;">Committees: </label><br />
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Aerial Robotics">Aerial Robotics</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Computer Society">Computer Society</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="EMBS">EMBS</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="MTT-S">MTT-S</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Racing">Racing</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="ROV">ROV</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Software Saturdays">Software Saturdays</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Growth and Engagement">Growth and Engagement</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Industrial Relations">Industrial Relations</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Learning">Learning</input>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" class="committees-checkbox" value="Social">Social</input>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-lg" id="btn-add-comte-submit">Submit</button>
-
-                </div>
-
+            <div class="form-group text-dark">
+                <label for="txt-comte-name-input" style="font-size: 45px;">Name:</label>
+                <input class="form-control input-lg" id="txt-comte-name-input" type="text" required maxlength="100">
             </div>
+
+            <div class="form-group text-dark">
+                <label for="txt-comte-email-input" style="font-size: 45px;">Email:</label>
+                <input class="form-control input-lg" id="txt-comte-email-input" type="email" required maxlength="100">
+            </div>
+
+            <div class="form-group text-dark">
+                <label for="nud-comte-id-input" style="font-size: 45px;">Purdue ID:</label>
+                <input class="form-control input-lg" id="nud-comte-id-input" type="number" max="0099999999">
+                <p>This may be blank if your ID is already in the database. Don't worry: it is hashed and stored securely.</p>
+            </div>
+
+            <div class="form-group text-dark" id="committees" style="font-size: 20px;">
+                <label for="id-input" style="font-size: 45px;">Committees: </label><br />
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Aerial Robotics">Aerial Robotics</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Computer Society">Computer Society</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="EMBS">EMBS</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="MTT-S">MTT-S</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Racing">Racing</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="ROV">ROV</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Software Saturdays">Software Saturdays</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Growth and Engagement">Growth and Engagement</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Industrial Relations">Industrial Relations</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Learning">Learning</input>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" class="committees-checkbox" value="Social">Social</input>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-lg" id="btn-add-comte-submit">Submit</button>
+
         </div>
-    </div>
+
+    <?php echo accordion_bottom(); ?>
+
 
     <?php
         if ($_SESSION['viewTreasurer'] >= 1) {
+            echo accordion_top("dues-treas", "Treasurer/President Totals");
     ?>
 
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="ca-dues-treas-head">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-dues-treas-body" aria-expanded="true" aria-controls="ca-dues-treas-body">
-                Treasurer/President Totals
-            </button>
-        </h2>
-        <div id="ca-dues-treas-body" class="accordion-collapse collapse show" aria-labelledby="ca-dues-treas-head">
-            <div class="accordion-body">
+        <div class="container">
+            <table id="tblDuesYearlySummaryPaid" class="display">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Amount Collected</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $dues_paid_by_year_items ?>
+                </tbody>
+            </table>
 
-                <div class="container">
-                    <table id="tblDuesYearlySummaryPaid" class="display">
-                        <thead>
-                            <tr>
-                                <th>Year</th>
-                                <th>Amount Collected</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $dues_paid_by_year_items ?>
-                        </tbody>
-                    </table>
+            <table id="tblDuesYearlySummaryDeposited" class="display">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $dues_totals_by_year_items ?>
+                </tbody>
+            </table>
 
-                    <table id="tblDuesYearlySummaryDeposited" class="display">
-                        <thead>
-                            <tr>
-                                <th>Year</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $dues_totals_by_year_items ?>
-                        </tbody>
-                    </table>
-
-                    <table id="tblDuesDeposits" class="display">
-                        <thead>
-                            <tr>
-                                <th>Income ID</th>
-                                <th>Source</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Item</th>
-                                <th>Status</th>
-                                <th>Comments</th>
-                                <th>Committee</th>
-                                <th>Added by</th>
-                                <th>Year</th>
-                                <th>Ref Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $deposits_items ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+            <table id="tblDuesDeposits" class="display">
+                <thead>
+                    <tr>
+                        <th>Income ID</th>
+                        <th>Source</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Item</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                        <th>Committee</th>
+                        <th>Added by</th>
+                        <th>Year</th>
+                        <th>Ref Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $deposits_items ?>
+                </tbody>
+            </table>
         </div>
-    </div>
 
     <?php
+        echo accordion_bottom();
         }  // viewTreasurer
-    ?>
 
-    <?php
-        }  // view
+        }  // view committee or treasurer
     ?>
 
     -->
+
 
 </div>
 
