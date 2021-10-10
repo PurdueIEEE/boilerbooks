@@ -5,9 +5,6 @@
 
 ?>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="script.js"></script>
-
 <?php
 include '../dbinfo.php';
 $my_dues_items = '';
@@ -26,7 +23,7 @@ try {
 
     $sql = "SELECT D.Name, D.Email, D.Committee, D.Year, D.Amount
         FROM Dues D
-        WHERE D.email = $user_email";
+        WHERE D.email = '$user_email'";
 
 
     // Find the entries for when the current user has paid dues
@@ -43,7 +40,7 @@ try {
     // If the user is a treasurer or president or has committee viewing powers, find those entries
     // Maybe change this to have more access control in the future
     if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
-        $sql = "SELECT D.Name, D.Email, D.Committee, D.Year, D.Amount FROM Dues D"
+        $sql = "SELECT D.Name, D.Email, D.Committee, D.Year, D.Amount FROM Dues D";
 
         $dues_paid_by_year = array();
         $committee_members_by_year = array();
@@ -149,10 +146,19 @@ try {
 $conn = null;
 ?>
 
-<div class="accordion" id="constitution-accordion">
+
+
+<script type="text/javascript" src="script.js"></script>
+<script src="../filter_table.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+
+<div class="accordion container" id="constitution-accordion">
     <div class="accordion-item">
         <h2 class="accordion-header" id="ca-my-dues-head">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-my-dues-body" aria-expanded="true" aria-controls="ca-my-dues-body">
+            <button class="accordion-button" type="button" data-toggle="collapse" data-target="#ca-my-dues-body" aria-expanded="true" aria-controls="ca-my-dues-body">
                 My Dues
             </button>
         </h2>
@@ -180,6 +186,7 @@ $conn = null;
         </div>
     </div>
 
+    <!--
     <div class="accordion-item">
         <h2 class="accordion-header" id="ca-my-add-head">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ca-my-add-body" aria-expanded="true" aria-controls="ca-my-add-body">
@@ -264,7 +271,7 @@ $conn = null;
 
                 <div class="container">
                     <?php
-                        if() {
+                        if($_SESSION['viewTreasurer'] >= 1) {
                             echo "<input type='number' id='nud-mark-paid-amount' class='form-control input-lg' min='0' max='100'>";
                         }
                     ?>
@@ -276,7 +283,7 @@ $conn = null;
                                 <th>Committee(s)</th>
                                 <th>Year</th>
                                 <th>Amount</th>
-                                <?php if($_SESSION['viewTreasurer'] >= 1) { echo "<th>Mark as paid</th>"} ?>
+                                <?php if($_SESSION['viewTreasurer'] >= 1) { echo "<th>Mark as paid</th>"; } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -446,20 +453,7 @@ $conn = null;
         }  // view
     ?>
 
-    <script src="../filter_table.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#tblPersonDues').DataTable( {
-                "order": [[ 0, "desc" ]]
-            });
-
-            $('#tblCommitteeDues').DataTable({
-                orderCellsTop: true,
-                fixedHeader: true,
-                initComplete: make_filterable,
-            });
-        });
-    </script>
+    -->
 
 </div>
 

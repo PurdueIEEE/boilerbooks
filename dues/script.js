@@ -81,4 +81,14 @@ $(document).ready(() => {
         event.preventDefault();
         submit_comte();
     });
+
+    $('#tblPersonDues').DataTable( {
+        "order": [[ 0, "desc" ]]
+    });
+
+    $('#tblCommitteeDues').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        initComplete: make_filterable,
+    });
 });
