@@ -18,7 +18,9 @@ body {
 }
 
 /* Proper spacing for searchable tables (see link in dues/script.js). */
-thead .filters .sorting input {
+thead .filters .sorting input,
+thead .filters .sorting_desc input,
+thead .filters .sorting_asc input {
 	width: 100%;
 }
 

@@ -103,9 +103,9 @@ $(document).ready(function() {
 
     $('#tblCommitteeDues').DataTable({
         "order": [[ 3, "desc" ]],
+        stateSave: true,
         orderCellsTop: true,
         fixedHeader: true,
-        stateSave: true,
         initComplete: function() {
             make_filterable(this.api(), "tblCommitteeDues");
         }

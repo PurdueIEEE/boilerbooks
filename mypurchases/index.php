@@ -67,7 +67,6 @@ try {
 
 $conn = null;
 ?>
-
 <script>
 	function cancelPurchase(purchaseid) {
 		let title = "update.php?purchaseid=" + purchaseid + "&status=Denied";
@@ -97,10 +96,16 @@ $conn = null;
 			<?php echo $items ?>
 		</tbody>
 	</table>
+	<script type="text/javascript" src="/assets/filter_table.js"></script>
 	<script>
 	$(document).ready(function() {
 			$('#mypurchasestable').DataTable( {
-				"order": [[ 0, "desc" ]]
+				"order": [[ 0, "desc" ]],
+				orderCeelsTop: true,
+				fixedHeader: true,
+				initComplete: function() {
+					make_filterable(this.api(), "mypurchasestable");
+				}
 			} );
 	} );
 	</script>
