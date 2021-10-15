@@ -169,7 +169,7 @@
 		$(document).ready(function() {
 			$('#treasurertable').DataTable( {
 				"order": [[ 1, "desc" ]],
-				stateSave: true;
+				stateSave: true
 			} );
 			stateSave: true
 

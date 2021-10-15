@@ -1,7 +1,15 @@
 // From: https://datatables.net/extensions/fixedheader/examples/options/columnFiltering.html
+function make_filterable(api, id_name) {
 
-function make_filterable() {
-    var api = this.api();
+    let dt = $(`#${id_name}`);
+    dt.css("width", "100%");
+
+    $(`#${id_name} thead tr`)
+        .clone(true)
+        .addClass('filters')
+        .appendTo(`#${id_name} thead`);
+
+    // let api = doc.api();
 
     // For each column
     api
@@ -9,10 +17,10 @@ function make_filterable() {
         .eq(0)
         .each(function (colIdx) {
             // Set the header cell to contain the input element
-            var cell = $('.filters th').eq(
+            let cell = $('.filters th').eq(
                 $(api.column(colIdx).header()).index()
             );
-            var title = $(cell).text();
+            let title = $(cell).text();
             $(cell).html('<input type="text" placeholder="' + title + '" />');
 
             // On every keypress in this input
@@ -26,9 +34,9 @@ function make_filterable() {
 
                     // Get the search value
                     $(this).attr('title', $(this).val());
-                    var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                    let regexr = '({search})'; //$(this).parents('th').find('select').val();
 
-                    var cursorPosition = this.selectionStart;
+                    let cursorPosition = this.selectionStart;
                     // Search the column for that value
                     api
                         .column(colIdx)
