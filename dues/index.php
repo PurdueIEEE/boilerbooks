@@ -27,7 +27,7 @@ function accordion_bottom() {
 
 function committee_checkboxes($id_insert, $select_committees) {
     echo "<div class='form-group text-dark' id='ckgroup-committees-$id_insert'>
-            <div class='col-sm-3'><h5 style='text-align: right;'>Committees: </h5></div>
+            <div class='col-sm-3'><h5>Committees: </h5></div>
             <div class='col-sm-5' style='padding-left: 35px;'>";
 
     $committees_ = array('Aerial Robotics', 'Computer Society', 'EMBS', 'MTT-S',
@@ -64,10 +64,9 @@ try {
     // Find the entries for when the current user has paid dues
     $my_last_committee = '';
     foreach($conn->query($sql) as $row) {
-        $user_full_name = $row['Name'];
         $my_last_committee = $row['Committee'];
         $my_dues_items .= "<tr>";
-        $my_dues_items .= "<td>$user_full_name</td>";
+        $my_dues_items .= "<td>{$row['Name']}</td>";
         $my_dues_items .= "<td>{$row['Email']}</td>";
         $my_dues_items .= "<td>$my_last_committee</td>";
         $my_dues_items .= "<td>{$row['Year']}</td>";
@@ -143,7 +142,7 @@ try {
 
         // If it's the treasurer or president, find the dues that have been deposited
         if($_SESSION['viewTreasurer'] >= 1) {
-            $sql = "SELECT *
+            $sql = "SELECT *, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = I.addedby) addedbyname
                 FROM Income I
                 WHERE LOWER(source) LIKE '%dues%'";
 
@@ -161,7 +160,7 @@ try {
                 $deposits_items .= "<td>{$row['status']}</td>";
                 $deposits_items .= "<td>{$row['comments']}</td>";
                 $deposits_items .= "<td>{$row['committee']}</td>";
-                $deposits_items .= "<td>{$row['addedby']}</td>";
+                $deposits_items .= "<td>{$row['addedbyname']}</td>";
                 $deposits_items .= "<td>$fiscal_year_i</td>";
                 $deposits_items .= "<td>{$row['refnumber']}</td>";
                 $deposits_items .= "</tr>";
@@ -198,15 +197,7 @@ $conn = null;
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
-<style>
-    /* .dataTable .filters th input { */
-    thead input {
-        width: 100%;
-        /* box-sizing: border-box; */
-    }
-</style>
-
-<script type="text/javascript" src="../filter_table.js"></script>
+<script type="text/javascript" src="/assets/filter_table.js"></script>
 <script type="text/javascript" src="script.js"></script>
 
 
@@ -233,7 +224,7 @@ $conn = null;
             <div class="form-group text-dark">
                 <label for="name-input" class="control-label col-sm-3">Name:</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="txt-my-name-input" type="text" required maxlength="100" value="<?php echo $user_full_name ?>" disabled>
+                    <input class="form-control" id="txt-my-name-input" type="text" required maxlength="100" value="<?php echo $_SESSION['user_full_name']; ?>" disabled>
                 </div>
             </div>
 

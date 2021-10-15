@@ -9,8 +9,6 @@ function make_filterable(api, id_name) {
         .addClass('filters')
         .appendTo(`#${id_name} thead`);
 
-    // let api = doc.api();
-
     // For each column
     api
         .columns()
