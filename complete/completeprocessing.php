@@ -39,6 +39,8 @@
             $uploadErrMessage = "";
             $sqlErr = "";
 
+            $isCostError = false;
+
             $okayFileTypes = ['pdf', 'jpeg', 'jpg', 'png'];
             $maxFileSize = 2 * 1024 * 1024; // MB * KB * B
 
@@ -68,8 +70,14 @@
                 $isUploadError = true;
             }
 
-            // Only run if we succeed in passing the file checks
-            if ($isUploadError === false)  {
+            // Check that maximum the user can increase by is 15% and $10.
+            $costCheck = (float) test_input(str_replace('$', '', $cost));
+            if ($costCheck > $_SESSION["costmax"]) {
+                $isCostError = true;
+            }
+
+            // Only run if we succeed in passing the file checks and max cost check
+            if ($isUploadError === false && $isCostError === false)  {
 
                 // Attempts to move file to the server
                 if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
@@ -78,17 +86,17 @@
 
             	    // Convert png to jpg
             	    if (strtolower($FileType) == 'png') {
-			$im = new Imagick($target_file);	
+			$im = new Imagick($target_file);
 			$im->setImageFormat('jpg');
-			
+
 			$delete_file = $target_file;
-			$target_file = str_replace('png', 'jpg', $target_file);		
-			$target_file = str_replace('PNG', 'jpg', $target_file);		
+			$target_file = str_replace('png', 'jpg', $target_file);
+			$target_file = str_replace('PNG', 'jpg', $target_file);
 
 			$im->writeImage($target_file);
-			
-			$receipt = str_replace('png', 'jpg', $receipt);		
-			$receipt = str_replace('PNG', 'jpg', $receipt);		
+
+			$receipt = str_replace('png', 'jpg', $receipt);
+			$receipt = str_replace('PNG', 'jpg', $receipt);
 			unlink($delete_file);
             	    }
                 } else {
@@ -97,7 +105,7 @@
                 }
             }
 
-            if ($isUploadError === false)  {
+            if ($isUploadError === false && $isCostError === false)  {
                 // Update sql database with the file and purchase info
                 try {
                     $cost = test_input(str_replace('$', '', $cost));
@@ -120,7 +128,7 @@
                 }
             }
 
-            if ($isUploadError === false)  {
+            if ($isUploadError === false && $isCostError === false)  {
 
                 if ($sendemail == 1) {
                     $to = "purdue.ieee.treasurer@gmail.com";
@@ -164,9 +172,16 @@
 
     <div style='text-align:center; line-height: 2.5em'>
         <?php
-            if (!empty($purchaseID) && $isUploadError == false) {
+            if (!empty($purchaseID) && $isUploadError == false && $isCostError === false) {
                 //header('Location: index.php');
                 echo "<h1> Your purchase was successful </h1>";
+            } else if (!empty($purchaseID) && $isUploadError == false) {
+                echo "<h1> Oops... something wend wrong</h1>";
+
+                echo '<h2> Your inputed cost of $';
+                echo "$cost is above the maximum increase amount allowed.</h2>";
+
+                echo "<h2> Please contact the IEEE Treasurer with any questions. </h2>";
             } else {
                 echo "<h1> Oops... something went wrong</h1>";
 
