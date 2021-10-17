@@ -1,7 +1,10 @@
 # boilerbooks
+
+[![Deploy](https://deploy.purdueieee.org/status?repo=PurdueIEEE_boilerbooks)](https://money.purdueieee.org)
+
 The ultimate IEEE record keeping system!
 
-This program is written using PHP. The website is displayed using the bootstrap framework. 
+This program is written using PHP. The website is displayed using the bootstrap framework.
 
 Boilerbooks is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
