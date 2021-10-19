@@ -71,6 +71,7 @@
     <select id="status" name="status" class="form-control">
       <option value="Expected">Expected</option>
       <option value="Received">Received</option>
+      <option value="Unreceived">Unreceived</option>
     </select>
   </div>
 </div>

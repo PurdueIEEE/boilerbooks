@@ -5,6 +5,16 @@
 	include '../dbinfo.php';
 ?>
 
+<?php
+	if($committee == '' && !isset($_SESSION['onlyCommittee'])) {
+		// For whatever reason, plain ole' `header()` wasn't working.
+		echo "<script type='text/javascript'> document.location = 'findcommittee.php'; </script>";
+	}
+	if (isset($_GET['committee'])) {
+		$committee = test_input($_GET['committee']);
+	}
+?>
+
 <br>
 
 <div class="container">
@@ -66,7 +76,8 @@
 
 	<div class="container">
 		<h3 class="text-center">
-		<?php echo $_SESSION['fiscalyear'] . ' ' . $_SESSION['committee'];?> Expenses Summary</h3>
+			<?php echo $_SESSION['fiscalyear'] . ' ' . $_SESSION['committee'];?> Expenses Summary
+		</h3>
 		<table id="expensestablesummary" class="display">
 			<thead>
 				<tr>
@@ -76,7 +87,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php echo $_SESSION['commiteepurchasessummary'] ?>
+				<?php echo $_SESSION['committeepurchasessummary'] ?>
 			</tbody>
 		</table>
 		<script>
@@ -116,7 +127,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php echo $_SESSION['commiteepurchases'] ?>
+			<?php echo $_SESSION['committeepurchases'] ?>
 		</tbody>
 	</table>
 	<script>
@@ -146,7 +157,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<?php echo $_SESSION['commiteeincome'] ?>
+			<?php echo $_SESSION['committeeincome'] ?>
 		</tbody>
 	</table>
 	<script>

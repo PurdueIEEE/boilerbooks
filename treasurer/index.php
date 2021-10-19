@@ -51,7 +51,7 @@
 
 
 		foreach ($conn->query($sql) as $row) {
-			$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+			$items .= '<tr> <td><a href=/purchase/index.php?purchaseid=';
 			$items .= $row['purchaseID'];
 			$items .= '>';
 			$items .= $row['purchaseID'];
@@ -79,20 +79,10 @@
 			$items .= '</td> <td>';
 			$items .= $row['comments'];
 
-			$items .= "</td> <td><a href='update.php?reimbursed=-1&processing=";
+			$items .= "</td> <td><a onclick='addIdToQueueBox(";
 			$items .= $row['purchaseID'];
-			$items .= "'>Mark Processing";
-			$items .= '</a></td> <td>';
-
-			$items .= "<a href='update.php?processing=-1&reimbursed=";
-			$items .= $row['purchaseID'];
-			$items .= "'>Mark Reimbursed";
-			$items .= '</a></td>';
-
-			$items .= "</fieldset>
-		</form>";
-		$items .= '</td></tr>';
-
+			$items .= ")'>Add to Chosen";
+			$items .= '</a></td></tr>';
 		}
 
 	}
@@ -146,14 +136,35 @@
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
-				<th>Processing</th>
-				<th>Reimbursed</th>
+                <th>Change Status</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php echo $items ?>
 		</tbody>
 	</table>
+
+    <br><br>
+    <div class="row">
+        <form class="form-inline" action="/treasurer/update.php" method="post">
+            <div class="col-sm-2"></div>
+
+            <div class="form-group">
+                <label class="control-label" for="chosen">Chosen</label>
+                <input id="txtChosen" name="chosen" type="text" placeholder="Enter purchase IDs here or click above" class="form-control input-md" required="" value="" size=40>
+
+                <span class="form-group" style="display: none">
+                    <select id="cboStatus" name="status" class="form-control" required="">
+                        <option value="Processing Reimbursement" selected>Processing</option>
+                        <option value="Reimbursed">Reimbursed</option>
+                    </select>
+                </span>
+
+                <button type="submit" id="btnProcessinge" name="processing" class="btn btn-primary" onclick="setStatus('Processing Reimbursement')">Mark Processing</button>
+                <button type="submit" id="btnReimbursed"  name="reimbursed" class="btn btn-success"  onclick="setStatus('Reimbursed')">Mark Reimbursed</button>
+            </div>
+        </form>
+    </div>
 	<script>
 		$(document).ready(function() {
 			$('#treasurertable').DataTable( {
@@ -182,6 +193,25 @@
 
 			window.location = fullFinal;
 		}
+
+        function setStatus(status) {
+            document.getElementById("cboStatus").value = status;
+        }
+
+        // const ID_FINDER = new RegExp("\\b[0-9]+\\b");
+        function addIdToQueueBox(purchaseId) {
+            let txtIds = document.getElementById("txtChosen");
+            let existingIdsString = txtIds.value;
+            if(existingIdsString === '') {
+                txtIds.value = purchaseId;
+            } else {
+                let existingIds = existingIdsString.split(',');
+                let purchaseIdStr = purchaseId.toString();
+                if(!existingIds.includes(purchaseIdStr)) {
+                    txtIds.value += ',' + purchaseIdStr;
+                }
+            }
+        }
 
 	</script>
 </div>

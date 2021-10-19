@@ -15,17 +15,18 @@ try {
 	$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	// set the PDO error mode to exception
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 	$sql = "SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-	p.cost, p.comments, p.username purchasedby
-	, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
-	FROM Purchases p
-			WHERE p.username = '$usr'
-			ORDER BY p.purchasedate";
+		p.cost, p.comments, p.username purchasedby
+		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.username = '$usr'
+		ORDER BY p.purchasedate";
 	//$stmt->execute();
 
 
 	foreach ($conn->query($sql) as $row) {
-		$items .= '<tr> <td><a href=/purchase.php?purchaseid=';
+		$items .= '<tr> <td><a href=/purchase/index.php?purchaseid=';
 		$items .= $row['purchaseid'];
 		$items .= '>';
 		$items .= $row['purchaseid'];
@@ -52,23 +53,27 @@ try {
 		$items .= $row['cost'];
 		$items .= '</td> <td>';
 		$items .= $row['comments'];
-
+		$items .= '</td> <td>';
+		if($row['status'] == "Requested" || $row['status'] == "Approved" || $row['status'] == "Purchased") {
+			$items .= "<a href='javascript:cancelPurchase(\"" . $row['purchaseid'] . "\")'>Cancel</a>";
+		}
 
 		$items .= '</td></tr>';
-
-
 	}
 		//echo $items;
-
-
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 ?>
+
+<script>
+	function cancelPurchase(purchaseid) {
+		let title = "update.php?purchaseid=" + purchaseid + "&status=Denied";
+		window.location = title;
+	}
+</script>
 
 <div class="container">
 	<table id="mypurchasestable" class="display">
@@ -85,6 +90,7 @@ $conn = null;
 				<th>Status</th>
 				<th>Amount</th>
 				<th>Comments</th>
+				<th>Cancel</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -94,13 +100,11 @@ $conn = null;
 	<script>
 	$(document).ready(function() {
 			$('#mypurchasestable').DataTable( {
-					"order": [[ 0, "desc" ]]
+				"order": [[ 0, "desc" ]]
 			} );
 	} );
 	</script>
 </div>
-
-
 
 
 <?php

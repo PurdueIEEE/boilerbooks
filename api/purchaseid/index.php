@@ -14,13 +14,13 @@
 		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 		// set the PDO error mode to exception
 		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		
+
 		$sql = "SELECT DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.modifydate as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-		p.cost, p.comments, p.fundsource, p.fiscalyear, p.username
-		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
-		, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
-		 FROM Purchases p 
-		 WHERE p.purchaseID = $purchaseid";
+			p.cost, p.comments, p.fundsource, p.fiscalyear, p.username
+			, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
+			, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+			FROM Purchases p
+			WHERE p.purchaseID = $purchaseid";
 		//$stmt->execute();
 
 
@@ -50,30 +50,22 @@
 
 		if ($decode == 1) {
 			echo "<br><br>";
-		    foreach($decoded as $key => $val)
-		    {
+		    foreach($decoded as $key => $val) {
 		        //echo $row;
 		        echo $key . ': ' . $val;
 		        echo '<br>';
 		    }
 		}
-		
 
 
-	}
-	catch(PDOException $e)
-		{
+	} catch(PDOException $e) {
 		echo $sql . "<br>" . $e->getMessage();
-		}
+	}
 
 	$conn = null;
 
 
-	$headerStuff = "Location: /purchase.php?purchaseid=" . $purchaseid;
-	//header($headerStuff); 
-	
-
+	$headerStuff = "Location: /purchase/index.php?purchaseid=" . $purchaseid;
+	//header($headerStuff);
 
 ?>
-
-

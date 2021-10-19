@@ -56,9 +56,6 @@ $conn = null;
 
 
 
-
-
-
 <!-- Page Content -->
 
 <form class="form-horizontal" action="completeprocessing.php" method="post" enctype="multipart/form-data">
@@ -116,7 +113,6 @@ $conn = null;
 				</div>
 			</div>
 
-
 		</div>
 
 		<!-- Text input-->
@@ -129,13 +125,6 @@ $conn = null;
 		</div>
 
 
-
-
-
-
-
-
-
 		<!-- Button -->
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="purchasedate">Purchase Date</label>
@@ -146,24 +135,17 @@ $conn = null;
 
 
 		<script>
-		    $('input[name="purchasedate"]').daterangepicker(
-
-
-    		{
+		    $('input[name="purchasedate"]').daterangepicker({
 		        singleDatePicker: true,
 		        showDropdowns: true
 		    });
 		</script>
 
 
-
-
-
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Receipt</label>
 			<div class="col-md-4">
-				<input id="fileToUpload" name="fileToUpload" type="file" class="btn btn-default" required="">
-
+				<input id="fileToUpload" name="fileToUpload" type="file" accept=".png,.jpg,.jpeg,.pdf" class="btn btn-default" required="">
 			</div>
 		</div>
 
@@ -175,7 +157,6 @@ $conn = null;
 				<textarea class="form-control" id="comments" name="comments"><?php echo $_SESSION['commentsc']; ?></textarea>
 			</div>
 		</div>
-
 
 
 		<!-- Button -->

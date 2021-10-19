@@ -1,8 +1,8 @@
 <?php
 	$title = 'Boiler Books';
 	$mypurchasesactive = "active";
-	include 'menu.php';
-	include 'dbinfo.php';
+	include '../menu.php';
+	include '../dbinfo.php';
 	$decode = 1;
 
 	$purchaseid = test_input($_GET["purchaseid"]);
@@ -27,8 +27,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4" class="text-center">
 			<p><strong>Purchased by:</strong> <a href=<?php echo "treasurer/user.php?usrlookup=" . $values['username']?>><?php echo $values['purchasedby']?></a></p>
 		</div>
@@ -37,11 +36,10 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Purchase reason:</strong> <?php echo $values['purchasereason']?></p>
 		</div>
@@ -50,11 +48,10 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Cost:</strong> $<?php echo $values['cost']?></p>
 		</div>
@@ -63,11 +60,10 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Category:</strong> <?php echo $values['category']?></p>
 		</div>
@@ -79,8 +75,7 @@
 
 
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Committee:</strong> <?php echo $values['committee']?></p>
 		</div>
@@ -89,11 +84,10 @@
 		</div>
 	</div>
 
-	
-	
+
+
 	<div class="row">
-		<div class="col-sm-3">
-		</div>
+		<div class="col-sm-3"></div>
 		<div class="col-sm-4">
 			<p><strong>Fiscal Year:</strong> <?php echo $values['fiscalyear']?></p>
 		</div>
@@ -102,13 +96,40 @@
 		</div>
 	</div>
 
-	<br>	
+	<div class="row">
+		<div class="col-sm-3">
+		</div>
+		<div class="col-sm-4">
+			<p><a href="<?php echo $values['receipt'] ?>">Open receipt in full tab</a></p>
+		</div>
+	</div>
+
+	<br>
+
+	<?php
+		if ($_SESSION['viewTreasurer'] >= 1) {
+	?>
+		<div class="row">
+			<form class="form-inline" action="/purchase/reuploadprocessing.php" method="post" enctype="multipart/form-data">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-6" class="form-group">
+					<input id="purchaseNumberReup" name="purchaseNumberReup" type="" style="display: none;" value=<?php echo $purchaseid; ?> >
+					<label class="control-label" for="cost">Change Receipt</label>
+					<input id="fileToUpload" name="fileToUpload" type="file" accept=".png,.jpg,.jpeg,.pdf" class="btn btn-default" required="" style="display: inline-block;">
+					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</form>
+		</div>
+	<?php
+		}
+	?>
+
+	<br>
 
 	<div class="row">
-	<div class="col-sm-2">
-	</div>
+	<div class="col-sm-2"></div>
 	<div class="col-sm-8">
-		<?php 
+		<?php
 			if($values['receipt'] == '') :
 				echo '<h1> <center> There is no receipt for this purchase. </center> </h1>';
 			else :

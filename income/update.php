@@ -61,7 +61,7 @@ if ($validuser >= 1) {
 	echo $stat;
 
 	try {
-		$cost = test_input(str_replace('$','',$cost));
+		$cost = test_input(str_replace('$', '', $cost));
 	    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 	    // set the PDO error mode to exception
 	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -73,34 +73,32 @@ if ($validuser >= 1) {
 		// use exec() because no results are returned
 	    $conn->exec($sql);
 	    echo "Updated";
-	    }
-	catch(PDOException $e)
-	    {
+	} catch(PDOException $e) {
 	    echo $sql . "<br>" . $e->getMessage();
-	    }
+	}
 
 	$conn = null;
 
 
 
-	 $to = $email;
-	 $subject = "Your purchased item is now $stat";
+	$to = $email;
+	$subject = "Your purchased item is now $stat";
 
-	 $message = "<p>$item for $committee is now $stat.
-	 Feel free to visit money.pieee.org or contact the IEEE treasurer for more information.</p>";
+	$message = "<p>$item for $committee is now $stat.
+	Feel free to visit money.pieee.org or contact the IEEE treasurer for more information.</p>";
 
-	 $header = "From:ieeeboilerbooks@gmail.com \r\n";
-	 $header .= "MIME-Version: 1.0\r\n";
-	 $header .= "Content-type: text/html\r\n";
+	$header = "From:ieeeboilerbooks@gmail.com \r\n";
+	$header .= "MIME-Version: 1.0\r\n";
+	$header .= "Content-type: text/html\r\n";
 
-	 if ($sendmail == 1) {
-		 $retval = mail ($to,$subject,$message,$header);
+	if ($sendmail == 1) {
+		$retval = mail ($to,$subject,$message,$header);
 
-		 if( $retval == true ) {
+		if($retval) {
 			//echo "Message sent successfully...";
-		 }else {
+		} else {
 			//echo "Message could not be sent...";
-	 		}
+	 	}
  	}
 }
 
