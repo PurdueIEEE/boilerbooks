@@ -1,7 +1,6 @@
 <?php
 /*
- * This pages handles a committee chair adding a member to their committe who is
- *  already in the database (from a prior year or another committee)
+ * This pages handles someone adding themself.
  */
 
 session_start();
@@ -16,7 +15,9 @@ if (!isset($_SESSION['user']))
 
 include '../dbinfo.php';
 
+$full_name = test_input($_POST["name"]);
 $email = test_input($_POST["email"]);
+$id = $_POST["id"];
 $committee = test_input($_POST["committee"]);
 
 try {
@@ -24,37 +25,33 @@ try {
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // TODO: limit adding people to only one's own committee
 
-    $currentYearEntryIndex = -1;
-    $committee_prior = "";
+    $id_hash = ($id === "") ? "" : hash("sha512", $id);
 
-    $sql = "SELECT * FROM Dues WHERE LOWER(email) = LOWER('$email')";
+    // Find the member's existing ID hash (if present) and figure out if that have already
+    //  been entered into the current year.
+    $sql = "SELECT id_hash, Email, Year, index FROM Dues WHERE LOWER(email) = LOWER('$email')";
     $connQuery = $conn->query($sql);
+    $currentYearEntryIndex = -1;  // Index of the entry for the current year of this member
+    $invalid = false;
     if($connQuery->rowCount() >= 1) {
         foreach ($connQuery as $row) {
+            if($id_hash !== $row['id_hash'] && $id_hash !== "") {
+                exit(); // the given id doesn't match (despite the same email)
+            }
             $id_hash = $row['id_hash'];
-            $full_name = $row['Name'];
-
             if($current_fiscal_year === $row['Year']) {
                 $currentYearEntryIndex = $row['index'];
-                $committee_prior = $row['Committee']
             }
         }
     } else {
-        exit();
-        // error message for someone new not populating their ID
+        if($id_hash === "") {
+            exit();
+            // error message for someone without an existing id hash not populating their ID
+        }
     }
 
     if($currentYearEntryIndex !== -1) {
-        $committee_list = explode(',', $committee_prior);
-        foreach(explode(',', $committee) as $committee_name_new) {
-            if(!in_array($committee_name_new, $committee_list, true)) {
-                $committee_list[] = $committee_name_new;
-            }
-        }
-        $committee = implode(',', $committee_list);
-
         $sql = "UPDATE Dues SET Committee = $committee
             WHERE index = $currentYearEntryIndex
             ";

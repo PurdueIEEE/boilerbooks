@@ -91,16 +91,18 @@ try {
             $amount = $row['Amount'];
             $fiscal_year_i = $row['Year'];
             $committee_i = $row['Committee'];
+            $email = $row['Email'];
 
             $committee_dues_items .= "<tr>";
             $committee_dues_items .= "<td>{$row['Name']}</td>";
-            $committee_dues_items .= "<td>{$row['Email']}</td>";
+            $committee_dues_items .= "<td>$email</td>";
             $committee_dues_items .= "<td>$committee_i</td>";
             $committee_dues_items .= "<td>$fiscal_year_i</td>";
             $committee_dues_items .= "<td>$amount</td>";
+            $committee_dues_items .= "<td><a onclick=\"submit_comte_exist('$email')\">Add</a></td>"
             if($_SESSION['viewTreasurer'] >= 1) {
                 if($fiscal_year_i == $current_fiscal_year) {
-                    $committee_dues_items .= "<td><a onclick=\"submit_mark_paid('{$row['Name']}', '{$row['Email']}', '$committee_i', $fiscal_year_i)\">Mark Paid</a></td>";
+                    $committee_dues_items .= "<td><a onclick=\"submit_mark_paid('{$row['Email']}')\">Mark Paid</a></td>";
                 } else {
 		    $committee_dues_items .= "<td></td>";
 		}
@@ -255,17 +257,24 @@ $conn = null;
         if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
             echo accordion_top("committee-dues", "Committee Dues");
     ?>
-        <?php
-            if($_SESSION['viewTreasurer'] >= 1) {
-                echo "<form class='form-horizontal'>
-<div class='form-group'>
-                    <label for='nud-mark-paid-amount' class='control-label col-sm-3'>Amount Paid</label>
-                    <div class='col-sm-2'>
-                    <input type='number' id='nud-mark-paid-amount' class='form-control' min='0' max='100' value='15'>
-                    </div>
-                </div>
-</form>";
-            }
+        <div class="col-sm-6">
+            <form class='form'>
+            <?php
+                echo committee_checkboxes("add-comte-exist", $my_last_committee);
+            echo "</form></div>"
+
+                if($_SESSION['viewTreasurer'] >= 1) {
+                    echo "<div class='col-sm-6'>
+                        <form class='form-horizontal'>
+                            <div class='form-group'>
+                                <label for='nud-mark-paid-amount' class='control-label col-sm-3'>Amount Paid</label>
+                                <div class='col-sm-2'>
+                                    <input type='number' id='nud-mark-paid-amount' class='form-control' min='0' max='100' value='15'>
+                                </div>
+                            </div>
+                        </form>
+                    </div>";
+                }
         ?>
         <table id="tblCommitteeDues" class="display">
             <thead>
@@ -275,6 +284,7 @@ $conn = null;
                     <th>Committee(s)</th>
                     <th>Year</th>
                     <th>Amount</th>
+                    <th>Add to chosen Committees</th>
                     <?php if($_SESSION['viewTreasurer'] >= 1) { echo "<th>Mark as paid</th>"; } ?>
                 </tr>
             </thead>
@@ -283,6 +293,7 @@ $conn = null;
             </tbody>
         </table>
 
+        <h4>Committee Summary</h4>
         <table id="tblCommitteeSummary" class="display">
             <thead>
                 <tr>

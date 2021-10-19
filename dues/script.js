@@ -13,7 +13,7 @@ function committee_boxes_to_string(group_id) {
 }
 
 
-function validate_member(name, email, id, committee, amount) {
+function validate_member(name, email, id, committee) {
     let error = "";
 
     if(!namePattern.test(name)) {
@@ -42,8 +42,6 @@ function validate_member(name, email, id, committee, amount) {
             email: email,
             id: id,
             committee: committee,
-            fiscalyear: '<?=$current_fiscal_year?>',
-            amount: 0
         }];
     }
 }
@@ -55,10 +53,10 @@ function submit_me() {
 
     let committee = committee_boxes_to_string("ckgroup-committees-add-me");
 
-    let [valid, post_data] = validate_member(name, email, id, committee, 0);
+    let [valid, post_data] = validate_member(name, email, id, committee);
 
     if(valid) {
-        $.post("add_exist.php", post_data);
+        $.post("add_new.php", post_data);
     }
 }
 
@@ -70,17 +68,33 @@ function submit_comte() {
 
     let committee = committee_boxes_to_string("ckgroup-committees-committee-new");
 
-    let [valid, post_data] = validate_member(name, email, id, committee, 0);
+    let [valid, post_data] = validate_member(name, email, id, committee);
 
     if(valid) {
-        // $.post("add_exist.php", post_data);
+        $.post("add_new.php", post_data);
+        console.log(post_data);
+    }
+}
+
+function submit_comte_exist(email) {
+    let committee = committee_boxes_to_string("ckgroup-committees-add-comte-exist");
+
+    if(valid) {
+        $.post("add_exist.php", {
+            committee: committee,
+            email: email
+        });
         console.log(post_data);
     }
 }
 
 
-function submit_mark_paid(name, email, committee, year, amount) {
-    _submit_internal(name, email, committee, year, amount)
+function submit_mark_paid(email) {
+    let amount = $("#nud-mark-paid-amount").val();
+    $.post("set_payment.php", {
+        email: email,
+        amount: amount
+    })
 }
 
 $(document).ready(function() {
@@ -91,10 +105,6 @@ $(document).ready(function() {
     $('#btn-add-comte-submit').submit((event) => {
         event.preventDefault();
         submit_comte();
-    });
-    $('#btn-add-comte-exist-submit').submit((event) => {
-        event.preventDefault();
-        submit_comte_exist();
     });
 
     $('#tblPersonDues').DataTable( {
