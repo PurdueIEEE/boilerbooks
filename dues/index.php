@@ -305,6 +305,7 @@ $conn = null;
         </table>
 
         <h4>Committee Summary</h4>
+        <p>Note: Not all members of committees may have been added to the database and are listed. Consult committee chairs for internal rosters.</p>
         <table id="tblCommitteeSummary" class="display">
             <thead>
                 <tr>
