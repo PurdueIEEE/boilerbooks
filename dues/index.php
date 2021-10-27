@@ -44,6 +44,7 @@ function committee_checkboxes($id_insert, $select_committees) {
 }
 
 $my_dues_items = '';
+$user_paid_current_year = false;
 $committee_dues_items = '';
 $committee_member_summary = '';
 $deposits_items = '';
@@ -65,13 +66,15 @@ try {
     $my_last_committee = '';
     foreach($conn->query($sql) as $row) {
         $my_last_committee = $row['Committee'];
+        $fiscal_year_i = $row['Fiscal_Year'];
         $my_dues_items .= "<tr>";
         $my_dues_items .= "<td>{$row['Name']}</td>";
         $my_dues_items .= "<td>{$row['Email']}</td>";
         $my_dues_items .= "<td>$my_last_committee</td>";
-        $my_dues_items .= "<td>{$row['Fiscal_Year']}</td>";
+        $my_dues_items .= "<td>$fiscal_year_i</td>";
         $my_dues_items .= "<td>{$row['Amount']}</td>";
         $my_dues_items .= '</tr>';
+        $user_paid_current_year = $user_paid_current_year || ($fiscal_year_i == $current_fiscal_year);
     }
     if($my_last_committee === "None") {
         $my_last_committee = "";
@@ -158,7 +161,6 @@ try {
                 $deposits_items .= "<td>{$row['source']}</td>";
                 $deposits_items .= "<td>{$row['type']}</td>";
                 $deposits_items .= "<td>$amount</td>";
-                $deposits_items .= "<td>{$row['item']}</td>";
                 $deposits_items .= "<td>{$row['status']}</td>";
                 $deposits_items .= "<td>{$row['comments']}</td>";
                 $deposits_items .= "<td>{$row['committee']}</td>";
@@ -187,6 +189,7 @@ try {
         }
     }
 } catch(PDOException $e) {
+    error_log($e);
     echo $sql . "<br>" . $e->getMessage();
 }
 
@@ -218,7 +221,8 @@ $conn = null;
         </table>
     <?php echo accordion_bottom(); ?>
 
-    <?php echo accordion_top("my-add", "Add Myself"); ?>
+    <?php if($user_paid_current_year === true) {
+        echo accordion_top("my-add", "Add Myself"); ?>
         <form class="form-horizontal" id="form-add-me" action>
             <div class="form-group text-dark">
                 <label for="name-input" class="control-label col-sm-3">Name:</label>
@@ -237,8 +241,13 @@ $conn = null;
             <div class="form-group text-dark">
             <label for="id-input" class="control-label col-sm-3">Purdue ID:</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="nud-my-id-input" type="number" max="0099999999">
-                    <span class="help-block">This may be blank if your ID is already in the database. Don't worry: it is hashed and stored securely.</span>
+                    <?php if($my_dues_items !== '') { ?>
+                        <input class="form-control" id="nud-my-id-input" type="number" disabled max="0099999999">
+                        <span class="help-block">A hash of your ID is already stored securely in the database.</span>
+                    <?php } else { ?>
+                        <input class="form-control" id="nud-my-id-input" type="number" required max="0099999999">
+                        <span class="help-block">Don't worry: your ID is hashed and stored securely.</span>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -248,7 +257,10 @@ $conn = null;
             <input type="submit" class="btn btn-primary" id="btn-add-me-submit">
 
         </form>
-    <?php echo accordion_bottom(); ?>
+    <?php
+        echo accordion_bottom();
+    }
+    ?>
 
     <?php
         if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
@@ -367,7 +379,6 @@ $conn = null;
                     <th>Source</th>
                     <th>Type</th>
                     <th>Amount</th>
-                    <th>Item</th>
                     <th>Status</th>
                     <th>Comments</th>
                     <th>Committee</th>
