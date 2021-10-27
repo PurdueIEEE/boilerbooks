@@ -221,7 +221,7 @@ $conn = null;
         </table>
     <?php echo accordion_bottom(); ?>
 
-    <?php if($user_paid_current_year === true) {
+    <?php if($user_paid_current_year === false) {
         echo accordion_top("my-add", "Add Myself"); ?>
         <form class="form-horizontal" id="form-add-me" action>
             <div class="form-group text-dark">
