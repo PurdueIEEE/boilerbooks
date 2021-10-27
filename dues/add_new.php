@@ -13,6 +13,8 @@ if (!isset($_SESSION['user']))
 
 <?php
 
+$INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
+
 include '../dbinfo.php';
 
 $full_name = test_input($_POST["name"]);
@@ -27,21 +29,24 @@ try {
 
     $sql = "SELECT email FROM Dues WHERE LOWER(email) = LOWER('$email')";
     if($conn->query($sql)->rowCount() >= 1) {
+        http_response_code($INVALID_RESPONSE_CODE);
+        echo "A user with the email $email already exists in the current year ($current_fiscal_year).";
         exit();
-        // Should return some kinda of failure message ("new" person added who's email is already there)
     }
 
     $id_hash = hash("sha512", $id);
 
-    $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Year)
+    $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
         VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
         ";
 
     $conn->exec($sql);
 
 } catch(PDOException $e) {
+    error_log($e);
 }
 
+http_response_code(200);
 $conn = null;
 
 ?>

@@ -14,6 +14,8 @@ if (!isset($_SESSION['user']))
 
 <?php
 
+$INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
+
 include '../dbinfo.php';
 
 $email = test_input($_POST["email"]);
@@ -36,12 +38,14 @@ try {
             $id_hash = $row['id_hash'];
             $full_name = $row['Name'];
 
-            if($current_fiscal_year === $row['Year']) {
-                $currentYearEntryIndex = $row['index'];
-                $committee_prior = $row['Committee']
+            if($current_fiscal_year === $row['Fiscal_Year']) {
+                $currentYearEntryIndex = $row['duesid'];
+                $committee_prior = $row['Committee'];
             }
         }
     } else {
+        http_response_code($INVALID_RESPONSE_CODE);
+        echo "ID was not populated and no ID for ($email) was found on file";
         exit();
         // error message for someone new not populating their ID
     }
@@ -55,11 +59,11 @@ try {
         }
         $committee = implode(',', $committee_list);
 
-        $sql = "UPDATE Dues SET Committee = $committee
-            WHERE index = $currentYearEntryIndex
+        $sql = "UPDATE Dues SET Committee = '$committee'
+            WHERE duesid = '$currentYearEntryIndex'
             ";
     } else {
-        $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Year)
+        $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
             VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
             ";
     }
@@ -67,8 +71,10 @@ try {
     $conn->exec($sql);
 
 } catch(PDOException $e) {
+    error_log($e);
 }
 
+http_response_code(200);
 $conn = null;
 
 ?>

@@ -56,7 +56,7 @@ try {
     // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT D.Name, D.Email, D.Committee, D.Year, D.Amount
+    $sql = "SELECT D.Name, D.Email, D.Committee, D.Fiscal_Year, D.Amount
         FROM Dues D
         WHERE D.email = '$user_email'";
 
@@ -69,7 +69,7 @@ try {
         $my_dues_items .= "<td>{$row['Name']}</td>";
         $my_dues_items .= "<td>{$row['Email']}</td>";
         $my_dues_items .= "<td>$my_last_committee</td>";
-        $my_dues_items .= "<td>{$row['Year']}</td>";
+        $my_dues_items .= "<td>{$row['Fiscal_Year']}</td>";
         $my_dues_items .= "<td>{$row['Amount']}</td>";
         $my_dues_items .= '</tr>';
     }
@@ -82,14 +82,14 @@ try {
     // If the user is a treasurer or president or has committee viewing powers, find those entries
     // Maybe change this to have more access control in the future
     if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
-        $sql = "SELECT D.Name, D.Email, D.Committee, D.Year, D.Amount FROM Dues D";
+        $sql = "SELECT D.Name, D.Email, D.Committee, D.Fiscal_Year, D.Amount, D.duesid FROM Dues D";
 
         $dues_paid_by_year = array();
         $committee_members_by_year = array();
         $committee_members_by_year_paid = array();
         foreach($conn->query($sql) as $row) {
             $amount = $row['Amount'];
-            $fiscal_year_i = $row['Year'];
+            $fiscal_year_i = $row['Fiscal_Year'];
             $committee_i = $row['Committee'];
             $email = $row['Email'];
 
@@ -99,13 +99,13 @@ try {
             $committee_dues_items .= "<td>$committee_i</td>";
             $committee_dues_items .= "<td>$fiscal_year_i</td>";
             $committee_dues_items .= "<td>$amount</td>";
-            $committee_dues_items .= "<td><a onclick=\"submit_comte_exist('$email')\">Add</a></td>"
+            $committee_dues_items .= "<td><a onclick=\"submit_comte_exist('$email')\">Add</a></td>";
             if($_SESSION['viewTreasurer'] >= 1) {
                 if($fiscal_year_i == $current_fiscal_year) {
-                    $committee_dues_items .= "<td><a onclick=\"submit_mark_paid('{$row['Email']}')\">Mark Paid</a></td>";
+                    $committee_dues_items .= "<td><a onclick=\"submit_mark_paid('{$row['duesid']}')\">Mark Paid</a></td>";
                 } else {
-		    $committee_dues_items .= "<td></td>";
-		}
+                    $committee_dues_items .= "<td></td>";
+                }
             }
             $committee_dues_items .= '</tr>';
 
@@ -173,18 +173,15 @@ try {
                 $dues_totals_by_year[$fiscal_year_i] += $amount;
             }
 
-            foreach($dues_totals_by_year as $fiscal_year_i => $year_total) {
-                $dues_totals_by_year_items .= "<tr>";
-                $dues_totals_by_year_items .= "<td>$fiscal_year_i</td>";
-                $dues_totals_by_year_items .= "<td>$year_total</td>";
-                $dues_totals_by_year_items .= "</tr>";
-            }
-
             foreach($dues_paid_by_year as $fiscal_year_i => $year_total) {
                 $dues_paid_by_year_items .= "<tr>";
                 $dues_paid_by_year_items .= "<td>$fiscal_year_i</td>";
                 $dues_paid_by_year_items .= "<td>$year_total</td>";
-                $dues_paid_by_year_items .= "<td>{$dues_totals_by_year[$fiscal_year_i]}</td>";
+                if(array_key_exists($fiscal_year_i, $dues_totals_by_year)) {
+                    $dues_paid_by_year_items .= "<td>{$dues_totals_by_year[$fiscal_year_i]}</td>";
+                } else {
+                    $dues_paid_by_year_items .= "<td>0</td>";
+                }
                 $dues_paid_by_year_items .= "</tr>";
             }
         }
@@ -222,7 +219,7 @@ $conn = null;
     <?php echo accordion_bottom(); ?>
 
     <?php echo accordion_top("my-add", "Add Myself"); ?>
-        <form class="form-horizontal">
+        <form class="form-horizontal" id="form-add-me" action>
             <div class="form-group text-dark">
                 <label for="name-input" class="control-label col-sm-3">Name:</label>
                 <div class="col-sm-5">
@@ -248,7 +245,7 @@ $conn = null;
             <?php echo committee_checkboxes("add-me", $my_last_committee); ?>
 
             <div class="col-sm-3"></div>
-            <button type="button" class="btn btn-primary" id="btn-add-me-submit">Submit</button>
+            <input type="submit" class="btn btn-primary" id="btn-add-me-submit">
 
         </form>
     <?php echo accordion_bottom(); ?>
@@ -258,24 +255,26 @@ $conn = null;
             echo accordion_top("committee-dues", "Committee Dues");
     ?>
         <div class="col-sm-6">
+            <h5>Committee Selection for Adding</h5>
             <form class='form'>
             <?php
                 echo committee_checkboxes("add-comte-exist", $my_last_committee);
-            echo "</form></div>"
+            echo "</form></div>";
 
-                if($_SESSION['viewTreasurer'] >= 1) {
-                    echo "<div class='col-sm-6'>
-                        <form class='form-horizontal'>
-                            <div class='form-group'>
-                                <label for='nud-mark-paid-amount' class='control-label col-sm-3'>Amount Paid</label>
-                                <div class='col-sm-2'>
-                                    <input type='number' id='nud-mark-paid-amount' class='form-control' min='0' max='100' value='15'>
-                                </div>
+            if($_SESSION['viewTreasurer'] >= 1) {
+                echo "<div class='col-sm-6'>
+                    <h5>Treasurer Payment Amount</h5>
+                    <form class='form-horizontal'>
+                        <div class='form-group'>
+                            <label for='nud-mark-paid-amount' class='control-label col-sm-3'>Amount Paid</label>
+                            <div class='col-sm-2'>
+                                <input type='number' id='nud-mark-paid-amount' class='form-control' min='0' max='100' value='15'>
                             </div>
-                        </form>
-                    </div>";
-                }
-        ?>
+                        </div>
+                    </form>
+                </div>";
+            }
+            ?>
         <table id="tblCommitteeDues" class="display">
             <thead>
                 <tr>
@@ -312,33 +311,33 @@ $conn = null;
 
     <?php echo accordion_top("committee-add", "Add to Committee (New Member)"); ?>
 
-        <form class="form-horizontal">
+        <form class="form-horizontal" id="form-add-comte">
             <div class="form-group text-dark">
                 <label for="txt-comte-name-input" class="control-label col-sm-3">Name:</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="txt-comte-name-input" type="text" required maxlength="100">
+                    <input class="form-control" id="txt-comte-name-input" type="text" required maxlength="100" placeholder="Scott Block">
                 </div>
             </div>
 
             <div class="form-group text-dark">
                 <label for="txt-comte-email-input" class="control-label col-sm-3">Email:</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="txt-comte-email-input" type="email" required maxlength="100">
+                    <input class="form-control" id="txt-comte-email-input" type="email" required maxlength="100" placeholder="purduepete@purdue.edu">
                 </div>
             </div>
 
             <div class="form-group text-dark">
                 <label for="nud-comte-id-input" class="control-label col-sm-3">Purdue ID:</label>
                 <div class="col-sm-5">
-                    <input class="form-control" id="nud-comte-id-input" type="number" max="0099999999">
+                    <input class="form-control" id="nud-comte-id-input" type="number" max="0099999999" placeholder="0012346578">
                 </div>
                 <span class="help-block">Your id is hashed and stored securely.</span>
             </div>
 
-            <?php echo committee_checkboxes("committee-new", array()); ?>
+            <?php echo committee_checkboxes("committee-new", $my_last_committee); ?>
 
             <div class="col-sm-3"></div>
-            <button type="button" class="btn btn-primary" id="btn-add-comte-submit">Submit</button>
+            <input type="submit" class="btn btn-primary">
         </form>
 
     <?php echo accordion_bottom(); ?>
