@@ -13,40 +13,45 @@ if (!isset($_SESSION['user']))
 
 <?php
 
-$INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
+if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
 
-include '../dbinfo.php';
+    $INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
 
-$full_name = test_input($_POST["name"]);
-$email = test_input($_POST["email"]);
-$id = $_POST["id"];
-$committee = test_input($_POST["committee"]);
+    include '../dbinfo.php';
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $full_name = test_input($_POST["name"]);
+    $email = test_input($_POST["email"]);
+    $id = $_POST["id"];
+    $committee = test_input($_POST["committee"]);
 
-    $sql = "SELECT email FROM Dues WHERE LOWER(email) = LOWER('$email')";
-    if($conn->query($sql)->rowCount() >= 1) {
-        http_response_code($INVALID_RESPONSE_CODE);
-        echo "A user with the email $email already exists in the current year ($current_fiscal_year).";
-        exit();
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = "SELECT email FROM Dues WHERE LOWER(email) = LOWER('$email')";
+        if($conn->query($sql)->rowCount() >= 1) {
+            http_response_code($INVALID_RESPONSE_CODE);
+            echo "A user with the email $email already exists in the current year ($current_fiscal_year).";
+            exit();
+        }
+
+        $id_hash = hash("sha512", $id);
+
+        $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
+            VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
+            ";
+
+        $conn->exec($sql);
+
+    } catch(PDOException $e) {
+        error_log($e);
     }
 
-    $id_hash = hash("sha512", $id);
-
-    $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
-        VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
-        ";
-
-    $conn->exec($sql);
-
-} catch(PDOException $e) {
-    error_log($e);
+    http_response_code(200);
+} else {
+    http_response_code(403);  // Forbidden
 }
-
-http_response_code(200);
 $conn = null;
 
 ?>

@@ -34,6 +34,8 @@ if($_SESSION['viewTreasurer'] >= 1) {
     } catch(PDOException $e) {
         error_log($e);
     }
+} else {
+    http_response_code(403);  // Forbidden
 }
 
 $conn = null;
