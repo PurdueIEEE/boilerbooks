@@ -34,61 +34,33 @@
 			try {
 				$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 				$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$sql2 = "SELECT COUNT(*) AS count FROM Users U3
-				INNER JOIN approval A ON U3.username = A.username
-				WHERE (A.role = 'treasurer' OR A.role = 'president')
-				AND U3.username = '$usr'";
+                $sql2 = "SELECT MAX(A.amount) AS maxAmount, MAX(privilege_level) AS maxPriviledge, A.approvalID
+                    FROM approval A
+                    WHERE A.username = '$usr' AND A.privilege_level > " . AccessLevel::MEMBER;
 
-				foreach ($conn2->query($sql2) as $row2) {
-					$item2 = $row2['count'];
-				}
-
-				$_SESSION['viewTreasurer'] = $item2;
-				$_SESSION['viewIncome'] = $item2;
-
+                $conn2Query = $conn2->query($sql2);
+                if($conn2Query->rowCount() >= 1) {
+                    $_SESSION['viewCommitteeExpenses'] = 1;
+                    $_SESSION['viewReceiveDonation'] = 1;
+                    foreach($conn2Query as $row2) {
+                        $_SESSION['viewApprovePurchase'] = $row2['maxAmount'] > 0;
+                        $_SESSION['viewCommitteeDues'] = $row2['maxPriviledge'] >= AccessLevel::OFFICER;
+                        $_SESSION['viewTreasurer'] = $row2['maxPriviledge'] >= AccessLevel::TREASURER;
+				        $_SESSION['viewIncome'] = $row2['maxPriviledge'] >= AccessLevel::TREASURER;
+                    }
+                } else {
+                    $_SESSION['viewCommitteeExpenses'] = 0;
+                    $_SESSION['viewReceiveDonation'] = 0;
+                    $_SESSION['viewApprovePurchase'] = 0;
+                    $_SESSION['viewCommitteeDues'] = 0;
+                    $_SESSION['viewTreasurer'] = 0;
+                    $_SESSION['viewIncome'] = 0;
+                }
 			}
 			catch(PDOException $e)
 			{
 				echo $sql2 . "<br>" . $e->getMessage();
 			}
-
-
-			try {
-				$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-				$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr'";
-
-				foreach ($conn2->query($sql2) as $row2) {
-					$item2 = $row2['count'];
-				}
-
-				$_SESSION['viewCommitteeExpenses'] = $item2;
-				$_SESSION['viewReceiveDonation'] = $item2;
-
-			}
-			catch(PDOException $e)
-			{
-				echo $sql2 . "<br>" . $e->getMessage();
-			}
-
-
-			try {
-				$conn2 = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-				$conn2->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$sql2 = "SELECT COUNT(*) AS count FROM approval A WHERE A.username = '$usr' AND A.amount > 0";
-
-				foreach ($conn2->query($sql2) as $row2) {
-					$item2 = $row2['count'];
-				}
-
-				$_SESSION['viewApprovePurchase'] = $item2;
-
-			}
-			catch(PDOException $e)
-			{
-				echo $sql2 . "<br>" . $e->getMessage();
-			}
-			/***** Figures out what options to display to user ******/
 
 
 
@@ -109,24 +81,23 @@
 				$conn->exec($sql);
 				$_SESSION['apikey'] = $randNum;
 			}
-		catch(PDOException $e)
-		{
-			echo $sql . "<br>" . $e->getMessage();
-		}
+            catch(PDOException $e)
+            {
+                echo $sql . "<br>" . $e->getMessage();
+            }
 
 		$conn = null;
 
 
 
 
-		$_SESSION['fiscalyear'] = $current_fiscal_year; // initialize for viewing committee expenses
+        $_SESSION['fiscalyear'] = $g_current_fiscal_year; // initialize for viewing committee expenses
 
 		$returnto = test_input2($_GET['returnto']);
 
 		if ($returnto != '') {
 			$headerinfo = "Location: " . $returnto;
-		}
-		else {
+        } else {
 			$headerinfo = "Location: loggedin.php";
 		}
 		header($headerinfo);
