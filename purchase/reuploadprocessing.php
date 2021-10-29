@@ -1,5 +1,5 @@
 <?php
-    $completeactive = "active";
+    $g_active_page = "complete";
 
     include '../dbinfo.php';
     // define variables and set to empty values
