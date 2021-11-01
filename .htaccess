@@ -5,3 +5,8 @@ Options All -Indexes
 ErrorDocument 404 /404.php
 RedirectMatch 404 /\.git
 
+
+# RedirectMatch receipts /receipt_check.php
+
+RewriteEngine On
+RewriteRule ^receipts/(.*)$ /receipt_check.php?file=$1 [L]
