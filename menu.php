@@ -11,13 +11,13 @@
 	include 'header.php';
 
 	function echoActive($name) {
-		if($name == $g_active_page) {
+		if($name == @$g_active_page) {
 			echo "active";
 		}
 	}
 
 	function active($name) {
-		return $name == $g_active_page ? "active" : "";
+		return $name == @$g_active_page ? "active" : "";
 	}
 ?>
 
