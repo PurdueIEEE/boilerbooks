@@ -33,7 +33,11 @@
 	$purchaseid = $_SESSION['currentitem'];
 	$usr = $_SESSION['user']; // eventually make this a passed parameter (maybe)
 
-
+	if ($cost > $_SESSION["costmax"]) {
+		// User edited the html limit to try to purchase approve more than what they can.
+		//  I'm not bothering with an error message since they know they're being malicious.
+		exit();
+	}
 
 	try {
 		$cost = test_input(str_replace('$','',$cost));

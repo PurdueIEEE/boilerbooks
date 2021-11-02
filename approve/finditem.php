@@ -38,6 +38,7 @@ try {
 		$_SESSION['committee'] = $row['committee'];
 		$_SESSION['category'] = $row['category'];
 		$_SESSION['cost'] = $row['cost'];
+		$_SESSION['costmax'] = $row['cost'] * 1.15 + 10;
 		$_SESSION['status'] = $row['status'];
 		$_SESSION['comments'] = $row['comments'];
 		$_SESSION['email'] = $row['email'];

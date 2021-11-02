@@ -23,7 +23,6 @@ try {
 
 	foreach ($conn->query($sql) as $row) {
 
-
 		$_SESSION['usernamec'] = $row['username'];
 		$_SESSION['itemc'] =  $row['item'];
 		$_SESSION['reasonc'] =  $row['purchasereason'];
@@ -31,17 +30,16 @@ try {
 		$_SESSION['committeec'] = $row['committee'];
 		$_SESSION['categoryc'] = $row['category'];
 		$_SESSION['costc'] = $row['cost'];
+		$_SESSION['costmax'] = $row['cost'] * 1.15 + 10;  // Maximum the user can increase by is 15% and $10.
 		$_SESSION['statusc']= $row['status'];
 		$_SESSION['commentsc']= $row['comments'];
 		$_SESSION['statusc']= $row['status'];
 		$_SESSION['purchaseIDc']= $row['purchaseID'];
 	}
 
-	}
-catch(PDOException $e)
-	{
+} catch(PDOException $e) {
 	echo $sql . "<br>" . $e->getMessage();
-	}
+}
 
 $conn = null;
 
