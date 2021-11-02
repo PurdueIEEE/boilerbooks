@@ -183,7 +183,7 @@
                 echo '<h2> Your inputed cost of $';
                 echo "$cost is above the maximum increase amount allowed.</h2>";
 
-                echo "<h2> Please contact the IEEE Treasurer with any questions. </h2>";
+                echo "<h2> Please do not greatly increase purchase amounts. Resubmit your purchase if need be. </h2>";
             } else {
                 echo "<h1> Oops... something went wrong</h1>";
 
