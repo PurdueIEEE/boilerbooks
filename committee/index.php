@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$committeeactive = "active";
+	$g_active_page = "committee";
 	include '../menu.php';
 	include '../dbinfo.php';
 ?>

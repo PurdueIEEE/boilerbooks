@@ -1,7 +1,7 @@
 <?php
 // Request  HTML form
 $title = 'Boiler Books';
-$requestactive = "active";
+$g_active_page = "request";
 include '../menu.php';
 include '../dbinfo.php';
 ?>

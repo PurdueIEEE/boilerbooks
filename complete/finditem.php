@@ -2,7 +2,7 @@
 	session_start();
 	header("Location: index.php");
 	$title = 'Boiler Books';
-	$completeactive = "active";
+	$g_active_page = "complete";
 ?>
 
 

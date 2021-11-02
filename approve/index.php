@@ -1,7 +1,7 @@
 <?php
 // approval form
 $title = 'Boiler Books';
-$approveactive = "active";
+$g_active_page = "approve";
 include '../menu.php';
 ?>
 

@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$mypurchasesactive = "active";
+	$g_active_page = "committee";
 ?>
 
 <?php

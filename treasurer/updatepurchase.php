@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$mypurchasesactive = "active";
+	$g_active_page = "viewmy";
 	include '../menu.php';
 	include '../dbinfo.php';
 	$decode = 1;

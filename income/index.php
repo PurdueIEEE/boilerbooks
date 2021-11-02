@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$incomeeactive = "active";
+	$g_active_page = "income";
 	include '../menu.php';
 	include '../dbinfo.php';
 
