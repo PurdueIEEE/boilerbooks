@@ -16,7 +16,7 @@
 
 	$fiscalyear = test_input($_GET["fiscalyear"]);
 	if ($fiscalyear == '') {
-		$fiscalyear = $current_fiscal_year;
+        $fiscalyear = $g_current_fiscal_year;
 	}
 
 	$items = '';

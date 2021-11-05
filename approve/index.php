@@ -39,7 +39,7 @@ try {
 
 	$categorylist = "";
 	$committee = $_SESSION['committee'];
-	$sql = "SELECT category FROM `Budget` WHERE committee='$committee' AND year='$current_fiscal_year'";
+	$sql = "SELECT category FROM `Budget` WHERE committee='$committee' AND year='$g_current_fiscal_year'";
 
 	foreach ($conn->query($sql) as $row) {
 		$categorylist .= '<option value="';

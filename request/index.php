@@ -39,7 +39,7 @@ if ($committee != "") {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         //$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
         $sql = "SELECT category FROM `Budget`
-        WHERE committee='$committee' AND year='$current_fiscal_year'";
+        WHERE committee='$committee' AND year='$g_current_fiscal_year'";
         //$stmt->execute();
 
 
