@@ -5,6 +5,13 @@
 	$decode = 1;
 
 	$purchaseid = test_input($_GET["purchaseid"]);
+
+    if(!check_view_permission($purchaseid)) {
+        // header("Location:"); does not work since output is already made by menu.php.
+        echo "<script type='text/javascript'> document.location = '/purchase/invalid_permission.php; </script>";
+        exit;
+    }
+
 	$url = "https://" . $_SERVER[HTTP_HOST] . "/api/purchaseid/?purchaseid=" . $purchaseid . "&user=" . $_SESSION['user'] . "&apikey=" . $_SESSION['apikey'];
 	//echo $url;
 	$jsonObj = file_get_contents($url);
