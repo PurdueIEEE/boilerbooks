@@ -15,5 +15,5 @@
 </div>
 
 <?php
-    include 'smallfooter.php';
+    include '../smallfooter.php';
 ?>

@@ -1,6 +1,5 @@
 <?php
-	/* This API provides info on a purchase for display. It also formats an ifram of the receipt
-	/* Consider adding additional security to prevent certain people from seeing all receipts */
+	/* This API provides info on a purchase for display. It also formats an ifram of the receipt */
 
 	include '../verify.php';
 

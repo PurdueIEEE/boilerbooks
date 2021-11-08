@@ -1,22 +1,30 @@
 <?php
     $title = 'Boiler Books';
-    // $mypurchasesactive = "active";
-    include 'menu.php';
-    include 'dbinfo.php';
+
+    session_start();
+    if (!isset($_SESSION['user'])) {
+        $headerinfo = "Location: /index.php?returnto=" . $_SERVER['REQUEST_URI'];
+        header($headerinfo);
+        die();
+    }
+
+    // include 'dbinfo.php';
+    require_once("purchase/check_permission.php");
 
     $filename = @$_GET['file'];
-    $purchase_number_regex = "/.*?_(?P<pnum>[0-9]+)(_reupload_[0-9]+)?\.(png|jpg|pdf)$/";
+    $purchase_number_regex = "/.*?_(?P<pnum>[0-9]+)(_reupload_[0-9]+)?\.(png|jpg|pdf)$/i";
     preg_match($purchase_number_regex, $filename, $matches);
-    if($matches['pnum'] === '') {
-        echo "<script type='text/javascript'> document.location = '/404.php; </script>";
-		exit;
+    // error_log(json_encode($matches));
+    if(!array_key_exists('pnum', $matches) ||  $matches['pnum'] === '') {
+        header("Location: /404.php");
+        exit;
     }
 
     if(check_view_permission($matches['pnum'])) {
         // check if file exists
         $file = getcwd() . '/receipts/' . @$_GET['file'];
         if(!is_file($file)) {
-            echo "<script type='text/javascript'> document.location = '/404.php; </script>";
+            header("Location: /404.php");
             exit;
         }
 
@@ -38,7 +46,7 @@
         // Send file data
         readfile($file);
     } else {
-        echo "<script type='text/javascript'> document.location = '/purchase/invalid_permission.php; </script>";
+        header("Location: /purchase/invalid_permission.php");
         exit;
     }
 ?>
