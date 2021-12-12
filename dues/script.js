@@ -52,7 +52,7 @@ function post_success(data, textStatus, response) {
     } else {
         alert("Your request was not completed.");
     }
-    console.log(response);
+    // console.log(response);
 }
 
 function post_fail(response, textStatus, errorThrown) {
@@ -61,7 +61,7 @@ function post_fail(response, textStatus, errorThrown) {
     } else {
         alert("Your request was not completed." + response.responseText);
     }
-    console.log(response);
+    // console.log(response);
 }
 
 function submit_me() {
@@ -74,8 +74,9 @@ function submit_me() {
     let [valid, post_data] = validate_member(name, email, id, committee);
 
     if(valid) {
-        let posting = $.post("add_me.php", post_data, function(data) {console.log(data);}, 'json');
-        post_post_alert(posting);
+        $.post("/api/dues/add_me.php", post_data)
+            .done(post_success)
+            .fail(post_fail);
     }
 }
 
@@ -90,7 +91,7 @@ function submit_comte() {
     let [valid, post_data] = validate_member(name, email, id, committee);
 
     if(valid) {
-        $.post("add_new.php", post_data)
+        $.post("/api/dues/add_new.php", post_data)
             .done(post_success)
             .fail(post_fail);
     }
@@ -99,7 +100,7 @@ function submit_comte() {
 function submit_comte_exist(duesid) {
     let committee = committee_boxes_to_string("ckgroup-committees-add-comte-exist");
 
-    $.post("add_exist.php", {
+    $.post("/api/dues/add_exist.php", {
         committee: committee,
         duesid: duesid
     }).done(post_success)
@@ -109,7 +110,7 @@ function submit_comte_exist(duesid) {
 
 function submit_mark_paid(duesid) {
     let amount = $("#nud-mark-paid-amount").val();
-    $.post("set_payment.php", {
+    $.post("/api/dues/set_payment.php", {
         duesid: duesid,
         amount: amount
     }).done(post_success)
