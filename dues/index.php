@@ -131,17 +131,19 @@ try {
             }
         }
 
-        foreach($committee_members_by_year as $committee_name => $committee_one_year) {
-            foreach($committee_one_year as $fiscal_year_i => $committee_members) {
-                $nPaid = $committee_members_by_year_paid[$committee_name][$fiscal_year_i];
-                $percentPaid = round($nPaid / $committee_members * 100);
-                $committee_member_summary .= "<tr>";
-                $committee_member_summary .= "<td>$committee_name</td>";
-                $committee_member_summary .= "<td>$fiscal_year_i</td>";
-                $committee_member_summary .= "<td>$nPaid</td>";
-                $committee_member_summary .= "<td>$committee_members</td>";
-                $committee_member_summary .= "<td>$percentPaid %</td>";
-                $committee_member_summary .= "</tr>";
+        if($_SESSION["viewCommitteeDues"] >= 1) {
+            foreach($committee_members_by_year as $committee_name => $committee_one_year) {
+                foreach($committee_one_year as $fiscal_year_i => $committee_members) {
+                    $nPaid = $committee_members_by_year_paid[$committee_name][$fiscal_year_i];
+                    // $percentPaid = round($nPaid / $committee_members * 100);
+                    $committee_member_summary .= "<tr>";
+                    $committee_member_summary .= "<td>$committee_name</td>";
+                    $committee_member_summary .= "<td>$fiscal_year_i</td>";
+                    $committee_member_summary .= "<td>$nPaid</td>";
+                    $committee_member_summary .= "<td>$committee_members</td>";
+                    // $committee_member_summary .= "<td>$percentPaid %</td>";
+                    $committee_member_summary .= "</tr>";
+                }
             }
         }
 
@@ -304,22 +306,28 @@ $conn = null;
             </tbody>
         </table>
 
-        <h4>Committee Summary</h4>
-        <p>Note: Not all members of committees may have been added to the database and are listed. Consult committee chairs for internal rosters.</p>
-        <table id="tblCommitteeSummary" class="display">
-            <thead>
-                <tr>
-                    <th>Committee</th>
-                    <th>Year</th>
-                    <th>Paying Members</th>
-                    <th>Total Members</th>
-                    <th>Percent</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php echo $committee_member_summary; ?>
-            </tbody>
-        </table>
+        <?php
+            if($_SESSION["viewCommitteeDues"] >= 1) {
+        ?>
+            <h4>Committee Summary</h4>
+            <p>Note: Not all members of committees may have been added to the database and are listed. Consult committee chairs for internal rosters.</p>
+            <table id="tblCommitteeSummary" class="display">
+                <thead>
+                    <tr>
+                        <th>Committee</th>
+                        <th>Year</th>
+                        <th>Paying Members</th>
+                        <th>Total Reported Members</th>
+                        <!-- <th>Percent</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $committee_member_summary; ?>
+                </tbody>
+            </table>
+        <?php
+            }
+        ?>
     <?php echo accordion_bottom(); ?>
 
     <?php echo accordion_top("committee-add", "Add to Committee (New Member)"); ?>
