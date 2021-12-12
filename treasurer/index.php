@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$treasuereactive = "active";
+	$g_active_page = "treasurer";
 	include '../menu.php';
 	include '../dbinfo.php';
 
@@ -16,7 +16,7 @@
 
 	$fiscalyear = test_input($_GET["fiscalyear"]);
 	if ($fiscalyear == '') {
-		$fiscalyear = $current_fiscal_year;
+        $fiscalyear = $g_current_fiscal_year;
 	}
 
 	$items = '';
@@ -114,7 +114,7 @@
 		</div>
 		<div class="col-sm-6">
 			<select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectcommitteeyear()">
-				<?php echo $year_options_select; ?>
+                <?php echo $g_year_options_select; ?>
 			</select>
 		</div>
 	</div>

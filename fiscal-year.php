@@ -2,16 +2,16 @@
     /*
      * This is the variable for the current fiscal year.
      * Update it at the start of every school year with the new year.
-     * It is included in dbinfo, where it sets current_fiscal_year for other files to reference it.
+     * It is included in dbinfo, which other files then include.
      */
-    $fiscal_year_file = "2021-2022";
-    $first_fiscal_year_file = "2015-2016";
+    $g_current_fiscal_year = "2021-2022";
+    $g_first_fiscal_year = "2015-2016";
 
-    $yearStart = intval(substr($first_fiscal_year_file, 0, 4));
-    $yearEnd = intval(substr($fiscal_year_file, 0, 4));
-    $year_options_file = "<option value=$fiscal_year_file >Select Year</option>";
+    $yearStart = intval(substr($g_first_fiscal_year, 0, 4));
+    $yearEnd = intval(substr($g_current_fiscal_year, 0, 4));
+    $g_year_options_select = "<option value=$g_current_fiscal_year >Select Year</option>";
     for($year = $yearEnd; $year >= $yearStart; $year--) {
         $nextYear = $year + 1;
-        $year_options_file .= "<option value='$year-$nextYear'>$year - $nextYear</option>";
+        $g_year_options_select .= "<option value='$year-$nextYear'>$year - $nextYear</option>";
     }
 ?>

@@ -1,6 +1,6 @@
 <?php
     $title = 'Boiler Books';
-    $duesactive = "active";
+    $g_active_page = "dues";
     include '../menu.php';
 
 ?>

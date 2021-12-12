@@ -8,7 +8,7 @@ _SESSION variable so this check is executed and executed once.
 
 <?php
 	$title = 'Boiler Books';
-	$mypurchasesactive = "active";
+	$g_active_page = "committee";
 ?>
 
 <?php

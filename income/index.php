@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$incomeeactive = "active";
+	$g_active_page = "income";
 	include '../menu.php';
 	include '../dbinfo.php';
 
@@ -16,7 +16,7 @@
 
 	$fiscalyear = test_input($_GET["fiscalyear"]);
 	if ($fiscalyear == '') {
-		$fiscalyear = $current_fiscal_year;
+        $fiscalyear = $g_current_fiscal_year;
 	}
 
 	$items = '';

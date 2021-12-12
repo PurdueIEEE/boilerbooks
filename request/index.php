@@ -1,7 +1,7 @@
 <?php
 // Request  HTML form
 $title = 'Boiler Books';
-$requestactive = "active";
+$g_active_page = "request";
 include '../menu.php';
 include '../dbinfo.php';
 ?>
@@ -39,7 +39,7 @@ if ($committee != "") {
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         //$sql = "SELECT purchaseID, item FROM Purchases WHERE Purchases.status = 'Requested'";
         $sql = "SELECT category FROM `Budget`
-        WHERE committee='$committee' AND year='$current_fiscal_year'";
+        WHERE committee='$committee' AND year='$g_current_fiscal_year'";
         //$stmt->execute();
 
 

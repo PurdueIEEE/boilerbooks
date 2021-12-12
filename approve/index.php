@@ -1,7 +1,7 @@
 <?php
 // approval form
 $title = 'Boiler Books';
-$approveactive = "active";
+$g_active_page = "approve";
 include '../menu.php';
 ?>
 
@@ -39,7 +39,7 @@ try {
 
 	$categorylist = "";
 	$committee = $_SESSION['committee'];
-	$sql = "SELECT category FROM `Budget` WHERE committee='$committee' AND year='$current_fiscal_year'";
+	$sql = "SELECT category FROM `Budget` WHERE committee='$committee' AND year='$g_current_fiscal_year'";
 
 	foreach ($conn->query($sql) as $row) {
 		$categorylist .= '<option value="';
@@ -142,7 +142,7 @@ $conn = null;
 		<div class="form-group">
 			<label class="col-md-4 control-label" for="cost">Cost</label>
 			<div class="col-md-4">
-				<input id="cost" name="cost" type="number" step = "0.01" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>">
+				<input id="cost" name="cost" type="number" step = "0.01" placeholder="Select item above to view" class="form-control input-md" required="" value="<?php echo $_SESSION['cost']; ?>" max="<?php echo $_SESSION['costmax']; ?>">
 			</div>
 		</div>
 

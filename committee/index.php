@@ -1,6 +1,6 @@
 <?php
 	$title = 'Boiler Books';
-	$committeeactive = "active";
+	$g_active_page = "committee";
 	include '../menu.php';
 	include '../dbinfo.php';
 ?>
@@ -26,7 +26,7 @@
 		</div>
 		<div class="col-sm-6">
 		    <select id="fiscalyear" name="fiscalyear" class="form-control" onchange="selectyear()">
-		        <?php echo $year_options_select; ?>
+		        <?php echo $g_year_options_select; ?>
 		    </select>
 		</div>
 	</div>

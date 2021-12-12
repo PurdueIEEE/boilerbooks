@@ -82,7 +82,6 @@ if ($validuser >= 1) {
             WHERE P.purchaseID IN ('$idsStringQuoted')";
             //$stmt->execute();
 
-            error_log("hello");
             $itemsByEmail = array();
             $committeesByEmail = array();
             foreach ($conn->query($sql) as $row) {
@@ -96,12 +95,10 @@ if ($validuser >= 1) {
                 if(!in_array($committee, $committeesByEmail[$email], true)) {
                     $committeesByEmail[$email][] = $committee;
                 }
-                error_log($email);
+                // error_log($email);
             }
 
-        }
-        catch(PDOException $e)
-        {
+        } catch(PDOException $e) {
             echo $sql . "<br>" . $e->getMessage();
         }
 
@@ -111,7 +108,7 @@ if ($validuser >= 1) {
 
         foreach($itemsByEmail as $email_addr => $items) {
             $itemsFormatted = implode(", ", $items);
-            $committeeFormatted = implode(", ", $committeesByEmail[$email]);
+            $committeeFormatted = implode(", ", $committeesByEmail[$email_addr]);
             $message = "<p>$itemsFormatted for $committeeFormatted is now $newStatus.</p>";
             if($newStatus === 'Reimbursed') {
                 $message .= "<p>Please stop by EE 14 to pick up your check.</p>";
