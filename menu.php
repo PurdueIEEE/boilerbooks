@@ -64,5 +64,7 @@
 		}
 		?>
 
+		<li class = <?php echoActive("dues"); ?>><a href="/dues/">Dues</a></li>
+
 	</ul>
 </div>

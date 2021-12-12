@@ -16,3 +16,20 @@ legend {
 body {
 	padding-top: 0px;
 }
+
+/* Proper spacing for searchable tables (see link in dues/script.js). */
+thead .filters .sorting input,
+thead .filters .sorting_desc input,
+thead .filters .sorting_asc input {
+	width: 100%;
+}
+
+
+/* Hack my own "labels" into right aligning, but only on desktop. */
+@media(min-width: 768px) {
+	div.col-sm-3 > h5 {
+		/* padding-top: 7px; */
+		/* margin-bottom: 0; */
+		text-align: right;
+	}
+}

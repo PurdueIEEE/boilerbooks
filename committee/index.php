@@ -130,10 +130,16 @@
 			<?php echo $_SESSION['committeepurchases'] ?>
 		</tbody>
 	</table>
+	<script type="text/javascript" src="/assets/filter_table.js"></script>
 	<script>
 	$(document).ready(function() {
 	    $('#expensestable').DataTable( {
-	        "order": [[ 1, "desc" ]]
+	        "order": [[ 1, "desc" ]],
+                orderCellsTop: true,
+                fixedHeader: true,
+                initComplete: function() {
+                    make_filterable(this.api(), "expensestable");
+                }
 	    } );
 	} );
 	</script>
@@ -176,9 +182,7 @@
 		var full = title.concat(com);
 		window.location = full;
 	}
-</script>
 
-<script>
 	function selectyear() {
 		var com = document.getElementById('fiscalyear').value;
 		var title = "selectyear.php?fiscalyear=";

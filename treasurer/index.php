@@ -165,13 +165,18 @@
             </div>
         </form>
     </div>
+	<script type="text/javascript" src="/assets/filter_table.js"></script>
 	<script>
 		$(document).ready(function() {
 			$('#treasurertable').DataTable( {
-				"order": [[ 1, "desc" ]]
+				"order": [[ 1, "desc" ]],
+				stateSave: true,
+				orderCellsTop: true,
+				fixedHeader: true,
+				initComplete: function() {
+					make_filterable(this.api(), "treasurertable");
+				}
 			} );
-			stateSave: true
-
 		} );
 
 		function selectcommitteeyear() {
