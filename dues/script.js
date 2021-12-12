@@ -97,12 +97,12 @@ function submit_comte() {
     }
 }
 
-function submit_comte_exist(duesid) {
+function submit_comte_exist(email) {
     let committee = committee_boxes_to_string("ckgroup-committees-add-comte-exist");
 
     $.post("/api/dues/add_exist.php", {
         committee: committee,
-        duesid: duesid
+        email: email
     }).done(post_success)
         .fail(post_fail);
 }
@@ -132,7 +132,7 @@ $(document).ready(function() {
     });
 
     $('#tblCommitteeDues').DataTable({
-        "order": [[ 3, "desc" ]],
+        "order": [[ 0, "desc" ]],
         stateSave: true,
         orderCellsTop: true,
         fixedHeader: true,

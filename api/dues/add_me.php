@@ -9,13 +9,14 @@ if (!isset($_SESSION['user']))
     header("Location: index.php");
     die();
 }
+require_once('../../common-functions.php');
 ?>
 
 <?php
 
 $INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
 
-include '../dbinfo.php';
+include '../../dbinfo.php';
 
 $full_name = test_input($_POST["name"]);
 $email = test_input($_POST["email"]);
@@ -45,7 +46,7 @@ try {
                 exit(); // the given id doesn't match (despite the same email)
             }
             $id_hash = $row['id_hash'];
-            if($current_fiscal_year === $row['Fiscal_Year']) {
+            if($g_current_fiscal_year === $row['Fiscal_Year']) {
                 $currentYearEntryIndex = $row['duesid'];
             }
         }
@@ -64,7 +65,7 @@ try {
             ";
     } else {
         $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
-            VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
+            VALUES ('$full_name', '$email', '$id_hash', '$committee', '$g_current_fiscal_year');
             ";
     }
 

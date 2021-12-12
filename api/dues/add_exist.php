@@ -10,6 +10,7 @@ if (!isset($_SESSION['user']))
     header("Location: index.php");
     die();
 }
+require_once('../../common-functions.php');
 ?>
 
 <?php
@@ -18,7 +19,7 @@ $INVALID_RESPONSE_CODE = 406;  // No idea if this is the proper one
 
 if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
 
-    include '../dbinfo.php';
+    include '../../dbinfo.php';
 
     $email = test_input($_POST["email"]);
     $committee = test_input($_POST["committee"]);
@@ -40,7 +41,7 @@ if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
                 $id_hash = $row['id_hash'];
                 $full_name = $row['Name'];
 
-                if($current_fiscal_year === $row['Fiscal_Year']) {
+                if($g_current_fiscal_year === $row['Fiscal_Year']) {
                     $currentYearEntryIndex = $row['duesid'];
                     $committee_prior = $row['Committee'];
                 }
@@ -66,7 +67,7 @@ if($_SESSION['viewCommitteeExpenses'] >= 1 || $_SESSION['viewTreasurer'] >= 1) {
                 ";
         } else {
             $sql = "INSERT INTO Dues (Name,Email,id_hash,Committee,Fiscal_Year)
-                VALUES ('$full_name', '$email', '$id_hash', '$committee', '$current_fiscal_year');
+                VALUES ('$full_name', '$email', '$id_hash', '$committee', '$g_current_fiscal_year');
                 ";
         }
 

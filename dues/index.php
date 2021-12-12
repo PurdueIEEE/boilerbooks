@@ -97,6 +97,7 @@ try {
             $email = $row['Email'];
 
             $committee_dues_items .= "<tr>";
+            $committee_dues_items .= "<td>{$row['duesid']}</td>";
             $committee_dues_items .= "<td>{$row['Name']}</td>";
             $committee_dues_items .= "<td>$email</td>";
             $committee_dues_items .= "<td>$committee_i</td>";
@@ -104,7 +105,7 @@ try {
             $committee_dues_items .= "<td>$amount</td>";
             $committee_dues_items .= "<td><a onclick=\"submit_comte_exist('$email')\">Add</a></td>";
             if($_SESSION['viewTreasurer'] >= 1) {
-                if($fiscal_year_i == $current_fiscal_year) {
+                if($fiscal_year_i == $g_current_fiscal_year) {
                     $committee_dues_items .= "<td><a onclick=\"submit_mark_paid('{$row['duesid']}')\">Mark Paid</a></td>";
                 } else {
                     $committee_dues_items .= "<td></td>";
@@ -292,6 +293,7 @@ $conn = null;
         <table id="tblCommitteeDues" class="display">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Committee(s)</th>

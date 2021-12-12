@@ -10,11 +10,12 @@ if (!isset($_SESSION['user']))
     header("Location: index.php");
     die();
 }
+require_once('../../common-functions.php');
 ?>
 
 <?php
 
-include '../dbinfo.php';
+include '../../dbinfo.php';
 
 $duesid = test_input($_POST["duesid"]);
 $amount = test_input($_POST["amount"]);
