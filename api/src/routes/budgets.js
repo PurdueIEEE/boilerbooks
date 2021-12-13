@@ -2,8 +2,8 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    return res.status(405).send("Not allowed to GET");
+router.all('/', (req, res) => {
+    return res.status(405).send("Endpoint not allowed.");
 })
 
 

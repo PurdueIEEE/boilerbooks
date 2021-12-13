@@ -1,15 +1,24 @@
 let users = {
     1: {
         id: '1',
-        username: "Purdue Pete",
+        fname: "Purdue",
+        lname: "Pete",
+        uname: "ppete",
+        email: "test1@example.com",
     },
     2: {
         id: '2',
-        username: "Mitch Daniels",
+        fname: "Mitch",
+        lname: "Daniels",
+        uname: "mdaniels",
+        email: "test2@example.com",
     },
     3: {
         id: '3',
-        username: "Third Person",
+        fname: "Third",
+        lname: "Person",
+        uname: "tperson",
+        email: "test3@example.com",
     }
 };
 
