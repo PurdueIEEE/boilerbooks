@@ -2,9 +2,9 @@
   "name": "boilerbooks-api",
   "version": "2.0.1",
   "description": "Backend API for the Purdue IEEE boilerbooks accounting software",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
+    "start": "nodemon --exec babel-node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Purdue IEEE",
