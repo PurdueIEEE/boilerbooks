@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true}));
 // Setup our middleware
 app.use((req, res, next) => {
     // TODO authentication check here
-
+    // use an API key with the Authorization header
     req.context = {
         models
     };
@@ -27,8 +27,8 @@ app.use((req, res, next) => {
 
 // Setup our routes
 app.all('/', (req, res) => {
-    return res.status(405).send("Endpoint not allowed.");
-})
+    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
+});
 
 app.use('/account', routes.account);
 app.use('/budgets', routes.budgets);
