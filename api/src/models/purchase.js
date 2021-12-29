@@ -78,6 +78,17 @@ function getPurchaseByUser(id) {
     return userPurchases;
 }
 
+function getPurchaseByCommittee(id) {
+    let commPurchases = [];
+    for(let purchase in purchases) {
+        if(purchases[purchase].committeeID === id) {
+            commPurchases.push(purchases[purchase]);
+        }
+    }
+
+    return commPurchases;
+}
+
 export default {
     STATUS,
     getPurchaseByID,
@@ -86,4 +97,5 @@ export default {
     completePurchase,
     updatePurchaseStatus,
     getPurchaseByUser,
+    getPurchaseByCommittee,
 }

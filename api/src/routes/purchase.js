@@ -183,7 +183,7 @@ router.post('/:purchaseID/complete', (req, res) => {
     return: 400, 404, 201
 */
 router.post('/:purchaseID/processing', (req, res) => {
-    const user = req.context.models.user.getUserByID(req.context.models.request_user_id);
+    const user = req.context.models.account.getUserByID(req.context.request_user_id);
 
     if(user === undefined) {
         return res.status(400).send({ status: 400, response:"Improper Request Format." });
@@ -216,7 +216,7 @@ router.post('/:purchaseID/processing', (req, res) => {
     return: 400, 404, 201
 */
 router.post('/:purchaseID/reimburse', (req, res) => {
-    const user = req.context.models.user.getUserByID(req.context.models.request_user_id);
+    const user = req.context.models.account.getUserByID(req.context.request_user_id);
 
     if(user === undefined) {
         return res.status(400).send({ status: 400, response:"Improper Request Format." });

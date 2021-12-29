@@ -34,6 +34,7 @@ app.all('/', (req, res) => {
 app.use('/account', routes.account);
 app.use('/budgets', routes.budgets);
 app.use('/purchase', routes.purchase);
+app.use('/committee', routes.committee);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

@@ -19,23 +19,11 @@ const blank_perms =
     'soga'     : false,
 };
 
-router.get('/', (req, res) => {
+router.all('/', (req, res) => {
     return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
 });
 
-router.head('/', (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
-});
-
-router.put('/', (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
-});
-
-router.delete('/', (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
-});
-
-router.post('/', (req, res) => {
+router.post('/new', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
@@ -103,6 +91,10 @@ router.get('/:userID/purchases', (req, res) => {
 
     const purchases = req.context.models.purchase.getPurchaseByUser(user.id);
     return res.status(200).send({ status:200, response:purchases });
+});
+
+router.put('/:userID', (req, res) => {
+    return res.status(500).send({ status:500, response:"To Be Implemented Later" }); // TODO should not be a 500
 });
 
 export default router;

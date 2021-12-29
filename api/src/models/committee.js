@@ -1,17 +1,17 @@
 const COMMITTEES =
 {
-    'general': 1,
-    'aerial': 2,
-    'csociety': 3,
-    'embs': 4,
-    'g-and-e': 5,
-    'mtt-s': 6,
-    'ir': 7,
-    'learning': 8,
-    'racing': 9,
-    'rov': 10,
-    'social': 11,
-    'soga': 12,
+    'general': '1',
+    'aerial': '2',
+    'csociety': '3',
+    'embs': '4',
+    'g-and-e': '5',
+    'mtt-s': '6',
+    'ir': '7',
+    'learning': '8',
+    'racing': '9',
+    'rov': '10',
+    'social': '11',
+    'soga': '12',
 }
 
 function getCommitteeFromID(id) {
