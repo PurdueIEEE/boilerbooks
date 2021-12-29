@@ -67,6 +67,17 @@ function updatePurchaseStatus(id, purchase) {
     purchases[id] = purchase;
 }
 
+function getPurchaseByUser(id) {
+    let userPurchases = [];
+    for(let purchase in purchases) {
+        if(purchases[purchase].purchaserID === id) {
+            userPurchases.push(purchases[purchase]);
+        }
+    }
+
+    return userPurchases;
+}
+
 export default {
     STATUS,
     getPurchaseByID,
@@ -74,4 +85,5 @@ export default {
     approvePurchase,
     completePurchase,
     updatePurchaseStatus,
+    getPurchaseByUser,
 }

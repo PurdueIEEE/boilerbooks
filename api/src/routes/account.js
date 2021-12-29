@@ -67,11 +67,14 @@ router.post('/', (req, res) => {
     return res.status(201).send({ status: 201, response: "User created." });
 });
 
-// TODO make this just a GET for /
 router.get('/:userID', (req, res) => {
     const user = req.context.models.account.getUserByID(req.params.userID);
 
     if (user === undefined) {
+        return res.status(404).send({ status: 404, response: "User not found." });
+    }
+
+    if (user.id !== req.context.request_user_id) {
         return res.status(404).send({ status: 404, response: "User not found." });
     }
 
@@ -85,6 +88,21 @@ router.get('/:userID', (req, res) => {
     };
 
     return res.status(200).send({ status: 200, response: sanitized_user });
+});
+
+router.get('/:userID/purchases', (req, res) => {
+    const user = req.context.models.account.getUserByID(req.params.userID);
+
+    if (user === undefined) {
+        return res.status(404).send({ status: 404, response: "User not found." });
+    }
+
+    if (user.id !== req.context.request_user_id) {
+        return res.status(404).send({ status: 404, response: "User not found." });
+    }
+
+    const purchases = req.context.models.purchase.getPurchaseByUser(user.id);
+    return res.status(200).send({ status:200, response:purchases });
 });
 
 export default router;
