@@ -3,6 +3,22 @@ import { Router } from 'express';
 
 const router = Router();
 
+const blank_perms =
+{
+    'general'  : false,
+    'aerial'   : false,
+    'csociety' : false,
+    'embs'     : false,
+    'g-and-e'  : false,
+    'mtt-s'    : false,
+    'ir'       : false,
+    'learning' : false,
+    'racing'   : false,
+    'rov'      : false,
+    'social'   : false,
+    'soga'     : false,
+};
+
 router.get('/', (req, res) => {
     return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
 });
@@ -41,6 +57,9 @@ router.post('/', (req, res) => {
         lname: req.body.lname,
         uname: req.body.uname,
         email: req.body.email,
+        approver_permission: blank_perms,
+        officer_permission: false,
+        treasurer_permission: false,
     };
 
     req.context.models.account.createUser(id, user);
@@ -56,7 +75,16 @@ router.get('/:userID', (req, res) => {
         return res.status(404).send({ status: 404, response: "User not found." });
     }
 
-    return res.status(200).send({ status: 200, response: user });
+    const sanitized_user = // basically remove permissions from GET request response
+    {
+        id: user.id,
+        fname: user.fname,
+        lname: user.lname,
+        uname: user.uname,
+        email: user.email,
+    };
+
+    return res.status(200).send({ status: 200, response: sanitized_user });
 });
 
 export default router;

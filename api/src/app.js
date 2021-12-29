@@ -20,7 +20,8 @@ app.use((req, res, next) => {
     // TODO authentication check here
     // use an API key with the Authorization header
     req.context = {
-        models
+        models,
+        request_user_id: '1',
     };
     next();
 });

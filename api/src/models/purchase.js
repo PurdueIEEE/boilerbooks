@@ -1,29 +1,36 @@
+const STATUS = { 'request':0, 'approved':1, 'complete':2, 'processing':3, 'reimbursed':4 };
+
 let purchases = {
     '1': {
         id: '1',
-        requesterID: '1',
-        approverID: '1',
+        purchaserID: '1',
+        approverID: '',
+        reimburerID: '',
         committeeID: '1',
-        requestDate: '1639885017',
-        approvalDate: '1639885018',
-        completionDate: '1639885019',
+        requestDate: '2021-11-01',
+        approvalDate: '',
+        completionDate: '',
+        reimbursementDate: '',
         requestPrice: '10.00',
-        approvalPrice: '10.00',
-        completionPrice: '10.00',
+        approvalPrice: '',
+        completionPrice: '',
         itemDescription: 'Test Item',
         itemVendor: 'Fake Vendor Inc',
         purchaseReason: 'Dummy Output',
         purchaseComments: '',
         purchaseCategory: 'General',
+        status: STATUS.request,
     },
     '2': {
         id: '2',
-        requesterID: '2',
+        purchaserID: '2',
         approverID: '2',
+        reimburerID: '2',
         committeeID: '1',
-        requestDate: '1639885017',
-        approvalDate: '1639885018',
-        completionDate: '1639885019',
+        requestDate: '2021-12-01',
+        approvalDate: '2021-12-02',
+        completionDate: '2021-12-03',
+        reimbursementDate: '2021-12-04',
         requestPrice: '10.00',
         approvalPrice: '10.00',
         completionPrice: '10.00',
@@ -32,6 +39,7 @@ let purchases = {
         purchaseReason: 'Dummy Output',
         purchaseComments: 'This is a test purchase',
         purchaseCategory: 'General',
+        status: STATUS.reimbursed,
     }
 };
 
@@ -55,9 +63,15 @@ function completePurchase(id, purchase) {
     purchases[id] = purchase;
 }
 
+function updatePurchaseStatus(id, purchase) {
+    purchases[id] = purchase;
+}
+
 export default {
+    STATUS,
     getPurchaseByID,
     createNewPurchase,
     approvePurchase,
     completePurchase,
+    updatePurchaseStatus,
 }
