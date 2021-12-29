@@ -27,15 +27,21 @@ router.post('/new', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
-        req.body.email === undefined) {
+        req.body.email === undefined ||
+        req.body.createpin === undefined) {
         return res.status(400).send({ status: 400, response: "All account details must be completed." });
     }
 
     if (req.body.fname === "" ||
         req.body.lname === "" ||
         req.body.uname === "" ||
-        req.body.email === "") {
+        req.body.email === "" ||
+        req.body.createpin === "") {
         return res.status(400).send({ status: 400, response: "All account details must be completed." });
+    }
+
+    if (req.body.createpin !== process.env.ACCOUNT_PIN) {
+        return res.status(400).send({ status:400, response:"Incorrect Creation PIN." });
     }
 
     const id = uuidv4();
