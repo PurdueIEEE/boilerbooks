@@ -31,9 +31,9 @@ let users = {
         email: "test2@example.com",
         approver_permission:
         {
-            'general': true,
-            'aerial': true,
-            'csociety': false,
+            'general': false,
+            'aerial': false,
+            'csociety': true,
             'embs': false,
             'g-and-e': false,
             'mtt-s': false,
@@ -55,7 +55,7 @@ let users = {
         email: "test3@example.com",
         approver_permission:
         {
-            'general': true,
+            'general': false,
             'aerial': true,
             'csociety': false,
             'embs': false,
@@ -68,7 +68,7 @@ let users = {
             'social': false,
             'soga': false
         },
-        officer_permission: false,
+        officer_permission: true,
         treasurer_permission: false,
     }
 };

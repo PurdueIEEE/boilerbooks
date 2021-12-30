@@ -1,0 +1,37 @@
+Home
+- view account
+- view help
+- navigation
+ - new purchase
+ - complete purchase
+ - view purchases
+ - ---
+ - approve purchases
+ - view committee expenses
+ - new donation
+ - ---
+ - reimburse purchases
+ - process donations
+ - view accounting
+
+Account
+
+Help
+
+New Purchase
+
+Complete Purchase
+
+View Purchases
+
+Approve Purchase
+
+View Expenses
+
+New Donation
+
+Reimburse Purchase
+
+Process Donation
+
+View Income
