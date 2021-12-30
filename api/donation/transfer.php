@@ -9,7 +9,7 @@
         header("Location: ../index.php");
         die();
     }
-    header('Location: /request/submitted.php ');
+    header('Location: /donation/ ');
 ?>
 
 <?php
@@ -37,7 +37,7 @@
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $sql = "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,cost,status,comments)
-            VALUES ('$usr', '$item', '$reason', '$vendor', '$committee', '$amount', 'Requested', '$comments');
+            VALUES ('$usr', '$item', '$reason', '$vendor', '$committee_from', '$amount', 'Requested', '$comments');
             ";
 
         // use exec() because no results are returned

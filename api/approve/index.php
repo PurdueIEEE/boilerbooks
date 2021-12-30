@@ -39,7 +39,9 @@
 		exit();
 	}
 
-    $is_transfer = str_starts_with($item, "Transfer from ");
+    // Don't have PHP 8 yet
+    // $is_transfer = str_starts_with($item, "Transfer from ");
+    $is_transfer = substr($item, 0, 14) === "Transfer from ";
     if($is_transfer) {
         try {
             if($stat == "Approved") {
