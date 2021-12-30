@@ -118,7 +118,8 @@ try {
             }
             $dues_paid_by_year[$fiscal_year_i] += $amount;
 
-            foreach(explode(',', $committee_i) as $committee_name) {
+            foreach(explode(',', $committee_i) as $committee_name_raw) {
+                $committee_name = trim($committee_name_raw);
                 if(!array_key_exists($committee_name, $committee_members_by_year)) {
                     $committee_members_by_year[$committee_name] = array();
                     $committee_members_by_year_paid[$committee_name] = array();
