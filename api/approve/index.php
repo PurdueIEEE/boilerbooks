@@ -39,41 +39,60 @@
 		exit();
 	}
 
-	try {
-		$cost = test_input(str_replace('$','',$cost));
-		$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-	    // set the PDO error mode to exception
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "UPDATE Purchases SET modifydate = NOW(), approvedby='$usr', item='$item', purchasereason='$reason', vendor='$vendor',
-		category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
-		comments='$comments' WHERE Purchases.purchaseID = '$purchaseid'";
-		$conn->exec($sql);
-		echo "New record created successfully";
-	}
-	catch(PDOException $e)
-	{
-		echo $sql . "<br>" . $e->getMessage();
-	}
+    $is_transfer = str_starts_with($item, "Transfer from ");
+    if($is_transfer) {
+        try {
+            if($stat == "Approved") {
+                $stat = "Purchased";
+            }
+
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            // set the PDO error mode to exception
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "UPDATE Purchases SET modifydate = NOW(), approvedby='$usr', category='$category',
+                status='$stat', fundsource='BOSO', comments='$comments'
+                WHERE Purchases.purchaseID = '$purchaseid'";
+            $conn->exec($sql);
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            echo $sql . "<br>" . $e->getMessage();
+        }
+    } else {
+        try {
+            $cost = test_input(str_replace('$','',$cost));
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            // set the PDO error mode to exception
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "UPDATE Purchases SET modifydate = NOW(), approvedby='$usr', item='$item', purchasereason='$reason', vendor='$vendor',
+                category='$category', cost='$cost', status='$stat', fundsource='$fundsource',
+                comments='$comments' WHERE Purchases.purchaseID = '$purchaseid'";
+            $conn->exec($sql);
+            echo "New record created successfully";
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            echo $sql . "<br>" . $e->getMessage();
+        }
+    }
 
 	$conn = null;
 
-	$to = $_SESSION['email'];
-	$subject = "Your request has been $stat";
+    if ($sendemail == 1 && $is_transfer) {
+        $to = $_SESSION['email'];
+        $subject = "Your request has been $stat";
 
-	$message = "<p>Please visit money.pieee.org at your earliest convenience to finish the purchase for $item.</p>" .
-	"<p>You always view the most up-to-date status of the purchase <a href=https://money.purdueieee.org/purchase/index.php?purchaseid=" . $purchaseid . "> here</a>.</p>";
+        $message = "<p>Please visit money.pieee.org at your earliest convenience to finish the purchase for $item.</p>" .
+        "<p>You always view the most up-to-date status of the purchase <a href=https://money.purdueieee.org/purchase/index.php?purchaseid=" . $purchaseid . "> here</a>.</p>";
 
-	$header = "From:ieeeboilerbooks@gmail.com \r\n";
-	$header .= "MIME-Version: 1.0\r\n";
-	$header .= "Content-type: text/html\r\n";
+        $header = "From:ieeeboilerbooks@gmail.com \r\n";
+        $header .= "MIME-Version: 1.0\r\n";
+        $header .= "Content-type: text/html\r\n";
 
-	if ($sendemail == 1) {
 		$retval = mail ($to,$subject,$message,$header);
 
 		if( $retval == true ) {
-		 //echo "<br>Message sent successfully...";
+		    //echo "<br>Message sent successfully...";
 		}else {
-		 //echo "<br>Message could not be sent...";
+		    //echo "<br>Message could not be sent...";
 		}
 	}
 

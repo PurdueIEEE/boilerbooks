@@ -95,6 +95,51 @@
 </fieldset>
 </form>
 
+<div class='panel panel-default'>
+    <div class='panel-heading'>
+        <h4 class='panel-title'>
+            <a data-toggle='collapse' href='#ca-transfer'>Inter-Committee Transfer</a>
+        </h4>
+    </div>
+    <div id='ca-transfer' class='panel-collapse collapse'>
+        <div class='panel-body'>
+            <form class="form-horizontal" action="/api/donation/transfer.php" method="post">
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="committee">Transfer from Committee</label>
+                <div class="col-md-4">
+                    <select id="committee-transfer-from" name="committee-from" class="form-control" required>
+                        <?php include '../committees.php'; ?>
+                    </select>
+                </div>
+
+                <label class="col-md-4 control-label" for="committee">Transfer to Committee</label>
+                <div class="col-md-4">
+                    <select id="committee-transfer-to" name="committee-to" class="form-control" required>
+                        <?php include '../committees.php'; ?>
+                    </select>
+                </div>
+
+                <label class="col-md-4 control-label" for="amount">Amount</label>
+                <div class="col-md-4">
+                    <input id="amount" name="amount" type="number" step="0.01" placeholder="$1500.00" class="form-control input-md" required="">
+                </div>
+
+                <label class="col-md-4 control-label" for="comments">Comments</label>
+                <div class="col-md-4">
+                    <textarea class="form-control" id="txt-comments-transfer" name="comments"></textarea>
+                </div>
+
+                <label class="col-md-4 control-label" for="submit"></label>
+                <div class="col-md-4">
+                    <button id="btn-submit-transfer" name="submit" class="btn btn-primary">Submit</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <?php
