@@ -51,7 +51,6 @@ const routes = [
   },
   {
     path: '/purchase',
-    name: 'Purchase',
     component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/Purchase.vue'),
     children: [
       {
