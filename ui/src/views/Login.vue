@@ -38,6 +38,7 @@ export default {
         lname:'Pete',
         uname:'ppete',
         email:'test@example.com',
+        p_approvePerm: true,
       };
       auth_state.setAuthState(getAuth);
       this.$router.push('/');

@@ -48,6 +48,36 @@ const routes = [
     meta: {
       requiresAuth: true,
     }
+  },
+  {
+    path: '/purchase',
+    name: 'Purchase',
+    component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/Purchase.vue'),
+    children: [
+      {
+        path:'/',
+        component: () => import(/* webpackChunkName: "purchase_home" */ '../views/purchase/PurchaseHome.vue'),
+      },
+      {
+        path:'new',
+        component: () => import(/* webpackChunkName: "purchase_new" */ '../views/purchase/PurchaseNew.vue'),
+      },
+      {
+        path:'approve',
+        component: () => import(/* webpackChunkName: "purchase_approve" */ '../views/purchase/PurchaseApprove.vue'),
+      },
+      {
+        path:'complete',
+        component: () => import(/* webpackChunkName: "purchase_complete" */ '../views/purchase/PurchaseComplete.vue'),
+      },
+      {
+        path:'view',
+        component: () => import(/* webpackChunkName: "purchase_view" */ '../views/purchase/PurchaseView.vue'),
+      }
+    ],
+    meta: {
+      requiresAuth: true,
+    }
   }
 ]
 

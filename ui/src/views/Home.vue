@@ -12,7 +12,7 @@
             <p class="card-text ">Purchase tracking for committees. Request a purchase, approve purchase requests, complete purchase requests, and view purchase status.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary">Go to Purchasing</router-link>
+            <router-link to="/purchase" class="btn btn-secondary">Go to Purchasing</router-link>
           </div>
         </div>
 
@@ -22,7 +22,7 @@
             <p class="card-text">Income tracking for committees. Create expected income and track income status.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary">Go to Income</router-link>
+            <router-link to="/" class="btn btn-secondary disabled">Go to Income</router-link>
           </div>
         </div>
 
@@ -32,7 +32,7 @@
             <p class="card-text">View income and expenses for each committee per fiscal year. Generate reports for committees and club financials.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary">Go to Financials</router-link>
+            <router-link to="/" class="btn btn-secondary disabled">Go to Financials</router-link>
           </div>
         </div>
 
@@ -42,7 +42,7 @@
             <p class="card-text">View your club dues and committee rosters. Add new members and dues payments.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary">Go to Dues</router-link>
+            <router-link to="/" class="btn btn-secondary disabled">Go to Dues</router-link>
           </div>
         </div>
 

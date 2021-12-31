@@ -5,6 +5,7 @@ let auth_state = {
         lname: "",
         uname: "",
         email: "",
+        p_approvePerm: false,
     },
 
     setAuthState(newAuth) {
@@ -13,6 +14,7 @@ let auth_state = {
         this.state.lname = newAuth.lname;
         this.state.uname = newAuth.uname;
         this.state.email = newAuth.email;
+        this.state.p_approvePerm = newAuth.p_approvePerm;
     },
     clearAuthState() {
         this.state.id = '';
@@ -20,6 +22,7 @@ let auth_state = {
         this.state.lname = '';
         this.state.uname = '';
         this.state.email = '';
+        this.state.p_approvePerm = false;
     }
 }
 
