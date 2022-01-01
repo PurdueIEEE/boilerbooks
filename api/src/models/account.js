@@ -1,3 +1,8 @@
+import { db_conn } from './index';
+
+const bcrypt = require('bcrypt');
+const bcrypt_rounds = 10;
+
 let users = {
     '1': {
         id: '1',
@@ -81,8 +86,22 @@ function getUserByID(id) {
     return undefined;
 }
 
-function createUser(id, user) {
-    users[id] = user;
+async function createUser(user, res) {
+    bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
+        db_conn.execute(
+            "INSERT INTO `Users` (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
+            [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash],
+            function(err, results, fields) {
+                if(err) {
+                    console.log('MySQL ' + err.stack);
+                    return res.status(500).send("Internal Server Error");
+                }
+
+                console.log('Created user ' + user.uname);
+                return res.status(201).send({ status: 201, response: "User created." });
+            }
+        );
+    });
 }
 
 export default {

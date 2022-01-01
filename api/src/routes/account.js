@@ -1,4 +1,3 @@
-import { v4 as uuidv4} from 'uuid';
 import { Router } from 'express';
 
 const router = Router();
@@ -19,46 +18,58 @@ const blank_perms =
     'soga'     : false,
 };
 
-router.all('/', (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
-});
-
 router.post('/new', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
         req.body.email === undefined ||
+        req.body.address === undefined ||
+        req.body.city === undefined ||
+        req.body.state === undefined ||
+        req.body.zip === undefined ||
+        req.body.pass1 === undefined ||
+        req.body.pass2 === undefined ||
         req.body.createpin === undefined) {
-        return res.status(400).send({ status: 400, response: "All account details must be completed." });
+        return res.status(400).send("All account details must be completed.");
     }
 
     if (req.body.fname === "" ||
         req.body.lname === "" ||
         req.body.uname === "" ||
         req.body.email === "" ||
+        req.body.address === "" ||
+        req.body.city === "" ||
+        req.body.state === "" ||
+        req.body.zip === "" ||
+        req.body.pass1 === "" ||
+        req.body.pass2 === "" ||
         req.body.createpin === "") {
-        return res.status(400).send({ status: 400, response: "All account details must be completed." });
+        return res.status(400).send("All account details must be completed.");
     }
+
+    // TODO escape and sanitize all input here
 
     if (req.body.createpin !== process.env.ACCOUNT_PIN) {
-        return res.status(400).send({ status:400, response:"Incorrect Creation PIN." });
+        return res.status(400).send("Incorrect Creation PIN.");
     }
 
-    const id = uuidv4();
+    if (req.body.pass1 !== req.body.pass2) {
+        return res.status(400).send("Passwords do not match");
+    }
+
     const user = {
-        id,
         fname: req.body.fname,
         lname: req.body.lname,
         uname: req.body.uname,
         email: req.body.email,
-        approver_permission: blank_perms,
-        officer_permission: false,
-        treasurer_permission: false,
+        address: req.body.address,
+        city: req.body.city,
+        state: req.body.state,
+        zip: req.body.zip,
+        pass: req.body.pass1,
     };
 
-    req.context.models.account.createUser(id, user);
-
-    return res.status(201).send({ status: 201, response: "User created." });
+    req.context.models.account.createUser(user, res);
 });
 
 router.get('/:userID', (req, res) => {

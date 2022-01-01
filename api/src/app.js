@@ -42,15 +42,21 @@ const server = app.listen(process.env.PORT, () =>
 );
 
 process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received: closing HTTP server');
+    console.log('SIGTERM signal received: closing server');
     server.close(() => {
         console.log('HTTP server closed');
-    })
+    });
+    models.db_conn.end((err) => {
+        console.log('MySQL connection closed');
+    });
 });
 
 process.on('SIGINT', () => {
-    console.log('SIGINT signal received: closing HTTP server');
+    console.log('SIGINT signal received: closing server');
     server.close(() => {
         console.log('HTTP server closed');
-    })
+    });
+    models.db_conn.end((err) => {
+        console.log('MySQL connection closed');
+    });
 });
