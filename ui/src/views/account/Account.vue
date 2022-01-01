@@ -30,7 +30,43 @@
       </div>
     </div>
 
-    <button class="btn btn-primary mt-2 mx-1" v-on:click="updateAccount">Update Account</button>
+    <div class="row my-2">
+      <div class="text-end col-md-4">
+        <h4>Current Address</h4>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control" v-model="address">
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="text-end col-md-4">
+        <h4>Current City</h4>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control" v-model="city">
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="text-end col-md-4">
+        <h4>Current State</h4>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control" v-model="state">
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="text-end col-md-4">
+        <h4>Current Zip Code</h4>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control" v-model="zip">
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-2 mx-1" v-on:click="updateAccount">Update Account Details</button>
     <button class="btn btn-secondary mt-2 mx-1" v-on:click="changePassword">Change Password</button>
   </div>
 </template>
@@ -42,9 +78,13 @@ export default {
   name: 'Account',
   data() {
     return {
-      fname: auth_state.state.fname,
-      lname: auth_state.state.lname,
-      email: auth_state.state.email,
+      fname: '',
+      lname: '',
+      email: '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
     }
   },
   methods: {
@@ -55,5 +95,31 @@ export default {
       this.$router.push('/myaccount/password');
     }
   },
+  mounted() {
+    fetch('http://localhost:3000/account', {
+        method: 'get',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      })
+      .then((response) => {
+        if (!response.ok) {
+          console.log(response.status);
+          // find some way to actually return a failed promise
+        }
+
+        return response.json()
+      })
+      .then((response) => {
+        this.fname = response.first;
+        this.lname = response.last;
+        this.email = response.email;
+        this.address = response.address;
+        this.city = response.city;
+        this.state = response.state;
+        this.zip = response.zip;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 </script>

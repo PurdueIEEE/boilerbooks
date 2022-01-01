@@ -15,6 +15,10 @@
       </div>
       <button type="submit" class="btn btn-primary" v-on:click="login">Submit</button>
     </form>
+    <div class="mt-3">
+      <button class="btn btn-link">Forgot Username</button> <button class="btn btn-link">Forgot Password</button>
+    </div>
+    <button class="btn btn-link mt-4 fw-bold">Make an Account</button>
   </div>
 </template>
 
@@ -31,17 +35,26 @@ export default {
   },
   methods: {
     login() {
-      //TODO actually add the authentication here
-      const getAuth = {
-        id:'1',
-        fname:'Purdue',
-        lname:'Pete',
-        uname:'ppete',
-        email:'test@example.com',
-        p_approvePerm: true,
-      };
-      auth_state.setAuthState(getAuth);
-      this.$router.push('/');
+      fetch('http://localhost:3000/account/login', {
+        method: 'post',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
+      })
+      .then((response) => {
+        if (!response.ok) {
+          console.log(response.status);
+          // find some way to actually return a failed promise
+        }
+
+        return response.json()
+      })
+      .then((response) => {
+        auth_state.setAuthState({uname:response.uname, apikey:response.apikey, p_approvePerm:true});
+        this.$router.push('/');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   }
 }

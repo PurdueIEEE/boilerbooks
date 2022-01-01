@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     showUser() {
-      return this.auth_state.id !== '';
+      return this.auth_state.uname !== '';
     }
   },
   methods: {

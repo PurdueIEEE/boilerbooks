@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-//import auth_state from '@/state'
+import auth_state from '@/state'
 
 Vue.use(VueRouter)
 
@@ -88,14 +88,13 @@ const router = new VueRouter({
 
 // Make sure user is logged in before moving
 router.beforeEach((to, from, next) => {
-  //const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
+  const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
-  /*if(requiresAuth && auth_state.state.id === '') {
+  if(requiresAuth && auth_state.state.uname === '') {
     next('/login');
   } else {
     next();
-  }*/
-  next();
+  }
 });
 
 export default router
