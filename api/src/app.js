@@ -4,7 +4,7 @@ import express, { application } from 'express';
 import cors from 'cors';
 
 // Import files
-import models from './models';
+import models, { db_conn } from './models';
 import routes from './routes';
 
 // Create Express
@@ -17,13 +17,41 @@ app.use(express.urlencoded({extended: true}));
 
 // Setup our middleware
 app.use((req, res, next) => {
-    // TODO authentication check here
-    // use an API key with the Authorization header
-    req.context = {
-        models,
-        request_user_id: '1',
-    };
-    next();
+    // If we are attempting to go to the /account/login or /account/new endpoints, don't authenticate
+    if (req.originalUrl === '/account/login' || req.originalUrl === '/account/new') {
+        req.context = {
+            models,
+        };
+        next();
+    } else {
+        // use an API key with the Authorization header
+        if (req.headers['x-api-key'] === undefined) {
+            return res.status(401).send("Must authenticate first");
+        }
+
+        // TODO sanitize api key input
+        // TODO validate api key time, force login if key is old
+        db_conn.execute(
+            "SELECT username FROM Users WHERE Users.apikey = ?",
+            [req.headers['x-api-key']],
+            function(err, results, fields) {
+                if(err) {
+                    console.log('MySQL ' + err.stack);
+                    return res.status(500).send("Internal Server Error");
+                }
+
+                if(results.length === 0) {
+                    return res.status(401).send("Invalid API Key");
+                }
+
+                req.context = {
+                    models,
+                    request_user_id: results[0].username,
+                };
+                next();
+            }
+        );
+    }
 });
 
 // Setup our routes
@@ -46,7 +74,7 @@ process.on('SIGTERM', () => {
     server.close(() => {
         console.log('HTTP server closed');
     });
-    models.db_conn.end((err) => {
+    db_conn.end((err) => {
         console.log('MySQL connection closed');
     });
 });
@@ -56,7 +84,7 @@ process.on('SIGINT', () => {
     server.close(() => {
         console.log('HTTP server closed');
     });
-    models.db_conn.end((err) => {
+    db_conn.end((err) => {
         console.log('MySQL connection closed');
     });
 });

@@ -20,7 +20,6 @@ db_conn.connect((err) => {
 });
 
 export default {
-    db_conn,
     account,
     purchase,
     committee

@@ -2,22 +2,9 @@ import { Router } from 'express';
 
 const router = Router();
 
-const blank_perms =
-{
-    'general'  : false,
-    'aerial'   : false,
-    'csociety' : false,
-    'embs'     : false,
-    'g-and-e'  : false,
-    'mtt-s'    : false,
-    'ir'       : false,
-    'learning' : false,
-    'racing'   : false,
-    'rov'      : false,
-    'social'   : false,
-    'soga'     : false,
-};
-
+// ---------------------------
+// Start unauthenticated endpoints
+// ---------------------------
 router.post('/new', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
@@ -72,27 +59,28 @@ router.post('/new', (req, res) => {
     req.context.models.account.createUser(user, res);
 });
 
-router.get('/:userID', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.params.userID);
-
-    if (user === undefined) {
-        return res.status(404).send({ status: 404, response: "User not found." });
+router.post('/login', (req, res) => {
+    if (req.body.uname === undefined || req.body.uname === '' ||
+        req.body.pass === undefined || req.body.pass === '') {
+        return res.status(400).send("Fill out login details.");
     }
 
-    if (user.id !== req.context.request_user_id) {
-        return res.status(404).send({ status: 404, response: "User not found." });
-    }
+    // TODO sanitize user input here
 
-    const sanitized_user = // basically remove permissions from GET request response
-    {
-        id: user.id,
-        fname: user.fname,
-        lname: user.lname,
-        uname: user.uname,
-        email: user.email,
+    const user = {
+        uname: req.body.uname,
+        pass: req.body.pass,
     };
 
-    return res.status(200).send({ status: 200, response: sanitized_user });
+    req.context.models.account.loginUser(user, res);
+});
+
+// ---------------------------
+// End unauthenticated endpoints
+// ---------------------------
+
+router.get('/', (req, res) => {
+    req.context.models.account.getUserByID(req.context.request_user_id, res);
 });
 
 router.get('/:userID/purchases', (req, res) => {
