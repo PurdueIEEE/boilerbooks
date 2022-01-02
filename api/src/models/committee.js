@@ -1,38 +1,20 @@
-const COMMITTEES =
-{
-    'general': '1',
-    'aerial': '2',
-    'csociety': '3',
-    'embs': '4',
-    'g-and-e': '5',
-    'mtt-s': '6',
-    'ir': '7',
-    'learning': '8',
-    'racing': '9',
-    'rov': '10',
-    'social': '11',
-    'soga': '12',
-}
+import { db_conn, current_fiscal_year } from "./index";
 
-function getCommitteeFromID(id) {
-    for(let key in COMMITTEES) {
-        if(COMMITTEES[key] === id) {
-            return key
+function getCommitteeCategories(comm, res) {
+    db_conn.execute(
+        "SELECT category FROM Budget WHERE committee=? AND year=?",
+        [comm, current_fiscal_year],
+        function(err, results, fields) {
+            if (err) {
+                console.log('MySQL ' + err.stack);
+                return res.status(500).send("Internal Server Error");
+            }
+
+            return res.status(200).send(results);
         }
-    }
-
-    return undefined;
-}
-
-function getIDFromCommittee(committee) {
-    if(committee in COMMITTEES) {
-        return COMMITTEES[committee];
-    }
-
-    return undefined;
+    )
 }
 
 export default {
-    getCommitteeFromID,
-    getIDFromCommittee,
+    getCommitteeCategories,
 }

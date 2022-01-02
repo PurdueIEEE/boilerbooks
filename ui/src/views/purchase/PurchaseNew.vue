@@ -7,17 +7,15 @@
       <div class="col-md-6">
         <label for="committeeSelect" class="form-label fw-bold">Committee</label>
         <select id="committeeSelect" class="form-select" v-model="committee" required>
-          <option selected disable value="">Select...</option>
-          <option>General IEEE</option>
-          <option>Aerial Robotics</option>
+          <option selected disabled value="">Select...</option>
+          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
         </select>
       </div>
       <div class="col-md-6">
         <label for="categorySelect" class="form-label fw-bold">Category</label>
         <select id="categorySelect" class="form-select" v-model="category" required>
           <option selected disabled value="">Select...</option>
-          <option>General Expense</option>
-          <option>TODO</option>
+          <option v-for="cat in categoryList" v-bind:key="cat.category">{{cat.category}}</option>
         </select>
       </div>
       <div class="col-12">
@@ -49,10 +47,13 @@
 </template>
 
 <script>
+import auth_state from '@/state';
+
 export default {
   name: 'PurchaseNew',
   data() {
     return {
+      committeeList: [],
       committee: '',
       category: '',
       itemName: '',
@@ -60,11 +61,58 @@ export default {
       vendor: '',
       price: '',
       comments: '',
+      error: false,
     }
   },
   methods: {
     submitRequest() {
       // TODO submit the request here
+    }
+  },
+  mounted() {
+    fetch('http://localhost:3000/committee', {
+      method: 'get',
+      headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        this.error = true;
+        return response.text();
+      }
+
+      return response.json();
+    })
+    .then((response) => {
+      if (this.error) {
+        console.log(response);
+        this.error = false;
+        return;
+      }
+      this.committeeList = response;
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  },
+  asyncComputed: {
+    async categoryList() {
+      if (this.committee === '') return [];
+
+      return await fetch(`http://localhost:3000/committee/${this.committee}/categories`, {
+        method: 'get',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      })
+      .then((response) => {
+        if (!response.ok) {
+          return [];
+        }
+
+        return response.json();
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      })
     }
   }
 }

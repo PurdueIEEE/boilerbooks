@@ -2,22 +2,44 @@ import { Router } from "express";
 
 const router = Router();
 
-/*
-    route: /committee
-    method: all
-    behavior: default sink for all requests
-    return: 405
-*/
-router.all('/', (req, res) => {
-    return res.status(405).send({ status: 405, response:"Endpoint not allowed." });
+// holy SHIT so this is the best solution I can come up with
+//  with out a database schema migration. Here is the problem:
+//  the committee column in the database is an enum with some values,
+//  but the name of the committee does not match the enum value.
+//  Further, the name of the committee is not a http safe thing to put in a URL.
+//  Therefore, this is a lookup table of sorts to cross reference these
+//  three different names for THE SAME COMMITEE
+// format = { http-name: [ db enum, committee name ] }
+const committees =
+{
+    'general':['General IEEE', 'General IEEE'],
+    'aerial':['Aerial Robotics', 'Aerial Robotics'],
+    'csociety':['Computer Society', 'Computer Society'],
+    'embs':['EMBS', 'EMBS'],
+    'mtt-s':['MTT-S', 'MTT-S'],
+    'professional':['Professional', 'Industrial Relations'],
+    'learning':['Learning', 'Learning'],
+    'racing':['Racing', 'Racing'],
+    'rov':['ROV', 'ROV'],
+    'social':['Social', 'Social'],
+    'soga':['SOGA', 'SOGA'],
+    'ge':['GE', 'Growth & Engagement'],
+};
+
+router.get('/', (req, res) => {
+    // literally just gets a list of committees
+    return res.status(200).send(committees);
 });
 
-/*
-    route: /committee/<id>/purchases
-    method: get
-    behavior: View all purchases for a committee
-    return: 400, 404, 200
-*/
+router.get('/:commKey/categories', (req, res) => {
+    // commKey must be one of the above values, that is in the DB
+    if(!(req.params.commKey in committees)) {
+        return res.status(404).send("Invalid committee value");
+    }
+
+    req.context.models.committee.getCommitteeCategories(committees[req.params.commKey][0], res);
+});
+
 router.get('/:commID/purchases', (req, res) => {
     const user = req.context.models.account.getUserByID(req.context.request_user_id);
 

@@ -112,8 +112,24 @@ export default {
       errmsg: 'sample error',
     }
   },
+  mounted() {
+    const user = {apikey:'',uname:'',p_approvePerm:true};
+
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
+      user.apikey = document.cookie.split('; ').find(row => row.startsWith('apikey=')).split('=')[1];
+    }
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('uname='))) {
+      user.uname = document.cookie.split('; ').find(row => row.startsWith('uname=')).split('=')[1];
+    }
+
+    if (user.apikey !== '' || user.uname !== '') {
+      auth_state.setAuthState(user);
+      this.$router.replace('/');
+    }
+  },
   methods: {
     login() {
+      this.error = false;
       fetch('http://localhost:3000/account/login', {
         method: 'post',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
@@ -152,6 +168,7 @@ export default {
         return;
       }
 
+      this.error = false;
       fetch('http://localhost:3000/account/new', {
         method: 'post',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
