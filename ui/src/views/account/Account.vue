@@ -1,7 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
     <h1>Boiler Books Account Details</h1>
-    <br>
+
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <br v-else>
 
     <div class="row my-2">
       <div class="text-end col-md-4">
@@ -68,6 +70,7 @@
 
     <button class="btn btn-primary mt-2 mx-1" v-on:click="updateAccount">Update Account Details</button>
     <button class="btn btn-secondary mt-2 mx-1" v-on:click="changePassword">Change Password</button>
+
   </div>
 </template>
 
@@ -85,11 +88,28 @@ export default {
       city: '',
       state: '',
       zip: '',
+      dispmsg:'',
+      error:false,
     }
   },
   methods: {
     updateAccount() {
-      // TODO implement a account update call
+      fetch('http://localhost:3000/account', {
+        method: 'put',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
+      })
+      .then((response) => {
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        //setTimeout(() => {this.dispmsg = '';}, 2000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     },
     changePassword() {
       this.$router.push('/myaccount/password');

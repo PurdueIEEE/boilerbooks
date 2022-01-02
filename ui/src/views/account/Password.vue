@@ -1,16 +1,19 @@
 <template>
   <div class="container-lg my-5 pt-5">
     <h1>Change Password</h1>
-    <br>
 
-    <div class="row my-2">
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <div v-if="passerr" class="lead fw-bold my-1 fs-3 text-danger">Passwords do not match!</div>
+    <br v-else>
+
+    <!--<div class="row my-2">
       <div class="text-end col-md-4">
         <h4>Current Password</h4>
       </div>
       <div class="col-md-8">
         <input class="form-control" type="password" placeholder="********" v-model="current">
       </div>
-    </div>
+    </div>-->
 
     <div class="row my-2">
       <div class="text-end col-md-4">
@@ -35,6 +38,8 @@
 </template>
 
 <script>
+import auth_state from '@/state';
+
 export default {
   name: 'Account',
   data() {
@@ -42,11 +47,38 @@ export default {
       current: '',
       new_pass: '',
       new_pass_again: '',
+      dispmsg: '',
+      error: false,
+    }
+  },
+  computed: {
+    passerr() {
+      if(this.new_pass === '' || this.new_pass_again === '') return;
+      return this.new_pass !== this.new_pass_again;
     }
   },
   methods: {
     changePassword() {
-      // TODO implement a password change API call
+      if (this.new_pass !== this.new_pass_again) {
+        return;
+      }
+
+      fetch('http://localhost:3000/account/password', {
+        method: 'put',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        body: JSON.stringify({uname:auth_state.state.uname,pass1:this.new_pass,pass2:this.new_pass_again}),
+      })
+      .then((response) => {
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        //setTimeout(() => {this.dispmsg = '';}, 2000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   },
 }

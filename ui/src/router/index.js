@@ -34,6 +34,14 @@ const routes = [
     }
   },
   {
+    path: '/forgot',
+    name: 'Forgot',
+    component: () => import(/* webpackChunkName: "forgot" */ '../views/Forgot.vue'),
+    meta: {
+      requiresAuth: false,
+    }
+  },
+  {
     path: '/myaccount',
     name: 'Account',
     component: () => import(/* webpackChunkName: "account" */ '../views/account/Account.vue'),
