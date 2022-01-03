@@ -4,10 +4,14 @@ let auth_state = {
         apikey: "",
         p_approvePerm: false,
     },
-
+    newAuthState(newAuth) {
+        document.cookie=`apikey=${newAuth.apikey}; max-age=${60*60*24}; SameSite=Strict; path='/'`;
+        document.cookie=`uname=${newAuth.uname}; max-age=${60*60*24}; SameSite=Strict; path='/'`;
+        this.state.uname = newAuth.uname;
+        this.state.apikey = newAuth.apikey;
+        this.state.p_approvePerm = newAuth.p_approvePerm;
+    },
     setAuthState(newAuth) {
-        document.cookie=`apikey=${newAuth.apikey}; max-age=${60*60*24}; SameSite=Strict`;
-        document.cookie=`uname=${newAuth.uname}; max-age=${60*60*24}; SameSite=Strict`;
         this.state.uname = newAuth.uname;
         this.state.apikey = newAuth.apikey;
         this.state.p_approvePerm = newAuth.p_approvePerm;

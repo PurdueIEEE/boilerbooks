@@ -42,6 +42,14 @@ const routes = [
     }
   },
   {
+    path: '/detail-view',
+    name: 'DetailView',
+    component: () => import(/* webpackChunkName: "detailview" */ '../views/DetailView.vue'),
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/myaccount',
     name: 'Account',
     component: () => import(/* webpackChunkName: "account" */ '../views/account/Account.vue'),
@@ -98,7 +106,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
-  if(requiresAuth && auth_state.state.uname !== '') {
+  if (!requiresAuth) {
+    next();
+  }
+  else if (requiresAuth && auth_state.state.uname !== '') {
     next();
   } else {
     const user = {
