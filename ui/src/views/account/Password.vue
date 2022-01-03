@@ -63,8 +63,8 @@ export default {
         return;
       }
 
-      fetch('http://localhost:3000/account/password', {
-        method: 'put',
+      fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
+        method: 'post',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,pass1:this.new_pass,pass2:this.new_pass_again}),
       })

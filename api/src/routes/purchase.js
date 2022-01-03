@@ -2,78 +2,55 @@ import { Router } from 'express';
 
 const router = Router();
 
-/*
-    route: /purchase
-    method: all
-    behavior: default sink for all requests
-    return: 405
-*/
-router.all('/', (req, res) => {
-    return res.status(405).send({ status: 405, response:"Endpoint not allowed." });
-});
-
-/*
-    route: /purchase/new
-    method: post
-    behavior: create a new purchase request
-    return: 400, 201
-*/
-router.post('/new', (req, res) => {
-    if (req.body.purchaserID === undefined ||
-        req.body.committeeID === undefined ||
-        req.body.requestPrice === undefined ||
-        req.body.itemDescription === undefined ||
-        req.body.itemVendor === undefined ||
-        req.body.purchaseReason === undefined ||
-        req.body.purchaseComments === undefined ||
-        req.body.purchaseCategory === undefined) {
-        return res.status(400).send({ status: 400, response:"All purchase details must be completed." });
+router.post('/new', async (req, res) => {
+    if (req.body.committee === undefined ||
+        req.body.price === undefined ||
+        req.body.item === undefined ||
+        req.body.vendor === undefined ||
+        req.body.reason === undefined ||
+        req.body.comments === undefined ||
+        req.body.category === undefined) {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.purchaserID === '' ||
-        req.body.committeeID === '' ||
-        req.body.requestPrice === '' ||
-        req.body.itemDescription === '' ||
-        req.body.itemVendor === '' ||
-        req.body.purchaseReason === '' ||
-        req.body.purchaseComments === '' ||
-        req.body.purchaseCategory === '') {
-        return res.status(400).send({ status: 400, response:"All purchase details must be completed." });
+    if (req.body.committee === '' ||
+        req.body.price === '' ||
+        req.body.item === '' ||
+        req.body.vendor === '' ||
+        req.body.reason === '' ||
+        req.body.comments === '' ||
+        req.body.category === '') {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    const id = uuidv4();
-    const date = new Date();
+    // TODO sanitize input here
+
     const purchase = {
-        id,
-        purchaserID: req.body.purchaserID,
-        approverID: '',
-        reimburserID: '',
-        committeeID: req.body.committeeID,
-        requestDate: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
-        approvalDate: '',
-        completionDate: '',
-        requestPrice: req.body.requestPrice,
-        approvalPrice: '',
-        completionPrice: '',
-        itemDescription: req.body.itemDescription,
-        itemVendor: req.body.itemVendor,
-        purchaseReason: req.body.purchaseReason,
-        purchaseComments: req.body.purchaseComments,
-        purchaseCategory: req.body.purchaseCategory,
-        status: req.context.models.purchase.STATUS.request,
+        user: req.context.request_user_id,
+        committee: req.body.committee,
+        price: req.body.price,
+        item: req.body.item,
+        vendor: req.body.vendor,
+        reason: req.body.reason,
+        comments: req.body.comments,
+        category: req.body.category,
     };
 
-    req.context.models.purchase.createNewPurchase(id, purchase);
+    /** Create the purchase request **/
+    try {
+        const [results, fields] = await req.context.models.purchase.createNewPurchase(purchase);
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 
-    return res.status(201).send({ status: 201, response:"Purchase created." });
+    /** Get names of approvers and send back to user **/
+    return res.status(201).send("Purchase request submitted, approval email not send");
+
+    /** Send an email to approvers **/
+
 });
 
-/*
-    route: /purchase/<id>/view
-    method: get
-    behavior: view purchase details for given id, only requesters/approvers/treasurers
-    return: 404, 200
-*/
 router.get('/:purchaseID/view', (req, res) => {
     const user = req.context.models.account.getUserByID(req.context.request_user_id);
 
@@ -98,12 +75,6 @@ router.get('/:purchaseID/view', (req, res) => {
     return res.status(200).send({ status: 200, response: purchase });
 });
 
-/*
-    route: /purchase/<id>/approve
-    method: post
-    behavior: approve purchase request, only with proper approval permissions
-    return: 400, 404, 201
-*/
 router.post('/:purchaseID/approve', (req, res) => {
     const user = req.context.models.account.getUserByID(req.context.request_user_id);
 
@@ -142,12 +113,6 @@ router.post('/:purchaseID/approve', (req, res) => {
     return res.status(201).send({ status: 201, response:"Purchase approved." });
 });
 
-/*
-    route: /purchase/<id>/complete
-    method: post
-    behavior: Mark purchase as completed, only requester allowed
-    return: 404, 400, 201
-*/
 router.post('/:purchaseID/complete', (req, res) => {
     const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
 
@@ -176,12 +141,6 @@ router.post('/:purchaseID/complete', (req, res) => {
     return res.status(201).send({ status: 201, response:"Purchase completed." });
 });
 
-/*
-    route: /purchase/<id>/processing
-    method: post
-    behavior: Move a completed purchase into reimbursement processing
-    return: 400, 404, 201
-*/
 router.post('/:purchaseID/processing', (req, res) => {
     const user = req.context.models.account.getUserByID(req.context.request_user_id);
 
@@ -209,12 +168,6 @@ router.post('/:purchaseID/processing', (req, res) => {
     return res.status(201).send({ status: 201, response:"Purchase processing." });
 });
 
-/*
-    route: /purchase/<id>/reimburse
-    method: post
-    behavior: BOSO has reimbursed purchase, workflow complete
-    return: 400, 404, 201
-*/
 router.post('/:purchaseID/reimburse', (req, res) => {
     const user = req.context.models.account.getUserByID(req.context.request_user_id);
 

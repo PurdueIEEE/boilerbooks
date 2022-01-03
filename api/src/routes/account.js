@@ -4,6 +4,7 @@ const router = Router();
 
 // ---------------------------
 // Start unauthenticated endpoints
+//  cannot be async because of bcrypt
 // ---------------------------
 router.post('/new', (req, res) => {
     if (req.body.fname === undefined ||
@@ -59,7 +60,7 @@ router.post('/new', (req, res) => {
     req.context.models.account.createUser(user, res);
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     if (req.body.uname === undefined || req.body.uname === '' ||
         req.body.pass === undefined || req.body.pass === '') {
         return res.status(400).send("Fill out login details");
@@ -79,26 +80,29 @@ router.post('/login', (req, res) => {
 // End unauthenticated endpoints
 // ---------------------------
 
-router.get('/', (req, res) => {
-    req.context.models.account.getUserByID(req.context.request_user_id, res);
-});
-
-router.get('/:userID/purchases', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.params.userID);
-
-    if (user === undefined) {
-        return res.status(404).send({ status: 404, response: "User not found" });
+router.get('/:userID', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
     }
 
-    if (user.id !== req.context.request_user_id) {
-        return res.status(404).send({ status: 404, response: "User not found" });
-    }
+    try {
+        const [results, fields] = await req.context.models.account.getUserByID(req.params.userID);
+        if (results.length === 0) {
+            return res.status(400).send("User not found");
+        }
 
-    const purchases = req.context.models.purchase.getPurchaseByUser(user.id);
-    return res.status(200).send({ status:200, response:purchases });
+        return res.status(200).send(results[0]);
+    } catch (err) {
+        console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 });
 
-router.put('/', (req, res) => {
+router.put('/:userID', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.email === undefined ||
@@ -132,10 +136,20 @@ router.put('/', (req, res) => {
         zip: req.body.zip,
     };
 
-    req.context.models.account.updateUser(user, res);
+    try {
+        const [] = await req.context.models.account.updateUser(user);
+        return res.status(200).send("Account Details Updated");
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 });
 
-router.put('/password', (req, res) => {
+router.post('/:userID', (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
     if (req.body.pass1 === undefined ||
         req.body.pass2 === undefined) {
         return res.status(400).send("All account details must be completed");
@@ -159,5 +173,19 @@ router.put('/password', (req, res) => {
 
     req.context.models.account.updatePassword(user, res);
 });
+
+router.get('/:userID/purchases', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
+        return res.status(200).send(results);
+    } catch (err) {
+        console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+})
 
 export default router;

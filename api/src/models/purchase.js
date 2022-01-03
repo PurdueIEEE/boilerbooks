@@ -1,47 +1,4 @@
-const STATUS = { 'request':0, 'approved':1, 'complete':2, 'processing':3, 'reimbursed':4 };
-
-let purchases = {
-    '1': {
-        id: '1',
-        purchaserID: '1',
-        approverID: '',
-        reimburerID: '',
-        committeeID: '1',
-        requestDate: '2021-11-01',
-        approvalDate: '',
-        completionDate: '',
-        reimbursementDate: '',
-        requestPrice: '10.00',
-        approvalPrice: '',
-        completionPrice: '',
-        itemDescription: 'Test Item',
-        itemVendor: 'Fake Vendor Inc',
-        purchaseReason: 'Dummy Output',
-        purchaseComments: '',
-        purchaseCategory: 'General',
-        status: STATUS.request,
-    },
-    '2': {
-        id: '2',
-        purchaserID: '2',
-        approverID: '2',
-        reimburerID: '2',
-        committeeID: '1',
-        requestDate: '2021-12-01',
-        approvalDate: '2021-12-02',
-        completionDate: '2021-12-03',
-        reimbursementDate: '2021-12-04',
-        requestPrice: '10.00',
-        approvalPrice: '10.00',
-        completionPrice: '10.00',
-        itemDescription: 'Test Item',
-        itemVendor: 'Fake Vendor Inc',
-        purchaseReason: 'Dummy Output',
-        purchaseComments: 'This is a test purchase',
-        purchaseCategory: 'General',
-        status: STATUS.reimbursed,
-    }
-};
+import { db_conn, current_fiscal_year } from './index';
 
 function getPurchaseByID(id) {
     if(id in purchases) {
@@ -51,8 +8,11 @@ function getPurchaseByID(id) {
     return undefined;
 }
 
-function createNewPurchase(id, purchase) {
-    purchases[id] = purchase;
+async function createNewPurchase(purchase) {
+    return db_conn.promise().execute(
+        "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
+        [purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
+    )
 }
 
 function approvePurchase(id, purchase) {
@@ -67,15 +27,15 @@ function updatePurchaseStatus(id, purchase) {
     purchases[id] = purchase;
 }
 
-function getPurchaseByUser(id) {
-    let userPurchases = [];
-    for(let purchase in purchases) {
-        if(purchases[purchase].purchaserID === id) {
-            userPurchases.push(purchases[purchase]);
-        }
-    }
-
-    return userPurchases;
+async function getPurchaseByUser(id) {
+    return db_conn.promise().execute(
+        `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+		p.cost, p.comments, p.username purchasedby, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.username = ?
+		ORDER BY p.purchasedate`,
+        [id]
+    )
 }
 
 function getPurchaseByCommittee(id) {
@@ -90,7 +50,6 @@ function getPurchaseByCommittee(id) {
 }
 
 export default {
-    STATUS,
     getPurchaseByID,
     createNewPurchase,
     approvePurchase,

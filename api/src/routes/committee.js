@@ -16,6 +16,7 @@ const committees =
     'aerial':['Aerial Robotics', 'Aerial Robotics'],
     'csociety':['Computer Society', 'Computer Society'],
     'embs':['EMBS', 'EMBS'],
+    'ge':['GE', 'Growth & Engagement'],
     'mtt-s':['MTT-S', 'MTT-S'],
     'professional':['Professional', 'Industrial Relations'],
     'learning':['Learning', 'Learning'],
@@ -23,7 +24,6 @@ const committees =
     'rov':['ROV', 'ROV'],
     'social':['Social', 'Social'],
     'soga':['SOGA', 'SOGA'],
-    'ge':['GE', 'Growth & Engagement'],
 };
 
 router.get('/', (req, res) => {
@@ -31,35 +31,25 @@ router.get('/', (req, res) => {
     return res.status(200).send(committees);
 });
 
-router.get('/:commKey/categories', (req, res) => {
+router.get('/:commKey/categories', async (req, res) => {
     // commKey must be one of the above values, that is in the DB
     if(!(req.params.commKey in committees)) {
         return res.status(404).send("Invalid committee value");
     }
 
-    req.context.models.committee.getCommitteeCategories(committees[req.params.commKey][0], res);
+    try {
+        const [results, fields] = await req.context.models.committee.getCommitteeCategories(committees[req.params.commKey][0]);
+        return res.status(200).send(results);
+    } catch (err) {
+        console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+
 });
 
 router.get('/:commID/purchases', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.context.request_user_id);
-
-    if(user === undefined) {
-        return res.status(400).send({ status: 400, response:"Improper Request Format." });
-    }
-
-    const committee = req.context.models.committee.getCommitteeFromID(req.params.commID);
-
-    if(committee === undefined) {
-        return res.status(404).send({ status: 404, response:"Committee not found." });
-    }
-
-    if(!user.approver_permission[committee] ||
-        !user.treasurer_permission) {
-        return res.status(403).send({ status:403, response:"Improper view permissions" });
-    }
-
-    const purchases = req.context.models.purchase.getPurchaseByCommittee(req.params.commID);
-    return res.status(200).send({ status:200, response:purchases });
+    return res.status(200).send("TODO eventually");
 });
 
 export default router

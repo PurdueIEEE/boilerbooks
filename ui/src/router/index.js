@@ -98,10 +98,27 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
-  if(requiresAuth && auth_state.state.uname === '') {
-    next('/login');
-  } else {
+  if(requiresAuth && auth_state.state.uname !== '') {
     next();
+  } else {
+    const user = {
+      apikey: '',
+      uname: '',
+      p_approvePerm: true,
+    }
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
+      user.apikey = document.cookie.split('; ').find(row => row.startsWith('apikey=')).split('=')[1];
+    }
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('uname='))) {
+      user.uname = document.cookie.split('; ').find(row => row.startsWith('uname=')).split('=')[1];
+    }
+
+    if (user.apikey !== '' || user.uname !== '') {
+      auth_state.setAuthState(user);
+      next();
+    } else {
+      next('/login');
+    }
   }
 });
 

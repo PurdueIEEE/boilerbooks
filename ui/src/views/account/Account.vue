@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     updateAccount() {
-      fetch('http://localhost:3000/account', {
+      fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
         method: 'put',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
@@ -116,7 +116,7 @@ export default {
     }
   },
   mounted() {
-    fetch('http://localhost:3000/account', {
+    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
         method: 'get',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
       })

@@ -1,14 +1,154 @@
 <template>
   <div >
     <h3>Approve a Purchase Request</h3>
-    <p class="lead">
-      Select a request below to approve.
-    </p>
+    <p class="lead">Select a request below to approve.</p>
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <br v-else>
+
+    <select id="currentApproval" class="form-select" v-model="currentApprove">
+      <option selected disabled value="">Select...</option>
+      <option>TODO</option>
+    </select>
+    <br><br>
+    <form onsubmit="return false;" class="row g-3 text-start" v-if="currentApprove !== ''">
+      <div class="col-12">
+        <label for="purchaserName" class="form-label fw-bold">Requester</label>
+        <h3 id="purchaserName">{{purchase.requestor}}</h3>
+      </div>
+      <div class="col-md-6">
+        <label for="committeeName" class="form-label fw-bold">Committee</label>
+        <h3 id="committeeName">{{purchase.committee}}</h3>
+      </div>
+      <div class="col-md-6">
+        <label for="categoryName" class="form-label fw-bold">Category</label>
+        <h3>{{purchase.category}}</h3>
+      </div>
+      <div class="col-12">
+        <label for="itemName" class="form-label fw-bold">Item being Purchased</label>
+        <input id="itemName" type="text" class="form-control" placeholder="Resistor, Screws, etc." v-model="purchase.item" required>
+      </div>
+      <div class="col-12">
+        <label for="purchaseReason" class="form-label fw-bold">Reason for Purchase</label>
+        <input id="purchaseReason" type="text" class="form-control" placeholder="For testing, building claw, etc." v-model="purchase.reason" required>
+      </div>
+      <div class="col-12">
+        <label for="vendorName" class="form-label fw-bold">Vendor</label>
+        <input id="vendorName" type="text" class="form-control" placeholder="Digikey, Amazon, etc." v-model="purchase.vendor" required>
+      </div>
+      <div class="col-12">
+        <label for="costDollars" class="form-label fw-bold">Cost</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input id="costDollars" type="number" step=".01" class="form-control" placeholder="123.45" v-model="purchase.cost" required>
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="commentsField" class="form-label fw-bold">Comments</label>
+        <textarea id="commentsField" type="text" class="form-control" v-model="purchase.comments"></textarea>
+      </div>
+      <div class="col-12">
+        <label for="fundingSelect" class="form-label fw-bold">Funding Source</label>
+        <select id="fundingSelect" class="form-select" v-model="funding" required>
+          <option selected disabled value="">Select...</option>
+          <option>BOSO</option>
+          <option>Cash</option>
+          <option>SOGA</option>
+        </select>
+      </div>
+      <div class="col-md-6 text-center">
+        <button type="submit" class="btn btn-success" v-on:click="approvePurchase">Approve Request</button>
+      </div>
+      <div class="col-md-6 text-center">
+        <button type="submit" class="btn btn-danger" v-on:click="denyPurchase">Deny Request</button>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
+import auth_state from '@/state';
+
 export default {
   name: 'PurchaseHome',
+  data() {
+    return {
+      error: false,
+      dispmsg: '',
+      funding: '',
+      approvalList: [],
+      currentApprove: '',
+    }
+  },
+  methods: {
+    approvePurchase() {
+      // TODO implement
+    },
+    denyPurchase() {
+      // TODO implement
+    }
+  },
+  mounted() {
+
+  },
+  asyncComputed: {
+    async purchase() {
+      this.dispmsg = '';
+      if (this.currentApprove === '') {
+        return {
+          requestor:'',
+          committee: '',
+          category: '',
+          item: '',
+          reason: '',
+          vendor: '',
+          cost: '',
+          comments: '',
+        };
+      }
+
+      // Not sure if this is valid, but it works...
+      return await fetch(`http://${location.hostname}:3000/purchase/${this.currentApprove}`, {
+        method: 'get',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      })
+      .then((response) => {
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+          return {
+            requestor:'',
+            committee: '',
+            category: '',
+            item: '',
+            reason: '',
+            vendor: '',
+            cost: '',
+            comments: '',
+          };
+        }
+
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+        return {
+          requestor:'',
+          committee: '',
+          category: '',
+          item: '',
+          reason: '',
+          vendor: '',
+          cost: '',
+          comments: '',
+        };
+      })
+    }
+  }
 }
 </script>
