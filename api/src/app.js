@@ -11,7 +11,7 @@ import routes from './routes';
 const app = express();
 
 // Setup predefined middleware
-app.use(cors());
+app.use(cors({maxAge:86400})); // allow for 24 hours (firefox max is 24hrs, chromium max is 2hrs)
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
