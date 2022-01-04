@@ -8,7 +8,8 @@ import { committee_name_swap } from '../models/index';
 // Start unauthenticated endpoints
 //  cannot be async because of bcrypt
 // ---------------------------
-router.post('/new', (req, res) => {
+
+router.post('/', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
@@ -60,22 +61,6 @@ router.post('/new', (req, res) => {
     };
 
     req.context.models.account.createUser(user, res);
-});
-
-router.post('/login', async (req, res) => {
-    if (req.body.uname === undefined || req.body.uname === '' ||
-        req.body.pass === undefined || req.body.pass === '') {
-        return res.status(400).send("Fill out login details");
-    }
-
-    // TODO sanitize user input here
-
-    const user = {
-        uname: req.body.uname,
-        pass: req.body.pass,
-    };
-
-    req.context.models.account.loginUser(user, res);
 });
 
 // ---------------------------

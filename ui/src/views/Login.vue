@@ -130,7 +130,7 @@ export default {
   methods: {
     login() {
       this.error = false;
-      fetch(`http://${location.hostname}:3000/account/login`, {
+      fetch(`http://${location.hostname}:3000/login`, {
         method: 'post',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
         body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
@@ -169,7 +169,7 @@ export default {
       }
 
       this.error = false;
-      fetch(`http://${location.hostname}:3000/account/new`, {
+      fetch(`http://${location.hostname}:3000/account`, {
         method: 'post',
         headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
         body: JSON.stringify({fname:this.new_fname,lname:this.new_lname,uname:this.new_uname,

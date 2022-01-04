@@ -17,8 +17,8 @@ app.use(express.urlencoded({extended: true}));
 
 // Setup our middleware
 app.use((req, res, next) => {
-    // If we are attempting to go to the /account/login or /account/new endpoints, don't authenticate
-    if (req.originalUrl === '/account/login' || req.originalUrl === '/account/new') {
+    // If we are attempting to go to the /account or /login endpoints, don't authenticate
+    if (req.originalUrl === '/account' || req.originalUrl === '/login') {
         req.context = {
             models,
         };
@@ -63,6 +63,7 @@ app.use('/account', routes.account);
 app.use('/budgets', routes.budgets);
 app.use('/purchase', routes.purchase);
 app.use('/committee', routes.committee);
+app.use('/login', routes.login);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

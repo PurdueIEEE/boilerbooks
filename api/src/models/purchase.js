@@ -14,8 +14,8 @@ async function getFullPurchaseByID(id) {
 
 async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
-        "INSERT INTO Purchases (username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
-        [purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
+        "INSERT INTO Purchases (fiscalyear,username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
+        [current_fiscal_year, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
     );
 }
 

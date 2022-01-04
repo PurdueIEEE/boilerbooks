@@ -17,8 +17,8 @@ let auth_state = {
         this.state.p_approvePerm = newAuth.p_approvePerm;
     },
     clearAuthState() {
-        document.cookie='apikey=; max-age=-1; SameSite=Strict';
-        document.cookie='uname=; max-age=-1; SameSite=Strict';
+        document.cookie="apikey=; max-age=-1; SameSite=Strict; path='/'";
+        document.cookie="uname=; max-age=-1; SameSite=Strict; path='/'";
         this.state.uname = '';
         this.state.apikey = '';
         this.state.p_approvePerm = false;
