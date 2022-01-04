@@ -51,28 +51,35 @@ router.post('/new', async (req, res) => {
 
 });
 
-router.get('/:purchaseID/view', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.context.request_user_id);
+router.get('/:purchaseID', async (req, res) => {
 
-    if(user === undefined) {
-        return res.status(400).send({ status: 400, response:"Improper Request Format." });
+    /** get the basic params to check access control **/
+    try {
+        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        // No purchase found
+        if (results.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+
+        // User is purchaser
+        if (req.context.request_user_id === results[0].username) {
+            return res.status(200).send(results[0]);
+        }
+
+        const [results_1, fields_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
+
+        // No approval powers for committee
+        if (results_1.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+
+        // Approval powers found
+        return res.status(200).send(results[0]);
+
+    } catch (err) {
+        console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
     }
-
-    const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
-
-    if(purchase === undefined) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
-    }
-
-    const committee = req.context.models.committee.getCommitteeFromID(purchase.committeeID);
-
-    if(!user.approver_permission[committee] &&
-       !user.treasurer_permission &&
-       purchase.purchaserID !== user.id) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
-    }
-
-    return res.status(200).send({ status: 200, response: purchase });
 });
 
 router.post('/:purchaseID/approve', (req, res) => {

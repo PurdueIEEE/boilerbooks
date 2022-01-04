@@ -1,5 +1,6 @@
 import { db_conn } from './index';
 import { v4 as uuidv4} from 'uuid';
+import purchase from './purchase';
 
 const bcrypt = require('bcrypt');
 const bcrypt_rounds = 10;
@@ -8,6 +9,20 @@ async function getUserByID(id) {
     return db_conn.promise().execute(
         "SELECT email, first, last, address, city, state, zip FROM Users WHERE Users.username = ?",
         [id]
+    );
+}
+
+async function updateUser(user) {
+    return db_conn.promise().execute(
+        "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=?, address=?, city=?, state=?, zip=? WHERE username=?",
+        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]
+    );
+}
+
+async function getUserApprovals(user, committee) {
+    return db_conn.promise().execute(
+        "SELECT username, committee FROM approval WHERE committee = ? AND username = ?",
+        [committee, user]
     );
 }
 
@@ -70,13 +85,6 @@ function loginUser(userInfo, res) {
     );
 }
 
-async function updateUser(user) {
-    return db_conn.promise().execute(
-        "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=?, address=?, city=?, state=?, zip=? WHERE username=?",
-        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]
-    )
-}
-
 // cannot be a promise because of bcrypt
 function updatePassword(user, res) {
     bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
@@ -119,4 +127,5 @@ export default {
     loginUser,
     updateUser,
     updatePassword,
+    getUserApprovals,
 }

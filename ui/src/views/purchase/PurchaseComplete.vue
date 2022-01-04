@@ -9,6 +9,6 @@
 
 <script>
 export default {
-  name: 'PurchaseHome',
+  name: 'PurchaseComplete',
 }
 </script>

@@ -69,4 +69,8 @@ export default {
   text-decoration: underline;
   color: black;
 }
+
+.debug {
+  outline: 2px solid red;
+}
 </style>

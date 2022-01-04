@@ -2,6 +2,8 @@ import { Router } from 'express';
 
 const router = Router();
 
+import { committee_name_swap } from '../models/index';
+
 // ---------------------------
 // Start unauthenticated endpoints
 //  cannot be async because of bcrypt
@@ -181,11 +183,28 @@ router.get('/:userID/purchases', async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
+        results.forEach(purchase => {
+            purchase.committee = committee_name_swap[purchase.committee];
+        });
         return res.status(200).send(results);
     } catch (err) {
         console.log('MySQL ' + err.stack);
         return res.status(500).send("Internal Server Error");
     }
-})
+});
+
+router.get('/:userID/approvals', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
+        return res.status(200).send(results);
+    } catch (err) {
+        console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+});
 
 export default router;

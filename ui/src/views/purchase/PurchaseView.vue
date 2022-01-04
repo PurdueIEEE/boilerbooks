@@ -38,7 +38,7 @@
 import auth_state from '@/state';
 
 export default {
-  name: 'PurchaseHome',
+  name: 'PurchaseView',
   data() {
     return {
       errmsg: '',
@@ -69,7 +69,7 @@ export default {
     })
     .catch((error) => {
       console.log(error);
-    })
+    });
   },
   methods: {
     goToItem(purchaseid) {

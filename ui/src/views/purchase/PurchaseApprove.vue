@@ -7,13 +7,13 @@
 
     <select id="currentApproval" class="form-select" v-model="currentApprove">
       <option selected disabled value="">Select...</option>
-      <option>TODO</option>
+      <option v-for="purchase in approvalList" v-bind:key="purchase.purchaseID" v-bind:value="purchase.purchaseID">{{purchase.item}}</option>
     </select>
     <br><br>
     <form onsubmit="return false;" class="row g-3 text-start" v-if="currentApprove !== ''">
       <div class="col-12">
         <label for="purchaserName" class="form-label fw-bold">Requester</label>
-        <h3 id="purchaserName">{{purchase.requestor}}</h3>
+        <h3 id="purchaserName">{{purchase.name}}</h3>
       </div>
       <div class="col-md-6">
         <label for="committeeName" class="form-label fw-bold">Committee</label>
@@ -29,7 +29,7 @@
       </div>
       <div class="col-12">
         <label for="purchaseReason" class="form-label fw-bold">Reason for Purchase</label>
-        <input id="purchaseReason" type="text" class="form-control" placeholder="For testing, building claw, etc." v-model="purchase.reason" required>
+        <input id="purchaseReason" type="text" class="form-control" placeholder="For testing, building claw, etc." v-model="purchase.purchasereason" required>
       </div>
       <div class="col-12">
         <label for="vendorName" class="form-label fw-bold">Vendor</label>
@@ -69,7 +69,7 @@
 import auth_state from '@/state';
 
 export default {
-  name: 'PurchaseHome',
+  name: 'PurchaseApprove',
   data() {
     return {
       error: false,
@@ -88,7 +88,29 @@ export default {
     }
   },
   mounted() {
+    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/approvals`, {
+        method: 'get',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        this.error = true;
+        return response.text();
+      }
 
+      return response.json();
+    })
+    .then((response) => {
+      if (this.error) {
+        this.dispmsg = response;
+        return;
+      }
+
+      this.approvalList = response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   },
   asyncComputed: {
     async purchase() {
