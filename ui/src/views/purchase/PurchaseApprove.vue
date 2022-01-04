@@ -13,7 +13,7 @@
     <form onsubmit="return false;" class="row g-3 text-start" v-if="currentApprove !== ''">
       <div class="col-12">
         <label for="purchaserName" class="form-label fw-bold">Requester</label>
-        <h3 id="purchaserName">{{purchase.name}}</h3>
+        <h3 id="purchaserName">{{purchase.purchasedby}}</h3>
       </div>
       <div class="col-md-6">
         <label for="committeeName" class="form-label fw-bold">Committee</label>
@@ -43,23 +43,22 @@
         </div>
       </div>
       <div class="col-12">
-        <label for="commentsField" class="form-label fw-bold">Comments</label>
+        <label for="commentsField" class="form-label fw-bold">Comments (Optional)</label>
         <textarea id="commentsField" type="text" class="form-control" v-model="purchase.comments"></textarea>
       </div>
       <div class="col-12">
         <label for="fundingSelect" class="form-label fw-bold">Funding Source</label>
         <select id="fundingSelect" class="form-select" v-model="funding" required>
-          <option selected disabled value="">Select...</option>
-          <option>BOSO</option>
+          <option selected>BOSO</option>
           <option>Cash</option>
           <option>SOGA</option>
         </select>
       </div>
       <div class="col-md-6 text-center">
-        <button type="submit" class="btn btn-success" v-on:click="approvePurchase">Approve Request</button>
+        <button type="submit" class="btn btn-success" v-on:click="approvePurchase('Approved', purchase.purchaseid)">Approve Request</button>
       </div>
       <div class="col-md-6 text-center">
-        <button type="submit" class="btn btn-danger" v-on:click="denyPurchase">Deny Request</button>
+        <button type="submit" class="btn btn-danger" v-on:click="approvePurchase('Denied', purchase.purchaseid)">Deny Request</button>
       </div>
     </form>
   </div>
@@ -80,11 +79,24 @@ export default {
     }
   },
   methods: {
-    approvePurchase() {
-      // TODO implement
-    },
-    denyPurchase() {
-      // TODO implement
+    approvePurchase(status, id) {
+      this.dispmsg = '';
+      fetch(`http://${location.hostname}:3000/purchase/${id}/approve`, {
+        method: 'post',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status}),
+      })
+      .then((response) => {
+        this.error = !response.ok;
+        if (response.ok) {
+          this.approvalList = this.approvalList.filter((p) => {return p.purchaseid !== id});
+          this.currentApprove = '';
+        }
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+      })
     }
   },
   mounted() {

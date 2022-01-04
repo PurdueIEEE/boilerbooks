@@ -18,7 +18,6 @@ router.post('/new', async (req, res) => {
         req.body.item === '' ||
         req.body.vendor === '' ||
         req.body.reason === '' ||
-        req.body.comments === '' ||
         req.body.category === '') {
         return res.status(400).send("All purchase details must be completed");
     }
@@ -39,6 +38,9 @@ router.post('/new', async (req, res) => {
     /** Create the purchase request **/
     try {
         const [results, fields] = await req.context.models.purchase.createNewPurchase(purchase);
+        if (results.affectedRows === 0) {
+            return res.status(400).send("Purchase cannot be created, try again later");
+        }
     } catch (err) {
         console.log("MySQL " + err.stack);
         return res.status(500).send("Internal Server Error");
@@ -82,42 +84,104 @@ router.get('/:purchaseID', async (req, res) => {
     }
 });
 
-router.post('/:purchaseID/approve', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.context.request_user_id);
-
-    if(user === undefined) {
-        return res.status(400).send({ status: 400, response:"Improper Request Format." });
+router.delete('/:purchaseID', async (req, res) => {
+    // check that the user has approval power first
+    try {
+        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        // Make sure purchase exists and belongs to user
+        if (results.length === 0 || results[0].username !== req.context.request_user_id) {
+            return res.status(404).send("Purchase not found");
+        }
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
-    const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
-
-    if(purchase === undefined) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
+    // Actually 'delete' the purchase
+    try {
+        const [results, fields] = await req.context.models.purchase.cancelPurchase(req.params.purchaseID);
+        if (results.affectedRows === 0) {
+            return res.status(400).send("Purchase status is not 'Requested' or 'Approved'");
+        }
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
-    const committee = req.context.models.committee.getCommitteeFromID(purchase.committeeID);
+    return res.status(200).send("Purchase canceled");
+});
 
-    if(!user.approver_permission[committee]) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
+router.post('/:purchaseID/approve', async (req, res) => {
+    if (req.body.price === undefined ||
+        req.body.item === undefined ||
+        req.body.vendor === undefined ||
+        req.body.reason === undefined ||
+        req.body.comments === undefined ||
+        req.body.fundsource === undefined ||
+        req.body.status ===  undefined ||
+        req.body.committee === undefined) {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    if(purchase.status !== req.context.models.purchase.STATUS.request) {
-        return res.status(400).send({ status: 400, response:"Purchase not request." });
+    if (req.body.price === '' ||
+        req.body.item === '' ||
+        req.body.vendor === '' ||
+        req.body.reason === '' ||
+        req.body.fundsource === '' ||
+        req.body.status === '' ||
+        req.body.committee === '') {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    if(req.body.approverID === undefined || req.body.approverID === '' ||
-       req.body.approvalPrice === undefined || req.body.approvalPrice === '') {
-        return res.status(400).send({ status:400, response:"Approval details must be completed." });
+    // TODO sanitize all user inputs here
+
+    // check that the user has approval power first
+    try {
+        const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
+        // No approval powers for committee
+        if (results.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
-    const date = new Date();
-    purchase.approvalDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    purchase.approverID = req.body.approverID;
-    purchase.approvalPrice = req.body.approvalPrice;
-    purchase.status = req.context.models.purchase.STATUS.approved;
+    // Only check the inputs after authorization
+    if (req.body.status !== 'Approved' && req.body.status !== 'Denied') {
+        return res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
+    }
+    if (req.body.fundsource !== 'BOSO' && req.body.fundsource !== 'Cash' && req.body.fundsource !== 'SOGA') {
+        return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
+    }
 
-    req.context.models.purchase.approvePurchase(purchase.id, purchase);
-    return res.status(201).send({ status: 201, response:"Purchase approved." });
+    const purchase = {
+        id: req.params.purchaseID,
+        approver: req.context.request_user_id,
+        item: req.body.item,
+        vendor: req.body.vendor,
+        reason: req.body.reason,
+        cost: req.body.price,
+        status: req.body.status,
+        comments: req.body.comments,
+        fundsource: req.body.fundsource,
+    };
+
+    /** update request **/
+    try{
+        const [results, fields] = await req.context.models.purchase.approvePurchase(purchase);
+        if (results.affectedRows === 0) {
+            return res.status(400).send("Purchase not found or not in 'Requested' status");
+        }
+    } catch (err) {
+        console.log("MySQL " + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    res.status(201).send(`Purchase ${req.body.status}`);
+
+    /** email requester with result **/
+
 });
 
 router.post('/:purchaseID/complete', (req, res) => {

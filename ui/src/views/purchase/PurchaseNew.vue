@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="col-12">
-        <label for="commentsField" class="form-label fw-bold">Comments</label>
+        <label for="commentsField" class="form-label fw-bold">Comments (Optional)</label>
         <textarea id="commentsField" type="text" class="form-control" v-model="comments"></textarea>
       </div>
       <div class="col-md-6 offset-md-3 text-center">
@@ -77,9 +77,7 @@ export default {
         body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments}),
       })
       .then((response) => {
-        if (!response.ok) {
-          this.error = true;
-        }
+        this.error = !response.ok;
         return response.text();
       })
       .then((response) => {
@@ -113,6 +111,7 @@ export default {
   },
   asyncComputed: {
     async categoryList() {
+      this.category = '';
       if (this.committee === '') return [];
 
       // Not sure if this is valid, Promises confuse me sometimes

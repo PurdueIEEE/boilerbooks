@@ -19,8 +19,23 @@ async function createNewPurchase(purchase) {
     );
 }
 
-function approvePurchase(id, purchase) {
-    purchases[id] = purchase;
+async function approvePurchase(purchase) {
+    return db_conn.promise().execute(
+        `UPDATE Purchases SET modifydate = NOW(), approvedby=?, item=?, purchasereason=?, vendor=?,
+        cost=?, status=?, fundsource=?, comments=?
+        WHERE Purchases.purchaseID = ? AND
+        Purchases.status='Requested'`,
+        [purchase.approver, purchase.item, purchase.reason, purchase.vendor, purchase.cost, purchase.status, purchase.fundsource, purchase.comments, purchase.id]
+    );
+}
+
+async function cancelPurchase(id) {
+    return db_conn.promise().execute(
+        `Update Purchases SET modifydate = NOW(), status=?
+        WHERE (Purchases.purchaseID = ?) AND
+        (Purchases.status='Requested' OR Purchases.status='Approved')`,
+        ['Denied', id]
+    )
 }
 
 function completePurchase(id, purchase) {
@@ -71,6 +86,7 @@ export default {
     getFullPurchaseByID,
     createNewPurchase,
     approvePurchase,
+    cancelPurchase,
     completePurchase,
     updatePurchaseStatus,
     getPurchaseByUser,

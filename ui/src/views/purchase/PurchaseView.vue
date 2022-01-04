@@ -47,37 +47,51 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/purchases`, {
-        method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.errmsg = response;
-        return;
-      }
-
-      this.purchaseList = response;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    this.init();
   },
   methods: {
     goToItem(purchaseid) {
       this.$router.push(`/detail-view?id=${purchaseid}`)
     },
     cancelPurchase(purchaseid) {
-      console.log("Cancel " + purchaseid);
+      fetch(`http://${location.hostname}:3000/purchase/${purchaseid}`, {
+        method: 'delete',
+        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      })
+      .then((response) => {
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        this.init();
+      })
     },
+    init() {
+      fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/purchases`, {
+          method: 'get',
+          headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      })
+      .then((response) => {
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
+
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.errmsg = response;
+          return;
+        }
+
+        this.purchaseList = response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   }
 }
 </script>
