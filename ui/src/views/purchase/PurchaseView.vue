@@ -63,8 +63,8 @@ export default {
         return response.text();
       })
       .then((response) => {
-        this.dispmsg = response;
-        this.init();
+        this.errmsg = response;
+        if(!this.error) this.init();
       })
     },
     init() {

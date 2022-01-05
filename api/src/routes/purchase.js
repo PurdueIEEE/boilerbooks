@@ -1,4 +1,22 @@
 import { Router } from 'express';
+import multer from 'multer';
+import * as fs from 'fs/promises';
+
+// Generate file upload handling
+function fileFilter(req, file, cb) {
+    if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "application/pdf" ) {
+        cb(null, true);
+    } else {
+    cb(null, false);
+    //return cb(new Error('Reciept must be a PDF, JPG, or PNG'));
+    }
+}
+
+const fileHandler = multer({
+    limits:{fieldSize:2*1024*1024}, // 2 MB
+    dest:'/tmp/boilerbooks-tmp', // Files are just stored here while we process them
+    fileFilter: fileFilter,
+});
 
 const router = Router();
 
@@ -62,7 +80,6 @@ router.get('/:purchaseID', async (req, res) => {
         if (results.length === 0) {
             return res.status(404).send("Purchase not found");
         }
-
         // User is purchaser
         if (req.context.request_user_id === results[0].username) {
             return res.status(200).send(results[0]);
@@ -101,7 +118,7 @@ router.delete('/:purchaseID', async (req, res) => {
     try {
         const [results, fields] = await req.context.models.purchase.cancelPurchase(req.params.purchaseID);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Purchase status is not 'Requested' or 'Approved'");
+            return res.status(400).send("Purchase status is not 'Requested', 'Approved', 'Purchased'");
         }
     } catch (err) {
         console.log("MySQL " + err.stack);
@@ -184,32 +201,75 @@ router.post('/:purchaseID/approve', async (req, res) => {
 
 });
 
-router.post('/:purchaseID/complete', (req, res) => {
-    const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
-
-    if(purchase === undefined) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
+router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, res) => {
+    if (req.body.price === undefined ||
+        req.body.comments === undefined ||
+        req.body.purchasedate === undefined) {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    if(purchase.purchaserID !== req.context.request_user_id) {
-        return res.status(404).send({ status: 404, response:"Purchase not found." });
+    if (req.body.price === '' ||
+        req.body.purchasedate === '') {
+        return res.status(400).send("All purchase details must be completed");
     }
 
-    if(purchase.status !== req.context.models.purchase.STATUS.approved) {
-        return res.status(400).send({ status: 400, response:"Purchase not approved." });
+    if (req.file === undefined) {
+        return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
     }
 
-    if(req.body.completionPrice === undefined || req.body.approverID === '') {
-        return res.status(400).send({ status:400, response:"Completion details must be completed." });
+    // TODO sanitize user inputs here
+
+    /** get the basic params to check access control **/
+    try {
+        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        // No purchase found
+        if (results.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+        // User is not purchaser
+        if (req.context.request_user_id !== results[0].username) {
+            return res.status(400).send("Purchase not found");
+        }
+
+        /** setup file and remove the temp **/
+        // dirty hack to get the file type from the MIME type
+        const fileType = req.file.mimetype.split('/')[1];
+        let file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType}`;
+        file_save_name = file_save_name.replace(' ', '_');
+        file_save_name = file_save_name.replaceAll(/['\"!?#%&{}/<>$:@+`|=]/ig, '');
+        file_save_name = '/receipt/'.concat('', file_save_name)
+
+        // check if the file already exists
+        try {
+            const stats = await fs.stat(file_save_name);
+            if (stats.isFile()) {
+                return res.status(500).send("Receipt file already exists");
+            }
+        } catch (err) {
+            // File doesn't exist, so just continue
+        }
+
+        await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+
+        const purchase = {
+            id: req.params.purchaseID,
+            purchasedate: req.body.purchasedate,
+            cost: req.body.price,
+            comments: req.body.comments,
+            receipt: file_save_name,
+        };
+
+        const [results_1, fields_1] = await req.context.models.purchase.completePurchase(purchase);
+
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
-    const date = new Date();
-    purchase.completionDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    purchase.completionPrice = req.body.approvalPrice;
-    purchase.status = req.context.models.purchase.STATUS.complete;
+    /** send email to treasurer **/
 
-    req.context.models.purchase.completePurchase(purchase.id, purchase);
-    return res.status(201).send({ status: 201, response:"Purchase completed." });
+    console.log(req.file);
+    return res.status(201).send("Purchase completed");
 });
 
 router.post('/:purchaseID/processing', (req, res) => {

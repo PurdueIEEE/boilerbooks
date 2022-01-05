@@ -33,13 +33,17 @@ async function cancelPurchase(id) {
     return db_conn.promise().execute(
         `Update Purchases SET modifydate = NOW(), status=?
         WHERE (Purchases.purchaseID = ?) AND
-        (Purchases.status='Requested' OR Purchases.status='Approved')`,
+        (Purchases.status='Requested' OR Purchases.status='Approved' OR Purchases.status='Purchased')`,
         ['Denied', id]
-    )
+    );
 }
 
-function completePurchase(id, purchase) {
-    purchases[id] = purchase;
+async function completePurchase(purchase) {
+    return db_conn.promise().execute(
+        `UPDATE Purchases SET modifydate = NOW(), purchasedate=?, cost=?, status=?, comments=?,
+        receipt=? WHERE Purchases.purchaseID = ?`,
+        [purchase.purchasedate, purchase.cost, 'Purchased', purchase.comments, purchase.receipt, purchase.id]
+    );
 }
 
 function updatePurchaseStatus(id, purchase) {
@@ -71,6 +75,16 @@ async function getApprovalsForUser(id) {
     );
 }
 
+async function getCompletionsForUser(id) {
+    return db_conn.promise().execute(
+        `SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
+        INNER JOIN approval a on p.committee = a.committee
+        WHERE p.status = 'Approved'
+        AND p.username = ?`,
+        [id]
+    );
+}
+
 function getPurchaseByCommittee(id) {
     let commPurchases = [];
     for(let purchase in purchases) {
@@ -91,5 +105,6 @@ export default {
     updatePurchaseStatus,
     getPurchaseByUser,
     getApprovalsForUser,
+    getCompletionsForUser,
     getPurchaseByCommittee,
 }

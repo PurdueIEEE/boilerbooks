@@ -73,7 +73,7 @@ export default {
     return {
       error: false,
       dispmsg: '',
-      funding: '',
+      funding: 'BOSO',
       approvalList: [],
       currentApprove: '',
     }
@@ -129,11 +129,11 @@ export default {
       this.dispmsg = '';
       if (this.currentApprove === '') {
         return {
-          requestor:'',
+          purchasedby:'',
           committee: '',
           category: '',
           item: '',
-          reason: '',
+          purchasereason: '',
           vendor: '',
           cost: '',
           comments: '',
@@ -156,11 +156,11 @@ export default {
         if (this.error) {
           this.dispmsg = response;
           return {
-            requestor:'',
+            purchasedby:'',
             committee: '',
             category: '',
             item: '',
-            reason: '',
+            purchasereason: '',
             vendor: '',
             cost: '',
             comments: '',
@@ -172,11 +172,11 @@ export default {
       .catch((error) => {
         console.log(error);
         return {
-          requestor:'',
+          purchasedby:'',
           committee: '',
           category: '',
           item: '',
-          reason: '',
+          purchasereason: '',
           vendor: '',
           cost: '',
           comments: '',
