@@ -70,6 +70,11 @@ export default {
         body: JSON.stringify({uname:auth_state.state.uname,pass1:this.new_pass,pass2:this.new_pass_again}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         this.error = !response.ok;
         return response.text();
       })

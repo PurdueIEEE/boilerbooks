@@ -123,13 +123,23 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        this.error = !response.ok;
         if (!response.ok) {
-          // find some way to actually return a failed promise
+          return response.text()
         }
 
         return response.json()
       })
       .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+        }
+
         this.fname = response.first;
         this.lname = response.last;
         this.email = response.email;

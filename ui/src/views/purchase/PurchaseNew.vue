@@ -76,6 +76,11 @@ export default {
         body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         this.error = !response.ok;
         return response.text();
       })
@@ -91,6 +96,11 @@ export default {
       headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
+      // API key must have expired
+      if (response.status === 401) {
+        this.$router.replace('/login');
+        return response.text()
+      }
       if (!response.ok) {
         this.error = true;
         return response.text();
@@ -121,6 +131,11 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         if (!response.ok) {
           return [];
         }

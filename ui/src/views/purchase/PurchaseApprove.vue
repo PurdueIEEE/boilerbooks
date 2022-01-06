@@ -88,6 +88,11 @@ export default {
         body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         this.error = !response.ok;
         if (response.ok) {
           this.approvalList = this.approvalList.filter((p) => {return p.purchaseid !== id});
@@ -107,6 +112,11 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
+      // API key must have expired
+      if (response.status === 401) {
+        this.$router.replace('/login');
+        return response.text()
+      }
       if (!response.ok) {
         this.error = true;
         return response.text();
@@ -149,6 +159,11 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         if (!response.ok) {
           this.error = true;
           return response.text();

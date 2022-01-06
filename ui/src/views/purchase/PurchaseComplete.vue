@@ -92,6 +92,11 @@ export default {
         body: formData,
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         this.error = !response.ok;
         /*if (response.ok) {
           this.approvalList = this.approvalList.filter((p) => {return p.purchaseid !== id});
@@ -111,6 +116,11 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
+      // API key must have expired
+      if (response.status === 401) {
+        this.$router.replace('/login');
+        return response.text()
+      }
       if (!response.ok) {
         this.error = true;
         return response.text();
@@ -152,6 +162,11 @@ export default {
         headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
         if (!response.ok) {
           this.error = true;
           return response.text();
