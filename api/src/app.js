@@ -2,6 +2,7 @@
 import 'dotenv/config';
 import express, { application } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 // Import files
 import models, { db_conn } from './models';
@@ -11,9 +12,10 @@ import routes from './routes';
 const app = express();
 
 // Setup predefined middleware
-app.use(cors({maxAge:86400})); // allow for 24 hours (firefox max is 24hrs, chromium max is 2hrs)
+app.use(cors({ credentials:true, origin:true, maxAge:3600})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 
 // Setup our middleware
 app.use((req, res, next) => {
@@ -25,7 +27,7 @@ app.use((req, res, next) => {
         next();
     } else {
         // use an API key with the Authorization header
-        if (req.headers['x-api-key'] === undefined) {
+        if (req.cookies.apikey === undefined) {
             return res.status(401).send("Must authenticate first");
         }
 
@@ -33,7 +35,7 @@ app.use((req, res, next) => {
         // TODO validate api key time, force login if key is old
         db_conn.execute(
             "SELECT username FROM Users WHERE Users.apikey = ?",
-            [req.headers['x-api-key']],
+            [req.cookies.apikey],
             function(err, results, fields) {
                 if(err) {
                     console.log('MySQL ' + err.stack);

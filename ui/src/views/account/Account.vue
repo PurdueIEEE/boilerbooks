@@ -96,7 +96,8 @@ export default {
     updateAccount() {
       fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
         method: 'put',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
       })
       .then((response) => {
@@ -118,11 +119,11 @@ export default {
   mounted() {
     fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         if (!response.ok) {
-          console.log(response.status);
           // find some way to actually return a failed promise
         }
 

@@ -30,6 +30,7 @@ export default {
         approve: route == '/purchase/approve',
         complete: route == '/purchase/complete',
         view: route == '/purchase/view',
+        reimburse: route == '/purchase/reimburse',
       }
     }
   }

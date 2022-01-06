@@ -106,28 +106,29 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
-  if (!requiresAuth) {
+  if (!requiresAuth) { // does not need auth
     next();
-  }
-  else if (requiresAuth && auth_state.state.uname !== '') {
+  } else if (requiresAuth && auth_state.state.uname !== '') { // needs auth and auth set
     next();
-  } else {
+  } else { // check if cookie exists
     const user = {
-      apikey: '',
-      uname: '',
-      p_approvePerm: true,
-    }
-    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
-      user.apikey = document.cookie.split('; ').find(row => row.startsWith('apikey=')).split('=')[1];
-    }
-    if (document.cookie.split(';').some((item) => item.trim().startsWith('uname='))) {
-      user.uname = document.cookie.split('; ').find(row => row.startsWith('uname=')).split('=')[1];
+      uname: null,
+      viewApprove: true,
+      viewExpenses: true,
+      viewDonation: true,
+      viewTreasurer: true,
+      viewIncome: true,
     }
 
-    if (user.apikey !== '' || user.uname !== '') {
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
+      user.uname = localStorage.getItem('uname');
+    }
+
+    if (user.uname !== null) { // found valid old login
       auth_state.setAuthState(user);
       next();
-    } else {
+    } else { // need to login
+      // TODO add some way to return to the previous page
       next('/login');
     }
   }

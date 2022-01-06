@@ -43,9 +43,6 @@ function createUser(user, res) {
 
                 const newUser = {
                     uname: user.uname,
-                    fname: user.fname,
-                    lname: user.lname,
-                    email: user.email,
                 }
                 return generateAPIKey(newUser, res);
             }
@@ -75,9 +72,6 @@ function loginUser(userInfo, res) {
 
                 const user = {
                     uname: userInfo.uname,
-                    fname: results[0].first,
-                    lname: results[0].last,
-                    email: results[0].email,
                 }
                 return generateAPIKey(user, res);
             });
@@ -115,7 +109,7 @@ function generateAPIKey(user, res) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
-            user.apikey = newKey;
+            res.cookie('apikey', newKey, { maxAge:1000*60*60*24}); // cookie is valid for 24 hours
             return res.status(201).send(user);
         }
     );

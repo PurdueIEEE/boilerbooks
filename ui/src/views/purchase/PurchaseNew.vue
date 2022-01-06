@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import auth_state from '@/state';
-
 export default {
   name: 'PurchaseNew',
   data() {
@@ -73,7 +71,8 @@ export default {
       this.dispmsg = '';
       fetch(`http://${location.hostname}:3000/purchase/new`, {
         method: 'post',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments}),
       })
       .then((response) => {
@@ -88,7 +87,8 @@ export default {
   mounted() {
     fetch(`http://${location.hostname}:3000/committee`, {
       method: 'get',
-      headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+      credentials: 'include',
+      headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       if (!response.ok) {
@@ -117,7 +117,8 @@ export default {
       // Not sure if this is valid, Promises confuse me sometimes
       return await fetch(`http://${location.hostname}:3000/committee/${this.committee}/categories`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         if (!response.ok) {

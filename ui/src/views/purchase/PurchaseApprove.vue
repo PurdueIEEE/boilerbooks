@@ -83,7 +83,8 @@ export default {
       this.dispmsg = '';
       fetch(`http://${location.hostname}:3000/purchase/${id}/approve`, {
         method: 'post',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status}),
       })
       .then((response) => {
@@ -102,7 +103,8 @@ export default {
   mounted() {
     fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/approvals`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       if (!response.ok) {
@@ -143,7 +145,8 @@ export default {
       // Not sure if this is valid, but it works...
       return await fetch(`http://${location.hostname}:3000/purchase/${this.currentApprove}`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         if (!response.ok) {

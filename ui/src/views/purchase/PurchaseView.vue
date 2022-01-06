@@ -56,7 +56,8 @@ export default {
     cancelPurchase(purchaseid) {
       fetch(`http://${location.hostname}:3000/purchase/${purchaseid}`, {
         method: 'delete',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         this.error = !response.ok;
@@ -70,7 +71,8 @@ export default {
     init() {
       fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/purchases`, {
           method: 'get',
-          headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+          credentials: 'include',
+          headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         if (!response.ok) {

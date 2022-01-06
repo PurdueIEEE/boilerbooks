@@ -51,8 +51,6 @@
 </template>
 
 <script>
-import auth_state from '@/state';
-
 export default {
   name: 'DetailView',
   data() {
@@ -65,7 +63,8 @@ export default {
   mounted() {
     fetch(`http://${location.hostname}:3000/purchase/${this.$route.query.id}`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       if (!response.ok) {

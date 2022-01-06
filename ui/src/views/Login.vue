@@ -113,16 +113,13 @@ export default {
     }
   },
   mounted() {
-    const user = {apikey:'',uname:'',p_approvePerm:true};
+    const user = {uname:null,viewApprove:true,viewExpenses:true,viewDonation:true,viewTreasurer:true,viewIncome:true,};
 
     if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
-      user.apikey = document.cookie.split('; ').find(row => row.startsWith('apikey=')).split('=')[1];
-    }
-    if (document.cookie.split(';').some((item) => item.trim().startsWith('uname='))) {
-      user.uname = document.cookie.split('; ').find(row => row.startsWith('uname=')).split('=')[1];
+      user.uname = localStorage.getItem('uname');
     }
 
-    if (user.apikey !== '' || user.uname !== '') {
+    if (user.uname !== null) {
       auth_state.setAuthState(user);
       this.$router.replace('/');
     }
@@ -132,7 +129,8 @@ export default {
       this.error = false;
       fetch(`http://${location.hostname}:3000/login`, {
         method: 'post',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
       })
       .then((response) => {
@@ -171,7 +169,8 @@ export default {
       this.error = false;
       fetch(`http://${location.hostname}:3000/account`, {
         method: 'post',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({fname:this.new_fname,lname:this.new_lname,uname:this.new_uname,
                               email:this.new_email,address:this.new_address,city:this.new_city,
                               state:this.new_state,zip:this.new_zip,pass1:this.new_pass1,pass2:this.new_pass2,
@@ -189,7 +188,7 @@ export default {
         if (this.error) {
           this.errmsg = response;
         } else {
-          auth_state.newAuthState({uname:response.uname, apikey:response.apikey, p_approvePerm:true});
+          auth_state.newAuthState({uname:response.uname, apikey:response.apikey, viewApprove:true, viewTreasurer:true, viewExpenses:true, viewDonation:true, viewIncome:true});
           this.$router.push('/');
         }
       })

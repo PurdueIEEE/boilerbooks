@@ -87,7 +87,8 @@ export default {
 
       fetch(`http://${location.hostname}:3000/purchase/${id}/complete`, {
         method: 'post',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,}),
+        credentials: 'include',
+        headers: new Headers({}),
         body: formData,
       })
       .then((response) => {
@@ -106,7 +107,8 @@ export default {
   mounted() {
     fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/completions`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       if (!response.ok) {
@@ -146,7 +148,8 @@ export default {
       // Not sure if this is valid, but it works...
       return await fetch(`http://${location.hostname}:3000/purchase/${this.currentComplete}`, {
         method: 'get',
-        headers: new Headers({'x-api-key': auth_state.state.apikey,'content-type': 'application/json'}),
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         if (!response.ok) {
