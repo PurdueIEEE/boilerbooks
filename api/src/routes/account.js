@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-import { committee_name_swap } from '../models/index';
+import { committee_name_swap } from '../common_items';
 
 // ---------------------------
 // Start unauthenticated endpoint

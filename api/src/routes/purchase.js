@@ -268,7 +268,6 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
 
     /** send email to treasurer **/
 
-    console.log(req.file);
     return res.status(201).send("Purchase completed");
 });
 

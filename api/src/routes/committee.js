@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut } from '../models/index';
+import { committee_lut } from '../common_items';
 
 router.get('/', (req, res) => {
     // literally just gets a list of committees

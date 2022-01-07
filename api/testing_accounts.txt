@@ -1,0 +1,7 @@
+testing accounts for permission roles
+uname - pass - role
+
+ahmed138 - test - treasurer
+pp - 12345678 - member
+mdma - qwertyuiop - officer
+trainboi - qwertyuiop - internal_leader

@@ -2,6 +2,8 @@
   <div class="container-lg my-5 pt-5">
     <h1>Purchase #{{purchase.purchaseid}}: {{purchase.item}}</h1>
     <br>
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <br v-else>
     <p class="lead">Last Modified at <u>{{purchase.mdate}}</u></p>
     <br>
     <div class="row">

@@ -1,6 +1,6 @@
 import { db_conn } from './index';
+import { ACCESS_LEVEL } from '../common_items';
 import { v4 as uuidv4} from 'uuid';
-import purchase from './purchase';
 
 const bcrypt = require('bcrypt');
 const bcrypt_rounds = 10;
@@ -44,7 +44,7 @@ function createUser(user, res) {
                 const newUser = {
                     uname: user.uname,
                 }
-                return generateAPIKey(newUser, res);
+                return getUserAccessLevel(newUser, res);
             }
         );
     });
@@ -73,7 +73,7 @@ function loginUser(userInfo, res) {
                 const user = {
                     uname: userInfo.uname,
                 }
-                return generateAPIKey(user, res);
+                return getUserAccessLevel(user, res);
             });
         }
     );
@@ -95,6 +95,38 @@ function updatePassword(user, res) {
             }
         );
     });
+}
+
+// Private method only used here
+function getUserAccessLevel(user, res) {
+    db_conn.execute(
+        "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPriviledge FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
+        [user.uname, ACCESS_LEVEL.member],
+        function (err, results, fields) {
+            if (err) {
+                console.log("MySQL " + err.stack);
+                return res.status(500).send("Internal Server Error");
+            }
+            console.log(results);
+            if (results[0].maxPriviledge !== null) {
+                user.viewExpenses = true;
+                user.viewDonation = true;
+                user.viewApprove = results[0].maxAmount > 0;
+                user.viewDues = results[0].maxPriviledge >= ACCESS_LEVEL.officer;
+                user.viewIncome = results[0].maxPriviledge >= ACCESS_LEVEL.treasurer;
+                user.viewTreasurer = results[0].maxPriviledge >= ACCESS_LEVEL.treasurer;
+            } else {
+                user.viewDues = false;
+                user.viewApprove = false;
+                user.viewExpenses = false;
+                user.viewDonation = false;
+                user.viewTreasurer = false;
+                user.viewIncome = false;
+            }
+
+            return generateAPIKey(user, res);
+        }
+    );
 }
 
 // Private method only used here

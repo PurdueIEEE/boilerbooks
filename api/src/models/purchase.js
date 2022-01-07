@@ -1,4 +1,5 @@
-import { db_conn, current_fiscal_year } from './index';
+import { db_conn } from './index';
+import { current_fiscal_year } from "../common_items";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(

@@ -145,7 +145,7 @@ export default {
         if (this.error) {
           this.errmsg = response;
         } else {
-          auth_state.newAuthState({uname:response.uname, apikey:response.apikey, p_approvePerm:true});
+          auth_state.newAuthState(response);
           this.$router.push('/');
         }
       })
@@ -188,7 +188,7 @@ export default {
         if (this.error) {
           this.errmsg = response;
         } else {
-          auth_state.newAuthState({uname:response.uname, apikey:response.apikey, viewApprove:true, viewTreasurer:true, viewExpenses:true, viewDonation:true, viewIncome:true});
+          auth_state.newAuthState(response);
           this.$router.push('/');
         }
       })
