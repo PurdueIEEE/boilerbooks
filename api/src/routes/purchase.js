@@ -2,7 +2,9 @@ import { Router } from 'express';
 import multer from 'multer';
 import * as fs from 'fs/promises';
 
-// Generate file upload handling
+import { clean_input_encodeurl, unescape_object, committee_name_swap } from '../common_items';
+
+// filter uploaded files based on type
 function fileFilter(req, file, cb) {
     if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "application/pdf" ) {
         cb(null, true);
@@ -11,9 +13,9 @@ function fileFilter(req, file, cb) {
     //return cb(new Error('Reciept must be a PDF, JPG, or PNG'));
     }
 }
-
+// create file upload handler
 const fileHandler = multer({
-    limits:{fieldSize:2*1024*1024}, // 2 MB
+    limits:{fileSize:2*1024*1024}, // 2 MB
     dest:'/tmp/boilerbooks-tmp', // Files are just stored here while we process them
     fileFilter: fileFilter,
 });
@@ -40,7 +42,18 @@ router.post('/new', async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    // TODO sanitize input here
+    // escape user input
+    req.body.price = clean_input_encodeurl(req.body.price);
+    req.body.item = clean_input_encodeurl(req.body.item);
+    req.body.vendor = clean_input_encodeurl(req.body.vendor);
+    req.body.reason = clean_input_encodeurl(req.body.reason);
+    req.body.comments = clean_input_encodeurl(req.body.comments);
+    req.body.category = clean_input_encodeurl(req.body.category);
+
+    // can't escape committe so check for committee name first
+    if(committee_name_swap[req.body.committee] === undefined) {
+        return res.status(400).send("Committee must be proper value");
+    }
 
     const purchase = {
         user: req.context.request_user_id,
@@ -82,7 +95,7 @@ router.get('/:purchaseID', async (req, res) => {
         }
         // User is purchaser
         if (req.context.request_user_id === results[0].username) {
-            return res.status(200).send(results[0]);
+            return res.status(200).send(unescape_object(results[0]));
         }
 
         const [results_1, fields_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
@@ -93,7 +106,7 @@ router.get('/:purchaseID', async (req, res) => {
         }
 
         // Approval powers found
-        return res.status(200).send(results[0]);
+        return res.status(200).send(unescape_object(results[0]));
 
     } catch (err) {
         console.log('MySQL ' + err.stack);
@@ -150,7 +163,18 @@ router.post('/:purchaseID/approve', async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    // TODO sanitize all user inputs here
+    // escape user input
+    req.body.price = clean_input_encodeurl(req.body.price);
+    req.body.item = clean_input_encodeurl(req.body.item);
+    req.body.vendor = clean_input_encodeurl(req.body.vendor);
+    req.body.reason = clean_input_encodeurl(req.body.reason);
+    req.body.comments = clean_input_encodeurl(req.body.comments);
+    req.body.fundsource = clean_input_encodeurl(req.body.fundsource);
+
+    // can't escape committe so check for committee name first
+    if(committee_name_swap[req.body.committee] === undefined) {
+        return res.status(400).send("Committee must be proper value");
+    }
 
     // check that the user has approval power first
     try {
@@ -213,11 +237,20 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         return res.status(400).send("All purchase details must be completed");
     }
 
+    // This catches our fileFilter filtering out files
     if (req.file === undefined) {
         return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
     }
 
-    // TODO sanitize user inputs here
+    // escape user input
+    req.body.price = clean_input_encodeurl(req.body.price);
+    req.body.comments = clean_input_encodeurl(req.body.comments);
+
+    // can't escape the purchasedate, so check format instead
+    if ((req.body.purchasedate.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
+        fs.unlink(req.file.path);
+        return res.status(400).send("Purchase Date must be in the form YYYY-MM-DD");
+    }
 
     /** get the basic params to check access control **/
     try {
@@ -232,12 +265,11 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         }
 
         /** setup file and remove the temp **/
-        // dirty hack to get the file type from the MIME type
-        const fileType = req.file.mimetype.split('/')[1];
+        const fileType = req.file.mimetype.split('/')[1]; // dirty hack to get the file type from the MIME type
         let file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType}`;
         file_save_name = file_save_name.replace(' ', '_');
         file_save_name = file_save_name.replaceAll(/['\"!?#%&{}/<>$:@+`|=]/ig, '');
-        file_save_name = '/receipt/'.concat('', file_save_name)
+        file_save_name = '/receipt/'.concat('', file_save_name);
 
         // check if the file already exists
         try {
@@ -269,68 +301,14 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
     /** send email to treasurer **/
 
     return res.status(201).send("Purchase completed");
+}, (err, req, res, next) => {
+    // This catches too large files
+    res.status(400).send("Reciept must be less than 2MB");
 });
 
-router.post('/:purchaseID/processing', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.context.request_user_id);
+router.post('/:purchaseID/treasurer', (req, res) => {
 
-    if(user === undefined) {
-        return res.status(400).send({ status: 400, response:"Improper Request Format." });
-    }
-
-    if(!user.treasurer_permission) {
-        return res.status(404).send({ status:404, response:"Purchase not found." });
-    }
-
-    const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
-
-    if(purchase === undefined) {
-        return res.status(404).send({ status:404, response:"Purchase not found." });
-    }
-
-    if(purchase !== req.context.models.purchase.STATUS.complete) {
-        return res.status(400).send({ status: 400, response:"Purchase not completed." });
-    }
-
-    purchase.status = req.context.models.purchase.STATUS.processing;
-
-    req.context.models.purchase.updatePurchaseStatus(purchase.id, purchase);
-    return res.status(201).send({ status: 201, response:"Purchase processing." });
-});
-
-router.post('/:purchaseID/reimburse', (req, res) => {
-    const user = req.context.models.account.getUserByID(req.context.request_user_id);
-
-    if(user === undefined) {
-        return res.status(400).send({ status: 400, response:"Improper Request Format." });
-    }
-
-    if(!user.treasurer_permission) {
-        return res.status(404).send({ status:404, response:"Purchase not found." });
-    }
-
-    const purchase = req.context.models.purchase.getPurchaseByID(req.params.purchaseID);
-
-    if(purchase === undefined) {
-        return res.status(404).send({ status:404, response:"Purchase not found." });
-    }
-
-    if(purchase.status !== req.context.models.purchase.STATUS.complete ||
-       purchase.status !== req.context.models.purchase.STATUS.processing) {
-        return res.status(400).send({ status: 400, response:"Purchase not completed or processing." });
-    }
-
-    if(req.body.reimburserID === undefined || req.body.reimburserID === '') {
-        return res.status(400).send({ status:400, response:"Reimbursement details must be completed." });
-    }
-
-    const date = new Date();
-    purchase.reimburserID = req.body.reimburserID;
-    purchase.reimbursementDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    purchase.status = req.context.models.purchase.STATUS.reimbursed;
-
-    req.context.models.purchase.updatePurchaseStatus(purchase.id, purchase);
-    return res.status(201).send({ status: 201, response:"Purchase reimbursed." });
+    return res.status(201).send("Purchase processing.");
 });
 
 export default router;

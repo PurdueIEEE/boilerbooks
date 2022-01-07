@@ -107,7 +107,6 @@ function getUserAccessLevel(user, res) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
-            console.log(results);
             if (results[0].maxPriviledge !== null) {
                 user.viewExpenses = true;
                 user.viewDonation = true;

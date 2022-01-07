@@ -1,5 +1,7 @@
 import { Router } from 'express';
 
+import { clean_input_encodeurl } from '../common_items';
+
 const router = Router();
 
 // ---------------------------
@@ -13,7 +15,8 @@ router.post('/', async (req, res) => {
         return res.status(400).send("Fill out login details");
     }
 
-    // TODO sanitize user input here
+    // escape user input, not password because it's getting hashed
+    req.body.uname = clean_input_encodeurl(req.body.uname);
 
     const user = {
         uname: req.body.uname,

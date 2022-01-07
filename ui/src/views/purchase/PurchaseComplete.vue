@@ -98,10 +98,10 @@ export default {
           return response.text()
         }
         this.error = !response.ok;
-        /*if (response.ok) {
-          this.approvalList = this.approvalList.filter((p) => {return p.purchaseid !== id});
-          this.currentApprove = '';
-        }*/
+        if (response.ok) {
+          this.completionList = this.completionList.filter((p) => {return p.purchaseid !== id});
+          this.currentComplete = '';
+        }
         return response.text();
       })
       .then((response) => {

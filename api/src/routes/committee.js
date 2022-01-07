@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut } from '../common_items';
+import { committee_lut, unescape_object } from '../common_items';
 
 router.get('/', (req, res) => {
     // literally just gets a list of committees
@@ -17,6 +17,9 @@ router.get('/:commKey/categories', async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commKey][0]);
+        results.forEach(category => {
+            category = unescape_object(category);
+        });
         return res.status(200).send(results);
     } catch (err) {
         console.log('MySQL ' + err.stack);
