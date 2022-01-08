@@ -26,6 +26,15 @@ async function getUserApprovals(user, committee) {
     );
 }
 
+async function getUserTreasurer(user) {
+    return db_conn.promise().execute(
+        `SELECT COUNT(U3.username) as validuser FROM Users U3
+        INNER JOIN approval A ON U3.username = A.username
+        WHERE A.role >= ? AND U3.username = ?`,
+        [ACCESS_LEVEL.treasurer, user]
+    );
+}
+
 // Cannot be a promise because of bcrypt
 function createUser(user, res) {
     bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
@@ -100,20 +109,20 @@ function updatePassword(user, res) {
 // Private method only used here
 function getUserAccessLevel(user, res) {
     db_conn.execute(
-        "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPriviledge FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
+        "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPrivilege FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
         [user.uname, ACCESS_LEVEL.member],
         function (err, results, fields) {
             if (err) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
-            if (results[0].maxPriviledge !== null) {
+            if (results[0].maxPrivilege !== null) {
                 user.viewExpenses = true;
                 user.viewDonation = true;
                 user.viewApprove = results[0].maxAmount > 0;
-                user.viewDues = results[0].maxPriviledge >= ACCESS_LEVEL.officer;
-                user.viewIncome = results[0].maxPriviledge >= ACCESS_LEVEL.treasurer;
-                user.viewTreasurer = results[0].maxPriviledge >= ACCESS_LEVEL.treasurer;
+                user.viewDues = results[0].maxPrivilege >= ACCESS_LEVEL.officer;
+                user.viewIncome = results[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+                user.viewTreasurer = results[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
             } else {
                 user.viewDues = false;
                 user.viewApprove = false;
@@ -153,4 +162,5 @@ export default {
     updateUser,
     updatePassword,
     getUserApprovals,
+    getUserTreasurer
 }

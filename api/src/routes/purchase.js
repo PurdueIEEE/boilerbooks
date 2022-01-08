@@ -84,6 +84,51 @@ router.post('/new', async (req, res) => {
 
 });
 
+router.post('/treasurer', async (req, res) => {
+    if (req.body.status === undefined || req.body.status === '' ||
+        req.body.idList === undefined || req.body.idList === '') {
+        return res.status(400).send("All purchase details must be completed");
+    }
+
+    if (req.body.status !== 'Processing Reimbursement' && req.body.status !== 'Reimbursed') {
+        return res.status(400).send("Purchase status must be 'Processing Reimbursement' or 'Reimbursed'");
+    }
+
+    if ((req.body.idList.match(/^(?:\d[,]?)+$/)).length === 0) {
+        return res.status(400).send("ID list must be a comma seperated list of numbers")
+    }
+
+    // Check that user is treasurer
+    try {
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.length === 0) {
+            return res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    /** parse each ID **/
+    const commaIDlist = req.body.idList.split(',');
+    try {
+        for (let id of commaIDlist) {
+            /** Update the purchase **/
+            const [results, fields] = await req.context.models.purchase.reimbursePurchases(id, req.body.status);
+            if (results.affectedRows === 0) {
+                return res.status(400).send("One or more purchase IDs are not currenty 'Purchased' or 'Processing Reimbursement'");
+            }
+        }
+    } catch(err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    res.status(201).send("Purchase(s) updated");
+
+    /** Send email to purchaser **/
+});
+
 router.get('/:purchaseID', async (req, res) => {
 
     /** get the basic params to check access control **/
@@ -95,6 +140,7 @@ router.get('/:purchaseID', async (req, res) => {
         }
         // User is purchaser
         if (req.context.request_user_id === results[0].username) {
+            results[0].committee = committee_name_swap[results[0].committee];
             return res.status(200).send(unescape_object(results[0]));
         }
 
@@ -163,16 +209,23 @@ router.post('/:purchaseID/approve', async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
+    if (req.body.status !== 'Approved' && req.body.status !== 'Denied') {
+        return res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
+    }
+    if (req.body.fundsource !== 'BOSO' && req.body.fundsource !== 'Cash' && req.body.fundsource !== 'SOGA') {
+        return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
+    }
+
     // escape user input
     req.body.price = clean_input_encodeurl(req.body.price);
     req.body.item = clean_input_encodeurl(req.body.item);
     req.body.vendor = clean_input_encodeurl(req.body.vendor);
     req.body.reason = clean_input_encodeurl(req.body.reason);
     req.body.comments = clean_input_encodeurl(req.body.comments);
-    req.body.fundsource = clean_input_encodeurl(req.body.fundsource);
 
     // can't escape committe so check for committee name first
-    if(committee_name_swap[req.body.committee] === undefined) {
+    req.body.committee = Object.keys(committee_name_swap).find(key => committee_name_swap[key] === req.body.committee);
+    if(!(req.body.committee in committee_name_swap)) {
         return res.status(400).send("Committee must be proper value");
     }
 
@@ -186,14 +239,6 @@ router.post('/:purchaseID/approve', async (req, res) => {
     } catch (err) {
         console.log("MySQL " + err.stack);
         return res.status(500).send("Internal Server Error");
-    }
-
-    // Only check the inputs after authorization
-    if (req.body.status !== 'Approved' && req.body.status !== 'Denied') {
-        return res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
-    }
-    if (req.body.fundsource !== 'BOSO' && req.body.fundsource !== 'Cash' && req.body.fundsource !== 'SOGA') {
-        return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
     }
 
     const purchase = {
@@ -304,11 +349,6 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
 }, (err, req, res, next) => {
     // This catches too large files
     res.status(400).send("Reciept must be less than 2MB");
-});
-
-router.post('/:purchaseID/treasurer', (req, res) => {
-
-    return res.status(201).send("Purchase processing.");
 });
 
 export default router;

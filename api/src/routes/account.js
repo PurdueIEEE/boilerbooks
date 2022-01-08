@@ -204,8 +204,9 @@ router.get('/:userID/approvals', async (req, res) => {
     try {
         const [results, fields] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
         results.forEach(purchase => {
+            purchase.committee = committee_name_swap[purchase.committee];
             purchase = unescape_object(purchase);
-        })
+        });
         return res.status(200).send(results);
     } catch (err) {
         console.log('MySQL ' + err.stack);
@@ -221,11 +222,30 @@ router.get('/:userID/completions', async (req, res) => {
     try {
         const [results, fields] = await req.context.models.purchase.getCompletionsForUser(req.params.userID);
         results.forEach(purchase => {
+            purchase.committee = committee_name_swap[purchase.committee];
             purchase = unescape_object(purchase);
-        })
+        });
         return res.status(200).send(results);
     } catch (err) {
         console.log('MySQL ' + err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+});
+
+router.get('/:userID/reimbursements', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.purchase.getTreasurer(req.params.userID);
+        results.forEach(purchase => {
+            purchase.committee = committee_name_swap[purchase.committee];
+            purchase = unescape_object(purchase);
+        });
+        return res.status(200).send(results);
+    } catch (err) {
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

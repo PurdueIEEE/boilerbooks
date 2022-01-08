@@ -1,5 +1,5 @@
 import { db_conn } from './index';
-import { current_fiscal_year } from "../common_items";
+import { ACCESS_LEVEL, current_fiscal_year } from "../common_items";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
@@ -34,7 +34,7 @@ async function cancelPurchase(id) {
     return db_conn.promise().execute(
         `Update Purchases SET modifydate = NOW(), status=?
         WHERE (Purchases.purchaseID = ?) AND
-        (Purchases.status='Requested' OR Purchases.status='Approved' OR Purchases.status='Purchased')`,
+        (Purchases.status IN ('Requested','Approved','Purchased'))`,
         ['Denied', id]
     );
 }
@@ -47,8 +47,13 @@ async function completePurchase(purchase) {
     );
 }
 
-function updatePurchaseStatus(id, purchase) {
-    purchases[id] = purchase;
+async function reimbursePurchases(id, status) {
+    // I tried to make this use WHERE ... IN () to update multiple IDs but
+    //  MySQL was throwing errors
+    return db_conn.promise().execute(
+        "UPDATE Purchases SET modifydate = NOW(), status=? WHERE Purchases.purchaseID=? AND Purchases.status IN ('Purchased','Processing Reimbursement')",
+        [status, id]
+    )
 }
 
 async function getPurchaseByUser(id) {
@@ -86,15 +91,24 @@ async function getCompletionsForUser(id) {
     );
 }
 
-function getPurchaseByCommittee(id) {
-    let commPurchases = [];
-    for(let purchase in purchases) {
-        if(purchases[purchase].committeeID === id) {
-            commPurchases.push(purchases[purchase]);
-        }
-    }
+async function getTreasurer(id) {
+    return db_conn.promise().execute(
+        `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.item, p.purchaseID, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status, p.cost, p.comments, p.username, p.fundsource,
+		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
+		(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.status in ('Purchased','Processing Reimbursement')
+		AND ? in (
+		SELECT U3.username FROM Users U3
+		INNER JOIN approval A ON U3.username = A.username
+		WHERE (A.privilege_level >= ?))
+		ORDER BY p.purchasedate DESC`,
+        [id, ACCESS_LEVEL.treasurer]
+    )
+}
 
-    return commPurchases;
+function getPurchaseByCommittee(id) {
+    return [];
 }
 
 export default {
@@ -103,9 +117,10 @@ export default {
     approvePurchase,
     cancelPurchase,
     completePurchase,
-    updatePurchaseStatus,
+    reimbursePurchases,
     getPurchaseByUser,
     getApprovalsForUser,
     getCompletionsForUser,
     getPurchaseByCommittee,
+    getTreasurer,
 }

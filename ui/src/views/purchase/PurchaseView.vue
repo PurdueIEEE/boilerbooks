@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     goToItem(purchaseid) {
-      this.$router.push(`/detail-view?id=${purchaseid}`)
+      this.$router.push(`/detail-view?id=${purchaseid}`);
     },
     cancelPurchase(purchaseid) {
       fetch(`http://${location.hostname}:3000/purchase/${purchaseid}`, {
