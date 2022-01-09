@@ -113,13 +113,11 @@ export default {
     }
   },
   mounted() {
-    const user = {uname:null,viewApprove:true,viewExpenses:true,viewDonation:true,viewTreasurer:true,viewIncome:true,};
-
+    let user = null;
     if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
-      user.uname = localStorage.getItem('uname');
+      user = JSON.parse(localStorage.getItem('authState'));
     }
-
-    if (user.uname !== null) {
+    if (user !== null) {
       auth_state.setAuthState(user);
       this.$router.replace('/');
     }

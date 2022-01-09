@@ -116,20 +116,20 @@ function getUserAccessLevel(user, res) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
+            // user.viewFinancials: Expected Donations, View Financials
+            // user.viewApprove: Approve Purchases
+            // user.viewOfficer: View Committee Dues, Committee Budgets
+            // user.viewTreasurer: Reimburse Purchases, View Income, Add Dues, Adjust Access Roles
             if (results[0].maxPrivilege !== null) {
-                user.viewExpenses = true;
-                user.viewDonation = true;
+                user.viewFinancials = true;
                 user.viewApprove = results[0].maxAmount > 0;
-                user.viewDues = results[0].maxPrivilege >= ACCESS_LEVEL.officer;
-                user.viewIncome = results[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+                user.viewOfficer = results[0].maxPrivilege >= ACCESS_LEVEL.officer;
                 user.viewTreasurer = results[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
             } else {
-                user.viewDues = false;
+                user.viewFinancials = false;
                 user.viewApprove = false;
-                user.viewExpenses = false;
-                user.viewDonation = false;
+                user.viewOfficer = false;
                 user.viewTreasurer = false;
-                user.viewIncome = false;
             }
 
             return generateAPIKey(user, res);
