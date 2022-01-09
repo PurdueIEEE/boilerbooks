@@ -50,6 +50,14 @@ const routes = [
     }
   },
   {
+    path: '/user-view',
+    name: 'UserView',
+    component: () => import(/* webpackChunkName: "userview" */ '../views/UserView.vue'),
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/myaccount',
     name: 'Account',
     component: () => import(/* webpackChunkName: "account" */ '../views/account/Account.vue'),
@@ -115,20 +123,13 @@ router.beforeEach((to, from, next) => {
   } else if (requiresAuth && auth_state.state.uname !== '') { // needs auth and auth set
     next();
   } else { // check if cookie exists
-    const user = {
-      uname: null,
-      viewApprove: true,
-      viewExpenses: true,
-      viewDonation: true,
-      viewTreasurer: true,
-      viewIncome: true,
-    }
+    let user = null;
 
     if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
-      user.uname = localStorage.getItem('uname');
+      user = JSON.parse(localStorage.getItem('authState'));
     }
 
-    if (user.uname !== null) { // found valid old login
+    if (user !== null) { // found valid old login
       auth_state.setAuthState(user);
       next();
     } else { // need to login

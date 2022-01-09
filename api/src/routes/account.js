@@ -77,8 +77,15 @@ router.post('/', (req, res) => {
 // ---------------------------
 
 router.get('/:userID', async (req, res) => {
-    if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+    try {
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        console.log(results);
+        if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
+            return res.status(404).send("User not found");
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
     try {
@@ -89,7 +96,7 @@ router.get('/:userID', async (req, res) => {
 
         return res.status(200).send(unescape_object(results[0]));
     } catch (err) {
-        console.log('MySQL ' + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

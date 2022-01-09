@@ -101,7 +101,7 @@ router.post('/treasurer', async (req, res) => {
     // Check that user is treasurer
     try {
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.length === 0) {
+        if (results.validuser === 0) {
             return res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
         }
     } catch (err) {

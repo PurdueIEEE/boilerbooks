@@ -1,6 +1,6 @@
 // Import libraries
 import 'dotenv/config';
-import express, { application } from 'express';
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
@@ -31,10 +31,8 @@ app.use((req, res, next) => {
             return res.status(401).send("Must authenticate first");
         }
 
-        // TODO sanitize api key input
-        // TODO validate api key time, force login if key is old
         db_conn.execute(
-            "SELECT username FROM Users WHERE Users.apikey = ?",
+            "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
             [req.cookies.apikey],
             function(err, results, fields) {
                 if(err) {
@@ -43,6 +41,13 @@ app.use((req, res, next) => {
                 }
 
                 if(results.length === 0) {
+                    return res.status(401).send("Invalid API Key");
+                }
+
+                const dbtime = new Date(results[0].apikeygentime);
+                const exptime = dbtime.setDate(dbtime.getHours() + 24); // key expires after 24 hours
+                const now = new Date();
+                if (now >= exptime) {
                     return res.status(401).send("Invalid API Key");
                 }
 
@@ -66,6 +71,7 @@ app.use('/budgets', routes.budgets);
 app.use('/purchase', routes.purchase);
 app.use('/committee', routes.committee);
 app.use('/login', routes.login);
+app.use('/receipt', routes.receipt);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

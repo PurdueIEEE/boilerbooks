@@ -22,12 +22,12 @@
       </thead>
       <tbody>
         <tr v-for="purchase in purchaseList" v-bind:key="purchase.purchaseID">
-          <td>{{purchase.purchaseID}}</td>
+          <td><router-link v-bind:to="goToItem(purchase.purchaseID)" class="link-primary text-decoration-none">{{purchase.purchaseID}}</router-link></td>
           <td>{{purchase.date}}</td>
-          <td><span v-on:click="goToItem(purchase.purchaseID)" class="link-primary" style="cursor:pointer;">{{purchase.item}}</span></td>
+          <td><a v-bind:href="computeReceipt(purchase.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.item}}</a></td>
           <td>{{purchase.vendor}}</td>
           <td>{{purchase.committee}}</td>
-          <td>{{purchase.purchasedby}}</td>
+          <td><router-link v-bind:to="goToUser(purchase.username)" class="link-primary text-decoration-none">{{purchase.purchasedby}}</router-link></td>
           <td>${{purchase.cost}}</td>
           <td>{{purchase.fundsource}}</td>
           <td>{{purchase.status}}</td>
@@ -64,7 +64,13 @@ export default {
   },
   methods: {
     goToItem(id) {
-      this.$router.push(`/detail-view?id=${id}`);
+      return `/detail-view?id=${id}`;
+    },
+    goToUser(id) {
+      return `/user-view?id=${id}`;
+    },
+    computeReceipt(fp) {
+      return `http://${location.hostname}:3000${fp}`
     },
     addToBox(id) {
       if(this.processList === '') {

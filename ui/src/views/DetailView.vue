@@ -49,6 +49,11 @@
         </div>
       </div>
     </div>
+    <br>
+    <div class="fs-3">
+      <a v-bind:href="fullRecipt" target="_blank" v-if="purchase.receipt">Open receipt in new tab </a>
+      <span v-else>No receipt for this purchase</span>
+    </div>
   </div>
 </template>
 
@@ -66,7 +71,6 @@ export default {
     fetch(`http://${location.hostname}:3000/purchase/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       // API key must have expired
@@ -92,6 +96,11 @@ export default {
     .catch((error) => {
       console.log(error);
     });
+  },
+  computed: {
+    fullRecipt() {
+      return `http://${location.hostname}:3000${this.purchase.receipt}`;
+    }
   }
 }
 </script>
