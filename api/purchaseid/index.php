@@ -1,7 +1,9 @@
 <?php
 	/* This API provides info on a purchase for display. It also formats an ifram of the receipt */
 
-	include '../verify.php';
+	//include '../verify.php'; // See issue#143 for why this is
+	include '../../common-functions.php';
+	include '../../dbinfo.php';
 
 	$decode = 0;
 
