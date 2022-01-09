@@ -28,6 +28,9 @@ app.use((req, res, next) => {
     } else {
         // use an API key with the Authorization header
         if (req.cookies.apikey === undefined) {
+            if (req.originalUrl.startsWith("/receipt")) {
+                return res.redirect('/ui/login')
+            }
             return res.status(401).send("Must authenticate first");
         }
 
@@ -36,11 +39,14 @@ app.use((req, res, next) => {
             [req.cookies.apikey],
             function(err, results, fields) {
                 if(err) {
-                    console.log('MySQL ' + err.stack);
+                    console.log(err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
                 if(results.length === 0) {
+                    if (req.originalUrl.startsWith("/receipt")) {
+                        return res.redirect('/ui/login')
+                    }
                     return res.status(401).send("Invalid API Key");
                 }
 
@@ -48,6 +54,9 @@ app.use((req, res, next) => {
                 const exptime = dbtime.setDate(dbtime.getHours() + 24); // key expires after 24 hours
                 const now = new Date();
                 if (now >= exptime) {
+                    if (req.originalUrl.startsWith("/receipt")) {
+                        return res.redirect('/ui/login')
+                    }
                     return res.status(401).send("Invalid API Key");
                 }
 

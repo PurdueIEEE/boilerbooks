@@ -46,7 +46,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/account/${this.$route.query.id}`, {
+    fetch(`http://${location.hostname}/api/account/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
     })

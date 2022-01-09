@@ -10,7 +10,7 @@
       <option v-for="purchase in approvalList" v-bind:key="purchase.purchaseID" v-bind:value="purchase.purchaseID">{{purchase.item}}</option>
     </select>
     <br><br>
-    <form onsubmit="return false;" class="row g-3 text-start" v-if="currentApprove !== ''">
+    <form v-on:submit.prevent="approvePurchase('Approved', purchase.purchaseid)" class="row g-3 text-start" v-if="currentApprove !== ''">
       <div class="col-12">
         <label for="purchaserName" class="form-label fw-bold">Requester</label>
         <h3 id="purchaserName">{{purchase.purchasedby}}</h3>
@@ -55,10 +55,10 @@
         </select>
       </div>
       <div class="col-md-6 text-center">
-        <button type="submit" class="btn btn-success" v-on:click="approvePurchase('Approved', purchase.purchaseid)">Approve Request</button>
+        <button type="submit" class="btn btn-success">Approve Request</button>
       </div>
       <div class="col-md-6 text-center">
-        <button type="submit" class="btn btn-danger" v-on:click="approvePurchase('Denied', purchase.purchaseid)">Deny Request</button>
+        <button type="button" class="btn btn-danger" v-on:click="approvePurchase('Denied', purchase.purchaseid)">Deny Request</button>
       </div>
     </form>
   </div>
@@ -81,7 +81,7 @@ export default {
   methods: {
     approvePurchase(status, id) {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}:3000/purchase/${id}/approve`, {
+      fetch(`http://${location.hostname}/api/purchase/${id}/approve`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -106,10 +106,9 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/approvals`, {
+    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/approvals`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       // API key must have expired
@@ -153,10 +152,9 @@ export default {
       }
 
       // Not sure if this is valid, but it works...
-      return await fetch(`http://${location.hostname}:3000/purchase/${this.currentApprove}`, {
+      return await fetch(`http://${location.hostname}/api/purchase/${this.currentApprove}`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         // API key must have expired

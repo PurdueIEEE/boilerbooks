@@ -310,9 +310,10 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         }
 
         /** setup file and remove the temp **/
+        const results_unsafe = unescape_object(results[0]);
         const fileType = req.file.mimetype.split('/')[1]; // dirty hack to get the file type from the MIME type
-        let file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType}`;
-        file_save_name = file_save_name.replace(' ', '_');
+        let file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.${fileType}`;
+        file_save_name = file_save_name.replaceAll(' ', '_');
         file_save_name = file_save_name.replaceAll(/['\"!?#%&{}/<>$:@+`|=]/ig, '');
         file_save_name = '/receipt/'.concat('', file_save_name);
 

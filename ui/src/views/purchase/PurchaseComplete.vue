@@ -10,7 +10,7 @@
       <option v-for="purchase in completionList" v-bind:key="purchase.purchaseID" v-bind:value="purchase.purchaseID">{{purchase.item}}</option>
     </select>
     <br><br>
-    <form onsubmit="return false;" class="row g-3 text-start" v-if="currentComplete !== ''">
+    <form v-on:submit.prevent="completePurchase(currentComplete)" class="row g-3 text-start" v-if="currentComplete !== ''">
       <div class="col-md-6">
         <label for="committeeName" class="form-label fw-bold">Committee</label>
         <h3 id="committeeName">{{purchase.committee}}</h3>
@@ -51,7 +51,7 @@
         <textarea id="commentsField" type="text" class="form-control" v-model="purchase.comments"></textarea>
       </div>
       <div class="col-12 text-center">
-        <button type="submit" class="btn btn-success" v-on:click="completePurchase(currentComplete)">Complete Request</button>
+        <button type="submit" class="btn btn-success">Complete Request</button>
       </div>
     </form>
   </div>
@@ -85,7 +85,7 @@ export default {
       formData.append('comments', this.purchase.comments);
       formData.append('receipt', fileInput.files[0]);
 
-      fetch(`http://${location.hostname}:3000/purchase/${id}/complete`, {
+      fetch(`http://${location.hostname}/api/purchase/${id}/complete`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({}),
@@ -110,10 +110,9 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/completions`, {
+    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/completions`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       // API key must have expired
@@ -156,10 +155,9 @@ export default {
       }
 
       // Not sure if this is valid, but it works...
-      return await fetch(`http://${location.hostname}:3000/purchase/${this.currentComplete}`, {
+      return await fetch(`http://${location.hostname}/api/purchase/${this.currentComplete}`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         // API key must have expired

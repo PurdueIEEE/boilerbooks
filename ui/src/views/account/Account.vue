@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     updateAccount() {
-      fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
+      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -117,10 +117,9 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}`, {
+    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         // API key must have expired

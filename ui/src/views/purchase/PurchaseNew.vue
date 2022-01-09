@@ -4,7 +4,7 @@
     <p class="lead">Fill out the details below to create a new purchase request.</p>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
-    <form onsubmit="return false;" class="row g-3 text-start">
+    <form v-on:submit.prevent="submitRequest()" class="row g-3 text-start">
       <div class="col-md-6">
         <label for="committeeSelect" class="form-label fw-bold">Committee</label>
         <select id="committeeSelect" class="form-select" v-model="committee" required>
@@ -43,7 +43,7 @@
         <textarea id="commentsField" type="text" class="form-control" v-model="comments"></textarea>
       </div>
       <div class="col-md-6 offset-md-3 text-center">
-        <button type="submit" class="btn btn-success" v-on:click="submitRequest">Submit Request</button>
+        <button type="submit" class="btn btn-success">Submit Request</button>
       </div>
     </form>
   </div>
@@ -69,7 +69,7 @@ export default {
   methods: {
     submitRequest() {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}:3000/purchase/new`, {
+      fetch(`http://${location.hostname}/api/purchase/new`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -90,10 +90,9 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/committee`, {
+    fetch(`http://${location.hostname}/api/committee`, {
       method: 'get',
       credentials: 'include',
-      headers: new Headers({'content-type': 'application/json'}),
     })
     .then((response) => {
       // API key must have expired
@@ -125,10 +124,9 @@ export default {
       if (this.committee === '') return [];
 
       // Not sure if this is valid, Promises confuse me sometimes
-      return await fetch(`http://${location.hostname}:3000/committee/${this.committee}/categories`, {
+      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/categories`, {
         method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         // API key must have expired

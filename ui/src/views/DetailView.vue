@@ -68,7 +68,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}:3000/purchase/${this.$route.query.id}`, {
+    fetch(`http://${location.hostname}/api/purchase/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
     })
@@ -99,7 +99,7 @@ export default {
   },
   computed: {
     fullRecipt() {
-      return `http://${location.hostname}:3000${this.purchase.receipt}`;
+      return `http://${location.hostname}/api${this.purchase.receipt}`;
     }
   }
 }

@@ -2,7 +2,7 @@
   <div >
     <h3>View Purchases</h3>
     <p class="lead">Below are your past purchases for IEEE.</p>
-    <div v-if="errmsg!==''" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <!-- As much as I would like, all the fields do not fit here -->
     <table class="table table-hover table-striped">
@@ -41,7 +41,7 @@ export default {
   name: 'PurchaseView',
   data() {
     return {
-      errmsg: '',
+      dispmsg: '',
       error: false,
       purchaseList: []
     }
@@ -54,7 +54,7 @@ export default {
       this.$router.push(`/detail-view?id=${purchaseid}`);
     },
     cancelPurchase(purchaseid) {
-      fetch(`http://${location.hostname}:3000/purchase/${purchaseid}`, {
+      fetch(`http://${location.hostname}/api/purchase/${purchaseid}`, {
         method: 'delete',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -69,15 +69,14 @@ export default {
         return response.text();
       })
       .then((response) => {
-        this.errmsg = response;
+        this.dispmsg = response;
         if(!this.error) this.init();
       })
     },
     init() {
-      fetch(`http://${location.hostname}:3000/account/${auth_state.state.uname}/purchases`, {
+      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/purchases`, {
           method: 'get',
           credentials: 'include',
-          headers: new Headers({'content-type': 'application/json'}),
       })
       .then((response) => {
         // API key must have expired
@@ -94,7 +93,7 @@ export default {
       })
       .then((response) => {
         if (this.error) {
-          this.errmsg = response;
+          this.dispmsg = response;
           return;
         }
 

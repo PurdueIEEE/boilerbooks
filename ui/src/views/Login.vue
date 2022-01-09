@@ -4,7 +4,7 @@
     <div v-if="login_status">
       <h1>Please Sign In</h1>
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
-      <form onsubmit="return false;" name="login_form">
+      <form v-on:submit.prevent="login()" name="login_form">
         <div class="row">
           <div class="offset-md-4 col-md-4 text-start p-4">
             <label for="login_uname" class="form-label">Username:</label>
@@ -16,7 +16,7 @@
             <input type="password" name="login_pass" id="login_pass" class="form-control" v-model="login_pass" required>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" v-on:click="login">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
       <div class="mt-3">
         <button class="btn btn-link"><router-link to="/forgot?type=user" class="link-secondary">Forgot Username</router-link></button>
@@ -30,7 +30,7 @@
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
       <div class="row">
         <div class="col-md-6 offset-md-3 text-start p-4">
-          <form class="row g-3" onsubmit="return false;" name="new_form">
+          <form class="row g-3" v-on:submit.prevent="newAccount()" name="new_form">
             <div class="col-md-6">
               <label for="new_fname" class="form-label">First name</label>
               <input type="text" class="form-control" id="new_fname" v-model="new_fname" placeholder="Mitch" required>
@@ -76,7 +76,7 @@
               <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter the code given by IEEE to enable account creation" required>
             </div>
             <div class="col-12 mt-4 text-center">
-              <button type="submit" class="btn btn-primary" v-on:click="newAccount">Submit</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </div>
           </form>
         </div>
@@ -125,7 +125,7 @@ export default {
   methods: {
     login() {
       this.error = false;
-      fetch(`http://${location.hostname}:3000/login`, {
+      fetch(`http://${location.hostname}/api/login`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -165,7 +165,7 @@ export default {
       }
 
       this.error = false;
-      fetch(`http://${location.hostname}:3000/account`, {
+      fetch(`http://${location.hostname}/api/account`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
