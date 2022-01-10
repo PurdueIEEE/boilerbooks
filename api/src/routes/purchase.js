@@ -152,10 +152,8 @@ router.get('/:purchaseID', async (req, res) => {
         }
 
         const [results_2, fields_2] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
-        //console.log(results_1[0]);
         results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
         results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
-        console.log(results[0]);
         // Approval powers found
         return res.status(200).send(unescape_object(results[0]));
 
