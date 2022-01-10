@@ -10,6 +10,8 @@
       <option v-for="purchase in approvalList" v-bind:key="purchase.purchaseID" v-bind:value="purchase.purchaseID">{{purchase.item}}</option>
     </select>
     <br><br>
+    <div v-if="purchase && purchase.costTooHigh" class="lead fw-bold my-1 fs-4 text-danger">Warning! Purchase cost exceeds committee balance!</div>
+    <div v-if="purchase && purchase.lowBalance" class="lead fw-bold my-1 fs-4 text-warning">Warning! Committe balance is low!</div>
     <form v-on:submit.prevent="approvePurchase('Approved', purchase.purchaseid)" class="row g-3 text-start" v-if="currentApprove !== ''">
       <div class="col-12">
         <label for="purchaserName" class="form-label fw-bold">Requester</label>
@@ -148,6 +150,8 @@ export default {
           vendor: '',
           cost: '',
           comments: '',
+          costTooHigh: false,
+          lowBalance: false,
         };
       }
 
@@ -180,6 +184,8 @@ export default {
             vendor: '',
             cost: '',
             comments: '',
+            costTooHigh: false,
+            lowBalance: false,
           };
         }
 
@@ -196,6 +202,8 @@ export default {
           vendor: '',
           cost: '',
           comments: '',
+          costTooHigh: false,
+          lowBalance: false,
         };
       })
     }

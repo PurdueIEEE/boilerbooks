@@ -210,12 +210,11 @@ router.get('/:userID/approvals', async (req, res) => {
     try {
         const [results, fields] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_name_swap[purchase.committee];
             purchase = unescape_object(purchase);
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log('MySQL ' + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

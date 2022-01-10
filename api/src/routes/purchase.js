@@ -138,19 +138,24 @@ router.get('/:purchaseID', async (req, res) => {
         if (results.length === 0) {
             return res.status(404).send("Purchase not found");
         }
-        // User is purchaser
-        if (req.context.request_user_id === results[0].username) {
-            results[0].committee = committee_name_swap[results[0].committee];
-            return res.status(200).send(unescape_object(results[0]));
-        }
 
         const [results_1, fields_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
 
         // No approval powers for committee
         if (results_1.length === 0) {
+            // User is purchaser
+            if (req.context.request_user_id === results[0].username) {
+                results[0].committee = committee_name_swap[results[0].committee];
+                return res.status(200).send(unescape_object(results[0]));
+            }
             return res.status(404).send("Purchase not found");
         }
 
+        const [results_2, fields_2] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
+        //console.log(results_1[0]);
+        results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
+        results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
+        console.log(results[0]);
         // Approval powers found
         return res.status(200).send(unescape_object(results[0]));
 
