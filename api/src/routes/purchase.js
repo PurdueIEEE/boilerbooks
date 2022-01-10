@@ -216,6 +216,20 @@ router.post('/:purchaseID/approve', async (req, res) => {
         return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
     }
 
+    try {
+        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        if (results.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+        console.log(typeof req.body.price)
+        if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
+            return res.status(400).send("Purchase cost too high");
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
     // escape user input
     req.body.price = clean_input_encodeurl(req.body.price);
     req.body.item = clean_input_encodeurl(req.body.item);
@@ -237,7 +251,7 @@ router.post('/:purchaseID/approve', async (req, res) => {
             return res.status(404).send("Purchase not found");
         }
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -257,10 +271,10 @@ router.post('/:purchaseID/approve', async (req, res) => {
     try{
         const [results, fields] = await req.context.models.purchase.approvePurchase(purchase);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Purchase not found or not in 'Requested' status");
+            return res.status(400).send("Purchase not in 'Requested' status");
         }
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -285,6 +299,20 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {
         return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        if (results.length === 0) {
+            return res.status(404).send("Purchase not found");
+        }
+        console.log(typeof req.body.price)
+        if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
+            return res.status(400).send("Purchase cost too high, create a new request if needed");
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
     }
 
     // escape user input
