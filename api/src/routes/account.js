@@ -293,7 +293,6 @@ router.get('/:userID/balances', async (req, res) => {
 
     try {
         for (let committee of committees) {
-            console.log(committees);
             const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
             if (results.length !== 0) {
                 const [results_1, fields_1] = await req.context.models.committee.getCommitteeBalance(committee);

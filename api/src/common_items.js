@@ -45,6 +45,12 @@ function unescape_object(obj) {
 // modify these numbers annually
 const current_fiscal_year = "2017-2018";
 const first_fiscal_year = "2015-2016";
+const yearStart = parseInt(first_fiscal_year.substring(0,4));
+const yearEnd = parseInt(current_fiscal_year.substring(0,4));
+const fiscal_year_list = [];
+for (let year = yearEnd; year >= yearStart; year--) {
+    fiscal_year_list.push(`${year}-${year+1}`);
+}
 // -------------------------------------------------
 
 // ---------------- committee lut ------------------
@@ -106,6 +112,7 @@ export {
     unescape_object,
     current_fiscal_year,
     first_fiscal_year,
+    fiscal_year_list,
     committee_lut,
     committee_name_swap,
     ACCESS_LEVEL

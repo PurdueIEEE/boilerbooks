@@ -116,7 +116,7 @@ export default {
     })
     .catch((error) => {
       console.log(error);
-    })
+    });
   },
   asyncComputed: {
     async categoryList() {
@@ -143,7 +143,7 @@ export default {
       .catch((error) => {
         console.log(error);
         return [];
-      })
+      });
     }
   }
 }
