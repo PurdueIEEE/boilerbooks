@@ -29,10 +29,6 @@ router.get('/:commKey/categories', async (req, res) => {
 
 });
 
-router.get('/:commID/purchases', (req, res) => {
-    return res.status(200).send("TODO eventually");
-});
-
 router.get('/:commID/balance', async (req, res) => {
     if (!(req.params.commKey in committee_lut)) {
         return res.status(404).send("Invalid committee value");

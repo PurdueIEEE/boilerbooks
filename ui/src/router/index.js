@@ -105,6 +105,23 @@ const routes = [
     meta: {
       requiresAuth: true,
     }
+  },
+  {
+    path: '/financials',
+    component: () => import(/* webpackChunkName: "financials" */ '../views/financials/Financials.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import(/* webpackChunkName: "financials_home" */ '../views/financials/FinancialsHome.vue'),
+      },
+      {
+        path: 'committee',
+        component: () => import(/* webpackChunkName: "financials_committee" */ '../views/financials/FinancialsCommittee.vue'),
+      }
+    ],
+    meta: {
+      requiresAuth: true,
+    }
   }
 ]
 

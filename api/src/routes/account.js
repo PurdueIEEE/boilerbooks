@@ -6,9 +6,12 @@ import { committee_name_swap, clean_input_encodeurl, unescape_object } from '../
 
 // ---------------------------
 // Start unauthenticated endpoint
-//  cannot be async because of bcrypt
 // ---------------------------
 
+/*
+    Creates a new user account
+    cannot be async because of bcrypt
+*/
 router.post('/', (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
@@ -76,6 +79,10 @@ router.post('/', (req, res) => {
 // End unauthenticated endpoint
 // ---------------------------
 
+/*
+    Gets user details, only if requester is the user
+    or the Treasurer
+*/
 router.get('/:userID', async (req, res) => {
     try {
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -100,6 +107,9 @@ router.get('/:userID', async (req, res) => {
     }
 });
 
+/*
+    Updates user account details, requester must be user
+*/
 router.put('/:userID', async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -155,6 +165,9 @@ router.put('/:userID', async (req, res) => {
     }
 });
 
+/*
+    Changes user password, requester must be user
+*/
 router.post('/:userID', (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -184,6 +197,9 @@ router.post('/:userID', (req, res) => {
     req.context.models.account.updatePassword(user, res);
 });
 
+/*
+    Get a list of all purchases made by the user
+*/
 router.get('/:userID/purchases', async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -202,6 +218,9 @@ router.get('/:userID/purchases', async (req, res) => {
     }
 });
 
+/*
+    Get a list of all active requests user can approve
+*/
 router.get('/:userID/approvals', async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -219,6 +238,9 @@ router.get('/:userID/approvals', async (req, res) => {
     }
 });
 
+/*
+    Get a list of all active purchases user can complete
+*/
 router.get('/:userID/completions', async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -237,6 +259,9 @@ router.get('/:userID/completions', async (req, res) => {
     }
 });
 
+/*
+    Get a list of all active purchases user can reimburse
+*/
 router.get('/:userID/reimbursements', async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
@@ -253,6 +278,34 @@ router.get('/:userID/reimbursements', async (req, res) => {
         console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
+});
+
+/*
+    Get a list of all committee balances user can view
+*/
+router.get('/:userID/balances', async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
+    const committees = Object.keys(committee_name_swap);
+    const outputBalances = {};
+
+    try {
+        for (let committee of committees) {
+            console.log(committees);
+            const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
+            if (results.length !== 0) {
+                const [results_1, fields_1] = await req.context.models.committee.getCommitteeBalance(committee);
+                outputBalances[committee] = results_1[0].balance;
+            }
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    return res.status(200).send(outputBalances);
 });
 
 export default router;

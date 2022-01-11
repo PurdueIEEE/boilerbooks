@@ -37,7 +37,7 @@
             <p class="card-text">View income and expenses for each committee per fiscal year.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary disabled">Go to Financials</router-link>
+            <router-link to="/financials" class="btn btn-secondary">Go to Financials</router-link>
           </div>
         </div>
         </div>

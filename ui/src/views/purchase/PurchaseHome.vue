@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <h3>Purchasing Home</h3>
     <p class="lead">
       Press a link on the left sidebar to begin. If you have any questions, please
