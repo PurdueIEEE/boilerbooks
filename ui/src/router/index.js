@@ -107,6 +107,23 @@ const routes = [
     }
   },
   {
+    path: '/income',
+    component: () => import(/* webpackChunkName: "income" */ '../views/income/Income.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import(/* webpackChunkName: "income_home" */ '../views/income/IncomeHome.vue'),
+      },
+      {
+        path: 'modify',
+        component: () => import(/* webpackChunkName: "income_modify" */ '../views/income/IncomeModify.vue'),
+      }
+    ],
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/financials',
     component: () => import(/* webpackChunkName: "financials" */ '../views/financials/Financials.vue'),
     children: [

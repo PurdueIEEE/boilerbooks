@@ -63,7 +63,7 @@
           <tr v-for="purchase in expenseTable" v-bind:key="purchase.purchaseid">
             <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.purchaseid}}</router-link></td>
             <td>{{purchase.date}}</td>
-            <td><a v-bind:href="computeReceipt(purchase.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.item}}</a></td>
+            <td>{{purchase.item}}</td>
             <td>{{purchase.vendor}}</td>
             <td>{{purchase.purchasedby}}</td>
             <td>${{purchase.cost}}</td>
@@ -189,9 +189,6 @@ export default {
   methods: {
     goToItem(id) {
       return `/detail-view?id=${id}`;
-    },
-    computeReceipt(fp) {
-      return `http://${location.hostname}/api${fp}`
     },
   },
   asyncComputed: {

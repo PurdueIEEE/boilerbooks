@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <h3>Request a New Purchase</h3>
     <p class="lead">Fill out the details below to create a new purchase request.</p>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
@@ -42,7 +42,7 @@
         <label for="commentsField" class="form-label fw-bold">Comments (Optional)</label>
         <textarea id="commentsField" type="text" class="form-control" v-model="comments"></textarea>
       </div>
-      <div class="col-md-6 offset-md-3 text-center">
+      <div class="col-12 text-center">
         <button type="submit" class="btn btn-success">Submit Request</button>
       </div>
     </form>
@@ -69,7 +69,7 @@ export default {
   methods: {
     submitRequest() {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/purchase/new`, {
+      fetch(`http://${location.hostname}/api/purchase`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -87,6 +87,9 @@ export default {
       .then((response) => {
         this.dispmsg = response;
       })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {

@@ -4,6 +4,7 @@ import purchase from './purchase';
 import committee from './committee';
 import login from './login';
 import receipt from './receipt';
+import income from './income';
 
 export default {
     account,
@@ -12,4 +13,5 @@ export default {
     committee,
     login,
     receipt,
+    income,
 };

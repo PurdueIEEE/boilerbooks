@@ -1,6 +1,7 @@
 import account from './account';
 import purchase from './purchase';
 import committee from './committee';
+import income from './income';
 
 const mysql2 = require('mysql2');
 const db_conn = mysql2.createConnection({
@@ -12,7 +13,7 @@ const db_conn = mysql2.createConnection({
 
 db_conn.connect((err) => {
     if (err) {
-        console.log("MySQL " + err.stack);
+        console.log(err.stack);
         process.exit(1);
     }
 
@@ -22,7 +23,8 @@ db_conn.connect((err) => {
 export default {
     account,
     purchase,
-    committee
+    committee,
+    income,
 }
 
 export { db_conn };

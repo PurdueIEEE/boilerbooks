@@ -22,7 +22,7 @@ const fileHandler = multer({
 
 const router = Router();
 
-router.post('/new', async (req, res) => {
+router.post('/', async (req, res) => {
     if (req.body.committee === undefined ||
         req.body.price === undefined ||
         req.body.item === undefined ||
@@ -73,12 +73,12 @@ router.post('/new', async (req, res) => {
             return res.status(400).send("Purchase cannot be created, try again later");
         }
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
     /** Get names of approvers and send back to user **/
-    return res.status(201).send("Purchase request submitted, approval email not send");
+    res.status(201).send("Purchase request submitted, approval email not send");
 
     /** Send an email to approvers **/
 

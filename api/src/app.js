@@ -81,6 +81,7 @@ app.use('/purchase', routes.purchase);
 app.use('/committee', routes.committee);
 app.use('/login', routes.login);
 app.use('/receipt', routes.receipt);
+app.use('/income', routes.income);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

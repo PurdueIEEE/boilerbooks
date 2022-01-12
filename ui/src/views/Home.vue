@@ -25,7 +25,7 @@
             <p class="card-text">Income tracking for committees. Create expected income and track income status.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary disabled">Go to Income</router-link>
+            <router-link to="/income" class="btn btn-secondary">Go to Income</router-link>
           </div>
         </div>
         </div>
