@@ -15,7 +15,7 @@ async function getCommitteeBalance(comm) {
         -
         (SELECT SUM(Purchases.cost) AS spend FROM Purchases
         WHERE Purchases.committee = ? AND Purchases.status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved',NULL)) AS balance`,
-        [comm, 'Received', comm]
+        [comm, "Received", comm]
     );
 }
 
@@ -77,7 +77,7 @@ async function getCommitteeBudgetSummary(comm, year) {
 		AND B.year = ?
 		GROUP BY B.category, B.amount`,
         [comm, year, comm, year]
-    )
+    );
 }
 
 export default {
@@ -89,4 +89,4 @@ export default {
     getCommitteePurchases,
     getCommitteeIncome,
     getCommitteeBudgetSummary,
-}
+};

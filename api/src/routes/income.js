@@ -3,7 +3,7 @@ import { committee_name_swap, clean_input_encodeurl } from "../common_items";
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
         req.body.amount === undefined ||
@@ -14,11 +14,11 @@ router.post('/', async (req, res) => {
         return res.status(400).send("All donation details must be completed");
     }
 
-    if (req.body.committee === '' ||
-        req.body.source === '' ||
-        req.body.amount === '' ||
-        req.body.type === '' ||
-        req.body.status === '') {
+    if (req.body.committee === "" ||
+        req.body.source === "" ||
+        req.body.amount === "" ||
+        req.body.type === "" ||
+        req.body.status === "") {
         return res.status(400).send("All donation details must be completed");
     }
 
@@ -34,17 +34,17 @@ router.post('/', async (req, res) => {
     }
 
     // can't escape type, so check it first
-    if (req.body.type !== 'BOSO' && req.body.type !== 'Cash' && req.body.type !== 'Discount' && req.body.type !== 'SOGA') {
+    if (req.body.type !== "BOSO" && req.body.type !== "Cash" && req.body.type !== "Discount" && req.body.type !== "SOGA") {
         return res.status(400).send("Type must be proper value");
     }
 
     // can't escape status so check it first
-    if (req.body.status !== 'Expected' && req.body.status !== 'Received' && req.body.status !== 'Unreceived') {
+    if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
         return res.status(400).send("Status must be proper value");
     }
 
     // if donation coming through BOSO, it's not actually recieved
-    if (req.body.type === 'BOSO' && req.body.status === 'Received') {
+    if (req.body.type === "BOSO" && req.body.status === "Received") {
         req.body.status = "Expected";
     }
 

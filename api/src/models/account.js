@@ -1,8 +1,8 @@
-import { db_conn } from './index';
-import { ACCESS_LEVEL } from '../common_items';
-import { v4 as uuidv4} from 'uuid';
+import { db_conn } from "./index";
+import { ACCESS_LEVEL } from "../common_items";
+import { v4 as uuidv4} from "uuid";
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const bcrypt_rounds = 10;
 
 async function getUserByID(id) {
@@ -42,17 +42,17 @@ function createUser(user, res) {
             "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
             [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash],
             function(err, results, fields) {
-                if(err && err.code === 'ER_DUP_ENTRY') {
+                if(err && err.code === "ER_DUP_ENTRY") {
                     return res.status(400).send("Username already exists");
                 }
                 else if(err) {
-                    console.log('MySQL ' + err.stack);
+                    console.log("MySQL " + err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
                 const newUser = {
                     uname: user.uname,
-                }
+                };
                 return getUserAccessLevel(newUser, res);
             }
         );
@@ -66,7 +66,7 @@ function loginUser(userInfo, res) {
         [userInfo.uname],
         function(err, results, fields) {
             if (err) {
-                console.log('MySQL ' + err.stack);
+                console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
 
@@ -81,7 +81,7 @@ function loginUser(userInfo, res) {
 
                 const user = {
                     uname: userInfo.uname,
-                }
+                };
                 return getUserAccessLevel(user, res);
             });
         }
@@ -96,7 +96,7 @@ function updatePassword(user, res) {
             [hash, user.uname],
             function(err, results, fields) {
                 if(err) {
-                    console.log('MySQL ' + err.stack);
+                    console.log("MySQL " + err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
@@ -140,7 +140,7 @@ function getUserAccessLevel(user, res) {
 // Private method only used here
 function generateAPIKey(user, res) {
     const newKey = uuidv4(); // UUIDs are not strictly great api keys
-                             //  but they are good enough for our purposes
+    //  but they are good enough for our purposes
     db_conn.execute(
         "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
         [newKey, user.uname],
@@ -149,7 +149,7 @@ function generateAPIKey(user, res) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
             }
-            res.cookie('apikey', newKey, { maxAge:1000*60*60*24}); // cookie is valid for 24 hours
+            res.cookie("apikey", newKey, { maxAge:1000*60*60*24,}); // cookie is valid for 24 hours
             return res.status(201).send(user);
         }
     );
@@ -162,5 +162,5 @@ export default {
     updateUser,
     updatePassword,
     getUserApprovals,
-    getUserTreasurer
-}
+    getUserTreasurer,
+};

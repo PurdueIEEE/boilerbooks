@@ -1,9 +1,9 @@
-import account from './account';
-import purchase from './purchase';
-import committee from './committee';
-import income from './income';
+import account from "./account";
+import purchase from "./purchase";
+import committee from "./committee";
+import income from "./income";
 
-const mysql2 = require('mysql2');
+const mysql2 = require("mysql2");
 const db_conn = mysql2.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -25,6 +25,6 @@ export default {
     purchase,
     committee,
     income,
-}
+};
 
-export { db_conn };
+export { db_conn, };

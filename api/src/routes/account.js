@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, clean_input_encodeurl, unescape_object } from '../common_items';
+import { committee_name_swap, clean_input_encodeurl, unescape_object } from "../common_items";
 
 // ---------------------------
 // Start unauthenticated endpoint
@@ -12,7 +12,7 @@ import { committee_name_swap, clean_input_encodeurl, unescape_object } from '../
     Creates a new user account
     cannot be async because of bcrypt
 */
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
@@ -83,7 +83,7 @@ router.post('/', (req, res) => {
     Gets user details, only if requester is the user
     or the Treasurer
 */
-router.get('/:userID', async (req, res) => {
+router.get("/:userID", async (req, res) => {
     try {
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
@@ -110,7 +110,7 @@ router.get('/:userID', async (req, res) => {
 /*
     Updates user account details, requester must be user
 */
-router.put('/:userID', async (req, res) => {
+router.put("/:userID", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -157,10 +157,10 @@ router.put('/:userID', async (req, res) => {
     };
 
     try {
-        const [] = await req.context.models.account.updateUser(user);
+        const [results, fields] = await req.context.models.account.updateUser(user);
         return res.status(200).send("Account Details Updated");
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -168,7 +168,7 @@ router.put('/:userID', async (req, res) => {
 /*
     Changes user password, requester must be user
 */
-router.post('/:userID', (req, res) => {
+router.post("/:userID", (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -184,7 +184,7 @@ router.post('/:userID', (req, res) => {
     }
 
     if (req.body.pass1 !== req.body.pass2) {
-        return res.status(400).send("Passwords do not match")
+        return res.status(400).send("Passwords do not match");
     }
 
     // no need to escape, it's all getting hashed
@@ -192,7 +192,7 @@ router.post('/:userID', (req, res) => {
     const user = {
         uname: req.context.request_user_id,
         pass: req.body.pass1,
-    }
+    };
 
     req.context.models.account.updatePassword(user, res);
 });
@@ -200,7 +200,7 @@ router.post('/:userID', (req, res) => {
 /*
     Get a list of all purchases made by the user
 */
-router.get('/:userID/purchases', async (req, res) => {
+router.get("/:userID/purchases", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -213,7 +213,7 @@ router.get('/:userID/purchases', async (req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log('MySQL ' + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -221,7 +221,7 @@ router.get('/:userID/purchases', async (req, res) => {
 /*
     Get a list of all active requests user can approve
 */
-router.get('/:userID/approvals', async (req, res) => {
+router.get("/:userID/approvals", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -241,7 +241,7 @@ router.get('/:userID/approvals', async (req, res) => {
 /*
     Get a list of all active purchases user can complete
 */
-router.get('/:userID/completions', async (req, res) => {
+router.get("/:userID/completions", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -254,7 +254,7 @@ router.get('/:userID/completions', async (req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log('MySQL ' + err.stack);
+        console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -262,7 +262,7 @@ router.get('/:userID/completions', async (req, res) => {
 /*
     Get a list of all active purchases user can reimburse
 */
-router.get('/:userID/reimbursements', async (req, res) => {
+router.get("/:userID/reimbursements", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -283,7 +283,7 @@ router.get('/:userID/reimbursements', async (req, res) => {
 /*
     Get a list of all committee balances user can view
 */
-router.get('/:userID/balances', async (req, res) => {
+router.get("/:userID/balances", async (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }

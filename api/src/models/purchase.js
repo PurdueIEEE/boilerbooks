@@ -1,4 +1,4 @@
-import { db_conn } from './index';
+import { db_conn } from "./index";
 import { ACCESS_LEVEL, current_fiscal_year } from "../common_items";
 
 async function getFullPurchaseByID(id) {
@@ -35,7 +35,7 @@ async function cancelPurchase(id) {
         `Update Purchases SET modifydate = NOW(), status=?
         WHERE (Purchases.purchaseID = ?) AND
         (Purchases.status IN ('Requested','Approved','Purchased'))`,
-        ['Denied', id]
+        ["Denied", id]
     );
 }
 
@@ -43,7 +43,7 @@ async function completePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), purchasedate=?, cost=?, status=?, comments=?,
         receipt=? WHERE Purchases.purchaseID = ?`,
-        [purchase.purchasedate, purchase.cost, 'Purchased', purchase.comments, purchase.receipt, purchase.id]
+        [purchase.purchasedate, purchase.cost, "Purchased", purchase.comments, purchase.receipt, purchase.id]
     );
 }
 
@@ -53,7 +53,7 @@ async function reimbursePurchases(id, status) {
     return db_conn.promise().execute(
         "UPDATE Purchases SET modifydate = NOW(), status=? WHERE Purchases.purchaseID=? AND Purchases.status IN ('Purchased','Processing Reimbursement')",
         [status, id]
-    )
+    );
 }
 
 async function getPurchaseByUser(id) {
@@ -104,7 +104,7 @@ async function getTreasurer(id) {
 		WHERE (A.privilege_level >= ?))
 		ORDER BY p.purchasedate DESC`,
         [id, ACCESS_LEVEL.treasurer]
-    )
+    );
 }
 
 export default {
@@ -118,4 +118,4 @@ export default {
     getApprovalsForUser,
     getCompletionsForUser,
     getTreasurer,
-}
+};

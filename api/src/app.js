@@ -1,26 +1,26 @@
 // Import libraries
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 // Import files
-import models, { db_conn } from './models';
-import routes from './routes';
+import models, { db_conn } from "./models";
+import routes from "./routes";
 
 // Create Express
 const app = express();
 
 // Setup predefined middleware
-app.use(cors({ credentials:true, origin:true, maxAge:3600})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
-app.use(express.json())
-app.use(express.urlencoded({extended: true}));
+app.use(cors({ credentials:true, origin:true, maxAge:3600,})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
+app.use(express.json());
+app.use(express.urlencoded({extended: true,}));
 app.use(cookieParser());
 
 // Setup our middleware
 app.use((req, res, next) => {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl === '/account' || req.originalUrl === '/login') {
+    if (req.originalUrl === "/account" || req.originalUrl === "/login") {
         req.context = {
             models,
         };
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
         // use an API key with the Authorization header
         if (req.cookies.apikey === undefined) {
             if (req.originalUrl.startsWith("/receipt")) {
-                return res.redirect('/ui/login')
+                return res.redirect("/ui/login");
             }
             return res.status(401).send("Must authenticate first");
         }
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 
                 if(results.length === 0) {
                     if (req.originalUrl.startsWith("/receipt")) {
-                        return res.redirect('/ui/login')
+                        return res.redirect("/ui/login");
                     }
                     return res.status(401).send("Invalid API Key");
                 }
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
                 const now = new Date();
                 if (now >= exptime) {
                     if (req.originalUrl.startsWith("/receipt")) {
-                        return res.redirect('/ui/login')
+                        return res.redirect("/ui/login");
                     }
                     return res.status(401).send("Invalid API Key");
                 }
@@ -71,39 +71,39 @@ app.use((req, res, next) => {
 });
 
 // Setup our routes
-app.all('/', (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed." });
+app.all("/", (req, res) => {
+    return res.status(405).send({ status: 405, response: "Endpoint not allowed.", });
 });
 
-app.use('/account', routes.account);
-app.use('/budgets', routes.budgets);
-app.use('/purchase', routes.purchase);
-app.use('/committee', routes.committee);
-app.use('/login', routes.login);
-app.use('/receipt', routes.receipt);
-app.use('/income', routes.income);
+app.use("/account", routes.account);
+app.use("/budgets", routes.budgets);
+app.use("/purchase", routes.purchase);
+app.use("/committee", routes.committee);
+app.use("/login", routes.login);
+app.use("/receipt", routes.receipt);
+app.use("/income", routes.income);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>
-    console.log(`App listening on port ${process.env.PORT}`),
+    console.log(`App listening on port ${process.env.PORT}`)
 );
 
-process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received: closing server');
+process.on("SIGTERM", () => {
+    console.log("SIGTERM signal received: closing server");
     server.close(() => {
-        console.log('HTTP server closed');
+        console.log("HTTP server closed");
     });
     db_conn.end((err) => {
-        console.log('MySQL connection closed');
+        console.log("MySQL connection closed");
     });
 });
 
-process.on('SIGINT', () => {
-    console.log('SIGINT signal received: closing server');
+process.on("SIGINT", () => {
+    console.log("SIGINT signal received: closing server");
     server.close(() => {
-        console.log('HTTP server closed');
+        console.log("HTTP server closed");
     });
     db_conn.end((err) => {
-        console.log('MySQL connection closed');
+        console.log("MySQL connection closed");
     });
 });

@@ -1,29 +1,29 @@
-import { Router } from 'express';
-import multer from 'multer';
-import * as fs from 'fs/promises';
-import jimp from 'jimp/es';
+import { Router } from "express";
+import multer from "multer";
+import * as fs from "fs/promises";
+import jimp from "jimp/es";
 
-import { clean_input_encodeurl, unescape_object, committee_name_swap } from '../common_items';
+import { clean_input_encodeurl, unescape_object, committee_name_swap } from "../common_items";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
     if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "application/pdf" ) {
         cb(null, true);
     } else {
-    cb(null, false);
+        cb(null, false);
     //return cb(new Error('Reciept must be a PDF, JPG, or PNG'));
     }
 }
 // create file upload handler
 const fileHandler = multer({
-    limits:{fileSize:2*1024*1024}, // 2 MB
-    dest:'/tmp/boilerbooks-tmp', // Files are just stored here while we process them
+    limits:{fileSize:2*1024*1024,}, // 2 MB
+    dest:"/tmp/boilerbooks-tmp", // Files are just stored here while we process them
     fileFilter: fileFilter,
 });
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
     if (req.body.committee === undefined ||
         req.body.price === undefined ||
         req.body.item === undefined ||
@@ -34,12 +34,12 @@ router.post('/', async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.committee === '' ||
-        req.body.price === '' ||
-        req.body.item === '' ||
-        req.body.vendor === '' ||
-        req.body.reason === '' ||
-        req.body.category === '') {
+    if (req.body.committee === "" ||
+        req.body.price === "" ||
+        req.body.item === "" ||
+        req.body.vendor === "" ||
+        req.body.reason === "" ||
+        req.body.category === "") {
         return res.status(400).send("All purchase details must be completed");
     }
 
@@ -85,18 +85,18 @@ router.post('/', async (req, res) => {
 
 });
 
-router.post('/treasurer', async (req, res) => {
-    if (req.body.status === undefined || req.body.status === '' ||
-        req.body.idList === undefined || req.body.idList === '') {
+router.post("/treasurer", async (req, res) => {
+    if (req.body.status === undefined || req.body.status === "" ||
+        req.body.idList === undefined || req.body.idList === "") {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.status !== 'Processing Reimbursement' && req.body.status !== 'Reimbursed') {
+    if (req.body.status !== "Processing Reimbursement" && req.body.status !== "Reimbursed") {
         return res.status(400).send("Purchase status must be 'Processing Reimbursement' or 'Reimbursed'");
     }
 
     if ((req.body.idList.match(/^(?:\d[,]?)+$/)).length === 0) {
-        return res.status(400).send("ID list must be a comma seperated list of numbers")
+        return res.status(400).send("ID list must be a comma seperated list of numbers");
     }
 
     // Check that user is treasurer
@@ -111,7 +111,7 @@ router.post('/treasurer', async (req, res) => {
     }
 
     /** parse each ID **/
-    const commaIDlist = req.body.idList.split(',');
+    const commaIDlist = req.body.idList.split(",");
     try {
         for (let id of commaIDlist) {
             /** Update the purchase **/
@@ -130,7 +130,7 @@ router.post('/treasurer', async (req, res) => {
     /** Send email to purchaser **/
 });
 
-router.get('/:purchaseID', async (req, res) => {
+router.get("/:purchaseID", async (req, res) => {
 
     /** get the basic params to check access control **/
     try {
@@ -159,12 +159,12 @@ router.get('/:purchaseID', async (req, res) => {
         return res.status(200).send(unescape_object(results[0]));
 
     } catch (err) {
-        console.log('MySQL ' + err.stack);
+        console.log("MySQL " + err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
 
-router.delete('/:purchaseID', async (req, res) => {
+router.delete("/:purchaseID", async (req, res) => {
     // check that the user has approval power first
     try {
         const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
@@ -191,7 +191,7 @@ router.delete('/:purchaseID', async (req, res) => {
     return res.status(200).send("Purchase canceled");
 });
 
-router.post('/:purchaseID/approve', async (req, res) => {
+router.post("/:purchaseID/approve", async (req, res) => {
     if (req.body.price === undefined ||
         req.body.item === undefined ||
         req.body.vendor === undefined ||
@@ -203,20 +203,20 @@ router.post('/:purchaseID/approve', async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.price === '' ||
-        req.body.item === '' ||
-        req.body.vendor === '' ||
-        req.body.reason === '' ||
-        req.body.fundsource === '' ||
-        req.body.status === '' ||
-        req.body.committee === '') {
+    if (req.body.price === "" ||
+        req.body.item === "" ||
+        req.body.vendor === "" ||
+        req.body.reason === "" ||
+        req.body.fundsource === "" ||
+        req.body.status === "" ||
+        req.body.committee === "") {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.status !== 'Approved' && req.body.status !== 'Denied') {
+    if (req.body.status !== "Approved" && req.body.status !== "Denied") {
         return res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
     }
-    if (req.body.fundsource !== 'BOSO' && req.body.fundsource !== 'Cash' && req.body.fundsource !== 'SOGA') {
+    if (req.body.fundsource !== "BOSO" && req.body.fundsource !== "Cash" && req.body.fundsource !== "SOGA") {
         return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
     }
 
@@ -225,7 +225,7 @@ router.post('/:purchaseID/approve', async (req, res) => {
         if (results.length === 0) {
             return res.status(404).send("Purchase not found");
         }
-        console.log(typeof req.body.price)
+        console.log(typeof req.body.price);
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
             return res.status(400).send("Purchase cost too high");
         }
@@ -288,7 +288,7 @@ router.post('/:purchaseID/approve', async (req, res) => {
 
 });
 
-router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, res) => {
+router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, res) => {
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {
         return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
@@ -301,8 +301,8 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         return res.status(400).send("All purchase details must be completed");
     }
 
-    if (req.body.price === '' ||
-        req.body.purchasedate === '') {
+    if (req.body.price === "" ||
+        req.body.purchasedate === "") {
         fs.unlink(req.file.path);
         return res.status(400).send("All purchase details must be completed");
     }
@@ -313,7 +313,7 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
             fs.unlink(req.file.path);
             return res.status(404).send("Purchase not found");
         }
-        console.log(typeof req.body.price)
+        console.log(typeof req.body.price);
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
             fs.unlink(req.file.path);
             return res.status(400).send("Purchase cost too high, create a new request if needed");
@@ -350,19 +350,19 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
 
         /** setup file and remove the temp **/
         const results_unsafe = unescape_object(results[0]);
-        const fileType = req.file.mimetype.split('/')[1]; // dirty hack to get the file type from the MIME type
+        const fileType = req.file.mimetype.split("/")[1]; // dirty hack to get the file type from the MIME type
 
-        let file_save_name = '';
-        if (fileType === 'png') {
+        let file_save_name = "";
+        if (fileType === "png") {
             // BOSO only allows PDF and JPG, so handle png differently
             file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.jpg`;
         } else {
             // handle JPG / JPEG / PDF like normal
             file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.${fileType}`;
         }
-        file_save_name = file_save_name.replaceAll(' ', '_');
-        file_save_name = file_save_name.replaceAll(/['\"!?#%&{}/<>$:@+`|=]/ig, '');
-        file_save_name = '/receipt/'.concat('', file_save_name);
+        file_save_name = file_save_name.replaceAll(" ", "_");
+        file_save_name = file_save_name.replaceAll(/['"!?#%&{}/<>$:@+`|=]/ig, "");
+        file_save_name = "/receipt/".concat("", file_save_name);
 
         // check if the file already exists
         try {
@@ -375,7 +375,7 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
             // File doesn't exist, so just continue
         }
 
-        if (fileType === 'png') {
+        if (fileType === "png") {
             const img = await jimp.read(req.file.path);
             img.write(process.env.RECEIPT_BASEDIR+file_save_name);
         } else {

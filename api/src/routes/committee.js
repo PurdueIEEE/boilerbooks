@@ -2,14 +2,14 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list, unescape_object } from '../common_items';
+import { committee_lut, fiscal_year_list, unescape_object } from "../common_items";
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
     // literally just gets a list of committees
     return res.status(200).send(committee_lut);
 });
 
-router.get('/:commID/categories', async (req, res) => {
+router.get("/:commID/categories", async (req, res) => {
     // commKey must be one of the above values, that is in the DB
     if(!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -29,7 +29,7 @@ router.get('/:commID/categories', async (req, res) => {
 
 });
 
-router.get('/:commID/balance', async (req, res) => {
+router.get("/:commID/balance", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -53,7 +53,7 @@ router.get('/:commID/balance', async (req, res) => {
     }
 });
 
-router.get('/:commID/budget/:year', async (req, res) => {
+router.get("/:commID/budget/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -84,7 +84,7 @@ router.get('/:commID/budget/:year', async (req, res) => {
     }
 });
 
-router.get('/:commID/expensetotal/:year', async (req, res) => {
+router.get("/:commID/expensetotal/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -115,7 +115,7 @@ router.get('/:commID/expensetotal/:year', async (req, res) => {
     }
 });
 
-router.get('/:commID/incometotal/:year', async (req, res) => {
+router.get("/:commID/incometotal/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -146,7 +146,7 @@ router.get('/:commID/incometotal/:year', async (req, res) => {
     }
 });
 
-router.get('/:commID/purchases/:year', async (req, res) => {
+router.get("/:commID/purchases/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -177,7 +177,7 @@ router.get('/:commID/purchases/:year', async (req, res) => {
     }
 });
 
-router.get('/:commID/income/:year', async (req, res) => {
+router.get("/:commID/income/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -208,7 +208,7 @@ router.get('/:commID/income/:year', async (req, res) => {
     }
 });
 
-router.get('/:commID/summary/:year', async (req, res) => {
+router.get("/:commID/summary/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -239,4 +239,4 @@ router.get('/:commID/summary/:year', async (req, res) => {
     }
 });
 
-export default router
+export default router;

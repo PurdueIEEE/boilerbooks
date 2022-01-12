@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "serve": "nodemon --exec babel-node src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix src/"
   },
   "author": "Purdue IEEE",
   "license": "Apache 2.0",
@@ -24,6 +25,7 @@
     "@babel/core": "^7.16.0",
     "@babel/node": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
+    "eslint": "^8.6.0",
     "nodemon": "^2.0.15"
   }
 }

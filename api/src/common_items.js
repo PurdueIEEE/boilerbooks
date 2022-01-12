@@ -4,15 +4,15 @@
 // (NOT USED) known issue - a name like O'Reilly will be destroyed
 function clean_input_all(string) {
     // ' " \ / < > ` &
-    string = string.replaceAll(/['\"\\/<>&`]/ig, '');
-    string = string.trim()
+    string = string.replaceAll(/['"\\/<>&`]/ig, "");
+    string = string.trim();
     return string;
 }
 
 // (NOT USED) not sure where this is used but it's defined in v1.0
 function clean_input_keepslash(string) {
     // ' " \ < > ` &
-    string = string.replaceAll(/['\"\\<>&`]/ig, '');
+    string = string.replaceAll(/['"\\<>&`]/ig, "");
     string = string.trim();
     return string;
 }
@@ -31,7 +31,7 @@ function clean_input_encodeurl(string) {
 function unescape_object(obj) {
     for (let key in obj) {
         // javascript is a perfect language with no flaws
-        if (obj.hasOwnProperty(key) && obj[key] && typeof(obj[key]) === 'string') {
+        if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] && typeof(obj[key]) === "string") {
             //obj[key] = obj[key].replaceAll(/[%27]/ig, "'");
             obj[key] = decodeURIComponent(obj[key]);
         }
@@ -64,34 +64,34 @@ for (let year = yearEnd; year >= yearStart; year--) {
 // format = { http-name: [ db enum, committee name ] }
 const committee_lut =
 {
-    'general':['General IEEE', 'General IEEE'],
-    'aerial':['Aerial Robotics', 'Aerial Robotics'],
-    'csociety':['Computer Society', 'Computer Society'],
-    'embs':['EMBS', 'EMBS'],
-    'ge':['GE', 'Growth & Engagement'],
-    'mtt-s':['MTT-S', 'MTT-S'],
-    'professional':['Professional', 'Industrial Relations'],
-    'learning':['Learning', 'Learning'],
-    'racing':['Racing', 'Racing'],
-    'rov':['ROV', 'ROV'],
-    'social':['Social', 'Social'],
-    'soga':['SOGA', 'SOGA'],
+    "general":["General IEEE", "General IEEE"],
+    "aerial":["Aerial Robotics", "Aerial Robotics"],
+    "csociety":["Computer Society", "Computer Society"],
+    "embs":["EMBS", "EMBS"],
+    "ge":["GE", "Growth & Engagement"],
+    "mtt-s":["MTT-S", "MTT-S"],
+    "professional":["Professional", "Industrial Relations"],
+    "learning":["Learning", "Learning"],
+    "racing":["Racing", "Racing"],
+    "rov":["ROV", "ROV"],
+    "social":["Social", "Social"],
+    "soga":["SOGA", "SOGA"],
 };
 // mini-LUT for db enum : committee name
 const committee_name_swap =
 {
-    'General IEEE':'General IEEE',
-    'Aerial Robotics':'Aerial Robotics',
-    'Computer Society':'Computer Society',
-    'EMBS':'EMBS',
-    'GE':'Growth & Engagement',
-    'MTT-S':'MTT-S',
-    'Professional':'Industrial Relations',
-    'Learning':'Learning',
-    'ROV':'ROV',
-    'Social':'Social',
-    'SOGA':'SOGA',
-}
+    "General IEEE":"General IEEE",
+    "Aerial Robotics":"Aerial Robotics",
+    "Computer Society":"Computer Society",
+    "EMBS":"EMBS",
+    "GE":"Growth & Engagement",
+    "MTT-S":"MTT-S",
+    "Professional":"Industrial Relations",
+    "Learning":"Learning",
+    "ROV":"ROV",
+    "Social":"Social",
+    "SOGA":"SOGA",
+};
 // -------------------------------------------------
 
 // --------------- access level enum ---------------
@@ -115,5 +115,5 @@ export {
     fiscal_year_list,
     committee_lut,
     committee_name_swap,
-    ACCESS_LEVEL
-}
+    ACCESS_LEVEL,
+};
