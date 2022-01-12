@@ -22,14 +22,81 @@
     <br>
     <div v-if="loaded">
       <div class="row my-3 fs-5 fw-bold">
-        <div class="col-md-3">Balance: <span v-bind:class="{'text-danger':totalBalance<100,'text-warning':(totalBalance<200&&totalBalance>=100)}">${{totalBalance.balance}}</span></div>
+        <div class="col-md-3">Balance: <span v-bind:class="balanceWarnings">${{totalBalance.balance}}</span></div>
         <div class="col-md-3">Income: ${{totalIncome.income}}</div>
         <div class="col-md-3">Spent: ${{totalSpent.spent}}</div>
         <div class="col-md-3">Budget: ${{totalBudget.budget}}</div>
       </div>
-      <h4>{{header}} Financial Summary</h4>
-      <h4>{{header}} Expenses</h4>
-      <h4>{{header}} Income</h4>
+
+      <h4 class="mt-4">{{header}} Financial Summary</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Spent</th>
+            <th>Budget</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in financialSummary" v-bind:key="item.category">
+            <td>{{item.category}}</td>
+            <td>{{item.spent}}</td>
+            <td>{{item.budget}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 class="mt-4">{{header}} Expenses</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Purchase ID</th>
+            <th>Date</th>
+            <th>Item</th>
+            <th>Vendor</th>
+            <th>Purchaser</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="purchase in expenseTable" v-bind:key="purchase.purchaseid">
+            <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.purchaseid}}</router-link></td>
+            <td>{{purchase.date}}</td>
+            <td><a v-bind:href="computeReceipt(purchase.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.item}}</a></td>
+            <td>{{purchase.vendor}}</td>
+            <td>{{purchase.purchasedby}}</td>
+            <td>${{purchase.cost}}</td>
+            <td>{{purchase.status}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 class="mt-4">{{header}} Income</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Item (if donated)</th>
+            <th>Status</th>
+            <th>Ref Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="income in incomeTable" v-bind:key="income.incomeid">
+            <td>{{income.date}}</td>
+            <td>{{income.source}}</td>
+            <td>{{income.type}}</td>
+            <td>${{income.amount}}</td>
+            <td>{{income.item}}</td>
+            <td>{{income.status}}</td>
+            <td>{{income.refnumber}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -114,7 +181,18 @@ export default {
         return '';
       }
       return `${this.fiscalyear} ${this.committeeList[this.committee][1]}`
+    },
+    balanceWarnings() {
+      return {'text-danger':this.totalBalance.balance<100,'text-warning':(this.totalBalance.balance<200&&this.totalBalance.balance>=100)}
     }
+  },
+  methods: {
+    goToItem(id) {
+      return `/detail-view?id=${id}`;
+    },
+    computeReceipt(fp) {
+      return `http://${location.hostname}/api${fp}`
+    },
   },
   asyncComputed: {
     async totalBalance() {
@@ -219,6 +297,84 @@ export default {
       .catch((error) => {
         console.log(error);
         return {spent:'--.--'};
+      });
+    },
+    async financialSummary() {
+      if (this.committee === '' || this.fiscalyear === '') {
+        return {};
+      }
+
+      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/summary/${this.fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          return {};
+        }
+
+        return response.json();
+      })
+      .catch((error) => {
+        console.log(error);
+        return {};
+      });
+    },
+    async expenseTable() {
+      if (this.committee === '' || this.fiscalyear === '') {
+        return [];
+      }
+
+      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/purchases/${this.fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          return [];
+        }
+
+        return response.json();
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      });
+    },
+    async incomeTable() {
+      if (this.committee === '' || this.fiscalyear === '') {
+        return [];
+      }
+
+      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/income/${this.fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          return [];
+        }
+
+        return response.json();
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
       });
     }
   }

@@ -44,10 +44,49 @@ async function getCommitteeIncomeTotals(comm, year) {
     );
 }
 
+async function getCommitteePurchases(comm, year) {
+    return db_conn.promise().execute(
+        `SELECT p.purchaseid, DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+		p.cost, p.comments,
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
+		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.committee = ?
+		AND p.fiscalyear = ?`,
+        [comm, year]
+    );
+}
+
+async function getCommitteeIncome(comm, year) {
+    return db_conn.promise().execute(
+        `SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date, I.amount as income_amount
+		FROM Income I
+		WHERE I.committee = ?
+		AND I.fiscalyear = ?
+		ORDER BY I.updated`,
+        [comm, year]
+    );
+}
+
+async function getCommitteeBudgetSummary(comm, year) {
+    return db_conn.promise().execute(
+        `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscalyear = ?)) THEN P.cost ELSE 0 END) AS spent,
+        B.amount AS budget FROM Budget B
+		LEFT JOIN Purchases P ON B.category = P.category
+		WHERE B.committee = ?
+		AND B.year = ?
+		GROUP BY B.category, B.amount`,
+        [comm, year, comm, year]
+    )
+}
+
 export default {
     getCommitteeCategories,
     getCommitteeBalance,
     getCommitteeBudgetTotals,
     getCommitteeExpenseTotals,
     getCommitteeIncomeTotals,
+    getCommitteePurchases,
+    getCommitteeIncome,
+    getCommitteeBudgetSummary,
 }

@@ -107,10 +107,6 @@ async function getTreasurer(id) {
     )
 }
 
-function getPurchaseByCommittee(id) {
-    return [];
-}
-
 export default {
     getFullPurchaseByID,
     createNewPurchase,
@@ -121,6 +117,5 @@ export default {
     getPurchaseByUser,
     getApprovalsForUser,
     getCompletionsForUser,
-    getPurchaseByCommittee,
     getTreasurer,
 }
