@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import * as fs from 'fs/promises';
+import jimp from 'jimp/es';
 
 import { clean_input_encodeurl, unescape_object, committee_name_swap } from '../common_items';
 
@@ -288,33 +289,38 @@ router.post('/:purchaseID/approve', async (req, res) => {
 });
 
 router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, res) => {
-    if (req.body.price === undefined ||
-        req.body.comments === undefined ||
-        req.body.purchasedate === undefined) {
-        return res.status(400).send("All purchase details must be completed");
-    }
-
-    if (req.body.price === '' ||
-        req.body.purchasedate === '') {
-        return res.status(400).send("All purchase details must be completed");
-    }
-
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {
         return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
     }
 
+    if (req.body.price === undefined ||
+        req.body.comments === undefined ||
+        req.body.purchasedate === undefined) {
+        fs.unlink(req.file.path);
+        return res.status(400).send("All purchase details must be completed");
+    }
+
+    if (req.body.price === '' ||
+        req.body.purchasedate === '') {
+        fs.unlink(req.file.path);
+        return res.status(400).send("All purchase details must be completed");
+    }
+
     try {
         const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
+            fs.unlink(req.file.path);
             return res.status(404).send("Purchase not found");
         }
         console.log(typeof req.body.price)
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
+            fs.unlink(req.file.path);
             return res.status(400).send("Purchase cost too high, create a new request if needed");
         }
     } catch (err) {
         console.log(err.stack);
+        fs.unlink(req.file.path);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -333,17 +339,27 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // No purchase found
         if (results.length === 0) {
+            fs.unlink(req.file.path);
             return res.status(404).send("Purchase not found");
         }
         // User is not purchaser
         if (req.context.request_user_id !== results[0].username) {
+            fs.unlink(req.file.path);
             return res.status(400).send("Purchase not found");
         }
 
         /** setup file and remove the temp **/
         const results_unsafe = unescape_object(results[0]);
         const fileType = req.file.mimetype.split('/')[1]; // dirty hack to get the file type from the MIME type
-        let file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.${fileType}`;
+
+        let file_save_name = '';
+        if (fileType === 'png') {
+            // BOSO only allows PDF and JPG, so handle png differently
+            file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.jpg`;
+        } else {
+            // handle JPG / JPEG / PDF like normal
+            file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.${fileType}`;
+        }
         file_save_name = file_save_name.replaceAll(' ', '_');
         file_save_name = file_save_name.replaceAll(/['\"!?#%&{}/<>$:@+`|=]/ig, '');
         file_save_name = '/receipt/'.concat('', file_save_name);
@@ -352,13 +368,19 @@ router.post('/:purchaseID/complete', fileHandler.single('receipt'), async (req, 
         try {
             const stats = await fs.stat(file_save_name);
             if (stats.isFile()) {
+                fs.unlink(req.file.path);
                 return res.status(500).send("Receipt file already exists");
             }
         } catch (err) {
             // File doesn't exist, so just continue
         }
 
-        await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+        if (fileType === 'png') {
+            const img = await jimp.read(req.file.path);
+            img.write(process.env.RECEIPT_BASEDIR+file_save_name);
+        } else {
+            await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+        }
 
         const purchase = {
             id: req.params.purchaseID,
