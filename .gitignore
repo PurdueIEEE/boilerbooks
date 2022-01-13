@@ -1,6 +1,4 @@
-/receipts/
-dbinfo.php
-/user/certs/
 .DS_Store
-.idea/*
+.idea/
+.vscode/
 is_dev.txt
