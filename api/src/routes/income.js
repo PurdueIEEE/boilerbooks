@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { committee_name_swap, clean_input_encodeurl } from "../common_items";
+import { committee_name_swap, clean_input_encodeurl, unescape_object } from "../common_items";
 
 const router = Router();
 
@@ -82,6 +82,69 @@ router.post("/", async (req, res) => {
     }
 
     return res.status(201).send("Donation created");
+});
+
+router.get("/", async (req, res) => {
+    // Check that user is treasurer
+    try {
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            return res.status(404).send("Income not found");
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.income.getAllIncome();
+        results.forEach(income => {
+            income.committee = committee_name_swap[income.committee];
+            income = unescape_object(income);
+        });
+        return res.status(200).send(results);
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+});
+
+router.put("/:incomeID", async (req, res) => {
+    if (req.body.status === undefined ||
+        req.body.refnumber === undefined) {
+        return res.status(400).send("All income update details must be completed");
+    }
+
+    if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
+        return res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
+    }
+
+    // Check that user is treasurer
+    try {
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            return res.status(404).send("Income not found");
+        }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+
+    req.body.refnumber = clean_input_encodeurl(req.body.refnumber);
+
+    const income = {
+        refnumber: req.body.refnumber,
+        status: req.body.status,
+        id: req.params.incomeID,
+    };
+
+    try {
+        const [results, fields] = await req.context.models.income.updateIncome(income);
+        return res.status(200).send("Income updated");
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 });
 
 export default router;
