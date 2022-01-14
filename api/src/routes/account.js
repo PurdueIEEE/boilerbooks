@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, clean_input_encodeurl, unescape_object } from "../common_items";
+import { committee_name_swap, committee_lut, clean_input_encodeurl, unescape_object } from "../common_items";
 
 // ---------------------------
 // Start unauthenticated endpoint
@@ -296,7 +296,7 @@ router.get("/:userID/balances", async (req, res) => {
             const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
             if (results.length !== 0) {
                 const [results_1, fields_1] = await req.context.models.committee.getCommitteeBalance(committee);
-                outputBalances[committee] = results_1[0].balance;
+                outputBalances[committee_name_swap[committee]] = results_1[0].balance;
             }
         }
     } catch (err) {
@@ -305,6 +305,34 @@ router.get("/:userID/balances", async (req, res) => {
     }
 
     return res.status(200).send(outputBalances);
+});
+
+/*
+    Get a list of all committees user has approval powers in
+*/
+router.get("/:userID/committees", async (req, res) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        return res.status(404).send("User not found");
+    }
+
+    try {
+        const [results, fields] = await req.context.models.account.getUserApprovalCommittees(req.params.userID);
+
+        // very slow very bad
+        let filtered_lut = {};
+        for (let committee in committee_lut) {
+            for(let approval of results) {
+                if (committee_lut[committee][0] == approval.committee) {
+                    filtered_lut[committee] = committee_lut[committee];
+                }
+            }
+        }
+
+        return res.status(200).send(filtered_lut);
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 });
 
 export default router;

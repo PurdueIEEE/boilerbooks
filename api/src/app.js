@@ -71,10 +71,6 @@ app.use((req, res, next) => {
 });
 
 // Setup our routes
-app.all("/", (req, res) => {
-    return res.status(405).send({ status: 405, response: "Endpoint not allowed.", });
-});
-
 app.use("/account", routes.account);
 app.use("/budgets", routes.budgets);
 app.use("/purchase", routes.purchase);

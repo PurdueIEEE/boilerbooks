@@ -4,11 +4,17 @@ const router = Router();
 
 import { committee_lut, fiscal_year_list, unescape_object } from "../common_items";
 
+/*
+    Get a list of all committees
+*/
 router.get("/", (req, res) => {
     // literally just gets a list of committees
     return res.status(200).send(committee_lut);
 });
 
+/*
+    Get a list of all committee budget categories for the current year
+*/
 router.get("/:commID/categories", async (req, res) => {
     // commKey must be one of the above values, that is in the DB
     if(!(req.params.commID in committee_lut)) {
@@ -29,6 +35,9 @@ router.get("/:commID/categories", async (req, res) => {
 
 });
 
+/*
+    Get total committee balance
+*/
 router.get("/:commID/balance", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -53,6 +62,9 @@ router.get("/:commID/balance", async (req, res) => {
     }
 });
 
+/*
+    Get committee budges for a year
+*/
 router.get("/:commID/budget/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -84,6 +96,9 @@ router.get("/:commID/budget/:year", async (req, res) => {
     }
 });
 
+/*
+    Get total expenses for a committee for a year
+*/
 router.get("/:commID/expensetotal/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -115,6 +130,9 @@ router.get("/:commID/expensetotal/:year", async (req, res) => {
     }
 });
 
+/*
+    Get total income for a committee for a year
+*/
 router.get("/:commID/incometotal/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -146,6 +164,9 @@ router.get("/:commID/incometotal/:year", async (req, res) => {
     }
 });
 
+/*
+    Get all purchases for a committee for a year
+*/
 router.get("/:commID/purchases/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -177,6 +198,9 @@ router.get("/:commID/purchases/:year", async (req, res) => {
     }
 });
 
+/*
+    Get all income for a committee for a year
+*/
 router.get("/:commID/income/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
@@ -208,6 +232,9 @@ router.get("/:commID/income/:year", async (req, res) => {
     }
 });
 
+/*
+    Get financial summary for a committee for a year
+*/
 router.get("/:commID/summary/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");

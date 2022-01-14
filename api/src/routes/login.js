@@ -6,9 +6,12 @@ const router = Router();
 
 // ---------------------------
 // Start unauthenticated endpoints
-//  cannot be async because of bcrypt
 // ---------------------------
 
+/*
+    Logs user in
+    cannot be async because of bcrypt
+*/
 router.post("/", async (req, res) => {
     if (req.body.uname === undefined || req.body.uname === "" ||
         req.body.pass === undefined || req.body.pass === "") {

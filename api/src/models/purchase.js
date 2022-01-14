@@ -20,6 +20,28 @@ async function createNewPurchase(purchase) {
     );
 }
 
+async function getLastInsertedID() {
+    return db_conn.promise().execute(
+        "SELECT LAST_INSERT_ID()",
+        []
+    );
+}
+
+async function getPurchaseApprovers(purchase) {
+    return db_conn.promise().execute(
+        `SELECT CONCAT(U.first, ' ', U.last) name, U.email, a.committee FROM approval a
+        INNER JOIN Users U ON U.username = a.username
+        WHERE a.committee = (
+            SELECT P.committee FROM Purchases P WHERE P.purchaseID = ?)
+        AND a.amount >= (
+            SELECT P.cost FROM Purchases P WHERE P.purchaseID = ?)
+        AND (a.category = (
+            SELECT P.category FROM Purchases P WHERE P.purchaseID = ?)
+            OR a.category = '*')`,
+        [purchase, purchase, purchase]
+    );
+}
+
 async function approvePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), approvedby=?, item=?, purchasereason=?, vendor=?,
@@ -110,6 +132,8 @@ async function getTreasurer(id) {
 export default {
     getFullPurchaseByID,
     createNewPurchase,
+    getLastInsertedID,
+    getPurchaseApprovers,
     approvePurchase,
     cancelPurchase,
     completePurchase,

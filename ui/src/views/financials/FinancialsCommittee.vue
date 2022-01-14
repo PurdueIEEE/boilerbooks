@@ -102,6 +102,8 @@
 </template>
 
 <script>
+import auth_state from '@/state';
+
 export default {
   name: "FinancialsCommittee",
   data() {
@@ -116,7 +118,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/committee`, {
+    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     })

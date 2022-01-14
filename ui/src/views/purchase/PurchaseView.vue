@@ -21,7 +21,7 @@
       <tbody>
         <tr v-for="purchase in purchaseList" v-bind:key="purchase.purchaseid">
           <td>{{purchase.date}}</td>
-          <td><span v-on:click="goToItem(purchase.purchaseid)" class="link-primary" style="cursor:pointer;">{{purchase.item}}</span></td>
+          <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.item}}</router-link></td>
           <td>{{purchase.vendor}}</td>
           <td>{{purchase.committee}}</td>
           <td>{{purchase.approvedby}}</td>
@@ -50,8 +50,8 @@ export default {
     this.init();
   },
   methods: {
-    goToItem(purchaseid) {
-      this.$router.push(`/detail-view?id=${purchaseid}`);
+    goToItem(id) {
+      return `/detail-view?id=${id}`;
     },
     cancelPurchase(purchaseid) {
       fetch(`http://${location.hostname}/api/purchase/${purchaseid}`, {

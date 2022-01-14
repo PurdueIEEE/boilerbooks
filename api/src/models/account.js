@@ -21,8 +21,8 @@ async function updateUser(user) {
 
 async function getUserApprovals(user, committee) {
     return db_conn.promise().execute(
-        "SELECT username, committee FROM approval WHERE committee = ? AND username = ?",
-        [committee, user]
+        "SELECT username, committee FROM approval WHERE committee = ? AND username = ? AND privilege_level > ?",
+        [committee, user, ACCESS_LEVEL.member]
     );
 }
 
@@ -32,6 +32,13 @@ async function getUserTreasurer(user) {
         INNER JOIN approval A ON U3.username = A.username
         WHERE A.role >= ? AND U3.username = ?`,
         [ACCESS_LEVEL.treasurer, user]
+    );
+}
+
+async function getUserApprovalCommittees(user) {
+    return db_conn.promise().execute(
+        "SELECT committee FROM approval WHERE username = ? AND privilege_level > ?",
+        [user, ACCESS_LEVEL.member]
     );
 }
 
@@ -163,4 +170,5 @@ export default {
     updatePassword,
     getUserApprovals,
     getUserTreasurer,
+    getUserApprovalCommittees,
 };

@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import auth_state from '@/state';
+
 export default {
   name: 'IncomeHome',
   data() {
@@ -92,6 +94,13 @@ export default {
       })
       .then((response) => {
         this.dispmsg = response;
+        this.committee = '';
+        this.source = '';
+        this.amount = '';
+        this.item = '';
+        this.type = 'BOSO';
+        this.status = 'Expected';
+        this.comments = '';
       })
       .catch((error) => {
         console.log(error);
@@ -99,7 +108,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/committee`, {
+    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     })

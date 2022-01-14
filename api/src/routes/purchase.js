@@ -23,6 +23,9 @@ const fileHandler = multer({
 
 const router = Router();
 
+/*
+    Create new purchase
+*/
 router.post("/", async (req, res) => {
     if (req.body.committee === undefined ||
         req.body.price === undefined ||
@@ -67,24 +70,41 @@ router.post("/", async (req, res) => {
         category: req.body.category,
     };
 
-    /** Create the purchase request **/
     try {
+        /** Create the purchase request **/
         const [results, fields] = await req.context.models.purchase.createNewPurchase(purchase);
         if (results.affectedRows === 0) {
             return res.status(400).send("Purchase cannot be created, try again later");
         }
+
+        /** Get names of approvers and send back to user **/
+        const [results_1, fields_1] = await req.context.models.purchase.getLastInsertedID();
+        const [results_2, fields_2] = await req.context.models.purchase.getPurchaseApprovers(results_1[0]["LAST_INSERT_ID()"]);
+        results_2.forEach(approver => {
+            approver = unescape_object(approver);
+        });
+
+        let names = "";
+        let emails = "";
+        results_2.forEach(approver => {
+            names += approver.name + ", ";
+            emails += approver.email + ", ";
+        });
+        names = names.slice(0, -2);
+        emails = emails.slice(0, -2);
+        res.status(201).send(`Purchase successfully submitted!\nIt can be reviewed by: ${names}`);
     } catch (err) {
         console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
-    /** Get names of approvers and send back to user **/
-    res.status(201).send("Purchase request submitted, approval email not send");
-
     /** Send an email to approvers **/
 
 });
 
+/*
+    Mark purchases as 'Reimbursed' or 'Processing Reimbursement'
+*/
 router.post("/treasurer", async (req, res) => {
     if (req.body.status === undefined || req.body.status === "" ||
         req.body.idList === undefined || req.body.idList === "") {
@@ -130,6 +150,9 @@ router.post("/treasurer", async (req, res) => {
     /** Send email to purchaser **/
 });
 
+/*
+    Get details of a purchase
+*/
 router.get("/:purchaseID", async (req, res) => {
 
     /** get the basic params to check access control **/
@@ -164,6 +187,9 @@ router.get("/:purchaseID", async (req, res) => {
     }
 });
 
+/*
+    Cancel a purchase
+*/
 router.delete("/:purchaseID", async (req, res) => {
     // check that the user has approval power first
     try {
@@ -191,6 +217,9 @@ router.delete("/:purchaseID", async (req, res) => {
     return res.status(200).send("Purchase canceled");
 });
 
+/*
+    Approve or Deny a purchase
+*/
 router.post("/:purchaseID/approve", async (req, res) => {
     if (req.body.price === undefined ||
         req.body.item === undefined ||
@@ -288,6 +317,9 @@ router.post("/:purchaseID/approve", async (req, res) => {
 
 });
 
+/*
+    Complete a purchase
+*/
 router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, res) => {
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {

@@ -52,7 +52,7 @@ router.post("/", async (req, res) => {
     try {
         const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
         if (results.length === 0) {
-            return res.status(201).send("Donation created"); // silently fail
+            return res.status(403).send("Not allowed to create donation"); // silently fail
         }
     } catch (err) {
         console.log(err.stack);

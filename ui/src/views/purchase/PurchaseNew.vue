@@ -2,7 +2,7 @@
   <div>
     <h3>Request a New Purchase</h3>
     <p class="lead">Fill out the details below to create a new purchase request.</p>
-    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <div v-if="dispmsg!==''" style="white-space: pre-wrap;" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <form v-on:submit.prevent="submitRequest()" class="row g-3 text-start">
       <div class="col-md-6">
@@ -86,6 +86,13 @@ export default {
       })
       .then((response) => {
         this.dispmsg = response;
+        this.committee = '';
+        this.category = '';
+        this.itemName = '';
+        this.itemReason = '';
+        this.vendor = '';
+        this.price = '';
+        this.comments = '';
       })
       .catch((error) => {
         console.log(error);
