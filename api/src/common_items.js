@@ -105,6 +105,17 @@ const ACCESS_LEVEL = Object.freeze({
 });
 // -------------------------------------------------
 
+// ------------------ SMTP mailer ------------------
+import nodemailer from 'nodemailer';
+const mailer = nodemailer.createTransport({
+    sendmail: true,
+    newline: 'unix',
+    path: '/usr/sbin/sendmail',
+},{
+    from: 'boilerbooks@purdueieee.org',
+});
+// -------------------------------------------------
+
 export {
     clean_input_all,
     clean_input_keepslash,
@@ -116,4 +127,5 @@ export {
     committee_lut,
     committee_name_swap,
     ACCESS_LEVEL,
+    mailer,
 };

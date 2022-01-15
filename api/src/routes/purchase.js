@@ -3,7 +3,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp/es";
 
-import { clean_input_encodeurl, unescape_object, committee_name_swap } from "../common_items";
+import { clean_input_encodeurl, unescape_object, committee_name_swap, mailer } from "../common_items";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -70,23 +70,30 @@ router.post("/", async (req, res) => {
         category: req.body.category,
     };
 
+    /** Create the purchase request **/
     try {
-        /** Create the purchase request **/
         const [results, fields] = await req.context.models.purchase.createNewPurchase(purchase);
         if (results.affectedRows === 0) {
             return res.status(400).send("Purchase cannot be created, try again later");
         }
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error: Purchase not created");
+    }
 
-        /** Get names of approvers and send back to user **/
-        const [results_1, fields_1] = await req.context.models.purchase.getLastInsertedID();
-        const [results_2, fields_2] = await req.context.models.purchase.getPurchaseApprovers(results_1[0]["LAST_INSERT_ID()"]);
-        results_2.forEach(approver => {
+    /** Get names of approvers and send back to user **/
+    let emails = "";
+    let lastID = "";
+    try {
+        const [results, fields_1] = await req.context.models.purchase.getLastInsertedID();
+        lastID = results[0]["LAST_INSERT_ID()"];
+        const [results_1, fields_2] = await req.context.models.purchase.getPurchaseApprovers(lastID);
+        results_1.forEach(approver => {
             approver = unescape_object(approver);
         });
 
         let names = "";
-        let emails = "";
-        results_2.forEach(approver => {
+        results_1.forEach(approver => {
             names += approver.name + ", ";
             emails += approver.email + ", ";
         });
@@ -95,11 +102,28 @@ router.post("/", async (req, res) => {
         res.status(201).send(`Purchase successfully submitted!\nIt can be reviewed by: ${names}`);
     } catch (err) {
         console.log(err.stack);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error: Purchase created");
     }
 
-    /** Send an email to approvers **/
-
+    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    try {
+        const result = await mailer.sendMail({
+            to: emails,
+            subject: `New Purchase Request for ${purchase.committee}`,
+            text: `A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}\n
+            Please visit Boiler Books at your earliest convenience to approve or deny the request.\n
+            You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${lastID}.\n\n
+            This email was automatically sent by Boiler Books`,
+            html: `<h2>New Purchase Request!</h2>
+            <p>A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}.</p>
+            <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
+            <p>You always view the most up-to-date status of the purchse <a href="https://money.purdueieee.org/ui/detail-view?id=${lastID}">here</a>.</p>
+            <br>
+            <small>This email was automatically sent by Boiler Books</small>`,
+        });
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 /*
