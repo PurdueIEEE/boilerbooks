@@ -278,7 +278,6 @@ router.post("/:purchaseID/approve", async (req, res) => {
         if (results.length === 0) {
             return res.status(404).send("Purchase not found");
         }
-        console.log(typeof req.body.price);
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
             return res.status(400).send("Purchase cost too high");
         }
@@ -338,6 +337,29 @@ router.post("/:purchaseID/approve", async (req, res) => {
     res.status(201).send(`Purchase ${req.body.status}`);
 
     /** email requester with result **/
+    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    try {
+        const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(purchase.id);
+        const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
+        purchase_deets[0] = unescape_object(purchase_deets[0]);
+        user_deets[0] = unescape_object(user_deets[0]);
+        const result = await mailer.sendMail({
+            to: user_deets[0].email,
+            subject: `Your Purchase Request Was ${purchase_deets[0].status}`,
+            text: `Your request for ${purchase_deets[0].item} was ${purchase_deets[0].status}\n
+            Please visit Boiler Books at your earliest convenience to complete the purchase.\n
+            You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase.id}.\n\n
+            This email was automatically sent by Boiler Books`,
+            html: `<h2>Request Status Updated!</h2>
+            <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${purchase_deets[0].committee}</em> was ${purchase_deets[0].status}</p>
+            <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
+            <p>You always view the most up-to-date status of the purchse <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase.id}">here</a>.</p>
+            <br>
+            <small>This email was automatically sent by Boiler Books</small>`,
+        });
+    } catch (err) {
+        console.log(err);
+    }
 
 });
 
@@ -369,7 +391,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
             fs.unlink(req.file.path);
             return res.status(404).send("Purchase not found");
         }
-        console.log(typeof req.body.price);
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
             fs.unlink(req.file.path);
             return res.status(400).send("Purchase cost too high, create a new request if needed");

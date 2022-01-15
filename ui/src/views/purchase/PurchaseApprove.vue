@@ -97,7 +97,7 @@ export default {
         }
         this.error = !response.ok;
         if (response.ok) {
-          this.approvalList = this.approvalList.filter((p) => {return p.purchaseid !== id});
+          this.approvalList = this.approvalList.filter((p) => {return p.purchaseID !== id});
           this.currentApprove = '';
         }
         return response.text();
