@@ -12,7 +12,7 @@ Boiler Books can be run on any OS, but it has been tested with Ubuntu 20.04 LTS.
 
 1. Install the required packages:
 ```
-apt install nginx mysql-server-8.0 nodejs
+apt install nginx mysql-server-8.0 nodejs postfix
 ```
 
 2. Use the given file to initialize the database, tables, and columns:
@@ -68,4 +68,4 @@ SSL certificates are auto renewed with Let's Encrypt certbot.
 
 ### Mail
 
-A proper mail server must be configured to email users with updates.
+A proper mailing agent must be configured on the server - `sendmail` may require extra configuration if not using the compatibility binary provided through `postfix`
