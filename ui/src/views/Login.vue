@@ -144,7 +144,11 @@ export default {
           this.errmsg = response;
         } else {
           auth_state.newAuthState(response);
-          this.$router.push('/');
+          if (this.$route.query.returnto === undefined) {
+            this.$router.push('/');
+          } else {
+            this.$router.push(this.$route.query.returnto);
+          }
         }
       })
       .catch((error) => {
@@ -187,7 +191,11 @@ export default {
           this.errmsg = response;
         } else {
           auth_state.newAuthState(response);
-          this.$router.push('/');
+          if (this.$route.query.returnto === undefined) {
+            this.$router.push('/');
+          } else {
+            this.$router.push(this.$route.query.returnto);
+          }
         }
       })
       .catch((error) => {

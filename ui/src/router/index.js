@@ -139,6 +139,13 @@ const routes = [
     meta: {
       requiresAuth: true,
     }
+  },
+  {
+    path: '*',
+    component: () => import(/* webpackChunkName: "notfound" */ '../views/NotFound.vue'),
+    meta: {
+      requiresAuth: false,
+    }
   }
 ]
 
@@ -167,8 +174,7 @@ router.beforeEach((to, from, next) => {
       auth_state.setAuthState(user);
       next();
     } else { // need to login
-      // TODO add some way to return to the previous page
-      next('/login');
+      next(`/login?returnto=${to.fullPath}`);
     }
   }
 });
