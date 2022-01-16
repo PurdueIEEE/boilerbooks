@@ -101,6 +101,7 @@ export default {
       })
       .then((response) => {
         this.dispmsg = response;
+        this.processList = '';
         this.init();
       })
       .catch((error) => {
@@ -108,7 +109,6 @@ export default {
       });
     },
     init() {
-      this.dispmsg = '';
       fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/reimbursements`, {
           method: 'get',
           credentials: 'include',

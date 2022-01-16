@@ -107,7 +107,7 @@ router.post("/", async (req, res) => {
 
     if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
     try {
-        const result = await mailer.sendMail({
+        await mailer.sendMail({
             to: emails,
             subject: `New Purchase Request for ${purchase.committee}`,
             text: `A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}\n` +
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
             html: `<h2>New Purchase Request!</h2>
             <p>A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}.</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
-            <p>You always view the most up-to-date status of the purchse <a href="https://money.purdueieee.org/ui/detail-view?id=${lastID}">here</a>.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${lastID}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });
@@ -171,7 +171,37 @@ router.post("/treasurer", async (req, res) => {
 
     res.status(201).send("Purchase(s) updated");
 
-    /** Send email to purchaser **/
+    /** Send email to purchasers **/
+    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    try {
+        for (let id of commaIDlist) {
+            const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(id);
+            const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
+            purchase_deets[0] = unescape_object(purchase_deets[0]);
+            user_deets[0] = unescape_object(user_deets[0]);
+
+            let text = `Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}\n`;
+            let html = `<h2>Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}</h2>`;
+            if (purchase_deets[0].status === 'Reimbursed') {
+                text += `Please stop by BHEE 014 to pick up your check.\n\n`;
+                html += `<p>Please stop by BHEE 014 to pick up your check</p>`;
+            } else {
+                text += `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}.\n\n`;
+                html += `<p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}">here</a>.</p>`;
+            }
+            text += `This email was automatically sent by Boiler Books`;
+            html += `<br><small>This email was automatically sent by Boiler Books</small>`
+
+            await mailer.sendMail({
+                to: user_deets[0].email,
+                subject: `Purchase Status Updated!`,
+                text,
+                html,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 /*
@@ -343,17 +373,17 @@ router.post("/:purchaseID/approve", async (req, res) => {
         const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
         purchase_deets[0] = unescape_object(purchase_deets[0]);
         user_deets[0] = unescape_object(user_deets[0]);
-        const result = await mailer.sendMail({
+        await mailer.sendMail({
             to: user_deets[0].email,
-            subject: `Your Purchase Request Was ${purchase_deets[0].status}`,
+            subject: `Purchase Status Updated!`,
             text: `Your request for ${purchase_deets[0].item} was ${purchase_deets[0].status}\n` +
             `Please visit Boiler Books at your earliest convenience to complete the purchase.\n` +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase.id}.\n\n` +
             `This email was automatically sent by Boiler Books`,
-            html: `<h2>Request Status Updated!</h2>
+            html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
             <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${purchase_deets[0].committee}</em> was ${purchase_deets[0].status}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
-            <p>You always view the most up-to-date status of the purchse <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase.id}">here</a>.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase.id}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });
@@ -478,7 +508,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
     try {
         const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         purchase_deets[0] = unescape_object(purchase_deets[0]);
-        const result = await mailer.sendMail({
+        await mailer.sendMail({
             to:  'hadiahmed098@gmail.com', // TODO change this for deploy 'purdue.ieee.treasurer@gmail.com'
             subject: `New Purchase By ${purchase_deets[0].committee}`,
             text: `${purchase_deets[0].committee} has just purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}.\n` +
@@ -487,7 +517,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
             `This email was automatically sent by Boiler Books`,
             html: `<p>${purchase_deets[0].committee} has purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to begin the reimbursement process.</p>
-            <p>You always view the most up-to-date status of the purchse <a href="https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });
