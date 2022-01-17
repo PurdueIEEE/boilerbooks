@@ -6,7 +6,7 @@ import jimp from "jimp/es";
 import { committee_name_swap, mailer } from "../common_items";
 
 // filter uploaded files based on type
-function fileFilter(req, file, cb) {
+function fileFilter (req, file, cb) {
     if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "application/pdf" ) {
         cb(null, true);
     } else {
@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     }
 
     // can't escape committe so check for committee name first
-    if(committee_name_swap[req.body.committee] === undefined) {
+    if (committee_name_swap[req.body.committee] === undefined) {
         return res.status(400).send("Committee must be proper value");
     }
 
@@ -100,9 +100,9 @@ router.post("/", async (req, res) => {
             to: emails,
             subject: `New Purchase Request for ${purchase.committee}`,
             text: `A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}\n` +
-            `Please visit Boiler Books at your earliest convenience to approve or deny the request.\n` +
+            "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${lastID}.\n\n` +
-            `This email was automatically sent by Boiler Books`,
+            "This email was automatically sent by Boiler Books",
             html: `<h2>New Purchase Request!</h2>
             <p>A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}.</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
@@ -153,7 +153,7 @@ router.post("/treasurer", async (req, res) => {
                 return res.status(400).send("One or more purchase IDs are not currenty 'Purchased' or 'Processing Reimbursement'");
             }
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
@@ -169,19 +169,19 @@ router.post("/treasurer", async (req, res) => {
 
             let text = `Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}\n`;
             let html = `<h2>Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}</h2>`;
-            if (purchase_deets[0].status === 'Reimbursed') {
-                text += `Please stop by BHEE 014 to pick up your check.\n\n`;
-                html += `<p>Please stop by BHEE 014 to pick up your check</p>`;
+            if (purchase_deets[0].status === "Reimbursed") {
+                text += "Please stop by BHEE 014 to pick up your check.\n\n";
+                html += "<p>Please stop by BHEE 014 to pick up your check</p>";
             } else {
                 text += `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}.\n\n`;
                 html += `<p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}">here</a>.</p>`;
             }
-            text += `This email was automatically sent by Boiler Books`;
-            html += `<br><small>This email was automatically sent by Boiler Books</small>`
+            text += "This email was automatically sent by Boiler Books";
+            html += "<br><small>This email was automatically sent by Boiler Books</small>";
 
             await mailer.sendMail({
                 to: user_deets[0].email,
-                subject: `Purchase Status Updated!`,
+                subject: "Purchase Status Updated!",
                 text,
                 html,
             });
@@ -305,7 +305,7 @@ router.post("/:purchaseID/approve", async (req, res) => {
 
     // can't escape committe so check for committee name first
     req.body.committee = Object.keys(committee_name_swap).find(key => committee_name_swap[key] === req.body.committee);
-    if(!(req.body.committee in committee_name_swap)) {
+    if (!(req.body.committee in committee_name_swap)) {
         return res.status(400).send("Committee must be proper value");
     }
 
@@ -334,7 +334,7 @@ router.post("/:purchaseID/approve", async (req, res) => {
     };
 
     /** update request **/
-    try{
+    try {
         const [results, fields] = await req.context.models.purchase.approvePurchase(purchase);
         if (results.affectedRows === 0) {
             return res.status(400).send("Purchase not in 'Requested' status");
@@ -353,11 +353,11 @@ router.post("/:purchaseID/approve", async (req, res) => {
         const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
         await mailer.sendMail({
             to: user_deets[0].email,
-            subject: `Purchase Status Updated!`,
+            subject: "Purchase Status Updated!",
             text: `Your request for ${purchase_deets[0].item} was ${purchase_deets[0].status}\n` +
-            `Please visit Boiler Books at your earliest convenience to complete the purchase.\n` +
+            "Please visit Boiler Books at your earliest convenience to complete the purchase.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase.id}.\n\n` +
-            `This email was automatically sent by Boiler Books`,
+            "This email was automatically sent by Boiler Books",
             html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
             <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${purchase_deets[0].committee}</em> was ${purchase_deets[0].status}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
@@ -434,10 +434,10 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
         let file_save_name = "";
         if (fileType === "png") {
             // BOSO only allows PDF and JPG, so handle png differently
-            file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.jpg`;
+            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.jpg`;
         } else {
             // handle JPG / JPEG / PDF like normal
-            file_save_name = `${results_unsafe.committee}_${results_unsafe.username}_${results_unsafe.item}_${results_unsafe.purchaseid}.${fileType}`;
+            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType}`;
         }
         file_save_name = file_save_name.replaceAll(" ", "_");
         file_save_name = file_save_name.replaceAll(/['"!?#%&{}/<>$:@+`|=]/ig, "");
@@ -481,12 +481,12 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
     try {
         const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         await mailer.sendMail({
-            to:  'hadiahmed098@gmail.com', // TODO change this for deploy 'purdue.ieee.treasurer@gmail.com'
+            to:  "hadiahmed098@gmail.com", // TODO change this for deploy 'purdue.ieee.treasurer@gmail.com'
             subject: `New Purchase By ${purchase_deets[0].committee}`,
             text: `${purchase_deets[0].committee} has just purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}.\n` +
-            `Please visit Boiler Books at your earliest convenience to begin the reimbursement process.\n` +
+            "Please visit Boiler Books at your earliest convenience to begin the reimbursement process.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
-            `This email was automatically sent by Boiler Books`,
+            "This email was automatically sent by Boiler Books",
             html: `<p>${purchase_deets[0].committee} has purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to begin the reimbursement process.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>

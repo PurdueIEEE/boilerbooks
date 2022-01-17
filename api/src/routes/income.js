@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
     }
 
     // can't escape committee so check committee name first
-    if(committee_name_swap[req.body.committee] === undefined) {
+    if (committee_name_swap[req.body.committee] === undefined) {
         return res.status(400).send("Committee must be proper value");
     }
 

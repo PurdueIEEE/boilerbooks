@@ -2,6 +2,7 @@ import account from "./account";
 import purchase from "./purchase";
 import committee from "./committee";
 import income from "./income";
+import access from "./access";
 
 const mysql2 = require("mysql2");
 const db_conn = mysql2.createConnection({
@@ -25,6 +26,7 @@ export default {
     purchase,
     committee,
     income,
+    access,
 };
 
 export { db_conn, };

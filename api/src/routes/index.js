@@ -5,6 +5,7 @@ import committee from "./committee";
 import login from "./login";
 import receipt from "./receipt";
 import income from "./income";
+import access from "./access";
 
 export default {
     account,
@@ -14,4 +15,5 @@ export default {
     login,
     receipt,
     income,
+    access,
 };

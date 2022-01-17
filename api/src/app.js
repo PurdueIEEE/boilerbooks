@@ -37,13 +37,13 @@ app.use((req, res, next) => {
         db_conn.execute(
             "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
             [req.cookies.apikey],
-            function(err, results, fields) {
-                if(err) {
+            function (err, results, fields) {
+                if (err) {
                     console.log(err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
-                if(results.length === 0) {
+                if (results.length === 0) {
                     if (req.originalUrl.startsWith("/receipt")) {
                         return res.redirect("/ui/login");
                     }
@@ -78,6 +78,7 @@ app.use("/committee", routes.committee);
 app.use("/login", routes.login);
 app.use("/receipt", routes.receipt);
 app.use("/income", routes.income);
+app.use("/access", routes.access);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

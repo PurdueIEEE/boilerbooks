@@ -8,7 +8,7 @@
 // ->   Vue does this an thereforore our front-end is safe.
 
 // (NOT USED)
-function clean_input_all(string) {
+function clean_input_all (string) {
     // ' " \ / < > ` &
     string = string.replaceAll(/['"\\/<>&`]/ig, "");
     string = string.trim();
@@ -16,7 +16,7 @@ function clean_input_all(string) {
 }
 
 // (NOT USED)
-function clean_input_keepslash(string) {
+function clean_input_keepslash (string) {
     // ' " \ < > ` &
     string = string.replaceAll(/['"\\<>&`]/ig, "");
     string = string.trim();
@@ -24,14 +24,14 @@ function clean_input_keepslash(string) {
 }
 
 // (NOT USED)
-function clean_input_encodeurl(string) {
+function clean_input_encodeurl (string) {
     //string = string.replaceAll(/[']/ig, '%27');
     string = encodeURIComponent(string);
     return string;
 }
 
 // (NOT USED)
-function unescape_object(obj) {
+function unescape_object (obj) {
     for (let key in obj) {
         // javascript is a perfect language with no flaws
         if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] && typeof(obj[key]) === "string") {
@@ -109,13 +109,13 @@ const ACCESS_LEVEL = Object.freeze({
 // -------------------------------------------------
 
 // ------------------ SMTP mailer ------------------
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 const mailer = nodemailer.createTransport({
     sendmail: true,
-    newline: 'unix',
-    path: '/usr/sbin/sendmail',
+    newline: "unix",
+    path: "/usr/sbin/sendmail",
 },{
-    from: 'boilerbooks@purdueieee.org',
+    from: "boilerbooks@purdueieee.org",
 });
 // -------------------------------------------------
 

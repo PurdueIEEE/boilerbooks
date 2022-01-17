@@ -1,14 +1,14 @@
 import { db_conn } from "./index";
 import { current_fiscal_year } from "../common_items";
 
-async function getCommitteeCategories(comm) {
+async function getCommitteeCategories (comm) {
     return db_conn.promise().execute(
         "SELECT category FROM Budget WHERE committee=? AND year=?",
         [comm, current_fiscal_year]
     );
 }
 
-async function getCommitteeBalance(comm) {
+async function getCommitteeBalance (comm) {
     return db_conn.promise().execute(
         `SELECT (SELECT SUM(amount) AS income FROM Income
         WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = ? AND status = ?)
@@ -19,14 +19,14 @@ async function getCommitteeBalance(comm) {
     );
 }
 
-async function getCommitteeBudgetTotals(comm, year) {
+async function getCommitteeBudgetTotals (comm, year) {
     return db_conn.promise().execute(
         "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.year = ?",
         [comm, year]
     );
 }
 
-async function getCommitteeExpenseTotals(comm, year) {
+async function getCommitteeExpenseTotals (comm, year) {
     return db_conn.promise().execute(
         `SELECT SUM(Purchases.cost) AS spent FROM Purchases
 		WHERE Purchases.committee = ? AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL)
@@ -35,7 +35,7 @@ async function getCommitteeExpenseTotals(comm, year) {
     );
 }
 
-async function getCommitteeIncomeTotals(comm, year) {
+async function getCommitteeIncomeTotals (comm, year) {
     return db_conn.promise().execute(
         `SELECT SUM(amount) AS income FROM Income
 		WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = ? AND status = 'Received'
@@ -44,7 +44,7 @@ async function getCommitteeIncomeTotals(comm, year) {
     );
 }
 
-async function getCommitteePurchases(comm, year) {
+async function getCommitteePurchases (comm, year) {
     return db_conn.promise().execute(
         `SELECT p.purchaseid, DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 		p.cost, p.comments,
@@ -57,7 +57,7 @@ async function getCommitteePurchases(comm, year) {
     );
 }
 
-async function getCommitteeIncome(comm, year) {
+async function getCommitteeIncome (comm, year) {
     return db_conn.promise().execute(
         `SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date, I.amount as income_amount
 		FROM Income I
@@ -68,7 +68,7 @@ async function getCommitteeIncome(comm, year) {
     );
 }
 
-async function getCommitteeBudgetSummary(comm, year) {
+async function getCommitteeBudgetSummary (comm, year) {
     return db_conn.promise().execute(
         `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscalyear = ?)) THEN P.cost ELSE 0 END) AS spent,
         B.amount AS budget FROM Budget B

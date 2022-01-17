@@ -297,7 +297,7 @@ router.get("/:userID/committees", async (req, res) => {
         // very slow very bad
         let filtered_lut = {};
         for (let committee in committee_lut) {
-            for(let approval of results) {
+            for (let approval of results) {
                 if (committee_lut[committee][0] == approval.committee) {
                     filtered_lut[committee] = committee_lut[committee];
                 }

@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 */
 router.get("/:commID/categories", async (req, res) => {
     // commKey must be one of the above values, that is in the DB
-    if(!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
 
