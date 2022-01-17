@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { committee_name_swap, clean_input_encodeurl, unescape_object } from "../common_items";
+import { committee_name_swap } from "../common_items";
 
 const router = Router();
 
@@ -21,12 +21,6 @@ router.post("/", async (req, res) => {
         req.body.status === "") {
         return res.status(400).send("All donation details must be completed");
     }
-
-    // escape user input
-    req.body.source = clean_input_encodeurl(req.body.source);
-    req.body.amount = clean_input_encodeurl(req.body.amount);
-    req.body.comments = clean_input_encodeurl(req.body.comments);
-    req.body.item = clean_input_encodeurl(req.body.item);
 
     // can't escape committee so check committee name first
     if(committee_name_swap[req.body.committee] === undefined) {
@@ -100,7 +94,6 @@ router.get("/", async (req, res) => {
         const [results, fields] = await req.context.models.income.getAllIncome();
         results.forEach(income => {
             income.committee = committee_name_swap[income.committee];
-            income = unescape_object(income);
         });
         return res.status(200).send(results);
     } catch (err) {
@@ -129,8 +122,6 @@ router.put("/:incomeID", async (req, res) => {
         console.log(err.stack);
         return res.status(500).send("Internal Server Error");
     }
-
-    req.body.refnumber = clean_input_encodeurl(req.body.refnumber);
 
     const income = {
         refnumber: req.body.refnumber,

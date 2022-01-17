@@ -3,7 +3,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp/es";
 
-import { clean_input_encodeurl, unescape_object, committee_name_swap, mailer } from "../common_items";
+import { committee_name_swap, mailer } from "../common_items";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -46,14 +46,6 @@ router.post("/", async (req, res) => {
         return res.status(400).send("All purchase details must be completed");
     }
 
-    // escape user input
-    req.body.price = clean_input_encodeurl(req.body.price);
-    req.body.item = clean_input_encodeurl(req.body.item);
-    req.body.vendor = clean_input_encodeurl(req.body.vendor);
-    req.body.reason = clean_input_encodeurl(req.body.reason);
-    req.body.comments = clean_input_encodeurl(req.body.comments);
-    req.body.category = clean_input_encodeurl(req.body.category);
-
     // can't escape committe so check for committee name first
     if(committee_name_swap[req.body.committee] === undefined) {
         return res.status(400).send("Committee must be proper value");
@@ -88,9 +80,6 @@ router.post("/", async (req, res) => {
         const [results, fields_1] = await req.context.models.purchase.getLastInsertedID();
         lastID = results[0]["LAST_INSERT_ID()"];
         const [results_1, fields_2] = await req.context.models.purchase.getPurchaseApprovers(lastID);
-        results_1.forEach(approver => {
-            approver = unescape_object(approver);
-        });
 
         let names = "";
         results_1.forEach(approver => {
@@ -177,8 +166,6 @@ router.post("/treasurer", async (req, res) => {
         for (let id of commaIDlist) {
             const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(id);
             const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
-            purchase_deets[0] = unescape_object(purchase_deets[0]);
-            user_deets[0] = unescape_object(user_deets[0]);
 
             let text = `Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}\n`;
             let html = `<h2>Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}</h2>`;
@@ -224,7 +211,7 @@ router.get("/:purchaseID", async (req, res) => {
             // User is purchaser
             if (req.context.request_user_id === results[0].username) {
                 results[0].committee = committee_name_swap[results[0].committee];
-                return res.status(200).send(unescape_object(results[0]));
+                return res.status(200).send(results[0]);
             }
             return res.status(404).send("Purchase not found");
         }
@@ -233,7 +220,7 @@ router.get("/:purchaseID", async (req, res) => {
         results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
         results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
         // Approval powers found
-        return res.status(200).send(unescape_object(results[0]));
+        return res.status(200).send(results[0]);
 
     } catch (err) {
         console.log("MySQL " + err.stack);
@@ -316,13 +303,6 @@ router.post("/:purchaseID/approve", async (req, res) => {
         return res.status(500).send("Internal Server Error");
     }
 
-    // escape user input
-    req.body.price = clean_input_encodeurl(req.body.price);
-    req.body.item = clean_input_encodeurl(req.body.item);
-    req.body.vendor = clean_input_encodeurl(req.body.vendor);
-    req.body.reason = clean_input_encodeurl(req.body.reason);
-    req.body.comments = clean_input_encodeurl(req.body.comments);
-
     // can't escape committe so check for committee name first
     req.body.committee = Object.keys(committee_name_swap).find(key => committee_name_swap[key] === req.body.committee);
     if(!(req.body.committee in committee_name_swap)) {
@@ -371,8 +351,6 @@ router.post("/:purchaseID/approve", async (req, res) => {
     try {
         const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(purchase.id);
         const [user_deets, fields_1] = await req.context.models.account.getUserByID(purchase_deets[0].username);
-        purchase_deets[0] = unescape_object(purchase_deets[0]);
-        user_deets[0] = unescape_object(user_deets[0]);
         await mailer.sendMail({
             to: user_deets[0].email,
             subject: `Purchase Status Updated!`,
@@ -430,10 +408,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
         return res.status(500).send("Internal Server Error");
     }
 
-    // escape user input
-    req.body.price = clean_input_encodeurl(req.body.price);
-    req.body.comments = clean_input_encodeurl(req.body.comments);
-
     // can't escape the purchasedate, so check format instead
     if ((req.body.purchasedate.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
         fs.unlink(req.file.path);
@@ -455,7 +429,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
         }
 
         /** setup file and remove the temp **/
-        const results_unsafe = unescape_object(results[0]);
         const fileType = req.file.mimetype.split("/")[1]; // dirty hack to get the file type from the MIME type
 
         let file_save_name = "";
@@ -507,7 +480,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, 
     if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
     try {
         const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
-        purchase_deets[0] = unescape_object(purchase_deets[0]);
         await mailer.sendMail({
             to:  'hadiahmed098@gmail.com', // TODO change this for deploy 'purdue.ieee.treasurer@gmail.com'
             subject: `New Purchase By ${purchase_deets[0].committee}`,

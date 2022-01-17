@@ -1,7 +1,13 @@
 // variables, functions, enums, etc. that are used elsewhere in the code
 
-// ---------------- escape functions ---------------
-// (NOT USED) known issue - a name like O'Reilly will be destroyed
+// ---------------- un/escape functions ---------------
+// Escaping is not necessary with our usage of Prepared Statements
+// These are left here if needed but they are not exported or used
+// -> Only concern is if the API user does not sanitize the
+// ->   possibly valid HTML in the responses.
+// ->   Vue does this an thereforore our front-end is safe.
+
+// (NOT USED)
 function clean_input_all(string) {
     // ' " \ / < > ` &
     string = string.replaceAll(/['"\\/<>&`]/ig, "");
@@ -9,7 +15,7 @@ function clean_input_all(string) {
     return string;
 }
 
-// (NOT USED) not sure where this is used but it's defined in v1.0
+// (NOT USED)
 function clean_input_keepslash(string) {
     // ' " \ < > ` &
     string = string.replaceAll(/['"\\<>&`]/ig, "");
@@ -17,17 +23,14 @@ function clean_input_keepslash(string) {
     return string;
 }
 
-// 🌍      👨🏻‍🚀              🔫👨🏽‍🚀
-// wait its all urls?  always has been
-// @see https://knowyourmeme.com/memes/wait-its-all-ohio-always-has-been
+// (NOT USED)
 function clean_input_encodeurl(string) {
     //string = string.replaceAll(/[']/ig, '%27');
     string = encodeURIComponent(string);
     return string;
 }
-// -------------------------------------------------
 
-// ---------------- unescape objects ---------------
+// (NOT USED)
 function unescape_object(obj) {
     for (let key in obj) {
         // javascript is a perfect language with no flaws
@@ -117,10 +120,6 @@ const mailer = nodemailer.createTransport({
 // -------------------------------------------------
 
 export {
-    clean_input_all,
-    clean_input_keepslash,
-    clean_input_encodeurl,
-    unescape_object,
     current_fiscal_year,
     first_fiscal_year,
     fiscal_year_list,

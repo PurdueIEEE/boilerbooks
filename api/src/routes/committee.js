@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list, unescape_object } from "../common_items";
+import { committee_lut, fiscal_year_list } from "../common_items";
 
 /*
     Get a list of all committees
@@ -23,9 +23,6 @@ router.get("/:commID/categories", async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0]);
-        results.forEach(category => {
-            category = unescape_object(category);
-        });
         return res.status(200).send(results);
     } catch (err) {
         console.log(err.stack);
@@ -188,9 +185,6 @@ router.get("/:commID/purchases/:year", async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.committee.getCommitteePurchases(committee_lut[req.params.commID][0], req.params.year);
-        results.forEach(purchase => {
-            purchase = unescape_object(purchase);
-        });
         return res.status(200).send(results);
     } catch (err) {
         console.log(err.stack);
@@ -222,9 +216,6 @@ router.get("/:commID/income/:year", async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.committee.getCommitteeIncome(committee_lut[req.params.commID][0], req.params.year);
-        results.forEach(income => {
-            income = unescape_object(income);
-        });
         return res.status(200).send(results);
     } catch (err) {
         console.log(err.stack);
@@ -256,9 +247,6 @@ router.get("/:commID/summary/:year", async (req, res) => {
 
     try {
         const [results, fields] = await req.context.models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], req.params.year);
-        results.forEach(category => {
-            category = unescape_object(category);
-        });
         return res.status(200).send(results);
     } catch (err) {
         console.log(err.stack);
