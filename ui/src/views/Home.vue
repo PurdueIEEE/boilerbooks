@@ -73,7 +73,7 @@
             <p class="card-text">Add and remove access roles to user accounts. Grant and revoke approval permissions.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary disabled">Go to Roles</router-link>
+            <router-link to="/access" class="btn btn-secondary">Go to Roles</router-link>
           </div>
         </div>
         </div>

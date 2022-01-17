@@ -25,8 +25,8 @@ export default {
       let route = this.$route.path;
 
       return {
-        home: route == '/financials',
-        committee: route == '/financials/committee',
+        home: route == '/financials' || route == '/financials/',
+        committee: route.startsWith('/financials/committee'),
       }
     }
   }

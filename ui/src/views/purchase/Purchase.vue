@@ -25,12 +25,12 @@ export default {
       let route = this.$route.path;
 
       return {
-        home: route == '/purchase',
-        request: route == '/purchase/new',
-        approve: route == '/purchase/approve',
-        complete: route == '/purchase/complete',
-        view: route == '/purchase/view',
-        reimburse: route == '/purchase/reimburse',
+        home: route == '/purchase' || route == '/purchase/',
+        request: route.startsWith('/purchase/new'),
+        approve: route.startsWith('/purchase/approve'),
+        complete: route.startsWith('/purchase/complete'),
+        view: route.startsWith('/purchase/view'),
+        reimburse: route.startsWith('/purchase/reimburse'),
       }
     }
   }

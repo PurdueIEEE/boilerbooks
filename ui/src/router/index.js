@@ -141,6 +141,31 @@ const routes = [
     }
   },
   {
+    path: '/access',
+    component: () => import(/* webpackChunkName: "access" */ '../views/access/Access.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import(/* webpackChunkName: "access_home" */ '../views/access/AccessHome.vue'),
+      },
+      {
+        path: 'treasurers',
+        component: () => import(/* webpackChunkName: "access_treasurers" */ '../views/access/AccessTreasurers.vue'),
+      },
+      {
+        path: 'officers',
+        component: () => import(/* webpackChunkName: "access_officers" */ '../views/access/AccessOfficers.vue'),
+      },
+      {
+        path: 'internal',
+        component: () => import(/* webpackChunkName: "access_internal" */ '../views/access/AccessInternal.vue'),
+      },
+    ],
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '*',
     component: () => import(/* webpackChunkName: "notfound" */ '../views/NotFound.vue'),
     meta: {

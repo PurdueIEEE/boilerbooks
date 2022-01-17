@@ -25,8 +25,8 @@ export default {
       let route = this.$route.path;
 
       return {
-        home: route =='/income',
-        modify: route == '/income/modify',
+        home: route == '/income' || route == '/income/',
+        modify: route.startsWith('/income/modify'),
       }
     }
   }
