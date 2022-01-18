@@ -51,7 +51,7 @@ app.use((req, res, next) => {
                 }
 
                 const dbtime = new Date(results[0].apikeygentime);
-                const exptime = dbtime.setDate(dbtime.getHours() + 24); // key expires after 24 hours
+                const exptime = new Date(dbtime.setHours(dbtime.getHours() + 24)); // key expires after 24 hours
                 const now = new Date();
                 if (now >= exptime) {
                     if (req.originalUrl.startsWith("/receipt")) {

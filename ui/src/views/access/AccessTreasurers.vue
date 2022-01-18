@@ -20,8 +20,21 @@
         </tr>
       </tbody>
     </table>
-    <br>
+    <br><br>
     <h3>Add New Treasurer</h3>
+    <form v-on:submit.prevent="create()" class="row g-3 text-start">
+      <div class="col-md-6">
+        <label for="nameInput" class="form-label fw-bold">Username</label>
+        <input id="nameInput" type="text" class="form-control" placeholder="Enter their Boiler Books username..." v-model="username" required>
+      </div>
+      <div class="col-md-6">
+        <label for="roleInput" class="form-label fw-bold">Role</label>
+        <input id="roleInput" type="text" class="form-control" placeholder="treasurer, president, etc..." v-model="role" required>
+      </div>
+      <div class="col-md-12 text-center">
+        <button type="submit" class="btn btn-success">Create Treasurer</button>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -33,6 +46,8 @@ export default {
       error: false,
       dispmsg: '',
       treasurerList: [],
+      username: '',
+      role: '',
     }
   },
   mounted() {
@@ -77,7 +92,7 @@ export default {
         // API key must have expired
         if (response.status === 401) {
           this.$router.replace('/login');
-          return response.text()
+          return response.text();
         }
         this.error = !response.ok;
         return response.text();
@@ -85,6 +100,32 @@ export default {
       .then((response) => {
         this.dispmsg = response;
         if (!this.error) this.init();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    create() {
+      fetch(`http://${location.hostname}/api/access/treasurers`, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
+        body: JSON.stringify({username:this.username,role:this.role}),
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text();
+        }
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        if (!this.error) this.init();
+        this.username = '';
+        this.role = '';
       })
       .catch((error) => {
         console.log(error);
