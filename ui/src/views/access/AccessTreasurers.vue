@@ -32,7 +32,7 @@
         <input id="roleInput" type="text" class="form-control" placeholder="treasurer, president, etc..." v-model="role" required>
       </div>
       <div class="col-md-12 text-center">
-        <button type="submit" class="btn btn-success">Create Treasurer</button>
+        <button type="submit" class="btn btn-success">Add Treasurer</button>
       </div>
     </form>
   </div>
@@ -84,7 +84,7 @@ export default {
       });
     },
     remove(username) {
-      fetch(`http://${location.hostname}/api/access/treasurers/${username}`, {
+      fetch(`http://${location.hostname}/api/access/approvals/${username}`, {
         method: 'delete',
         credentials: 'include',
       })
