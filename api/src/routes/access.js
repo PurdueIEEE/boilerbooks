@@ -78,7 +78,13 @@ router.post("/treasurers", async (req, res) => {
         };
         for (let committee in committee_name_swap) {
             approval.committee = committee;
+            if (committee === "General IEEE") {
+                approval.amount = 1000000; // if they need more than this we have a problem
+            }
             await req.context.models.access.addApproval(approval);
+            if (committee === "General IEEE") {
+                approval.amount = 0; // reset back to 0
+            }
         }
         return res.status(200).send("Treasurer added");
     } catch (err) {
@@ -135,7 +141,7 @@ router.post("/internals", async (req, res) => {
         req.body.amount === undefined || req.body.amount === "") {
         return res.status(400).send("Complete all addition details");
     }
-    console.log(req.body);
+
     if (committee_name_swap[req.body.committee] === undefined) {
         return res.status(400).send("Committee must be proper value");
     }
