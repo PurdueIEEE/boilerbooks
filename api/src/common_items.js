@@ -91,6 +91,7 @@ const committee_name_swap =
     "MTT-S":"MTT-S",
     "Professional":"Industrial Relations",
     "Learning":"Learning",
+    "Racing":"Racing",
     "ROV":"ROV",
     "Social":"Social",
     "SOGA":"SOGA",

@@ -8,6 +8,7 @@ let DataTableMixin = {
   computed: {
     currPage() {
       if (this.currPageRaw > this.maxPage) {
+        this.currPageRaw = this.maxPage;
         return this.maxPage
       }
       return this.currPageRaw;

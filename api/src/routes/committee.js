@@ -60,7 +60,7 @@ router.get("/:commID/balance", async (req, res) => {
 });
 
 /*
-    Get committee budges for a year
+    Get committee budget for a year
 */
 router.get("/:commID/budget/:year", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {

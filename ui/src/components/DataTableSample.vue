@@ -7,7 +7,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="data in paginatedData" v-bind:key="data[row_key]">
+        <tr v-for="data in paginatedData" v-bind:key="data.key">
           <td></td>
         </tr>
       </tbody>

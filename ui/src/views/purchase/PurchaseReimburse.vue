@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="purchase in purchaseList" v-bind:key="purchase.purchaseID">
+        <tr v-for="purchase in paginatedData" v-bind:key="purchase.purchaseID">
           <td><router-link v-bind:to="goToItem(purchase.purchaseID)" class="link-primary text-decoration-none">{{purchase.purchaseID}}</router-link></td>
           <td>{{purchase.date}}</td>
           <td><a v-bind:href="computeReceipt(purchase.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.item}}</a></td>
@@ -36,6 +36,19 @@
       </tbody>
     </table>
     <div class="row">
+      <span class="col">Showing {{currPageStart}} - {{currPageEnd}} of {{rows.length}} entries</span>
+      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==0" v-on:click="currPageRaw-=1">Prev</button></span>
+      <span class="col">Page {{currPage+1}} of {{maxPage+1}}</span>
+      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==maxPage" v-on:click="currPageRaw+=1">Next</button></span>
+      <span class="col">
+        <select class="form-select" v-model="maxElemPerPage">
+          <option value="10">10 entries</option>
+          <option value="25">25 entries</option>
+          <option value="50">50 entries</option>
+        </select>
+      </span>
+    </div>
+    <div class="row">
       <div class="col-md-8 offset-md-2">
         <label class="form-label" for="selectedBox">Selected:</label>
         <input class="form-control" id="selectedBox" placeholder="Enter purchase IDs or click above" v-model="processList">
@@ -48,14 +61,16 @@
 
 <script>
 import auth_state from '@/state';
+import mixin from '@/mixins/DataTables';
 
 export default {
   name: 'PurchaseReimburse',
+  mixins: [mixin],
   data() {
     return {
       dispmsg: '',
       error: false,
-      purchaseList: [],
+      rows: [],
       processList: '',
     }
   },
@@ -132,7 +147,7 @@ export default {
           return;
         }
 
-        this.purchaseList = response;
+        this.rows = response;
       })
       .catch((error) => {
         console.log(error);

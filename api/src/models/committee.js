@@ -51,8 +51,7 @@ async function getCommitteePurchases (comm, year) {
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
 		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
 		FROM Purchases p
-		WHERE p.committee = ?
-		AND p.fiscalyear = ?`,
+		WHERE p.committee = ? AND p.fiscalyear = ? AND p.status != 'Denied'`,
         [comm, year]
     );
 }
