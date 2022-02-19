@@ -6,7 +6,7 @@ import jimp from "jimp/es";
 import { committee_name_swap, mailer } from "../common_items";
 
 // filter uploaded files based on type
-function fileFilter (req, file, cb) {
+function fileFilter(req, file, cb) {
     if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg" || file.mimetype === "application/pdf" ) {
         cb(null, true);
     } else {
@@ -26,7 +26,7 @@ const router = Router();
 /*
     Create new purchase
 */
-router.post("/", async (req, res) => {
+router.post("/", async(req, res) => {
     if (req.body.committee === undefined ||
         req.body.price === undefined ||
         req.body.item === undefined ||
@@ -118,7 +118,7 @@ router.post("/", async (req, res) => {
 /*
     Mark purchases as 'Reimbursed' or 'Processing Reimbursement'
 */
-router.post("/treasurer", async (req, res) => {
+router.post("/treasurer", async(req, res) => {
     if (req.body.status === undefined || req.body.status === "" ||
         req.body.idList === undefined || req.body.idList === "") {
         return res.status(400).send("All purchase details must be completed");
@@ -194,7 +194,7 @@ router.post("/treasurer", async (req, res) => {
 /*
     Get details of a purchase
 */
-router.get("/:purchaseID", async (req, res) => {
+router.get("/:purchaseID", async(req, res) => {
 
     /** get the basic params to check access control **/
     try {
@@ -231,7 +231,7 @@ router.get("/:purchaseID", async (req, res) => {
 /*
     Cancel a purchase
 */
-router.delete("/:purchaseID", async (req, res) => {
+router.delete("/:purchaseID", async(req, res) => {
     // check that the user has approval power first
     try {
         const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
@@ -261,7 +261,7 @@ router.delete("/:purchaseID", async (req, res) => {
 /*
     Approve or Deny a purchase
 */
-router.post("/:purchaseID/approve", async (req, res) => {
+router.post("/:purchaseID/approve", async(req, res) => {
     if (req.body.price === undefined ||
         req.body.item === undefined ||
         req.body.vendor === undefined ||
@@ -373,7 +373,7 @@ router.post("/:purchaseID/approve", async (req, res) => {
 /*
     Complete a purchase
 */
-router.post("/:purchaseID/complete", fileHandler.single("receipt"), async (req, res) => {
+router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, res) => {
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {
         return res.status(400).send("Reciept must be a PDF, JPG, or PNG");

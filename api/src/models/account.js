@@ -5,28 +5,28 @@ import { v4 as uuidv4} from "uuid";
 const bcrypt = require("bcrypt");
 const bcrypt_rounds = 10;
 
-async function getUserByID (id) {
+async function getUserByID(id) {
     return db_conn.promise().execute(
         "SELECT email, first, last, address, city, state, zip FROM Users WHERE Users.username = ?",
         [id]
     );
 }
 
-async function updateUser (user) {
+async function updateUser(user) {
     return db_conn.promise().execute(
         "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=?, address=?, city=?, state=?, zip=? WHERE username=?",
         [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]
     );
 }
 
-async function getUserApprovals (user, committee) {
+async function getUserApprovals(user, committee) {
     return db_conn.promise().execute(
         "SELECT username, committee FROM approval WHERE committee = ? AND username = ? AND privilege_level > ?",
         [committee, user, ACCESS_LEVEL.member]
     );
 }
 
-async function getUserTreasurer (user) {
+async function getUserTreasurer(user) {
     return db_conn.promise().execute(
         `SELECT COUNT(U3.username) as validuser FROM Users U3
         INNER JOIN approval A ON U3.username = A.username
@@ -35,7 +35,7 @@ async function getUserTreasurer (user) {
     );
 }
 
-async function getUserApprovalCommittees (user) {
+async function getUserApprovalCommittees(user) {
     return db_conn.promise().execute(
         "SELECT committee FROM approval WHERE username = ? AND privilege_level > ?",
         [user, ACCESS_LEVEL.member]
@@ -43,12 +43,12 @@ async function getUserApprovalCommittees (user) {
 }
 
 // Cannot be a promise because of bcrypt
-function createUser (user, res) {
-    bcrypt.hash(user.pass, bcrypt_rounds, function (err, hash) {
+function createUser(user, res) {
+    bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
         db_conn.execute(
             "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
             [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash],
-            function (err, results, fields) {
+            function(err, results, fields) {
                 if (err && err.code === "ER_DUP_ENTRY") {
                     return res.status(400).send("Username already exists");
                 }
@@ -67,11 +67,11 @@ function createUser (user, res) {
 }
 
 // Cannot be a promise because of bcrypt
-function loginUser (userInfo, res) {
+function loginUser(userInfo, res) {
     db_conn.execute(
         "SELECT password, email, first, last FROM Users WHERE Users.username = ?",
         [userInfo.uname],
-        function (err, results, fields) {
+        function(err, results, fields) {
             if (err) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
@@ -81,7 +81,7 @@ function loginUser (userInfo, res) {
                 return  res.status(400).send("Incorrect Username or Password");
             }
 
-            bcrypt.compare(userInfo.pass, results[0].password, function (err, result) {
+            bcrypt.compare(userInfo.pass, results[0].password, function(err, result) {
                 if (!result) {
                     return res.status(400).send("Incorrect Username or Password");
                 }
@@ -96,12 +96,12 @@ function loginUser (userInfo, res) {
 }
 
 // cannot be a promise because of bcrypt
-function updatePassword (user, res) {
-    bcrypt.hash(user.pass, bcrypt_rounds, function (err, hash) {
+function updatePassword(user, res) {
+    bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
         db_conn.execute(
             "UPDATE Users SET modifydate=NOW(), password=? WHERE username=?",
             [hash, user.uname],
-            function (err, results, fields) {
+            function(err, results, fields) {
                 if (err) {
                     console.log("MySQL " + err.stack);
                     return res.status(500).send("Internal Server Error");
@@ -114,11 +114,11 @@ function updatePassword (user, res) {
 }
 
 // Private method only used here
-function getUserAccessLevel (user, res) {
+function getUserAccessLevel(user, res) {
     db_conn.execute(
         "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPrivilege FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
         [user.uname, ACCESS_LEVEL.member],
-        function (err, results, fields) {
+        function(err, results, fields) {
             if (err) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");
@@ -145,13 +145,13 @@ function getUserAccessLevel (user, res) {
 }
 
 // Private method only used here
-function generateAPIKey (user, res) {
+function generateAPIKey(user, res) {
     const newKey = uuidv4(); // UUIDs are not strictly great api keys
     //  but they are good enough for our purposes
     db_conn.execute(
         "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
         [newKey, user.uname],
-        function (err, results, fields) {
+        function(err, results, fields) {
             if (err) {
                 console.log("MySQL " + err.stack);
                 return res.status(500).send("Internal Server Error");

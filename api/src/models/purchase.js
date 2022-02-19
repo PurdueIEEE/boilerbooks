@@ -1,7 +1,7 @@
 import { db_conn } from "./index";
 import { ACCESS_LEVEL, current_fiscal_year } from "../common_items";
 
-async function getFullPurchaseByID (id) {
+async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, DATE_FORMAT(p.modifydate, '%Y-%d-%m %h:%i:%s %p') as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
         p.cost, p.comments, p.fundsource, p.fiscalyear, p.username, p.purchaseid,
@@ -13,21 +13,21 @@ async function getFullPurchaseByID (id) {
     );
 }
 
-async function createNewPurchase (purchase) {
+async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
         "INSERT INTO Purchases (fiscalyear,username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
         [current_fiscal_year, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
     );
 }
 
-async function getLastInsertedID () {
+async function getLastInsertedID() {
     return db_conn.promise().execute(
         "SELECT LAST_INSERT_ID()",
         []
     );
 }
 
-async function getPurchaseApprovers (purchase) {
+async function getPurchaseApprovers(purchase) {
     return db_conn.promise().execute(
         `SELECT CONCAT(U.first, ' ', U.last) name, U.email, a.committee FROM approval a
         INNER JOIN Users U ON U.username = a.username
@@ -42,7 +42,7 @@ async function getPurchaseApprovers (purchase) {
     );
 }
 
-async function approvePurchase (purchase) {
+async function approvePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), approvedby=?, item=?, purchasereason=?, vendor=?,
         cost=?, status=?, fundsource=?, comments=?
@@ -52,7 +52,7 @@ async function approvePurchase (purchase) {
     );
 }
 
-async function cancelPurchase (id) {
+async function cancelPurchase(id) {
     return db_conn.promise().execute(
         `Update Purchases SET modifydate = NOW(), status=?
         WHERE (Purchases.purchaseID = ?) AND
@@ -61,7 +61,7 @@ async function cancelPurchase (id) {
     );
 }
 
-async function completePurchase (purchase) {
+async function completePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), purchasedate=?, cost=?, status=?, comments=?,
         receipt=? WHERE Purchases.purchaseID = ?`,
@@ -69,7 +69,7 @@ async function completePurchase (purchase) {
     );
 }
 
-async function reimbursePurchases (id, status) {
+async function reimbursePurchases(id, status) {
     // I tried to make this use WHERE ... IN () to update multiple IDs but
     //  MySQL was throwing errors
     return db_conn.promise().execute(
@@ -78,7 +78,7 @@ async function reimbursePurchases (id, status) {
     );
 }
 
-async function getPurchaseByUser (id) {
+async function getPurchaseByUser(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 		p.cost, p.comments, p.username purchasedby, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
@@ -89,7 +89,7 @@ async function getPurchaseByUser (id) {
     );
 }
 
-async function getApprovalsForUser (id) {
+async function getApprovalsForUser(id) {
     return db_conn.promise().execute(
         `SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
         INNER JOIN approval a on p.committee = a.committee
@@ -103,7 +103,7 @@ async function getApprovalsForUser (id) {
     );
 }
 
-async function getCompletionsForUser (id) {
+async function getCompletionsForUser(id) {
     return db_conn.promise().execute(
         `SELECT DISTINCT p.purchaseID, p.item FROM Purchases p
         INNER JOIN approval a on p.committee = a.committee
@@ -113,7 +113,7 @@ async function getCompletionsForUser (id) {
     );
 }
 
-async function getTreasurer (id) {
+async function getTreasurer(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.item, p.purchaseID, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status, p.cost, p.comments, p.username, p.fundsource,
 		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,

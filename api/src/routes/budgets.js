@@ -21,6 +21,6 @@ router.post("/:comm", (req, res) => {
     console.log(req.body);
 
     return res.status(200).send("ok");
-})
+});
 
 export default router;

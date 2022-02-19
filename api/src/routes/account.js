@@ -72,7 +72,7 @@ router.post("/", (req, res) => {
     Gets user details, only if requester is the user
     or the Treasurer
 */
-router.get("/:userID", async (req, res) => {
+router.get("/:userID", async(req, res) => {
     try {
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
@@ -99,7 +99,7 @@ router.get("/:userID", async (req, res) => {
 /*
     Updates user account details, requester must be user
 */
-router.put("/:userID", async (req, res) => {
+router.put("/:userID", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -179,7 +179,7 @@ router.post("/:userID", (req, res) => {
 /*
     Get a list of all purchases made by the user
 */
-router.get("/:userID/purchases", async (req, res) => {
+router.get("/:userID/purchases", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -199,7 +199,7 @@ router.get("/:userID/purchases", async (req, res) => {
 /*
     Get a list of all active requests user can approve
 */
-router.get("/:userID/approvals", async (req, res) => {
+router.get("/:userID/approvals", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -219,7 +219,7 @@ router.get("/:userID/approvals", async (req, res) => {
 /*
     Get a list of all active purchases user can complete
 */
-router.get("/:userID/completions", async (req, res) => {
+router.get("/:userID/completions", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -239,7 +239,7 @@ router.get("/:userID/completions", async (req, res) => {
 /*
     Get a list of all active purchases user can reimburse
 */
-router.get("/:userID/reimbursements", async (req, res) => {
+router.get("/:userID/reimbursements", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -259,7 +259,7 @@ router.get("/:userID/reimbursements", async (req, res) => {
 /*
     Get a list of all committee balances user can view
 */
-router.get("/:userID/balances", async (req, res) => {
+router.get("/:userID/balances", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }
@@ -286,7 +286,7 @@ router.get("/:userID/balances", async (req, res) => {
 /*
     Get a list of all committees user has approval powers in
 */
-router.get("/:userID/committees", async (req, res) => {
+router.get("/:userID/committees", async(req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
         return res.status(404).send("User not found");
     }

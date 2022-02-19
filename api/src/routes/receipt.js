@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/:file", async (req, res) => {
+router.get("/:file", async(req, res) => {
     // make sure that only purchaser, approvers, and treasurers can view receipts
     const id_from_file = /.*?_(?<pnum>[0-9]+)(_reupload_[0-9]+)?\.(png|jpg|pdf|jpeg)$/gm;
     const match = id_from_file.exec(req.params.file);

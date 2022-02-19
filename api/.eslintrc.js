@@ -33,7 +33,7 @@ module.exports = {
             "functions": "never",
         }],
         "no-unused-vars": "off",
-        "space-before-function-paren": ["error", "always"],
+        "space-before-function-paren": ["error", "never"],
         "keyword-spacing": ["error", {
             "before": true,
             "after": true,

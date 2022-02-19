@@ -10,7 +10,7 @@ const router = Router();
     Logs user in
     cannot be async because of bcrypt
 */
-router.post("/", async (req, res) => {
+router.post("/", async(req, res) => {
     if (req.body.uname === undefined || req.body.uname === "" ||
         req.body.pass === undefined || req.body.pass === "") {
         return res.status(400).send("Fill out login details");

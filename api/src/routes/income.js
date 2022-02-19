@@ -3,7 +3,7 @@ import { committee_name_swap } from "../common_items";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", async(req, res) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
         req.body.amount === undefined ||
@@ -78,7 +78,7 @@ router.post("/", async (req, res) => {
     return res.status(201).send("Donation created");
 });
 
-router.get("/", async (req, res) => {
+router.get("/", async(req, res) => {
     // Check that user is treasurer
     try {
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -102,7 +102,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.put("/:incomeID", async (req, res) => {
+router.put("/:incomeID", async(req, res) => {
     if (req.body.status === undefined ||
         req.body.refnumber === undefined) {
         return res.status(400).send("All income update details must be completed");

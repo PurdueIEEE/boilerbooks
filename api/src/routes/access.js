@@ -3,7 +3,7 @@ import { ACCESS_LEVEL, committee_name_swap } from "../common_items";
 
 const router = Router();
 
-router.get("/treasurers", async (req, res) => {
+router.get("/treasurers", async(req, res) => {
     try {
         // first make sure user is actually a treasurer
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -18,7 +18,7 @@ router.get("/treasurers", async (req, res) => {
     }
 });
 
-router.get("/officers", async (req, res) => {
+router.get("/officers", async(req, res) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -33,7 +33,7 @@ router.get("/officers", async (req, res) => {
     }
 });
 
-router.get("/internals", async (req, res) => {
+router.get("/internals", async(req, res) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -48,7 +48,7 @@ router.get("/internals", async (req, res) => {
     }
 });
 
-router.post("/treasurers", async (req, res) => {
+router.post("/treasurers", async(req, res) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "") {
         return res.status(400).send("Complete all addition details");
@@ -93,7 +93,7 @@ router.post("/treasurers", async (req, res) => {
     }
 });
 
-router.post("/officers", async (req, res) => {
+router.post("/officers", async(req, res) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
         req.body.committee === undefined || req.body.committee == "") {
@@ -134,7 +134,7 @@ router.post("/officers", async (req, res) => {
     }
 });
 
-router.post("/internals", async (req, res) => {
+router.post("/internals", async(req, res) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
         req.body.committee === undefined || req.body.committee === "" ||
@@ -176,7 +176,7 @@ router.post("/internals", async (req, res) => {
     }
 });
 
-router.delete("/approvals/:approver", async (req, res) => {
+router.delete("/approvals/:approver", async(req, res) => {
     if (req.params.approver === "") { // Sanity Check
         return res.status(400).send("Bad Treasurer ID");
     }

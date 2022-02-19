@@ -37,7 +37,7 @@ app.use((req, res, next) => {
         db_conn.execute(
             "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
             [req.cookies.apikey],
-            function (err, results, fields) {
+            function(err, results, fields) {
                 if (err) {
                     console.log(err.stack);
                     return res.status(500).send("Internal Server Error");
