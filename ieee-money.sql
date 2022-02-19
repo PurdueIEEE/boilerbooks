@@ -22,7 +22,8 @@ CREATE TABLE `Budget` (
   `category` varchar(250) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
-  `year` enum('2015-2016','2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022'
+  `year` enum('2015-2016','2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
+  `status` enum('Submitted','Approved') NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

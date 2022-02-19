@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list } from "../common_items";
+import { committee_lut, fiscal_year_list, current_fiscal_year } from "../common_items";
 
 /*
     Get a list of all committees
@@ -62,9 +62,13 @@ router.get("/:commID/balance", async (req, res) => {
 /*
     Get committee budget for a year
 */
-router.get("/:commID/budget/:year", async (req, res) => {
+router.get("/:commID/budget/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {
@@ -96,9 +100,13 @@ router.get("/:commID/budget/:year", async (req, res) => {
 /*
     Get total expenses for a committee for a year
 */
-router.get("/:commID/expensetotal/:year", async (req, res) => {
+router.get("/:commID/expensetotal/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {
@@ -130,9 +138,13 @@ router.get("/:commID/expensetotal/:year", async (req, res) => {
 /*
     Get total income for a committee for a year
 */
-router.get("/:commID/incometotal/:year", async (req, res) => {
+router.get("/:commID/incometotal/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {
@@ -164,9 +176,13 @@ router.get("/:commID/incometotal/:year", async (req, res) => {
 /*
     Get all purchases for a committee for a year
 */
-router.get("/:commID/purchases/:year", async (req, res) => {
+router.get("/:commID/purchases/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {
@@ -195,9 +211,13 @@ router.get("/:commID/purchases/:year", async (req, res) => {
 /*
     Get all income for a committee for a year
 */
-router.get("/:commID/income/:year", async (req, res) => {
+router.get("/:commID/income/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {
@@ -226,9 +246,13 @@ router.get("/:commID/income/:year", async (req, res) => {
 /*
     Get financial summary for a committee for a year
 */
-router.get("/:commID/summary/:year", async (req, res) => {
+router.get("/:commID/summary/:year?", async (req, res) => {
     if (!(req.params.commID in committee_lut)) {
         return res.status(404).send("Invalid committee value");
+    }
+
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
     }
 
     if (!(fiscal_year_list.includes(req.params.year))) {

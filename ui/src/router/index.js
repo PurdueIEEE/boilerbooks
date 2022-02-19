@@ -141,6 +141,27 @@ const routes = [
     }
   },
   {
+    path: '/budget',
+    component: () => import(/* webpackChunkName: "budget" */ '../views/budget/Budget.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import(/* webpackChunkName: "budget_home" */ '../views/budget/BudgetHome.vue'),
+      },
+      {
+        path: 'modify',
+        component: () => import(/* webpackChunkName: "budget_new" */ '../views/budget/BudgetModify.vue'),
+      },
+      {
+        path: 'approve',
+        component: () => import(/* webpackChunkName: "budget_approve" */ '../views/budget/BudgetApprove.vue'),
+      },
+    ],
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/access',
     component: () => import(/* webpackChunkName: "access" */ '../views/access/Access.vue'),
     children: [

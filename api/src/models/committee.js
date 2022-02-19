@@ -3,7 +3,7 @@ import { current_fiscal_year } from "../common_items";
 
 async function getCommitteeCategories (comm) {
     return db_conn.promise().execute(
-        "SELECT category FROM Budget WHERE committee=? AND year=?",
+        "SELECT category FROM Budget WHERE committee=? AND year=? AND status='Approved'",
         [comm, current_fiscal_year]
     );
 }
@@ -21,7 +21,7 @@ async function getCommitteeBalance (comm) {
 
 async function getCommitteeBudgetTotals (comm, year) {
     return db_conn.promise().execute(
-        "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.year = ?",
+        "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.year = ? AND status='Approved'",
         [comm, year]
     );
 }
@@ -70,11 +70,11 @@ async function getCommitteeIncome (comm, year) {
 async function getCommitteeBudgetSummary (comm, year) {
     return db_conn.promise().execute(
         `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscalyear = ?)) THEN P.cost ELSE 0 END) AS spent,
-        B.amount AS budget FROM Budget B
+        B.amount, B.status AS budget FROM Budget B
 		LEFT JOIN Purchases P ON B.category = P.category
 		WHERE B.committee = ?
 		AND B.year = ?
-		GROUP BY B.category, B.amount`,
+		GROUP BY B.category, B.amount, B.status`,
         [comm, year, comm, year]
     );
 }

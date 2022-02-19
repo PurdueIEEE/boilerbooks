@@ -41,7 +41,7 @@
           <tr v-for="item in financialSummary" v-bind:key="item.category">
             <td>{{item.category}}</td>
             <td>{{item.spent}}</td>
-            <td>{{item.budget}}</td>
+            <td>{{item.amount}}</td>
           </tr>
         </tbody>
       </table>
