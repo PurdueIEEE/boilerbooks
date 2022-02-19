@@ -18,7 +18,7 @@
       <form v-on:submit.prevent="pushNewBudget">
 
         <div v-for="(item, idx) in currBudget" v-bind:key="item.category" class="p-3 m-1 bg-light border rounded-3 row text-start">
-          <div class="col-md-6">
+          <div class="col-md-5">
             <label v-bind:for="'cat-input-'+idx" class="form-label fw-bold">Category</label>
             <input v-bind:id="'cat-input-'+idx" type="text" v-model="currEditBudget[idx].category" class="form-control" required>
           </div>
@@ -29,13 +29,13 @@
               <input v-bind:id="'amt-input-'+idx" type="number" v-model="currEditBudget[idx].amount" class="form-control" required>
             </div>
           </div>
-          <div class="col-md-1">
-            <button class="btn btn-danger" v-on:click="removeLineItem(idx)"><i class="bi bi-trash-fill"></i>Delete</button>
+          <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <button class="btn btn-danger p-2" v-on:click="removeLineItem(idx)"><i class="bi bi-trash-fill"></i>Delete</button>
           </div>
         </div>
 
         <div class="p-3 m-1 bg-light border rounded-3 row text-start">
-          <div class="col-md-6">
+          <div class="col-md-5">
             <label for="cat-input-new" class="form-label fw-bold">Category</label>
             <input id="cat-input-new" type="text" v-model="newCat" class="form-control" placeholder="Category name...">
           </div>
@@ -46,8 +46,8 @@
               <input id="amt-input-new" type="number" step=".01" class="form-control" placeholder="Category amount..." v-model="newAmt">
             </div>
           </div>
-          <div class="col-md-1">
-            <button class="btn btn-success" type="button" v-on:click="addNewLineItem"><i class="bi bi-plus-lg"></i>Add</button>
+          <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <button class="btn btn-success p-2" type="button" v-on:click="addNewLineItem"><i class="bi bi-plus-lg"></i>Add</button>
           </div>
         </div>
 
@@ -114,6 +114,7 @@ export default {
       })
       .then((response) => {
         this.dispmsg = response;
+        this.committee = '';
       })
       .catch((error) => {
         console.log(error);
@@ -195,3 +196,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.debug {
+  outline: 2px solid red;
+}
+
+.debug-1 {
+  outline: 2px solid green;
+}
+</style>

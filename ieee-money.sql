@@ -72,16 +72,6 @@ CREATE TABLE `Purchases` (
   `fiscalyear` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `TABLE_NAME` (
-  `TransactionDate` varchar(100) DEFAULT NULL,
-  `DocumentNumber` varchar(100) DEFAULT NULL,
-  `ReferenceCode` varchar(100) DEFAULT NULL,
-  `ReferenceNumber` decimal(10,2) DEFAULT NULL,
-  `TransactionAmount` varchar(100) DEFAULT NULL,
-  `ReconciledDate` varchar(100) DEFAULT NULL,
-  `IncomeExpenseName` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE `Users` (
   `userid` int(10) UNSIGNED NOT NULL,
   `first` varchar(100) NOT NULL,

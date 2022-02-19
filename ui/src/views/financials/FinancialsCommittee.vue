@@ -39,12 +39,16 @@
         </thead>
         <tbody>
           <tr v-for="item in financialSummary" v-bind:key="item.category">
-            <td>{{item.category}}</td>
+            <td>
+              {{item.category}}
+              <span v-if="item.budget !== 'Approved'" class="text-danger">*</span>
+              </td>
             <td>{{item.spent}}</td>
             <td>{{item.amount}}</td>
           </tr>
         </tbody>
       </table>
+      <small><span class="text-danger">*</span> = Budget item not approved</small>
 
       <h4 class="mt-4">{{header}} Expenses</h4>
       <table class="table table-striped">
