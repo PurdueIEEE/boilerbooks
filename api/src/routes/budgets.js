@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fiscal_year_list, current_fiscal_year, committee_lut } from "../common_items";
+import { fiscal_year_list, current_fiscal_year, committee_lut, committee_name_swap } from "../common_items";
 
 const router = Router();
 
@@ -65,7 +65,58 @@ router.post("/:comm", async (req, res) => {
         return res.status(500).send("Internal Server Error");
     }
 
-    return res.status(200).send("Budget submitted for approval");
+    return res.status(201).send("Budget submitted for approval");
+});
+
+/*
+    Update the committee budget to approved
+*/
+router.put("/:comm", async (req, res) => {
+    if (!(req.params.comm in committee_lut)) {
+        return res.status(404).send("Invalid committee value");
+    }
+
+    try {
+        // first we make sure user is actually a treasurer
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            return res.status(200).send("Approved Budget");
+        }
+
+        const [results_1, fields_1] = await req.context.models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], current_fiscal_year);
+
+        return res.status(200).send("Approved Budget");
+
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
+});
+
+/*
+    Get all the submitted committee budgets
+*/
+router.get("/submitted", async (req, res) => {
+    try {
+        // first we make sure user is actually a treasurer
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            return res.status(200).send({});
+        }
+
+        const budgets = {};
+
+        for (let committee in committee_lut) {
+            const [results_1, fields_1] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], current_fiscal_year);
+            budgets[committee] = results_1;
+        }
+
+        return res.status(200).send(budgets);
+
+    } catch (err) {
+        console.log(err.stack);
+        return res.status(500).send("Internal Server Error");
+    }
 });
 
 export default router;
