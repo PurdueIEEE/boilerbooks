@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { committee_name_swap } from "../common_items";
+import { committee_name_swap, logger } from "../common_items";
 
 const router = Router();
 
@@ -49,7 +49,7 @@ router.post("/", async(req, res) => {
             return res.status(403).send("Not allowed to create donation"); // silently fail
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -70,8 +70,7 @@ router.post("/", async(req, res) => {
             return res.status(400).send("Donation cannot be created, try again later");
         }
     } catch (err) {
-        //console.log(err.stack);
-        console.log(err);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -86,7 +85,7 @@ router.get("/", async(req, res) => {
             return res.status(404).send("Income not found");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -97,7 +96,7 @@ router.get("/", async(req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -119,7 +118,7 @@ router.put("/:incomeID", async(req, res) => {
             return res.status(404).send("Income not found");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -133,7 +132,7 @@ router.put("/:incomeID", async(req, res) => {
         const [results, fields] = await req.context.models.income.updateIncome(income);
         return res.status(200).send("Income updated");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

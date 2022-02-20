@@ -120,6 +120,41 @@ const mailer = nodemailer.createTransport({
 });
 // -------------------------------------------------
 
+// ----------------- Logging -----------------------
+import winston from "winston";
+import 'winston-daily-rotate-file'
+const transport = new winston.transports.DailyRotateFile({
+    filename: 'boilerbooks-%DATE%.log',
+    datePattern:'YYYY-MM-DD',
+    zippedArchive: true,
+    dirname: '/var/log/boilerbooks/',
+    maxSize: '20m',
+    maxFiles: 10,
+});
+const format = winston.format.printf((log) => {
+    return `${log.timestamp} [${log.level}]: ${log.message}`;
+});
+const logger = winston.createLogger({
+    transports: [
+        transport
+    ],
+    level: "info",
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.splat(),
+        format,
+    ),
+});
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+        )
+    }));
+}
+// -------------------------------------------------
+
 export {
     current_fiscal_year,
     first_fiscal_year,
@@ -128,4 +163,5 @@ export {
     committee_name_swap,
     ACCESS_LEVEL,
     mailer,
+    logger,
 };

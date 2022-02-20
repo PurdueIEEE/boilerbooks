@@ -5,6 +5,8 @@ import income from "./income";
 import access from "./access";
 import budgets from "./budgets";
 
+import { logger } from "../common_items";
+
 const mysql2 = require("mysql2");
 const db_conn = mysql2.createConnection({
     host: process.env.DB_HOST,
@@ -19,7 +21,7 @@ db_conn.connect((err) => {
         process.exit(1);
     }
 
-    console.log("MySQL connection started");
+    logger.info("MySQL connection started");
 });
 
 export default {

@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 // Import files
 import models, { db_conn } from "./models";
+import { logger } from "./common_items";
 import routes from "./routes";
 
 // Create Express
@@ -39,7 +40,7 @@ app.use((req, res, next) => {
             [req.cookies.apikey],
             function(err, results, fields) {
                 if (err) {
-                    console.log(err.stack);
+                    logger.error(err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
@@ -82,25 +83,25 @@ app.use("/access", routes.access);
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>
-    console.log(`App listening on port ${process.env.PORT}`)
+    logger.info(`App listening on port ${process.env.PORT}`)
 );
 
 process.on("SIGTERM", () => {
-    console.log("SIGTERM signal received: closing server");
+    logger.warn("SIGTERM signal received: closing server");
     server.close(() => {
-        console.log("HTTP server closed");
+        logger.warn("HTTP server closed");
     });
-    db_conn.end((err) => {
-        console.log("MySQL connection closed");
+    db_conn.end(() => {
+        logger.warn("MySQL connection closed");
     });
 });
 
 process.on("SIGINT", () => {
-    console.log("SIGINT signal received: closing server");
+    logger.warn("SIGINT signal received: closing server");
     server.close(() => {
-        console.log("HTTP server closed");
+        logger.warn("HTTP server closed");
     });
-    db_conn.end((err) => {
-        console.log("MySQL connection closed");
+    db_conn.end(() => {
+        logger.warn("MySQL connection closed");
     });
 });

@@ -3,7 +3,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp/es";
 
-import { committee_name_swap, mailer } from "../common_items";
+import { committee_name_swap, mailer, logger } from "../common_items";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -69,7 +69,7 @@ router.post("/", async(req, res) => {
             return res.status(400).send("Purchase cannot be created, try again later");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error: Purchase not created");
     }
 
@@ -90,7 +90,7 @@ router.post("/", async(req, res) => {
         emails = emails.slice(0, -2);
         res.status(201).send(`Purchase successfully submitted!\nIt can be reviewed by: ${names}`);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error: Purchase created");
     }
 
@@ -111,7 +111,7 @@ router.post("/", async(req, res) => {
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        console.log(err);
+        logger.error(err);
     }
 });
 
@@ -139,7 +139,7 @@ router.post("/treasurer", async(req, res) => {
             return res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -154,7 +154,7 @@ router.post("/treasurer", async(req, res) => {
             }
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -187,7 +187,7 @@ router.post("/treasurer", async(req, res) => {
             });
         }
     } catch (err) {
-        console.log(err);
+        logger.error(err);
     }
 });
 
@@ -223,7 +223,7 @@ router.get("/:purchaseID", async(req, res) => {
         return res.status(200).send(results[0]);
 
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -240,7 +240,7 @@ router.delete("/:purchaseID", async(req, res) => {
             return res.status(404).send("Purchase not found");
         }
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -251,7 +251,7 @@ router.delete("/:purchaseID", async(req, res) => {
             return res.status(400).send("Purchase status is not 'Requested', 'Approved', 'Purchased'");
         }
     } catch (err) {
-        console.log("MySQL " + err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -299,7 +299,7 @@ router.post("/:purchaseID/approve", async(req, res) => {
             return res.status(400).send("Purchase cost too high");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -317,7 +317,7 @@ router.post("/:purchaseID/approve", async(req, res) => {
             return res.status(404).send("Purchase not found");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -340,7 +340,7 @@ router.post("/:purchaseID/approve", async(req, res) => {
             return res.status(400).send("Purchase not in 'Requested' status");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -366,7 +366,7 @@ router.post("/:purchaseID/approve", async(req, res) => {
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        console.log(err);
+        logger.error(err);
     }
 });
 
@@ -403,7 +403,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             return res.status(400).send("Purchase cost too high, create a new request if needed");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         fs.unlink(req.file.path);
         return res.status(500).send("Internal Server Error");
     }
@@ -472,7 +472,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         const [results_1, fields_1] = await req.context.models.purchase.completePurchase(purchase);
 
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -494,7 +494,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        console.log(err);
+        logger.error(err);
     }
 
     return res.status(201).send("Purchase completed");

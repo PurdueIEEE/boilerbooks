@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, committee_lut } from "../common_items";
+import { committee_name_swap, committee_lut, logger } from "../common_items";
 
 // ---------------------------
 // Start unauthenticated endpoint
@@ -79,7 +79,7 @@ router.get("/:userID", async(req, res) => {
             return res.status(404).send("User not found");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -91,7 +91,7 @@ router.get("/:userID", async(req, res) => {
 
         return res.status(200).send(results[0]);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -139,7 +139,7 @@ router.put("/:userID", async(req, res) => {
         const [results, fields] = await req.context.models.account.updateUser(user);
         return res.status(200).send("Account Details Updated");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -191,7 +191,7 @@ router.get("/:userID/purchases", async(req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -211,7 +211,7 @@ router.get("/:userID/approvals", async(req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -231,7 +231,7 @@ router.get("/:userID/completions", async(req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -251,7 +251,7 @@ router.get("/:userID/reimbursements", async(req, res) => {
         });
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -276,7 +276,7 @@ router.get("/:userID/balances", async(req, res) => {
             }
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -306,7 +306,7 @@ router.get("/:userID/committees", async(req, res) => {
 
         return res.status(200).send(filtered_lut);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

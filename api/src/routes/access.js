@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ACCESS_LEVEL, committee_name_swap } from "../common_items";
+import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items";
 
 const router = Router();
 
@@ -13,7 +13,7 @@ router.get("/treasurers", async(req, res) => {
         const [results_1, fields_1] = await req.context.models.access.getTreasurers(ACCESS_LEVEL.treasurer);
         return res.status(200).send(results_1);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -28,7 +28,7 @@ router.get("/officers", async(req, res) => {
         const [results_1, fields_1] = await req.context.models.access.getApprovals(ACCESS_LEVEL.officer);
         return res.status(200).send(results_1);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -43,7 +43,7 @@ router.get("/internals", async(req, res) => {
         const [results_1, fields_1] = await req.context.models.access.getApprovals(ACCESS_LEVEL.internal_leader);
         return res.status(200).send(results_1);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -88,7 +88,7 @@ router.post("/treasurers", async(req, res) => {
         }
         return res.status(200).send("Treasurer added");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -129,7 +129,7 @@ router.post("/officers", async(req, res) => {
         await req.context.models.access.addApproval(approval);
         return res.status(200).send("Officer added");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -171,7 +171,7 @@ router.post("/internals", async(req, res) => {
         await req.context.models.access.addApproval(approval);
         return res.status(200).send("Internal Leader added");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -190,7 +190,7 @@ router.delete("/approvals/:approver", async(req, res) => {
         const [results_1, fields_1] = await req.context.models.access.removeApproval(req.params.approver);
         return res.status(200).send("Access removed");
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

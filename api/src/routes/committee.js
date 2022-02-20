@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list, current_fiscal_year } from "../common_items";
+import { committee_lut, fiscal_year_list, current_fiscal_year, logger } from "../common_items";
 
 /*
     Get a list of all committees
@@ -25,7 +25,7 @@ router.get("/:commID/categories", async(req, res) => {
         const [results, fields] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0]);
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -46,7 +46,7 @@ router.get("/:commID/balance", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -54,7 +54,7 @@ router.get("/:commID/balance", async(req, res) => {
         const [results, fields] = await req.context.models.committee.getCommitteeBalance(committee_lut[req.params.commID][0]);
         return res.status(200).send(results[0]);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -81,7 +81,7 @@ router.get("/:commID/budget/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -92,7 +92,7 @@ router.get("/:commID/budget/:year?", async(req, res) => {
         }
         return res.status(200).send(results[0]);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -119,7 +119,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -130,7 +130,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res) => {
         }
         return res.status(200).send(results[0]);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -157,7 +157,7 @@ router.get("/:commID/incometotal/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -168,7 +168,7 @@ router.get("/:commID/incometotal/:year?", async(req, res) => {
         }
         return res.status(200).send(results[0]);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -195,7 +195,7 @@ router.get("/:commID/purchases/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -203,7 +203,7 @@ router.get("/:commID/purchases/:year?", async(req, res) => {
         const [results, fields] = await req.context.models.committee.getCommitteePurchases(committee_lut[req.params.commID][0], req.params.year);
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -230,7 +230,7 @@ router.get("/:commID/income/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -238,7 +238,7 @@ router.get("/:commID/income/:year?", async(req, res) => {
         const [results, fields] = await req.context.models.committee.getCommitteeIncome(committee_lut[req.params.commID][0], req.params.year);
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -265,7 +265,7 @@ router.get("/:commID/summary/:year?", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -273,7 +273,7 @@ router.get("/:commID/summary/:year?", async(req, res) => {
         const [results, fields] = await req.context.models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], req.params.year);
         return res.status(200).send(results);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

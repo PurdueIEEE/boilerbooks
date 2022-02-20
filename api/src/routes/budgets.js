@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fiscal_year_list, current_fiscal_year, committee_lut, ACCESS_LEVEL } from "../common_items";
+import { fiscal_year_list, current_fiscal_year, committee_lut, ACCESS_LEVEL, logger } from "../common_items";
 
 const router = Router();
 
@@ -29,7 +29,7 @@ router.post("/:comm", async(req, res) => {
             return res.status(404).send("Invalid committee value");
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -37,7 +37,7 @@ router.post("/:comm", async(req, res) => {
     try {
         const [results, fields] = await req.context.models.budgets.clearBudget(committee_lut[req.params.comm][0], current_fiscal_year);
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -61,7 +61,7 @@ router.post("/:comm", async(req, res) => {
             const [results, fields] = await req.context.models.budgets.addBudget(budget);
         }
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 
@@ -88,7 +88,7 @@ router.put("/:comm", async(req, res) => {
         return res.status(200).send("Approved Budget");
 
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });
@@ -114,7 +114,7 @@ router.get("/submitted", async(req, res) => {
         return res.status(200).send(budgets);
 
     } catch (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
         return res.status(500).send("Internal Server Error");
     }
 });

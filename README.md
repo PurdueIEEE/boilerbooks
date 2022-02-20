@@ -35,7 +35,7 @@ npm --prefix ./ui ci
 
 5. Create a `.env` file for the API, with database and private variables - use `.env.git` as an example:
 ```
-touch ./api/.env
+cp ./api/.env.git ./api/.env
 ```
 
 6. Start the servers
