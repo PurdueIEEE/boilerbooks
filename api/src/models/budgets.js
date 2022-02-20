@@ -10,7 +10,7 @@ async function clearBudget(comm, year) {
 async function addBudget(budget) {
     return db_conn.promise().execute(
         "INSERT INTO Budget (category,amount,committee,year,status) VALUES (?,?,?,?,?)",
-        [budget.category, budget.amount, budget.committee, budget.year, 'Submitted']
+        [budget.category, budget.amount, budget.committee, budget.year, "Submitted"]
     );
 }
 
@@ -34,4 +34,4 @@ export default {
     addBudget,
     getCommitteeSubmittedBudget,
     approveCommitteeBudget,
-}
+};

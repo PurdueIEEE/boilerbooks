@@ -13,7 +13,7 @@ router.get("/years", (req, res) => {
 /*
     Create a new budget for the current fiscal year
 */
-router.post("/:comm", async (req, res) => {
+router.post("/:comm", async(req, res) => {
     if (!(req.params.comm in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -47,7 +47,7 @@ router.post("/:comm", async (req, res) => {
             if (item.category === undefined || item.amount === undefined) {
                 return res.status(400).send("Budget item(s) not complete");
             }
-            if (item.category === '' || item.amount === '') {
+            if (item.category === "" || item.amount === "") {
                 return res.status(400).send("Budget item(s) not complete");
             }
 
@@ -56,7 +56,7 @@ router.post("/:comm", async (req, res) => {
                 amount: item.amount,
                 committee: committee_lut[req.params.comm][0],
                 year: current_fiscal_year,
-            }
+            };
 
             const [results, fields] = await req.context.models.budgets.addBudget(budget);
         }
@@ -71,7 +71,7 @@ router.post("/:comm", async (req, res) => {
 /*
     Update the committee budget to approved
 */
-router.put("/:comm", async (req, res) => {
+router.put("/:comm", async(req, res) => {
     if (!(req.params.comm in committee_lut)) {
         return res.status(404).send("Invalid committee value");
     }
@@ -96,7 +96,7 @@ router.put("/:comm", async (req, res) => {
 /*
     Get all the submitted committee budgets
 */
-router.get("/submitted", async (req, res) => {
+router.get("/submitted", async(req, res) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);

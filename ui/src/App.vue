@@ -51,6 +51,15 @@ export default {
       auth_state.clearAuthState();
       this.$router.push('/login');
     }
+  },
+  mounted() {
+    fetch(`${location.pathname}is_dev.txt`)
+    .then((response) => {
+      console.log(response);
+      if (response.ok) {
+        document.getElementById("favicon").href=`${location.pathname}dev-favicon.ico`;
+      }
+    })
   }
 }
 </script>

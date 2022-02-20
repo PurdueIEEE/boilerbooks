@@ -196,13 +196,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.debug {
-  outline: 2px solid red;
-}
-
-.debug-1 {
-  outline: 2px solid green;
-}
-</style>

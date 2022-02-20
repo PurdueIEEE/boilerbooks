@@ -28,7 +28,7 @@ export default {
     committee,
     income,
     access,
-    budgets
+    budgets,
 };
 
 export { db_conn, };

@@ -481,7 +481,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     try {
         const [purchase_deets, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         await mailer.sendMail({
-            to:  "hadiahmed098@gmail.com", // TODO change this for deploy 'purdue.ieee.treasurer@gmail.com'
+            to:  "purdue.ieee.treasurer@gmail.com",
             subject: `New Purchase By ${purchase_deets[0].committee}`,
             text: `${purchase_deets[0].committee} has just purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}.\n` +
             "Please visit Boiler Books at your earliest convenience to begin the reimbursement process.\n" +

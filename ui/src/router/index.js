@@ -150,7 +150,7 @@ const routes = [
       },
       {
         path: 'modify',
-        component: () => import(/* webpackChunkName: "budget_new" */ '../views/budget/BudgetModify.vue'),
+        component: () => import(/* webpackChunkName: "budget_modify" */ '../views/budget/BudgetModify.vue'),
       },
       {
         path: 'approve',
