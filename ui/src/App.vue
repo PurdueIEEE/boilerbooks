@@ -53,11 +53,10 @@ export default {
     }
   },
   mounted() {
-    fetch(`${location.pathname}is_dev.txt`)
+    fetch(`${process.env.BASE_URL}is_dev.txt`)
     .then((response) => {
-      console.log(response);
       if (response.ok) {
-        document.getElementById("favicon").href=`${location.pathname}dev-favicon.ico`;
+        document.getElementById("favicon").href=`${process.env.BASE_URL}dev-favicon.ico`;
       }
     })
   }
