@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fiscal_year_list, current_fiscal_year, committee_lut, committee_name_swap } from "../common_items";
+import { fiscal_year_list, current_fiscal_year, committee_lut, ACCESS_LEVEL } from "../common_items";
 
 const router = Router();
 
@@ -24,7 +24,7 @@ router.post("/:comm", async (req, res) => {
 
     // First check the user has approval permissions
     try {
-        const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0]);
+        const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
         if (results.length === 0) {
             return res.status(404).send("Invalid committee value");
         }

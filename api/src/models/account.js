@@ -19,10 +19,10 @@ async function updateUser(user) {
     );
 }
 
-async function getUserApprovals(user, committee) {
+async function getUserApprovals(user, committee, min_level=ACCESS_LEVEL.member) {
     return db_conn.promise().execute(
-        "SELECT username, committee FROM approval WHERE committee = ? AND username = ? AND privilege_level > ?",
-        [committee, user, ACCESS_LEVEL.member]
+        "SELECT username, committee FROM approval WHERE committee = ? AND username = ? AND privilege_level >= ?",
+        [committee, user, min_level]
     );
 }
 
