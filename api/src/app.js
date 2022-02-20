@@ -71,6 +71,12 @@ app.use((req, res, next) => {
     }
 });
 
+// Log every route and it's result
+app.use((req, res, next) => {
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ''}] ${req.path}`);
+    next();
+});
+
 // Setup our routes
 app.use("/account", routes.account);
 app.use("/budgets", routes.budgets);
