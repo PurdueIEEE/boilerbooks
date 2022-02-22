@@ -1,5 +1,5 @@
 import { db_conn } from "./index";
-import { ACCESS_LEVEL } from "../common_items";
+import { ACCESS_LEVEL, logger } from "../common_items";
 import { v4 as uuidv4} from "uuid";
 
 const bcrypt = require("bcrypt");
@@ -7,8 +7,15 @@ const bcrypt_rounds = 10;
 
 async function getUserByID(id) {
     return db_conn.promise().execute(
-        "SELECT email, first, last, address, city, state, zip FROM Users WHERE Users.username = ?",
+        "SELECT email, first, last, address, city, state, zip FROM Users WHERE username = ?",
         [id]
+    );
+}
+
+async function getUserByEmail(email) {
+    return db_conn.promise().execute(
+        "SELECT username FROM Users WHERE email = ?",
+        [email]
     );
 }
 
@@ -53,7 +60,7 @@ function createUser(user, res) {
                     return res.status(400).send("Username already exists");
                 }
                 else if (err) {
-                    console.log("MySQL " + err.stack);
+                    logger.error(err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
@@ -73,7 +80,7 @@ function loginUser(userInfo, res) {
         [userInfo.uname],
         function(err, results, fields) {
             if (err) {
-                console.log("MySQL " + err.stack);
+                logger.error(err.stack);
                 return res.status(500).send("Internal Server Error");
             }
 
@@ -103,7 +110,7 @@ function updatePassword(user, res) {
             [hash, user.uname],
             function(err, results, fields) {
                 if (err) {
-                    console.log("MySQL " + err.stack);
+                    logger.error(err.stack);
                     return res.status(500).send("Internal Server Error");
                 }
 
@@ -120,7 +127,7 @@ function getUserAccessLevel(user, res) {
         [user.uname, ACCESS_LEVEL.member],
         function(err, results, fields) {
             if (err) {
-                console.log("MySQL " + err.stack);
+                logger.error(err.stack);
                 return res.status(500).send("Internal Server Error");
             }
             // user.viewFinancials: Expected Donations, View Financials
@@ -153,7 +160,7 @@ function generateAPIKey(user, res) {
         [newKey, user.uname],
         function(err, results, fields) {
             if (err) {
-                console.log("MySQL " + err.stack);
+                logger.error(err.stack);
                 return res.status(500).send("Internal Server Error");
             }
             res.cookie("apikey", newKey, { maxAge:1000*60*60*24,}); // cookie is valid for 24 hours
@@ -164,6 +171,7 @@ function generateAPIKey(user, res) {
 
 export default {
     getUserByID,
+    getUserByEmail,
     createUser,
     loginUser,
     updateUser,

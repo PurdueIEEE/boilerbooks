@@ -21,7 +21,7 @@ app.use(cookieParser());
 // Setup our middleware
 app.use((req, res, next) => {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl === "/account" || req.originalUrl === "/login") {
+    if (req.originalUrl === "/account" || req.originalUrl.startsWith("/login")) {
         req.context = {
             models,
         };
@@ -71,9 +71,9 @@ app.use((req, res, next) => {
     }
 });
 
-// Log every route and it's result
+// Log every route ((TODO and it's result))
 app.use((req, res, next) => {
-    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ''}] ${req.path}`);
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] ${req.originalUrl}`);
     next();
 });
 

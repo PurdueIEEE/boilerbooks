@@ -122,13 +122,13 @@ const mailer = nodemailer.createTransport({
 
 // ----------------- Logging -----------------------
 import winston from "winston";
-import 'winston-daily-rotate-file'
+import "winston-daily-rotate-file";
 const transport = new winston.transports.DailyRotateFile({
-    filename: 'boilerbooks-%DATE%.log',
-    datePattern:'YYYY-MM-DD',
+    filename: "boilerbooks-%DATE%.log",
+    datePattern:"YYYY-MM-DD",
     zippedArchive: true,
-    dirname: '/var/log/boilerbooks/',
-    maxSize: '20m',
+    dirname: "/var/log/boilerbooks/",
+    maxSize: "20m",
     maxFiles: 10,
 });
 const format = winston.format.printf((log) => {
@@ -142,15 +142,15 @@ const logger = winston.createLogger({
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.splat(),
-        format,
+        format
     ),
 });
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
             winston.format.colorize(),
             winston.format.simple()
-        )
+        ),
     }));
 }
 // -------------------------------------------------
