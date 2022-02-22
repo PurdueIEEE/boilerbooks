@@ -2,7 +2,7 @@ import { db_conn } from "./index";
 import { ACCESS_LEVEL, logger } from "../common_items";
 import { v4 as uuidv4} from "uuid";
 
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 const bcrypt_rounds = 10;
 
 async function getUserByID(id) {
@@ -50,9 +50,23 @@ async function getUserApprovalCommittees(user) {
 }
 
 async function updatePassword(user) {
-    db_conn.promise().execute(
-        "UPDATE Users SET modifydate=NOW(), password=? WHERE username=?",
-        [user.pass, user.uname],
+    return db_conn.promise().execute(
+        "UPDATE Users SET modifydate=NOW(), password=?, resettime=NULL WHERE username=?",
+        [user.pass, user.uname]
+    );
+}
+
+async function setPasswordResetDetails(user, rstlink) {
+    return db_conn.promise().execute(
+        "UPDATE Users SET resettime=NOW(), passwordreset=?, modifydate=NOW() WHERE username=?",
+        [rstlink, user]
+    );
+}
+
+async function checkResetTime(user, rstlink) {
+    return db_conn.promise().execute(
+        "SELECT resettime FROM Users WHERE username=? AND passwordreset=?",
+        [user, rstlink]
     );
 }
 
@@ -168,4 +182,6 @@ export default {
     getUserApprovals,
     getUserTreasurer,
     getUserApprovalCommittees,
+    setPasswordResetDetails,
+    checkResetTime,
 };

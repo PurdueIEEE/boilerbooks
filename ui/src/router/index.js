@@ -42,6 +42,14 @@ const routes = [
     }
   },
   {
+    path: '/passwordreset',
+    name: 'PasswordReset',
+    component: () => import(/* webpackChunkName: "passwordreset" */ '../views/PasswordReset.vue'),
+    meta: {
+      requiresAuth: false,
+    }
+  },
+  {
     path: '/detail-view',
     name: 'DetailView',
     component: () => import(/* webpackChunkName: "detailview" */ '../views/DetailView.vue'),

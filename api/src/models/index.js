@@ -7,7 +7,7 @@ import budgets from "./budgets";
 
 import { logger } from "../common_items";
 
-const mysql2 = require("mysql2");
+import mysql2 from "mysql2";
 const db_conn = mysql2.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

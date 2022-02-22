@@ -109,7 +109,7 @@ export default {
       new_pass2: '',
       new_pin: '',
       error: false,
-      errmsg: 'sample error',
+      errmsg: '',
     }
   },
   mounted() {

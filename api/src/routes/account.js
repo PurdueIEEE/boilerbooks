@@ -4,7 +4,7 @@ const router = Router();
 
 import { committee_name_swap, committee_lut, logger, mailer } from "../common_items";
 
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 const bcrypt_rounds = 10;
 
 // ---------------------------
@@ -44,6 +44,7 @@ router.post("/", (req, res) => {
         return res.status(400).send("All account details must be completed");
     }
 
+    // eslint-disable-next-line
     if (req.body.uname.match(/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/)) {
         return res.status(400).send("Username cannot contain any special characters");
     }
@@ -173,6 +174,7 @@ router.post("/:userID", (req, res) => {
         return res.status(400).send("Passwords do not match");
     }
 
+    // But this can by async
     bcrypt.hash(req.body.pass1, bcrypt_rounds, async function(error, hash) {
         const user = {
             uname: req.context.request_user_id,
@@ -198,7 +200,8 @@ router.post("/:userID", (req, res) => {
             });
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send("Internal Server Error");
+            if (!res.headersSent) res.status(500).send("Internal Server Error");
+            return;
         }
     });
 });

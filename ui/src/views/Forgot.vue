@@ -2,32 +2,63 @@
   <div class="container-lg my-5 pt-5">
     <div v-if="$route.query.type === 'user'">
       <h1>Forgot Username</h1>
-      <p class="lead fs-3">Enter the email associated with the account below. If you don't remember the email you used, please contact an IEEE Officer at <a href="mailto:ieee@purdue.edu">ieee@purdue.edu</a> for more help.</p>
+      <p class="lead fs-3">Enter the email associated with the account below.<br>If you don't remember the email you used, please contact IEEE at <a href="mailto:ieee@purdue.edu">ieee@purdue.edu</a> for more help.</p>
       <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
-    <br v-else>
+      <br v-else>
       <div class="row">
-        <div class="col-md-6 offset-md-3 text-start">
+        <div class="col-md-6 offset-md-3">
           <form v-on:submit.prevent="forgotUsername">
-            <label for="forgot_user_email" class="form-label">Email Address:</label>
-            <input type="text" id="forgot_user_email" class="form-control" placeholder="username@purdue.edu..." v-model="forgot_user_email">
-            <button type="submit" class="btn btn-primary mt-3">Find Username</button>
+            <div class="row g-3">
+              <div class="col-12 text-start">
+                <label for="forgot_user_email" class="form-label">Email Address:</label>
+                <input type="text" id="forgot_user_email" class="form-control" placeholder="username@purdue.edu..." v-model="forgot_user_email">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary mt-3">Find Username</button>
+              </div>
+            </div>
           </form>
         </div>
       </div>
+    </div>
+
+    <div v-else-if="$route.query.type === 'pass'">
+      <h1>Forgot Password</h1>
+      <p class="lead fs-3">Enter the username of your account below.<br>Instructions will be sent to the email associated with the account.</p>
+      <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+      <br v-else>
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <form v-on:submit.prevent="forgotPassword">
+            <div class="row g-3">
+              <div class="col-12 text-start">
+                <label for="forgot_pass_user" class="form-label">Username:</label>
+                <input type="text" id="forgot_pass_user" class="form-control" placeholder="mdaniels" v-model="forgot_pass_user">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary mt-3">Request Password Reset</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <h3>Return to the <router-link to="/login">login page</router-link></h3>
     </div>
   </div>
 </template>
 
 <script>
-// TODO add a forgot check
-
 export default {
   name: 'Forgot',
   data() {
     return {
       dispmsg: '',
       error: false,
-      forgot_user_email: ''
+      forgot_user_email: '',
+      forgot_pass_user: '',
     }
   },
   methods: {
@@ -46,13 +77,32 @@ export default {
       })
       .then((response) => {
         this.dispmsg = response;
+        if (!this.error) this.forgot_user_email = '';
       })
       .catch((error) => {
         console.log(error);
-      })
+      });
     },
     forgotPassword() {
-
+      this.dispmsg = '';
+      this.error = false;
+      fetch(`http://${location.hostname}/api/login/forgot-pass`, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
+        body: JSON.stringify({user:this.forgot_pass_user}),
+      })
+      .then((response) => {
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        if (!this.error) this.forgot_pass_user = '';
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   }
 }
