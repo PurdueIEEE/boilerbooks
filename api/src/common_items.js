@@ -71,13 +71,9 @@ const committee_lut =
     "aerial":["Aerial Robotics", "Aerial Robotics"],
     "csociety":["Computer Society", "Computer Society"],
     "embs":["EMBS", "EMBS"],
-    "ge":["GE", "Growth & Engagement"],
     "mtt-s":["MTT-S", "MTT-S"],
-    "professional":["Professional", "Industrial Relations"],
-    "learning":["Learning", "Learning"],
     "racing":["Racing", "Racing"],
     "rov":["ROV", "ROV"],
-    "social":["Social", "Social"],
     "soga":["SOGA", "SOGA"],
 };
 // mini-LUT for db enum : committee name
@@ -87,13 +83,9 @@ const committee_name_swap =
     "Aerial Robotics":"Aerial Robotics",
     "Computer Society":"Computer Society",
     "EMBS":"EMBS",
-    "GE":"Growth & Engagement",
     "MTT-S":"MTT-S",
-    "Professional":"Industrial Relations",
-    "Learning":"Learning",
     "Racing":"Racing",
     "ROV":"ROV",
-    "Social":"Social",
     "SOGA":"SOGA",
 };
 // -------------------------------------------------
