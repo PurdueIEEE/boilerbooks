@@ -44,6 +44,10 @@ router.post("/", (req, res) => {
         return res.status(400).send("All account details must be completed");
     }
 
+    if (req.body.uname.match(/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/)) {
+        return res.status(400).send("Username cannot contain any special characters");
+    }
+
     if (req.body.createpin !== process.env.ACCOUNT_PIN) {
         return res.status(400).send("Incorrect Creation PIN");
     }
