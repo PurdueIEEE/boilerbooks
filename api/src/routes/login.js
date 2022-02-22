@@ -39,7 +39,7 @@ router.post("/forgot-user", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.account.getUserByEmail(req.body.email);
+        const [results, fields] = await req.context.models.account.getUserByEmail(req.body.email);
         res.status(200).send("If that account exists, an email was send the provided address.");
         let list_of_users = results.map((element) => (element.username)).join(", ");
         await mailer.sendMail({

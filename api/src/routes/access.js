@@ -6,11 +6,11 @@ const router = Router();
 router.get("/treasurers", async(req, res) => {
     try {
         // first make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send([]);
         }
-        const [results_1, _] = await req.context.models.access.getTreasurers(ACCESS_LEVEL.treasurer);
+        const [results_1, fields_1] = await req.context.models.access.getTreasurers(ACCESS_LEVEL.treasurer);
         return res.status(200).send(results_1);
     } catch (err) {
         logger.error(err.stack);
@@ -21,11 +21,11 @@ router.get("/treasurers", async(req, res) => {
 router.get("/officers", async(req, res) => {
     try {
         // first we make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send([]);
         }
-        const [results_1, _] = await req.context.models.access.getApprovals(ACCESS_LEVEL.officer);
+        const [results_1, fields_1] = await req.context.models.access.getApprovals(ACCESS_LEVEL.officer);
         return res.status(200).send(results_1);
     } catch (err) {
         logger.error(err.stack);
@@ -36,11 +36,11 @@ router.get("/officers", async(req, res) => {
 router.get("/internals", async(req, res) => {
     try {
         // first we make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send([]);
         }
-        const [results_1, _] = await req.context.models.access.getApprovals(ACCESS_LEVEL.internal_leader);
+        const [results_1, fields_1] = await req.context.models.access.getApprovals(ACCESS_LEVEL.internal_leader);
         return res.status(200).send(results_1);
     } catch (err) {
         logger.error(err.stack);
@@ -56,13 +56,13 @@ router.post("/treasurers", async(req, res) => {
 
     try {
         // first make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send("Treasurer added"); // silently failed
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1, _] = await req.context.models.access.checkApprovalExists(req.body.username);
+        const [results_1, fields_1] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
             return res.status(400).send("User already has approval powers, please remove them before adding more");
         }
@@ -106,13 +106,13 @@ router.post("/officers", async(req, res) => {
 
     try {
         // first make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send("Officer added"); // silently failed
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1, _] = await req.context.models.access.checkApprovalExists(req.body.username);
+        const [results_1, fields_1] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
             return res.status(400).send("User already has approval powers, please remove them before adding more");
         }
@@ -148,13 +148,13 @@ router.post("/internals", async(req, res) => {
 
     try {
         // first make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send("Internal Leader added"); // silently failed
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1, _] = await req.context.models.access.checkApprovalExists(req.body.username);
+        const [results_1, fields_1] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
             return res.status(400).send("User already has approval powers, please remove them before adding more");
         }
@@ -183,11 +183,11 @@ router.delete("/approvals/:approver", async(req, res) => {
 
     try {
         // first make sure user is actually a treasurer
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(200).send("Access removed");
         }
-        await req.context.models.access.removeApproval(req.params.approver);
+        const [results_1, fields_1] = await req.context.models.access.removeApproval(req.params.approver);
         return res.status(200).send("Access removed");
     } catch (err) {
         logger.error(err.stack);

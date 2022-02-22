@@ -44,7 +44,7 @@ router.post("/", async(req, res) => {
 
     // Make sure user actually is allowed to create donations
     try {
-        const [results, _] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
+        const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
         if (results.length === 0) {
             return res.status(403).send("Not allowed to create donation"); // silently fail
         }
@@ -65,7 +65,7 @@ router.post("/", async(req, res) => {
     };
 
     try {
-        const [results, _] = await req.context.models.income.createNewDonation(donation);
+        const [results, fields] = await req.context.models.income.createNewDonation(donation);
         if (results.affectedRows === 0) {
             return res.status(400).send("Donation cannot be created, try again later");
         }
@@ -80,7 +80,7 @@ router.post("/", async(req, res) => {
 router.get("/", async(req, res) => {
     // Check that user is treasurer
     try {
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(404).send("Income not found");
         }
@@ -90,7 +90,7 @@ router.get("/", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.income.getAllIncome();
+        const [results, fields] = await req.context.models.income.getAllIncome();
         results.forEach(income => {
             income.committee = committee_name_swap[income.committee];
         });
@@ -113,7 +113,7 @@ router.put("/:incomeID", async(req, res) => {
 
     // Check that user is treasurer
     try {
-        const [results, _] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results, fields] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             return res.status(404).send("Income not found");
         }
@@ -129,7 +129,7 @@ router.put("/:incomeID", async(req, res) => {
     };
 
     try {
-        await req.context.models.income.updateIncome(income);
+        const [results, fields] = await req.context.models.income.updateIncome(income);
         return res.status(200).send("Income updated");
     } catch (err) {
         logger.error(err.stack);

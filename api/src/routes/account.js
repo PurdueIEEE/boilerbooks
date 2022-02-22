@@ -91,7 +91,7 @@ router.get("/:userID", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.account.getUserByID(req.params.userID);
+        const [results, fields] = await req.context.models.account.getUserByID(req.params.userID);
         if (results.length === 0) {
             return res.status(400).send("User not found");
         }
@@ -143,7 +143,7 @@ router.put("/:userID", async(req, res) => {
     };
 
     try {
-        const [results, _] = await req.context.models.account.updateUser(user);
+        const [results, fields] = await req.context.models.account.updateUser(user);
         return res.status(200).send("Account Details Updated");
     } catch (err) {
         logger.error(err.stack);
@@ -183,7 +183,7 @@ router.post("/:userID", (req, res) => {
 
         try {
             await req.context.models.account.updatePassword(user);
-            const [results, _] = await req.context.models.account.getUserByID(req.context.request_user_id);
+            const [results, fields] = await req.context.models.account.getUserByID(req.context.request_user_id);
             res.status(200).send("Password Changed");
             await mailer.sendMail({
                 to: results[0].email,
@@ -215,7 +215,7 @@ router.get("/:userID/purchases", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
+        const [results, fields] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -235,7 +235,7 @@ router.get("/:userID/approvals", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
+        const [results, fields] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -255,7 +255,7 @@ router.get("/:userID/completions", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.purchase.getCompletionsForUser(req.params.userID);
+        const [results, fields] = await req.context.models.purchase.getCompletionsForUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -275,7 +275,7 @@ router.get("/:userID/reimbursements", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.purchase.getTreasurer(req.params.userID);
+        const [results, fields] = await req.context.models.purchase.getTreasurer(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -299,9 +299,9 @@ router.get("/:userID/balances", async(req, res) => {
 
     try {
         for (let committee of committees) {
-            const [results, _] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
+            const [results, fields] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
             if (results.length !== 0) {
-                const [results_1, _] = await req.context.models.committee.getCommitteeBalance(committee);
+                const [results_1, fields_1] = await req.context.models.committee.getCommitteeBalance(committee);
                 outputBalances[committee_name_swap[committee]] = results_1[0].balance;
             }
         }
@@ -322,7 +322,7 @@ router.get("/:userID/committees", async(req, res) => {
     }
 
     try {
-        const [results, _] = await req.context.models.account.getUserApprovalCommittees(req.params.userID);
+        const [results, fields] = await req.context.models.account.getUserApprovalCommittees(req.params.userID);
 
         // very slow very bad
         let filtered_lut = {};
