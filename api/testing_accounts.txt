@@ -2,6 +2,6 @@ testing accounts for permission roles
 uname - pass - role
 
 ahmed138 - test - treasurer
-pp - 12345678 - member
+pp - qwertyuiop - member
 mdma - qwertyuiop - officer (csociety)
 trainboi - qwertyuiop - internal_leader (partieee)

@@ -2,7 +2,10 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, committee_lut, logger } from "../common_items";
+import { committee_name_swap, committee_lut, logger, mailer } from "../common_items";
+
+const bcrypt = require("bcrypt");
+const bcrypt_rounds = 10;
 
 // ---------------------------
 // Start unauthenticated endpoint
@@ -69,8 +72,7 @@ router.post("/", (req, res) => {
 // ---------------------------
 
 /*
-    Gets user details, only if requester is the user
-    or the Treasurer
+    Gets user details, only if requester is the user or the Treasurer
 */
 router.get("/:userID", async(req, res) => {
     try {
@@ -146,6 +148,7 @@ router.put("/:userID", async(req, res) => {
 
 /*
     Changes user password, requester must be user
+    Cannot be async because of bcrypt
 */
 router.post("/:userID", (req, res) => {
     if (req.context.request_user_id !== req.params.userID) {
@@ -166,14 +169,34 @@ router.post("/:userID", (req, res) => {
         return res.status(400).send("Passwords do not match");
     }
 
-    // no need to escape, it's all getting hashed
+    bcrypt.hash(req.body.pass1, bcrypt_rounds, async function(error, hash) {
+        const user = {
+            uname: req.context.request_user_id,
+            pass: hash,
+        };
 
-    const user = {
-        uname: req.context.request_user_id,
-        pass: req.body.pass1,
-    };
-
-    req.context.models.account.updatePassword(user, res);
+        try {
+            await req.context.models.account.updatePassword(user);
+            const [results, fields] = await req.context.models.account.getUserByID(req.context.request_user_id);
+            res.status(200).send("Password Changed");
+            await mailer.sendMail({
+                to: results[0].email,
+                subject: "Boiler Books Password Changed",
+                text: "Your Boiler Books password was recently changed.\n" +
+                      "If you made this request, you can safely ignore this message.\n" +
+                      "Otherwise, please reach out to IEEE.\n\n" +
+                      "This email was automatically sent by Boiler Books",
+                html: `<h2>Your Boiler Books password was recently changed.</h2>
+                       <p>If you made this request, you can safely ignore this message.<p>
+                       <p><b>Otherwise, please reach out to IEEE.</b></p>
+                       <br>
+                       <small>This email was automatically sent by Boiler Books</small>`,
+            });
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send("Internal Server Error");
+        }
+    });
 });
 
 /*

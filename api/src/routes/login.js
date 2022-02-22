@@ -46,7 +46,7 @@ router.post("/forgot-user", async(req, res) => {
                   "If you did not request this reminder, please ignore this message.\n" +
                   "This email was automatically sent by Boiler Books",
             html: `<h2>Hello! A reminder of your username was requested.</h2>
-                   <p>The username(s) associated with this email are (if blank, no account exists):<p>\
+                   <p>The username(s) associated with this email are (if blank, no account exists):<p>
                    <p>* <b>${list_of_users}</b> *</p>
                    <p>If you did not request this email, please ignore this message.</p>
                    <br>

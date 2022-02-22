@@ -49,6 +49,13 @@ async function getUserApprovalCommittees(user) {
     );
 }
 
+async function updatePassword(user) {
+    db_conn.promise().execute(
+        "UPDATE Users SET modifydate=NOW(), password=? WHERE username=?",
+        [user.pass, user.uname],
+    );
+}
+
 // Cannot be a promise because of bcrypt
 function createUser(user, res) {
     bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
@@ -100,24 +107,6 @@ function loginUser(userInfo, res) {
             });
         }
     );
-}
-
-// cannot be a promise because of bcrypt
-function updatePassword(user, res) {
-    bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
-        db_conn.execute(
-            "UPDATE Users SET modifydate=NOW(), password=? WHERE username=?",
-            [hash, user.uname],
-            function(err, results, fields) {
-                if (err) {
-                    logger.error(err.stack);
-                    return res.status(500).send("Internal Server Error");
-                }
-
-                return res.status(200).send("Password Updated");
-            }
-        );
-    });
 }
 
 // Private method only used here

@@ -63,6 +63,7 @@ export default {
         return;
       }
 
+      this.dispmsg = '';
       fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
         method: 'post',
         credentials: 'include',
