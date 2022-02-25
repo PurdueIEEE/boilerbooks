@@ -29,6 +29,7 @@ app.use((req, res, next) => {
     } else {
         // use an API key with the Authorization header
         if (req.cookies.apikey === undefined) {
+            logger.info(`[] - "${req.originalUrl}" - Return 401`);
             if (req.originalUrl.startsWith("/receipt")) {
                 return res.redirect("/ui/login");
             }
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
                 }
 
                 if (results.length === 0) {
+                    logger.info(`[] - "${req.originalUrl}" - Return 401`);
                     if (req.originalUrl.startsWith("/receipt")) {
                         return res.redirect("/ui/login");
                     }
@@ -55,6 +57,7 @@ app.use((req, res, next) => {
                 const exptime = new Date(dbtime.setHours(dbtime.getHours() + 24)); // key expires after 24 hours
                 const now = new Date();
                 if (now >= exptime) {
+                    logger.info(`[] - "${req.originalUrl}" - Return 401`);
                     if (req.originalUrl.startsWith("/receipt")) {
                         return res.redirect("/ui/login");
                     }
@@ -71,12 +74,6 @@ app.use((req, res, next) => {
     }
 });
 
-// Log every route ((TODO and it's result))
-app.use((req, res, next) => {
-    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] ${req.originalUrl}`);
-    next();
-});
-
 // Setup our routes
 app.use("/account", routes.account);
 app.use("/budgets", routes.budgets);
@@ -86,6 +83,13 @@ app.use("/login", routes.login);
 app.use("/receipt", routes.receipt);
 app.use("/income", routes.income);
 app.use("/access", routes.access);
+
+// Log every route and it's result
+//   does not catch invalid API keys
+app.use((req, res, next) => {
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - "${req.originalUrl}" - Return ${res.statusCode}`);
+    next();
+});
 
 // Start and attach app
 const server = app.listen(process.env.PORT, () =>

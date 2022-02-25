@@ -3,68 +3,80 @@ import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items";
 
 const router = Router();
 
-router.get("/treasurers", async(req, res) => {
+router.get("/treasurers", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send([]);
+            res.status(200).send([]);
+            return next()
         }
         const [results_1, ] = await req.context.models.access.getTreasurers(ACCESS_LEVEL.treasurer);
-        return res.status(200).send(results_1);
+        res.status(200).send(results_1);
+        return next()
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next()
     }
 });
 
-router.get("/officers", async(req, res) => {
+router.get("/officers", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send([]);
+            res.status(200).send([]);
+            return next();
         }
         const [results_1, ] = await req.context.models.access.getApprovals(ACCESS_LEVEL.officer);
-        return res.status(200).send(results_1);
+        res.status(200).send(results_1);
+        return next()
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.get("/internals", async(req, res) => {
+router.get("/internals", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send([]);
+            res.status(200).send([]);
+            return next()
         }
         const [results_1, ] = await req.context.models.access.getApprovals(ACCESS_LEVEL.internal_leader);
-        return res.status(200).send(results_1);
+        res.status(200).send(results_1);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.post("/treasurers", async(req, res) => {
+router.post("/treasurers", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "") {
-        return res.status(400).send("Complete all addition details");
+        res.status(400).send("Complete all addition details");
+        return next();
     }
 
     try {
         // first make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Treasurer added"); // silently failed
+            res.status(200).send("Treasurer added"); // silently failed
+            return next();
         }
 
         // second verify that user doesn't have approvals already
         const [results_1, ] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
-            return res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send("User already has approval powers, please remove them before adding more");
+            return next();
         }
 
         // third add user as a treasurer
@@ -86,35 +98,41 @@ router.post("/treasurers", async(req, res) => {
                 approval.amount = 0; // reset back to 0
             }
         }
-        return res.status(200).send("Treasurer added");
+        res.status(200).send("Treasurer added");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.post("/officers", async(req, res) => {
+router.post("/officers", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
         req.body.committee === undefined || req.body.committee == "") {
-        return res.status(400).send("Complete all addition details");
+        res.status(400).send("Complete all addition details");
+        return next();
     }
 
     if (committee_name_swap[req.body.committee] === undefined) {
-        return res.status(400).send("Committee must be proper value");
+        res.status(400).send("Committee must be proper value");
+        return next();
     }
 
     try {
         // first make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Officer added"); // silently failed
+            res.status(200).send("Officer added"); // silently failed
+            return next();
         }
 
         // second verify that user doesn't have approvals already
         const [results_1, ] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
-            return res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send("User already has approval powers, please remove them before adding more");
+            return next();
         }
 
         // third add user as an officer
@@ -127,36 +145,42 @@ router.post("/officers", async(req, res) => {
             level: ACCESS_LEVEL.officer,
         };
         await req.context.models.access.addApproval(approval);
-        return res.status(200).send("Officer added");
+        res.status(200).send("Officer added");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.post("/internals", async(req, res) => {
+router.post("/internals", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
         req.body.committee === undefined || req.body.committee === "" ||
         req.body.amount === undefined || req.body.amount === "") {
-        return res.status(400).send("Complete all addition details");
+        res.status(400).send("Complete all addition details");
+        return next();
     }
 
     if (committee_name_swap[req.body.committee] === undefined) {
-        return res.status(400).send("Committee must be proper value");
+        res.status(400).send("Committee must be proper value");
+        return next();
     }
 
     try {
         // first make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Internal Leader added"); // silently failed
+            res.status(200).send("Internal Leader added"); // silently failed
+            return next();
         }
 
         // second verify that user doesn't have approvals already
         const [results_1, ] = await req.context.models.access.checkApprovalExists(req.body.username);
         if (results_1[0].approvalexists) {
-            return res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send("User already has approval powers, please remove them before adding more");
+            return next();
         }
 
         // third add user as an officer
@@ -169,29 +193,35 @@ router.post("/internals", async(req, res) => {
             level: ACCESS_LEVEL.internal_leader,
         };
         await req.context.models.access.addApproval(approval);
-        return res.status(200).send("Internal Leader added");
+        res.status(200).send("Internal Leader added");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.delete("/approvals/:approver", async(req, res) => {
+router.delete("/approvals/:approver", async(req, res, next) => {
     if (req.params.approver === "") { // Sanity Check
-        return res.status(400).send("Bad Treasurer ID");
+        res.status(400).send("Bad Treasurer ID");
+        return next();
     }
 
     try {
         // first make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Access removed");
+            res.status(200).send("Access removed");
+            return next();
         }
         await req.context.models.access.removeApproval(req.params.approver);
-        return res.status(200).send("Access removed");
+        res.status(200).send("Access removed");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 

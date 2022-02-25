@@ -6,31 +6,36 @@ const router = Router();
 /*
     Get a list of all fiscal years
 */
-router.get("/years", (req, res) => {
-    return res.status(200).send(fiscal_year_list);
+router.get("/years", (req, res, next) => {
+    res.status(200).send(fiscal_year_list);
+    return next();
 });
 
 /*
     Create a new budget for the current fiscal year
 */
-router.post("/:comm", async(req, res) => {
+router.post("/:comm", async(req, res, next) => {
     if (!(req.params.comm in committee_lut)) {
-        return res.status(404).send("Invalid committee value");
+        res.status(404).send("Invalid committee value");
+        return next();
     }
 
     if (req.body === undefined || req.body.length === 0) {
-        return res.status(400).send("No budget items included");
+        res.status(400).send("No budget items included");
+        return next();
     }
 
     // First check the user has approval permissions
     try {
         const [results, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
         if (results.length === 0) {
-            return res.status(404).send("Invalid committee value");
+            res.status(404).send("Invalid committee value");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     // Clear the old budget from the database
@@ -38,17 +43,20 @@ router.post("/:comm", async(req, res) => {
         await req.context.models.budgets.clearBudget(committee_lut[req.params.comm][0], current_fiscal_year);
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     // Add all the new line items
     try {
         for (let item of req.body) {
             if (item.category === undefined || item.amount === undefined) {
-                return res.status(400).send("Budget item(s) not complete");
+                res.status(400).send("Budget item(s) not complete");
+                return next();
             }
             if (item.category === "" || item.amount === "") {
-                return res.status(400).send("Budget item(s) not complete");
+                res.status(400).send("Budget item(s) not complete");
+                return next();
             }
 
             let budget = {
@@ -62,46 +70,53 @@ router.post("/:comm", async(req, res) => {
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
-    return res.status(201).send("Budget submitted for approval");
+    res.status(201).send("Budget submitted for approval");
+    return next();
 });
 
 /*
     Update the committee budget to approved
 */
-router.put("/:comm", async(req, res) => {
+router.put("/:comm", async(req, res, next) => {
     if (!(req.params.comm in committee_lut)) {
-        return res.status(404).send("Invalid committee value");
+        res.status(404).send("Invalid committee value");
+        return next();
     }
 
     try {
         // first we make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Approved Budget");
+            res.status(200).send("Approved Budget");
+            return next();
         }
 
         await req.context.models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], current_fiscal_year);
 
-        return res.status(200).send("Approved Budget");
+        res.status(200).send("Approved Budget");
+        return next();
 
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Get all the submitted committee budgets
 */
-router.get("/submitted", async(req, res) => {
+router.get("/submitted", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send({});
+            res.status(200).send({});
+            return next();
         }
 
         const budgets = {};
@@ -111,11 +126,13 @@ router.get("/submitted", async(req, res) => {
             budgets[committee] = results_1;
         }
 
-        return res.status(200).send(budgets);
+        res.status(200).send(budgets);
+        return next();
 
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 

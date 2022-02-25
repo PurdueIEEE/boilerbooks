@@ -26,7 +26,7 @@ const router = Router();
 /*
     Create new purchase
 */
-router.post("/", async(req, res) => {
+router.post("/", async(req, res, next) => {
     if (req.body.committee === undefined ||
         req.body.price === undefined ||
         req.body.item === undefined ||
@@ -34,7 +34,8 @@ router.post("/", async(req, res) => {
         req.body.reason === undefined ||
         req.body.comments === undefined ||
         req.body.category === undefined) {
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     if (req.body.committee === "" ||
@@ -43,12 +44,14 @@ router.post("/", async(req, res) => {
         req.body.vendor === "" ||
         req.body.reason === "" ||
         req.body.category === "") {
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     // can't escape committe so check for committee name first
     if (committee_name_swap[req.body.committee] === undefined) {
-        return res.status(400).send("Committee must be proper value");
+        res.status(400).send("Committee must be proper value");
+        return next();
     }
 
     const purchase = {
@@ -66,11 +69,13 @@ router.post("/", async(req, res) => {
     try {
         const [results, ] = await req.context.models.purchase.createNewPurchase(purchase);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Purchase cannot be created, try again later");
+            res.status(400).send("Purchase cannot be created, try again later");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error: Purchase not created");
+        res.status(500).send("Internal Server Error: Purchase not created");
+        return next();
     }
 
     /** Get names of approvers and send back to user **/
@@ -91,7 +96,8 @@ router.post("/", async(req, res) => {
         res.status(201).send(`Purchase successfully submitted!\nIt can be reviewed by: ${names}`);
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error: Purchase created");
+        res.status(500).send("Internal Server Error: Purchase created");
+        return next();
     }
 
     if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
@@ -113,34 +119,40 @@ router.post("/", async(req, res) => {
     } catch (err) {
         logger.error(err);
     }
+    return next();
 });
 
 /*
     Mark purchases as 'Reimbursed' or 'Processing Reimbursement'
 */
-router.post("/treasurer", async(req, res) => {
+router.post("/treasurer", async(req, res, next) => {
     if (req.body.status === undefined || req.body.status === "" ||
         req.body.idList === undefined || req.body.idList === "") {
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     if (req.body.status !== "Processing Reimbursement" && req.body.status !== "Reimbursed") {
-        return res.status(400).send("Purchase status must be 'Processing Reimbursement' or 'Reimbursed'");
+        res.status(400).send("Purchase status must be 'Processing Reimbursement' or 'Reimbursed'");
+        return next();
     }
 
     if ((req.body.idList.match(/^(?:\d[,]?)+$/)).length === 0) {
-        return res.status(400).send("ID list must be a comma seperated list of numbers");
+        res.status(400).send("ID list must be a comma seperated list of numbers");
+        return next();
     }
 
     // Check that user is treasurer
     try {
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
+            res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     /** parse each ID **/
@@ -150,12 +162,14 @@ router.post("/treasurer", async(req, res) => {
             /** Update the purchase **/
             const [results, ] = await req.context.models.purchase.reimbursePurchases(id, req.body.status);
             if (results.affectedRows === 0) {
-                return res.status(400).send("One or more purchase IDs are not currenty 'Purchased' or 'Processing Reimbursement'");
+                res.status(400).send("One or more purchase IDs are not currenty 'Purchased' or 'Processing Reimbursement'");
+                next();
             }
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     res.status(201).send("Purchase(s) updated");
@@ -189,19 +203,21 @@ router.post("/treasurer", async(req, res) => {
     } catch (err) {
         logger.error(err);
     }
+    return next();
 });
 
 /*
     Get details of a purchase
 */
-router.get("/:purchaseID", async(req, res) => {
+router.get("/:purchaseID", async(req, res, next) => {
 
     /** get the basic params to check access control **/
     try {
         const [results, ] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // No purchase found
         if (results.length === 0) {
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
 
         const [results_1, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
@@ -211,57 +227,64 @@ router.get("/:purchaseID", async(req, res) => {
             // User is purchaser
             if (req.context.request_user_id === results[0].username) {
                 results[0].committee = committee_name_swap[results[0].committee];
-                return res.status(200).send(results[0]);
+                res.status(200).send(results[0]);
+                return next();
             }
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
 
         const [results_2, ] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
         results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
         results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
         // Approval powers found
-        return res.status(200).send(results[0]);
-
+        res.status(200).send(results[0]);
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
     }
+    return next();
 });
 
 /*
     Cancel a purchase
 */
-router.delete("/:purchaseID", async(req, res) => {
+router.delete("/:purchaseID", async(req, res, next) => {
     // check that the user has approval power first
     try {
         const [results, ] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // Make sure purchase exists and belongs to user
         if (results.length === 0 || results[0].username !== req.context.request_user_id) {
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     // Actually 'delete' the purchase
     try {
         const [results, ] = await req.context.models.purchase.cancelPurchase(req.params.purchaseID);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Purchase status is not 'Requested', 'Approved', 'Purchased'");
+            res.status(400).send("Purchase status is not 'Requested', 'Approved', 'Purchased'");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
-    return res.status(200).send("Purchase canceled");
+    res.status(200).send("Purchase canceled");
+    return next();
 });
 
 /*
     Approve or Deny a purchase
 */
-router.post("/:purchaseID/approve", async(req, res) => {
+router.post("/:purchaseID/approve", async(req, res, next) => {
     if (req.body.price === undefined ||
         req.body.item === undefined ||
         req.body.vendor === undefined ||
@@ -270,7 +293,8 @@ router.post("/:purchaseID/approve", async(req, res) => {
         req.body.fundsource === undefined ||
         req.body.status ===  undefined ||
         req.body.committee === undefined) {
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     if (req.body.price === "" ||
@@ -280,33 +304,40 @@ router.post("/:purchaseID/approve", async(req, res) => {
         req.body.fundsource === "" ||
         req.body.status === "" ||
         req.body.committee === "") {
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     if (req.body.status !== "Approved" && req.body.status !== "Denied") {
-        return res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
+        res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
+        return next();
     }
     if (req.body.fundsource !== "BOSO" && req.body.fundsource !== "Cash" && req.body.fundsource !== "SOGA") {
-        return res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
+        res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
+        return next();
     }
 
     try {
         const [results, ] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
-            return res.status(400).send("Purchase cost too high");
+            res.status(400).send("Purchase cost too high");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     // can't escape committe so check for committee name first
     req.body.committee = Object.keys(committee_name_swap).find(key => committee_name_swap[key] === req.body.committee);
     if (!(req.body.committee in committee_name_swap)) {
-        return res.status(400).send("Committee must be proper value");
+        res.status(400).send("Committee must be proper value");
+        return next();
     }
 
     // check that the user has approval power first
@@ -314,11 +345,13 @@ router.post("/:purchaseID/approve", async(req, res) => {
         const [results, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
         // No approval powers for committee
         if (results.length === 0) {
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     const purchase = {
@@ -337,11 +370,13 @@ router.post("/:purchaseID/approve", async(req, res) => {
     try {
         const [results, ] = await req.context.models.purchase.approvePurchase(purchase);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Purchase not in 'Requested' status");
+            res.status(400).send("Purchase not in 'Requested' status");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     res.status(201).send(`Purchase ${req.body.status}`);
@@ -368,50 +403,58 @@ router.post("/:purchaseID/approve", async(req, res) => {
     } catch (err) {
         logger.error(err);
     }
+    return next();
 });
 
 /*
     Complete a purchase
 */
-router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, res) => {
+router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, res, next) => {
     // This catches our fileFilter filtering out files
     if (req.file === undefined) {
-        return res.status(400).send("Reciept must be a PDF, JPG, or PNG");
+        res.status(400).send("Reciept must be a PDF, JPG, or PNG");
+        return next();
     }
 
     if (req.body.price === undefined ||
         req.body.comments === undefined ||
         req.body.purchasedate === undefined) {
         fs.unlink(req.file.path);
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next()
     }
 
     if (req.body.price === "" ||
         req.body.purchasedate === "") {
         fs.unlink(req.file.path);
-        return res.status(400).send("All purchase details must be completed");
+        res.status(400).send("All purchase details must be completed");
+        return next();
     }
 
     try {
         const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
             fs.unlink(req.file.path);
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
         if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
             fs.unlink(req.file.path);
-            return res.status(400).send("Purchase cost too high, create a new request if needed");
+            res.status(400).send("Purchase cost too high, create a new request if needed");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
         fs.unlink(req.file.path);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     // can't escape the purchasedate, so check format instead
     if ((req.body.purchasedate.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
         fs.unlink(req.file.path);
-        return res.status(400).send("Purchase Date must be in the form YYYY-MM-DD");
+        res.status(400).send("Purchase Date must be in the form YYYY-MM-DD");
+        return next();
     }
 
     /** get the basic params to check access control **/
@@ -420,12 +463,14 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         // No purchase found
         if (results.length === 0) {
             fs.unlink(req.file.path);
-            return res.status(404).send("Purchase not found");
+            res.status(404).send("Purchase not found");
+            return next();
         }
         // User is not purchaser
         if (req.context.request_user_id !== results[0].username) {
             fs.unlink(req.file.path);
-            return res.status(400).send("Purchase not found");
+            res.status(400).send("Purchase not found");
+            return next();
         }
 
         /** setup file and remove the temp **/
@@ -448,7 +493,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             const stats = await fs.stat(file_save_name);
             if (stats.isFile()) {
                 fs.unlink(req.file.path);
-                return res.status(500).send("Receipt file already exists");
+                res.status(500).send("Receipt file already exists");
+                return next();
             }
         } catch (err) {
             // File doesn't exist, so just continue
@@ -473,7 +519,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
 
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     /** send email to treasurer **/
@@ -497,10 +544,12 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         logger.error(err);
     }
 
-    return res.status(201).send("Purchase completed");
+    res.status(201).send("Purchase completed");
+    return next();
 }, (err, req, res, next) => {
     // This catches too large files
     res.status(400).send("Reciept must be less than 2MB");
+    return next();
 });
 
 export default router;

@@ -28,7 +28,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/committee`, {
+    fetch(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
     })

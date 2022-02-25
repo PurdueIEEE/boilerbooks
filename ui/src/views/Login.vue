@@ -169,7 +169,7 @@ export default {
       }
 
       this.error = false;
-      fetch(`http://${location.hostname}/api/account`, {
+      fetch(`/api/v2/account`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

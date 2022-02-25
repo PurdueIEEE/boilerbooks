@@ -15,7 +15,7 @@ const bcrypt_rounds = 10;
     Creates a new user account
     cannot be async because of bcrypt
 */
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
@@ -27,7 +27,8 @@ router.post("/", (req, res) => {
         req.body.pass1 === undefined ||
         req.body.pass2 === undefined ||
         req.body.createpin === undefined) {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     if (req.body.fname === "" ||
@@ -41,20 +42,24 @@ router.post("/", (req, res) => {
         req.body.pass1 === "" ||
         req.body.pass2 === "" ||
         req.body.createpin === "") {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     // eslint-disable-next-line
     if (req.body.uname.match(/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/)) {
-        return res.status(400).send("Username cannot contain any special characters");
+        res.status(400).send("Username cannot contain any special characters");
+        return next();
     }
 
     if (req.body.createpin !== process.env.ACCOUNT_PIN) {
-        return res.status(400).send("Incorrect Creation PIN");
+        res.status(400).send("Incorrect Creation PIN");
+        return next();
     }
 
     if (req.body.pass1 !== req.body.pass2) {
-        return res.status(400).send("Passwords do not match");
+        res.status(400).send("Passwords do not match");
+        return next();
     }
 
     const user = {
@@ -69,7 +74,7 @@ router.post("/", (req, res) => {
         pass: req.body.pass1,
     };
 
-    req.context.models.account.createUser(user, res);
+    req.context.models.account.createUser(user, res, next);
 });
 
 // ---------------------------
@@ -79,36 +84,42 @@ router.post("/", (req, res) => {
 /*
     Gets user details, only if requester is the user or the Treasurer
 */
-router.get("/:userID", async(req, res) => {
+router.get("/:userID", async(req, res, next) => {
     try {
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
-            return res.status(404).send("User not found");
+            res.status(404).send("User not found");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     try {
         const [results, ] = await req.context.models.account.getUserByID(req.params.userID);
         if (results.length === 0) {
-            return res.status(400).send("User not found");
+            res.status(400).send("User not found");
+            return next();
         }
 
-        return res.status(200).send(results[0]);
+        res.status(200).send(results[0]);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Updates user account details, requester must be user
 */
-router.put("/:userID", async(req, res) => {
+router.put("/:userID", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     if (req.body.fname === undefined ||
@@ -118,7 +129,8 @@ router.put("/:userID", async(req, res) => {
         req.body.city === undefined ||
         req.body.state === undefined ||
         req.body.zip === undefined) {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     if (req.body.fname === "" ||
@@ -128,7 +140,8 @@ router.put("/:userID", async(req, res) => {
         req.body.city === "" ||
         req.body.state === "" ||
         req.body.zip === "") {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     const user = {
@@ -144,10 +157,12 @@ router.put("/:userID", async(req, res) => {
 
     try {
         await req.context.models.account.updateUser(user);
-        return res.status(200).send("Account Details Updated");
+        res.status(200).send("Account Details Updated");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
@@ -155,23 +170,27 @@ router.put("/:userID", async(req, res) => {
     Changes user password, requester must be user
     Cannot be async because of bcrypt
 */
-router.post("/:userID", (req, res) => {
+router.post("/:userID", (req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     if (req.body.pass1 === undefined ||
         req.body.pass2 === undefined) {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     if (req.body.pass1 === "" ||
         req.body.pass2 === "") {
-        return res.status(400).send("All account details must be completed");
+        res.status(400).send("All account details must be completed");
+        return next();
     }
 
     if (req.body.pass1 !== req.body.pass2) {
-        return res.status(400).send("Passwords do not match");
+        res.status(400).send("Passwords do not match");
+        return next();
     }
 
     // But this can by async
@@ -198,10 +217,11 @@ router.post("/:userID", (req, res) => {
                        <br>
                        <small>This email was automatically sent by Boiler Books</small>`,
             });
+            next();
         } catch (err) {
             logger.error(err.stack);
             if (!res.headersSent) res.status(500).send("Internal Server Error");
-            return;
+            return next();
         }
     });
 });
@@ -209,9 +229,10 @@ router.post("/:userID", (req, res) => {
 /*
     Get a list of all purchases made by the user
 */
-router.get("/:userID/purchases", async(req, res) => {
+router.get("/:userID/purchases", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     try {
@@ -219,19 +240,22 @@ router.get("/:userID/purchases", async(req, res) => {
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
-        return res.status(200).send(results);
+        res.status(200).send(results);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Get a list of all active requests user can approve
 */
-router.get("/:userID/approvals", async(req, res) => {
+router.get("/:userID/approvals", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     try {
@@ -239,19 +263,22 @@ router.get("/:userID/approvals", async(req, res) => {
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
-        return res.status(200).send(results);
+        res.status(200).send(results);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Get a list of all active purchases user can complete
 */
-router.get("/:userID/completions", async(req, res) => {
+router.get("/:userID/completions", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     try {
@@ -259,19 +286,22 @@ router.get("/:userID/completions", async(req, res) => {
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
-        return res.status(200).send(results);
+        res.status(200).send(results);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Get a list of all active purchases user can reimburse
 */
-router.get("/:userID/reimbursements", async(req, res) => {
+router.get("/:userID/reimbursements", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     try {
@@ -279,19 +309,22 @@ router.get("/:userID/reimbursements", async(req, res) => {
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
-        return res.status(200).send(results);
+        res.status(200).send(results);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
 /*
     Get a list of all committee balances user can view
 */
-router.get("/:userID/balances", async(req, res) => {
+router.get("/:userID/balances", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     const committees = Object.keys(committee_name_swap);
@@ -307,18 +340,21 @@ router.get("/:userID/balances", async(req, res) => {
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
-    return res.status(200).send(outputBalances);
+    res.status(200).send(outputBalances);
+    next();
 });
 
 /*
     Get a list of all committees user has approval powers in
 */
-router.get("/:userID/committees", async(req, res) => {
+router.get("/:userID/committees", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
-        return res.status(404).send("User not found");
+        res.status(404).send("User not found");
+        return next();
     }
 
     try {
@@ -334,10 +370,12 @@ router.get("/:userID/committees", async(req, res) => {
             }
         }
 
-        return res.status(200).send(filtered_lut);
+        res.status(200).send(filtered_lut);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 

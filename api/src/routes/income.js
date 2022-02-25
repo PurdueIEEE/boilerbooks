@@ -3,7 +3,7 @@ import { committee_name_swap, logger } from "../common_items";
 
 const router = Router();
 
-router.post("/", async(req, res) => {
+router.post("/", async(req, res, next) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
         req.body.amount === undefined ||
@@ -11,7 +11,8 @@ router.post("/", async(req, res) => {
         req.body.type === undefined ||
         req.body.status === undefined ||
         req.body.comments === undefined) {
-        return res.status(400).send("All donation details must be completed");
+        res.status(400).send("All donation details must be completed");
+        return next();
     }
 
     if (req.body.committee === "" ||
@@ -19,22 +20,26 @@ router.post("/", async(req, res) => {
         req.body.amount === "" ||
         req.body.type === "" ||
         req.body.status === "") {
-        return res.status(400).send("All donation details must be completed");
+        res.status(400).send("All donation details must be completed");
+        return next();
     }
 
     // can't escape committee so check committee name first
     if (committee_name_swap[req.body.committee] === undefined) {
-        return res.status(400).send("Committee must be proper value");
+        res.status(400).send("Committee must be proper value");
+        return next();
     }
 
     // can't escape type, so check it first
     if (req.body.type !== "BOSO" && req.body.type !== "Cash" && req.body.type !== "Discount" && req.body.type !== "SOGA") {
-        return res.status(400).send("Type must be proper value");
+        res.status(400).send("Type must be proper value");
+        return next();
     }
 
     // can't escape status so check it first
     if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
-        return res.status(400).send("Status must be proper value");
+        res.status(400).send("Status must be proper value");
+        return next();
     }
 
     // if donation coming through BOSO, it's not actually recieved
@@ -46,11 +51,13 @@ router.post("/", async(req, res) => {
     try {
         const [results, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
         if (results.length === 0) {
-            return res.status(403).send("Not allowed to create donation"); // silently fail
+            res.status(403).send("Not allowed to create donation"); // silently fail
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     const donation = {
@@ -67,26 +74,31 @@ router.post("/", async(req, res) => {
     try {
         const [results, ] = await req.context.models.income.createNewDonation(donation);
         if (results.affectedRows === 0) {
-            return res.status(400).send("Donation cannot be created, try again later");
+            res.status(400).send("Donation cannot be created, try again later");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
-    return res.status(201).send("Donation created");
+    res.status(201).send("Donation created");
+    return next();
 });
 
-router.get("/", async(req, res) => {
+router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(404).send("Income not found");
+            res.status(404).send("Income not found");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     try {
@@ -94,32 +106,38 @@ router.get("/", async(req, res) => {
         results.forEach(income => {
             income.committee = committee_name_swap[income.committee];
         });
-        return res.status(200).send(results);
+        res.status(200).send(results);
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 
-router.put("/:incomeID", async(req, res) => {
+router.put("/:incomeID", async(req, res, next) => {
     if (req.body.status === undefined ||
         req.body.refnumber === undefined) {
-        return res.status(400).send("All income update details must be completed");
+        res.status(400).send("All income update details must be completed");
+        return next();
     }
 
     if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
-        return res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
+        res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
+        return next();
     }
 
     // Check that user is treasurer
     try {
         const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            return res.status(404).send("Income not found");
+            res.status(404).send("Income not found");
+            return next();
         }
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     const income = {
@@ -130,10 +148,12 @@ router.put("/:incomeID", async(req, res) => {
 
     try {
         await req.context.models.income.updateIncome(income);
-        return res.status(200).send("Income updated");
+        res.status(200).send("Income updated");
+        return next();
     } catch (err) {
         logger.error(err.stack);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 });
 

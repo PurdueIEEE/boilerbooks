@@ -71,67 +71,73 @@ async function checkResetTime(user, rstlink) {
 }
 
 // Cannot be a promise because of bcrypt
-function createUser(user, res) {
+function createUser(user, res, next) {
     bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
         db_conn.execute(
             "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
             [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash],
             function(err, results, fields) {
                 if (err && err.code === "ER_DUP_ENTRY") {
-                    return res.status(400).send("Username already exists");
+                    res.status(400).send("Username already exists");
+                    return next();
                 }
                 else if (err) {
                     logger.error(err.stack);
-                    return res.status(500).send("Internal Server Error");
+                    res.status(500).send("Internal Server Error");
+                    return next();
                 }
 
                 const newUser = {
                     uname: user.uname,
                 };
-                return getUserAccessLevel(newUser, res);
+                return getUserAccessLevel(newUser, res, next);
             }
         );
     });
 }
 
 // Cannot be a promise because of bcrypt
-function loginUser(userInfo, res) {
+function loginUser(userInfo, res, next) {
     db_conn.execute(
         "SELECT password, email, first, last FROM Users WHERE Users.username = ?",
         [userInfo.uname],
         function(err, results, fields) {
             if (err) {
                 logger.error(err.stack);
-                return res.status(500).send("Internal Server Error");
+                res.status(500).send("Internal Server Error");
+                return next();
             }
 
             if (results.length === 0) {
-                return  res.status(400).send("Incorrect Username or Password");
+                res.status(400).send("Incorrect Username or Password");
+                return next();
             }
 
             bcrypt.compare(userInfo.pass, results[0].password, function(err, result) {
                 if (!result) {
-                    return res.status(400).send("Incorrect Username or Password");
+                    res.status(400).send("Incorrect Username or Password");
+                    return next();
                 }
 
                 const user = {
                     uname: userInfo.uname,
                 };
-                return getUserAccessLevel(user, res);
+                return getUserAccessLevel(user, res, next);
             });
         }
     );
 }
 
 // Private method only used here
-function getUserAccessLevel(user, res) {
+function getUserAccessLevel(user, res, next) {
     db_conn.execute(
         "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPrivilege FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
         [user.uname, ACCESS_LEVEL.member],
         function(err, results, fields) {
             if (err) {
                 logger.error(err.stack);
-                return res.status(500).send("Internal Server Error");
+                res.status(500).send("Internal Server Error");
+                return next();
             }
             // user.viewFinancials: Expected Donations, View Financials
             // user.viewApprove: Approve Purchases
@@ -149,13 +155,13 @@ function getUserAccessLevel(user, res) {
                 user.viewTreasurer = false;
             }
 
-            return generateAPIKey(user, res);
+            return generateAPIKey(user, res, next);
         }
     );
 }
 
 // Private method only used here
-function generateAPIKey(user, res) {
+function generateAPIKey(user, res, next) {
     const newKey = uuidv4(); // UUIDs are not strictly great api keys
     //  but they are good enough for our purposes
     db_conn.execute(
@@ -164,10 +170,12 @@ function generateAPIKey(user, res) {
         function(err, results, fields) {
             if (err) {
                 logger.error(err.stack);
-                return res.status(500).send("Internal Server Error");
+                res.status(500).send("Internal Server Error");
+                return next();
             }
             res.cookie("apikey", newKey, { maxAge:1000*60*60*24,}); // cookie is valid for 24 hours
-            return res.status(201).send(user);
+            res.status(201).send(user);
+            next();
         }
     );
 }

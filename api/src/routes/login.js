@@ -16,7 +16,7 @@ const router = Router();
     Logs user in
     cannot be async because of bcrypt
 */
-router.post("/", async(req, res) => {
+router.post("/", async(req, res, next) => {
     if (req.body.uname === undefined || req.body.uname === "" ||
         req.body.pass === undefined || req.body.pass === "") {
         return res.status(400).send("Fill out login details");
@@ -27,15 +27,16 @@ router.post("/", async(req, res) => {
         pass: req.body.pass,
     };
 
-    req.context.models.account.loginUser(user, res);
+    req.context.models.account.loginUser(user, res, next);
 });
 
 /*
     Finds all usernames associated with an email and sends the email to the requester
 */
-router.post("/forgot-user", async(req, res) => {
+router.post("/forgot-user", async(req, res, next) => {
     if (req.body.email === undefined || req.body.email === "") {
-        return res.status(400).send("Email must be included");
+        res.status(400).send("Email must be included");
+        next();
     }
 
     try {
@@ -57,20 +58,21 @@ router.post("/forgot-user", async(req, res) => {
                    <br>
                    <small>This email was automatically sent by Boiler Books</small>`,
         });
-
+        return next();
     } catch (err) {
         logger.error(err.stack);
         if (!res.headersSent) res.status(500).send("Internal Server Error");
-        return;
+        return next();;
     }
 });
 
 /*
     Sends reset email to user if they exist
 */
-router.post("/forgot-pass", async(req, res) => {
+router.post("/forgot-pass", async(req, res, next) => {
     if (req.body.user === undefined || req.body.user === "") {
-        return res.status(400).send("Username must be included");
+        res.status(400).send("Username must be included");
+        return next();
     }
 
     try {
@@ -100,51 +102,57 @@ router.post("/forgot-pass", async(req, res) => {
                    <br>
                    <small>This email was automatically sent by Boiler Books</small>`,
         });
-
+        next();
     } catch (err) {
         logger.error(err.stack);
         if (!res.headersSent) res.status(500).send("Internal Server Error");
-        return;
+        return next();
     }
 });
 
 /*
     Resets a password
 */
-router.post("/reset", async(req, res) => {
+router.post("/reset", async(req, res, next) => {
     if (req.body.pass1 === undefined ||
         req.body.pass2 === undefined ||
         req.body.uname === undefined ||
         req.body.rstlink === undefined) {
-        return res.status(400).send("All reset information must be included");
+        res.status(400).send("All reset information must be included");
+        return next();
     }
 
     if (req.body.pass1 === "" ||
         req.body.pass2 === "" ||
         req.body.uname === "" ||
         req.body.rstlink === "") {
-        return res.status(400).send("All reset information must be included");
+        res.status(400).send("All reset information must be included");
+        return next();
     }
 
     if (req.body.pass1 !== req.body.pass2) {
-        return res.status(400).send("Passwords do not match");
+        res.status(400).send("Passwords do not match");
+        return next();
     }
 
     try {
         const [results, ] = await req.context.models.account.checkResetTime(req.body.uname, req.body.rstlink);
 
         if (results.length === 0 || results[0].resettime === null) {
-            return res.status(401).send("Reset link expired!"); // silently fail
+            res.status(401).send("Reset link expired!"); // silently fail
+            return next();
         }
         const dbtime = new Date(results[0].resettime);
         const exptime = new Date(dbtime.setHours(dbtime.getHours() + 24)); // reset link expires after 24 hours
         const now = new Date();
         if (now >= exptime) {
-            return res.status(401).send("Reset link expired!");
+            res.status(401).send("Reset link expired!");
+            return next();
         }
     } catch (err) {
         logger.error(err);
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
+        return next();
     }
 
     bcrypt.hash(req.body.pass1, bcrypt_rounds, async function(error, hash) {
@@ -170,10 +178,11 @@ router.post("/reset", async(req, res) => {
                        <br>
                        <small>This email was automatically sent by Boiler Books</small>`,
             });
+            return next();
         } catch (err) {
             logger.error(err.stack);
             if (!res.headersSent) res.status(500).send("Internal Server Error");
-            return;
+            return next();
         }
     });
 });

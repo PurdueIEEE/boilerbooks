@@ -117,7 +117,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'get',
         credentials: 'include',
       })
