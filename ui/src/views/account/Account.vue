@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     updateAccount() {
-      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
+      fetch(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

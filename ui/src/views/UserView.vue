@@ -18,7 +18,7 @@
             <p class="fs-5">Email: <span class="fw-bold">{{user.email}}</span></p>
           </div>
           <div class="col-md-12 border border-secondary p-3">
-            <p class="fs-5">Address <span class="fw-bold">{{user.address}}</span></p>
+            <p class="fs-5">Address: <span class="fw-bold">{{user.address}}</span></p>
           </div>
           <div class="col-md-12 border border-secondary p-3">
             <p class="fs-5">City: <span class="fw-bold">{{user.city}}</span></p>
@@ -46,7 +46,10 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${this.$route.query.id}`, {
+    if (this.$route.query.id === undefined || this.$route.query.id === '') {
+      return;
+    }
+    fetch(`/api/v2/account/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
     })

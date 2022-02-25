@@ -33,7 +33,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/balances`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}/balances`, {
         method: 'get',
         credentials: 'include',
     })

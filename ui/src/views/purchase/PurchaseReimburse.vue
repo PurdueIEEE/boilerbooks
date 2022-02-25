@@ -85,7 +85,7 @@ export default {
       return `/user-view?id=${id}`;
     },
     computeReceipt(fp) {
-      return `http://${location.hostname}/api${fp}`
+      return `/api/v2${fp}`
     },
     addToBox(id) {
       if(this.processList === '') {
@@ -99,7 +99,7 @@ export default {
     },
     processPurchase(status) {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/purchase/treasurer`, {
+      fetch(`/api/v2/purchase/treasurer`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -124,7 +124,7 @@ export default {
       });
     },
     init() {
-      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/reimbursements`, {
+      fetch(`/api/v2/account/${auth_state.state.uname}/reimbursements`, {
           method: 'get',
           credentials: 'include',
       })

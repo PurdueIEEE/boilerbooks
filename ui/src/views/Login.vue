@@ -125,7 +125,7 @@ export default {
   methods: {
     login() {
       this.error = false;
-      fetch(`http://${location.hostname}/api/login`, {
+      fetch(`/api/v2/login`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

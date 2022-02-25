@@ -97,7 +97,7 @@ export default {
     },
     pushNewBudget() {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/budgets/${this.committee}`, {
+      fetch(`/api/v2/budgets/${this.committee}`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -122,7 +122,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/committees`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     })
@@ -165,7 +165,7 @@ export default {
         return [];
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/summary`, {
+      return await fetch(`/api/v2/committee/${this.committee}/summary`, {
         method: 'get',
         credentials: 'include',
       })

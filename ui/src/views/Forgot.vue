@@ -65,7 +65,7 @@ export default {
     forgotUsername() {
       this.dispmsg = '';
       this.error = false;
-      fetch(`http://${location.hostname}/api/login/forgot-user`, {
+      fetch(`/api/v2/login/forgot-user`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -86,7 +86,7 @@ export default {
     forgotPassword() {
       this.dispmsg = '';
       this.error = false;
-      fetch(`http://${location.hostname}/api/login/forgot-pass`, {
+      fetch(`/api/v2/login/forgot-pass`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

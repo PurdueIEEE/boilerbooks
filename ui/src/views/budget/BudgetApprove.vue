@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     approveBudget(comm) {
-      fetch(`http://${location.hostname}/api/budgets/${comm}`, {
+      fetch(`/api/v2/budgets/${comm}`, {
         method: 'put',
         credentials: 'include',
       })
@@ -84,7 +84,7 @@ export default {
       });
     },
     init() {
-      fetch(`http://${location.hostname}/api/budgets/submitted`, {
+      fetch(`/api/v2/budgets/submitted`, {
         method: 'get',
         credentials: 'include',
       })

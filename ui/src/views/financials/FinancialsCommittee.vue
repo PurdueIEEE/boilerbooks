@@ -122,7 +122,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/committees`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     })
@@ -150,7 +150,7 @@ export default {
       console.log(error);
     });
 
-    fetch(`http://${location.hostname}/api/budgets/years`, {
+    fetch(`/api/v2/budgets/years`, {
       method: 'get',
       credentials: 'include',
     })
@@ -203,7 +203,7 @@ export default {
         return {balance:''};
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/balance`, {
+      return await fetch(`/api/v2/committee/${this.committee}/balance`, {
         method: 'get',
         credentials: 'include',
       })
@@ -229,7 +229,7 @@ export default {
         return {budget:''};
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/budget/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/budget/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })
@@ -255,7 +255,7 @@ export default {
         return {income:''};
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/incometotal/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/incometotal/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })
@@ -281,7 +281,7 @@ export default {
         return {spent:''};
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/expensetotal/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/expensetotal/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })
@@ -307,7 +307,7 @@ export default {
         return {};
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/summary/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })
@@ -333,7 +333,7 @@ export default {
         return [];
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/purchases/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })
@@ -359,7 +359,7 @@ export default {
         return [];
       }
 
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/income/${this.fiscalyear}`, {
+      return await fetch(`/api/v2/committee/${this.committee}/income/${this.fiscalyear}`, {
         method: 'get',
         credentials: 'include',
       })

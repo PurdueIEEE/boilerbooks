@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     init() {
-      fetch(`http://${location.hostname}/api/income`, {
+      fetch(`/api/v2/income`, {
         method: 'get',
         credentials: 'include',
       })
@@ -105,7 +105,7 @@ export default {
       }
 
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/income/${id}`, {
+      fetch(`/api/v2/income/${id}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

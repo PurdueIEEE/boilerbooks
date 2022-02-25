@@ -69,7 +69,7 @@ export default {
   methods: {
     submitRequest() {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/purchase`, {
+      fetch(`/api/v2/purchase`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -100,7 +100,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/committee`, {
+    fetch(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
     })
@@ -134,7 +134,7 @@ export default {
       if (this.committee === '') return [];
 
       // Not sure if this is valid, Promises confuse me sometimes
-      return await fetch(`http://${location.hostname}/api/committee/${this.committee}/categories`, {
+      return await fetch(`/api/v2/committee/${this.committee}/categories`, {
         method: 'get',
         credentials: 'include',
       })

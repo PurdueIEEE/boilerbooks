@@ -65,7 +65,7 @@ export default {
   },
   mounted() {
     this.init();
-    fetch(`http://${location.hostname}/api/committee`, {
+    fetch(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
     })
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     init() {
-      fetch(`http://${location.hostname}/api/access/officers`, {
+      fetch(`/api/v2/access/officers`, {
         method: 'get',
         credentials: 'include',
       })
@@ -124,7 +124,7 @@ export default {
       });
     },
     remove(username) {
-      fetch(`http://${location.hostname}/api/access/approvals/${username}`, {
+      fetch(`/api/v2/access/approvals/${username}`, {
         method: 'delete',
         credentials: 'include',
       })
@@ -146,7 +146,7 @@ export default {
       });
     },
     create() {
-      fetch(`http://${location.hostname}/api/access/officers`, {
+      fetch(`/api/v2/access/officers`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

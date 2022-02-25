@@ -76,7 +76,7 @@ export default {
   methods: {
     submitIncome() {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/income`, {
+      fetch(`/api/v2/income`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -108,7 +108,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/committees`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     })

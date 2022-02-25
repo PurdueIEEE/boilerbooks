@@ -52,7 +52,7 @@ export default {
       }
 
       this.dispmsg = "";
-      fetch(`http://${location.hostname}/api/login/reset`, {
+      fetch(`/api/v2/login/reset`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

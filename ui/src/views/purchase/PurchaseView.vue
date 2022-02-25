@@ -69,7 +69,7 @@ export default {
       return `/detail-view?id=${id}`;
     },
     cancelPurchase(purchaseid) {
-      fetch(`http://${location.hostname}/api/purchase/${purchaseid}`, {
+      fetch(`/api/v2/purchase/${purchaseid}`, {
         method: 'delete',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -89,7 +89,7 @@ export default {
       })
     },
     init() {
-      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/purchases`, {
+      fetch(`/api/v2/account/${auth_state.state.uname}/purchases`, {
           method: 'get',
           credentials: 'include',
       })

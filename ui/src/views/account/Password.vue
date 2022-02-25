@@ -64,7 +64,7 @@ export default {
       }
 
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}`, {
+      fetch(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),

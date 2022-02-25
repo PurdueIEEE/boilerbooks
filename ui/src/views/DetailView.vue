@@ -68,7 +68,10 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/purchase/${this.$route.query.id}`, {
+    if (this.$route.query.id === undefined || this.$route.query.id === '') {
+      return;
+    }
+    fetch(`/api/v2/purchase/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
     })
@@ -99,7 +102,7 @@ export default {
   },
   computed: {
     fullRecipt() {
-      return `http://${location.hostname}/api${this.purchase.receipt}`;
+      return `/api/v2${this.purchase.receipt}`;
     }
   }
 }

@@ -85,7 +85,7 @@ export default {
       formData.append('comments', this.purchase.comments);
       formData.append('receipt', fileInput.files[0]);
 
-      fetch(`http://${location.hostname}/api/purchase/${id}/complete`, {
+      fetch(`/api/v2/purchase/${id}/complete`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({}),
@@ -99,45 +99,49 @@ export default {
         }
         this.error = !response.ok;
         if (response.ok) {
-          this.completionList = this.completionList.filter((p) => {return p.purchaseid !== id});
           this.currentComplete = '';
+          this.init();
         }
         return response.text();
       })
       .then((response) => {
         this.dispmsg = response;
+      });
+    },
+
+    init() {
+      fetch(`/api/v2/account/${auth_state.state.uname}/completions`, {
+        method: 'get',
+        credentials: 'include',
       })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
+
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+          return;
+        }
+
+        this.completionList = response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/completions`, {
-        method: 'get',
-        credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-
-      this.completionList = response;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    this.init();
   },
   asyncComputed: {
     async purchase() {
@@ -155,7 +159,7 @@ export default {
       }
 
       // Not sure if this is valid, but it works...
-      return await fetch(`http://${location.hostname}/api/purchase/${this.currentComplete}`, {
+      return await fetch(`/api/v2/purchase/${this.currentComplete}`, {
         method: 'get',
         credentials: 'include',
       })

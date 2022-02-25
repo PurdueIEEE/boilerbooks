@@ -83,7 +83,7 @@ export default {
   methods: {
     approvePurchase(status, id) {
       this.dispmsg = '';
-      fetch(`http://${location.hostname}/api/purchase/${id}/approve`, {
+      fetch(`/api/v2/purchase/${id}/approve`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -108,7 +108,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`http://${location.hostname}/api/account/${auth_state.state.uname}/approvals`, {
+    fetch(`/api/v2/account/${auth_state.state.uname}/approvals`, {
         method: 'get',
         credentials: 'include',
     })
@@ -156,7 +156,7 @@ export default {
       }
 
       // Not sure if this is valid, but it works...
-      return await fetch(`http://${location.hostname}/api/purchase/${this.currentApprove}`, {
+      return await fetch(`/api/v2/purchase/${this.currentApprove}`, {
         method: 'get',
         credentials: 'include',
       })

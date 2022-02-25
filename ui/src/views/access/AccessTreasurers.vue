@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     init() {
-      fetch(`http://${location.hostname}/api/access/treasurers`, {
+      fetch(`/api/v2/access/treasurers`, {
         method: 'get',
         credentials: 'include',
       })
@@ -84,7 +84,7 @@ export default {
       });
     },
     remove(username) {
-      fetch(`http://${location.hostname}/api/access/approvals/${username}`, {
+      fetch(`/api/v2/access/approvals/${username}`, {
         method: 'delete',
         credentials: 'include',
       })
@@ -106,7 +106,7 @@ export default {
       });
     },
     create() {
-      fetch(`http://${location.hostname}/api/access/treasurers`, {
+      fetch(`/api/v2/access/treasurers`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
