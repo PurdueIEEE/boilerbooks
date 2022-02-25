@@ -86,7 +86,7 @@ router.post("/", (req, res, next) => {
 */
 router.get("/:userID", async(req, res, next) => {
     try {
-        const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
             res.status(404).send("User not found");
             return next();
@@ -98,7 +98,7 @@ router.get("/:userID", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.account.getUserByID(req.params.userID);
+        const [results] = await req.context.models.account.getUserByID(req.params.userID);
         if (results.length === 0) {
             res.status(400).send("User not found");
             return next();
@@ -202,7 +202,7 @@ router.post("/:userID", (req, res, next) => {
 
         try {
             await req.context.models.account.updatePassword(user);
-            const [results, ] = await req.context.models.account.getUserByID(req.context.request_user_id);
+            const [results] = await req.context.models.account.getUserByID(req.context.request_user_id);
             res.status(200).send("Password Changed");
             await mailer.sendMail({
                 to: results[0].email,
@@ -236,7 +236,7 @@ router.get("/:userID/purchases", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
+        const [results] = await req.context.models.purchase.getPurchaseByUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -259,7 +259,7 @@ router.get("/:userID/approvals", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
+        const [results] = await req.context.models.purchase.getApprovalsForUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -282,7 +282,7 @@ router.get("/:userID/completions", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.purchase.getCompletionsForUser(req.params.userID);
+        const [results] = await req.context.models.purchase.getCompletionsForUser(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -305,7 +305,7 @@ router.get("/:userID/reimbursements", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.purchase.getTreasurer(req.params.userID);
+        const [results] = await req.context.models.purchase.getTreasurer(req.params.userID);
         results.forEach(purchase => {
             purchase.committee = committee_name_swap[purchase.committee];
         });
@@ -332,9 +332,9 @@ router.get("/:userID/balances", async(req, res, next) => {
 
     try {
         for (let committee of committees) {
-            const [results, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
+            const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
             if (results.length !== 0) {
-                const [results_1, ] = await req.context.models.committee.getCommitteeBalance(committee);
+                const [results_1] = await req.context.models.committee.getCommitteeBalance(committee);
                 outputBalances[committee_name_swap[committee]] = results_1[0].balance;
             }
         }
@@ -358,7 +358,7 @@ router.get("/:userID/committees", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.account.getUserApprovalCommittees(req.params.userID);
+        const [results] = await req.context.models.account.getUserApprovalCommittees(req.params.userID);
 
         // very slow very bad
         let filtered_lut = {};

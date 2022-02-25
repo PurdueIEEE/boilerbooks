@@ -40,7 +40,7 @@ router.post("/forgot-user", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.account.getUserByEmail(req.body.email);
+        const [results] = await req.context.models.account.getUserByEmail(req.body.email);
         res.status(200).send("If that account exists, an email was send the provided address.");
         let list_of_users = results.map((element) => (element.username)).join(", ");
         await mailer.sendMail({
@@ -62,7 +62,7 @@ router.post("/forgot-user", async(req, res, next) => {
     } catch (err) {
         logger.error(err.stack);
         if (!res.headersSent) res.status(500).send("Internal Server Error");
-        return next();;
+        return next();
     }
 });
 
@@ -76,7 +76,7 @@ router.post("/forgot-pass", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.account.getUserByID(req.body.user);
+        const [results] = await req.context.models.account.getUserByID(req.body.user);
         res.status(200).send("Instructions to reset your password were sent to your email");
 
         const buffer = crypto.randomBytes(64);
@@ -136,7 +136,7 @@ router.post("/reset", async(req, res, next) => {
     }
 
     try {
-        const [results, ] = await req.context.models.account.checkResetTime(req.body.uname, req.body.rstlink);
+        const [results] = await req.context.models.account.checkResetTime(req.body.uname, req.body.rstlink);
 
         if (results.length === 0 || results[0].resettime === null) {
             res.status(401).send("Reset link expired!"); // silently fail

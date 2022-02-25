@@ -27,7 +27,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // First check the user has approval permissions
     try {
-        const [results, ] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -89,7 +89,7 @@ router.put("/:comm", async(req, res, next) => {
 
     try {
         // first we make sure user is actually a treasurer
-        const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send("Approved Budget");
             return next();
@@ -113,7 +113,7 @@ router.put("/:comm", async(req, res, next) => {
 router.get("/submitted", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
-        const [results, ] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send({});
             return next();
@@ -122,7 +122,7 @@ router.get("/submitted", async(req, res, next) => {
         const budgets = {};
 
         for (let committee in committee_lut) {
-            const [results_1, ] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], current_fiscal_year);
+            const [results_1] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], current_fiscal_year);
             budgets[committee] = results_1;
         }
 

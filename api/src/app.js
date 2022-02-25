@@ -87,7 +87,7 @@ app.use("/access", routes.access);
 // Log every route and it's result
 //   does not catch invalid API keys
 app.use((req, res, next) => {
-    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - "${req.originalUrl}" - Return ${res.statusCode}`);
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - "${req.method} ${req.originalUrl}" - Return ${res.statusCode}`);
     next();
 });
 

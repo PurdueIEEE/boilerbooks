@@ -13,7 +13,7 @@ router.get("/:file", async(req, res, next) => {
     }
 
     try {
-        const [results, ]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
+        const [results]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
         if (results.length === 0) {
             res.status(404).send("Receipt not found");
             return next();
@@ -23,7 +23,7 @@ router.get("/:file", async(req, res, next) => {
             res.download(process.env.RECEIPT_BASEDIR + "/receipt/" + req.params.file);
             return next();
         }
-        const [results_1, ]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
+        const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
         if (results_1.length === 0) {
             res.status(404).send("Receipt not found");
             return next();
