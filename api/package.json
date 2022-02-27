@@ -3,6 +3,8 @@
   "version": "2.0.0",
   "description": "Backend API for the Purdue IEEE boilerbooks accounting software",
   "main": "src/app.js",
+  "private": true,
+  "type":"module",
   "scripts": {
     "serve": "nodemon --exec babel-node src/app.js",
     "lint": "eslint --fix src/",

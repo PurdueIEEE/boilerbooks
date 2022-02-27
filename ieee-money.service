@@ -1,0 +1,15 @@
+[Unit]
+Description=Purdue IEEE Boiler Books
+Documentation=https://github.com/PurdueIEEE/boilerbooks
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/srv/boilerbooks/api
+ExecStart=/usr/bin/node /srv/boilerbooks/api/dist/app.js
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
