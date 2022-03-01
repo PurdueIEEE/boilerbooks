@@ -5,7 +5,9 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <p class="lead">Last Modified at <u>{{purchase.mdate}}</u></p>
-    <br>
+    <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer" v-on:click="editPurchase=!editPurchase">Update Purchase Details</button>
+    <button class="btn btn-secondary" v-else-if="editPurchase" v-on:click="finishEdit">Finish Purchase Edit</button>
+    <br><br>
     <div class="row">
       <!-- This looks misaligned but its actually centered -->
       <div class="col-md-8 offset-md-2">
@@ -17,19 +19,32 @@
             <p class="fs-5">Purchase date: <span class="fw-bold">{{purchase.date}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Purchase Reason: <span class="fw-bold">{{purchase.purchasereason}}</span></p>
+            <p class="fs-5">Purchase Reason:
+              <span class="fw-bold" v-if="!editPurchase">{{purchase.purchasereason}}</span>
+              <input class="form-control" v-else v-model="reason">
+            </p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
             <p class="fs-5">Status: <span class="fw-bold">{{purchase.status}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Cost: <span class="fw-bold">${{purchase.cost}}</span></p>
+            <div class="fs-5">Cost:
+              <span class="fw-bold" v-if="!editPurchase">${{purchase.cost}}</span>
+              <div class="input-group" v-else>
+                <span class="input-group-text">$</span>
+                <input id="costDollars" type="number" step=".01" class="form-control" v-model="cost">
+              </div>
+            </div>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Vendor: <span class="fw-bold">{{purchase.vendor}}</span></p>
+            <p class="fs-5">Vendor:
+              <span class="fw-bold" v-if="!editPurchase">{{purchase.vendor}}</span>
+              <input class="form-control" v-else v-model="vendor">
+            </p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Category: <span class="fw-bold">{{purchase.category}}</span></p>
+            <p class="fs-5">Category:
+              <span class="fw-bold">{{purchase.category}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
             <p class="fs-5">Approved By: <span class="fw-bold">{{purchase.approvedby}}</span></p>
@@ -44,11 +59,15 @@
             <p class="fs-5">Fiscal Year: <span class="fw-bold">{{purchase.fiscalyear}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Comments: <span class="fw-bold">{{purchase.comments}}</span></p>
+            <p class="fs-5">Comments:
+              <span class="fw-bold" v-if="!editPurchase">{{purchase.comments}}</span>
+              <input class="form-control" v-else v-model="comments">
+            </p>
           </div>
         </div>
       </div>
     </div>
+    <br><br>
     <br>
     <div class="fs-3">
       <a v-bind:href="fullRecipt" target="_blank" v-if="purchase.receipt">Open receipt in new tab </a>
@@ -74,6 +93,8 @@
   limitations under the License.
 */
 
+import auth_state from '@/state';
+
 export default {
   name: 'DetailView',
   data() {
@@ -81,40 +102,82 @@ export default {
       purchase: {},
       error: false,
       dispmsg: '',
+      auth_state: auth_state.state,
+      reason: '',
+      cost: '',
+      vendor: '',
+      comments: '',
+      item: '',
+      editPurchase: false,
     }
   },
   mounted() {
-    if (this.$route.query.id === undefined || this.$route.query.id === '') {
-      return;
-    }
-    fetch(`/api/v2/purchase/${this.$route.query.id}`, {
-        method: 'get',
-        credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
+    this.init();
+  },
+  methods: {
+    init() {
+      if (this.$route.query.id === undefined || this.$route.query.id === '') {
         return;
       }
+      fetch(`/api/v2/purchase/${this.$route.query.id}`, {
+          method: 'get',
+          credentials: 'include',
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
 
-      this.purchase = response;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+          return;
+        }
+
+        this.purchase = response;
+        this.reason = response.purchasereason;
+        this.vendor = response.vendor;
+        this.item = response.item;
+        this.comments = response.comments;
+        this.cost = response.cost;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    finishEdit() {
+      this.dispmsg = '';
+      fetch(`/api/v2/purchase/${this.$route.query.id}`, {
+        method: 'put',
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
+        body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments}),
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        this.error = !response.ok;
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+        if (!this.error) {
+          this.editPurchase = false;
+          this.init();
+        }
+      })
+    }
   },
   computed: {
     fullRecipt() {

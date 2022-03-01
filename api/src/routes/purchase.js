@@ -263,6 +263,45 @@ router.get("/:purchaseID", async(req, res, next) => {
 });
 
 /*
+    Allow a treasurer to edit a purchase
+*/
+router.put("/:purchaseID", async(req,res, next) => {
+    if (req.body.cost === undefined ||
+        req.body.vendor === undefined ||
+        req.body.reason === undefined ||
+        req.body.comments === undefined) {
+        res.status(400).send("All purchase details must be completed");
+        return next();
+    }
+
+    if (req.body.cost === "" ||
+        req.body.vendor === "" ||
+        req.body.reason === "") {
+        res.status(400).send("All purchase details must be completed");
+        return next();
+    }
+
+    try {
+        // check the user is a treasurer
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send("Updated Purchase");
+            return next();
+        }
+        req.body.purchaseID = req.params.purchaseID;
+        const [results_1] = await req.context.models.purchase.updatePurchase(req.body);
+        if (results_1.affectedRows === 0) {
+            res.status(400).send("Not able to update purchase, try again later");
+        }
+        res.status(200).send("Updated purchase");
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+    }
+    return next();
+});
+
+/*
     Cancel a purchase
 */
 router.delete("/:purchaseID", async(req, res, next) => {

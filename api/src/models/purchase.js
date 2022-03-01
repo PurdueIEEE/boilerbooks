@@ -36,6 +36,14 @@ async function createNewPurchase(purchase) {
     );
 }
 
+async function updatePurchase(purchase) {
+    return db_conn.promise().execute(
+        `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?
+        WHERE Purchases.purchaseID=? AND Purchases.status IN ('Requested', 'Approved', 'Purchased')`,
+        [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.purchaseID]
+    );
+}
+
 async function getLastInsertedID() {
     return db_conn.promise().execute(
         "SELECT LAST_INSERT_ID()",
@@ -158,4 +166,5 @@ export default {
     getApprovalsForUser,
     getCompletionsForUser,
     getTreasurer,
+    updatePurchase,
 };
