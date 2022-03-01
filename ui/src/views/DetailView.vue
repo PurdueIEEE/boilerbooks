@@ -68,11 +68,21 @@
       </div>
     </div>
     <br><br>
-    <br>
     <div class="fs-3">
       <a v-bind:href="fullRecipt" target="_blank" v-if="purchase.receipt">Open receipt in new tab </a>
       <span v-else>No receipt for this purchase</span>
     </div>
+    <br>
+    <form v-on:submit.prevent="updateReceipt">
+      <div class="row">
+        <div class="col-md-6 offset-md-2">
+          <input id="receiptFile" type="file" class="form-control" accept="image/png, image/jpeg, application/pdf" required>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-success" type="submit" v-if="auth_state.viewTreasurer&&purchase.receipt">Update Receipt</button>
+        </div>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -177,6 +187,42 @@ export default {
           this.init();
         }
       })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    updateReceipt() {
+      this.dispmsg = '';
+      const formData = new FormData();
+      const fileInput = document.querySelector('#receiptFile');
+
+      formData.append('receipt', fileInput.files[0]);
+
+      fetch(`/api/v2/purchase/${this.$route.query.id}/receipt`, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({}),
+        body: formData,
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          this.$router.replace('/login');
+          return response.text()
+        }
+        this.error = !response.ok;
+        if (response.ok) {
+          this.currentComplete = '';
+          this.init();
+        }
+        return response.text();
+      })
+      .then((response) => {
+        this.dispmsg = response;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   },
   computed: {

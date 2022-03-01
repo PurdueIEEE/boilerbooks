@@ -44,6 +44,13 @@ async function updatePurchase(purchase) {
     );
 }
 
+async function updateReceipt(id, receipt) {
+    return db_conn.promise().execute(
+        "Update Purchases SET receipt=? WHERE Purchases.purchaseID=?",
+        [receipt, id]
+    );
+}
+
 async function getLastInsertedID() {
     return db_conn.promise().execute(
         "SELECT LAST_INSERT_ID()",
@@ -167,4 +174,5 @@ export default {
     getCompletionsForUser,
     getTreasurer,
     updatePurchase,
+    updateReceipt,
 };

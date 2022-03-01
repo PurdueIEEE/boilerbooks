@@ -17,7 +17,7 @@
 import { Router } from "express";
 import multer from "multer";
 import * as fs from "fs/promises";
-import jimp from "jimp/es/index.js";
+import jimp from "jimp";
 
 import { committee_name_swap, mailer, logger } from "../common_items.js";
 
@@ -487,7 +487,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     }
 
     try {
-        const [results, fields] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
             fs.unlink(req.file.path);
             res.status(404).send("Purchase not found");
@@ -545,7 +545,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
 
         // check if the file already exists
         try {
-            const stats = await fs.stat(file_save_name);
+            const stats = await fs.stat(process.env.RECEIPT_BASEDIR+file_save_name);
             if (stats.isFile()) {
                 fs.unlink(req.file.path);
                 res.status(500).send("Receipt file already exists");
@@ -570,7 +570,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             receipt: file_save_name,
         };
 
-        const [results_1, fields_1] = await req.context.models.purchase.completePurchase(purchase);
+        await req.context.models.purchase.completePurchase(purchase);
 
     } catch (err) {
         logger.error(err.stack);
@@ -600,6 +600,82 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     }
 
     res.status(201).send("Purchase completed");
+    return next();
+}, (err, req, res, next) => {
+    // This catches too large files
+    res.status(400).send("Reciept must be less than 2MB");
+    return next();
+});
+
+/*
+    Reupload a purchase receipt
+*/
+router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, res, next) => {
+    // This catches our fileFilter filtering out files
+    if (req.file === undefined) {
+        res.status(400).send("Reciept must be a PDF, JPG, or PNG");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            fs.unlink(req.file.path);
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+        const [results_1] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        if (results_1.length === 0) {
+            fs.unlink(req.file.path);
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+
+        /** setup file and remove the temp **/
+        const old_file = results_1[0].receipt.match(/(?<pre>\/receipt\/[^_]+_??[^_]*?_[^_]+_.+?_[0-9]+)(_reupload_(?<reup>[0-9]))?\.(pdf|jpg)/);
+        const fileType = req.file.mimetype.split("/")[1]; // dirty hack to get the file type from the MIME type
+
+        let reup_num = 1;
+        if (old_file.groups.reup) {
+            reup_num = parseInt(old_file.groups.reup, 10) + 1;
+        }
+
+        let file_save_name = "";
+        if (fileType === "png") {
+            file_save_name = `${old_file.groups.pre}_reupload_${reup_num}.jpg`;
+        } else {
+            file_save_name = `${old_file.groups.pre}_reupload_${reup_num}.${fileType}`;
+        }
+
+        // check if the file already exists
+        try {
+            const stats = await fs.stat(process.env.RECEIPT_BASEDIR+file_save_name);
+            if (stats.isFile()) {
+                fs.unlink(req.file.path);
+                res.status(500).send("Receipt file already exists");
+                return next();
+            }
+        } catch (err) {
+            // File doesn't exist, so just continue
+        }
+
+        if (fileType === "png") {
+            const img = await jimp.read(req.file.path);
+            img.write(process.env.RECEIPT_BASEDIR+file_save_name);
+        } else {
+            await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+        }
+
+        await req.context.models.purchase.updateReceipt(req.params.purchaseID, file_save_name);
+
+    } catch (err) {
+        logger.error(err.stack);
+        fs.unlink(req.file.path);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    res.status(201).send("Receipt updated");
     return next();
 }, (err, req, res, next) => {
     // This catches too large files
