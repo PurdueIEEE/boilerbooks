@@ -23,19 +23,19 @@ CREATE TABLE `Budget` (
   `amount` decimal(10,2) NOT NULL,
   `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
   `year` enum('2015-2016','2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
-  `status` enum('Submitted','Approved') NOT NULL,
+  `status` enum('Submitted','Approved') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `Dues` (
-  `Name` varchar(100) NOT NULL,
-  `Email` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `id_hash` varchar(512) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `duesid` int(11) NOT NULL,
-  `Committee` varchar(255) NOT NULL,
-  `Fiscal_Year` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
-  `Amount` int(11) NOT NULL DEFAULT '0'
+  `committee` varchar(255) NOT NULL,
+  `fiscal_year` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
+  `amount` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Income` (
@@ -98,9 +98,7 @@ ALTER TABLE `Budget`
   ADD PRIMARY KEY (`budgetid`);
 
 ALTER TABLE `Dues`
-  ADD PRIMARY KEY (`duesid`),
-  ADD UNIQUE KEY `index_2` (`duesid`),
-  ADD KEY `index` (`duesid`);
+  ADD PRIMARY KEY (`duesid`);
 
 ALTER TABLE `Income`
   ADD PRIMARY KEY (`incomeid`);

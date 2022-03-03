@@ -42,14 +42,14 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3" v-if="/* TODO sometime */ false">
+        <div class="col-3 d-flex align-items-stretch mb-3">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Club Dues</h5>
             <p class="card-text">View your club dues and committee rosters. Add new members and dues payments.</p>
           </div>
           <div class="card-footer">
-            <router-link to="/" class="btn btn-secondary disabled">Go to Dues</router-link>
+            <router-link to="/dues" class="btn btn-secondary">Go to Dues</router-link>
           </div>
         </div>
         </div>

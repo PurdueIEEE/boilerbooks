@@ -61,8 +61,11 @@ function unescape_object(obj) {
 // -------------------------------------------------
 
 // -------------- fiscal year globals -------------
-// modify these numbers annually
+
+/** CHANGE BELOW ANNUALLY **/
 const current_fiscal_year = "2017-2018";
+/** CHANGE ABOVE ANNUALLY **/
+
 const first_fiscal_year = "2015-2016";
 const yearStart = parseInt(first_fiscal_year.substring(0,4));
 const yearEnd = parseInt(current_fiscal_year.substring(0,4));
@@ -72,7 +75,7 @@ for (let year = yearEnd; year >= yearStart; year--) {
 }
 // -------------------------------------------------
 
-// ---------------- committee lut ------------------
+// ------------ financial committee lut ------------
 // this is the best solution I can come up with
 //  with out a database schema migration. Here is the problem:
 //  the committee column in the database is an enum with some values,
@@ -104,6 +107,33 @@ const committee_name_swap =
     "ROV":"ROV",
     "SOGA":"SOGA",
 };
+// -------------------------------------------------
+
+// ------------- dues committee lut ----------------
+// List of all committees a member can be part of
+const dues_committees =
+[
+    "Aerial Robotics",
+    "Computer Society",
+    "EMBS",
+    "Growth & Engagement",
+    "MTT-S",
+    "Industrial Relations",
+    "Learning",
+    "Racing",
+    "ROV",
+    "Social",
+    "Software Saturdays"
+];
+// -------------------------------------------------
+
+// ----------------- dues amount -------------------
+// Current annual local dues
+
+/** CHANGE BELOW ANNUALLY **/
+const dues_amount = 15.0;
+/** CHANGE ABOVE ANNUALLY **/
+
 // -------------------------------------------------
 
 // --------------- access level enum ---------------
@@ -169,6 +199,8 @@ export {
     fiscal_year_list,
     committee_lut,
     committee_name_swap,
+    dues_committees,
+    dues_amount,
     ACCESS_LEVEL,
     mailer,
     logger,

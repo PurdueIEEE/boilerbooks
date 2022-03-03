@@ -166,6 +166,31 @@ const routes = [
     }
   },
   {
+    path: '/dues',
+    component: () => import(/* webpackChunkName: "dues" */ '../views/dues/Dues.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import(/* webpackChunkName: "dues_home" */ '../views/dues/DuesHome.vue'),
+      },
+      {
+        path: 'mydues',
+        component: () => import(/* webpackChunkName: "dues_mydues" */ '../views/dues/DuesMine.vue'),
+      },
+      {
+        path: 'summary',
+        component: () => import(/* webpackChunkName: "dues_summary" */ '../views/dues/DuesSummary.vue'),
+      },
+      {
+        path: 'add',
+        component: () => import(/* webpackChunkName: "dues_add" */ '../views/dues/DuesAdd.vue'),
+      },
+    ],
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/budget',
     component: () => import(/* webpackChunkName: "budget" */ '../views/budget/Budget.vue'),
     children: [

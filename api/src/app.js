@@ -99,6 +99,7 @@ app.use("/login", routes.login);
 app.use("/receipt", routes.receipt);
 app.use("/income", routes.income);
 app.use("/access", routes.access);
+app.use("/dues", routes.dues);
 
 // Log every route and it's result
 //   does not catch invalid API keys

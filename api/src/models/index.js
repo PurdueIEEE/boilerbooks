@@ -20,6 +20,7 @@ import committee from "./committee.js";
 import income from "./income.js";
 import access from "./access.js";
 import budgets from "./budgets.js";
+import dues from "./dues.js";
 
 import { logger } from "../common_items.js";
 
@@ -47,6 +48,7 @@ export default {
     income,
     access,
     budgets,
+    dues,
 };
 
 export { db_conn, };

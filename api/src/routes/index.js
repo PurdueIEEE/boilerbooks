@@ -22,6 +22,7 @@ import login from "./login.js";
 import receipt from "./receipt.js";
 import income from "./income.js";
 import access from "./access.js";
+import dues from "./dues.js";
 
 export default {
     account,
@@ -32,4 +33,5 @@ export default {
     receipt,
     income,
     access,
+    dues,
 };

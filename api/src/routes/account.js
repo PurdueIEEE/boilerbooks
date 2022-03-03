@@ -395,4 +395,23 @@ router.get("/:userID/committees", async(req, res, next) => {
     }
 });
 
+/*
+    Return all dues user has paid
+*/
+router.get("/:userID/dues", async(req, res, next) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        res.status(404).send("User not found");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.account.getUserDues(req.context.request_user_id);
+        res.status(200).send(results);
+        return next();
+    } catch (err) {
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
 export default router;
