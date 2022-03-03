@@ -65,6 +65,15 @@ async function getUserApprovalCommittees(user) {
     );
 }
 
+async function getUserDues(user) {
+    return db_conn.promise().execute(
+        `SELECT D.name, D.email, D.committee, D.fiscal_year, D.amount FROM Dues D
+        INNER JOIN Users U ON D.email = U.email
+        WHERE U.username=?`,
+        [user]
+    );
+}
+
 async function updatePassword(user) {
     return db_conn.promise().execute(
         "UPDATE Users SET modifydate=NOW(), password=?, resettime=NULL WHERE username=?",
@@ -177,23 +186,35 @@ function getUserAccessLevel(user, res, next) {
 }
 
 // Private method only used here
-function generateAPIKey(user, res, next) {
-    const newKey = uuidv4(); // UUIDs are not strictly great api keys
-    //  but they are good enough for our purposes
-    db_conn.execute(
-        "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
-        [newKey, user.uname],
-        function(err, results, fields) {
-            if (err) {
-                logger.error(err.stack);
-                res.status(500).send("Internal Server Error");
-                return next();
-            }
+async function generateAPIKey(user, res, next) {
+
+    while(true) {
+        const newKey = uuidv4(); // UUIDs are not strictly great api keys
+        //  but they are good enough for our purposes
+
+        // test for the (unlikely) situation that the generated
+        //   api key already exists
+        try {
+            const [test] = await db_conn.promise().execute(
+                "SELECT username FROM Users WHERE apikey=?",
+                [newKey]
+            );
+            if (test.length !== 0) continue;
+
+            await db_conn.promise().execute(
+                "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
+                [newKey, user.uname]
+            );
             res.cookie("apikey", newKey, { maxAge:1000*60*60*24,}); // cookie is valid for 24 hours
             res.status(201).send(user);
             next();
+            break;
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
         }
-    );
+    }
 }
 
 export default {
@@ -208,4 +229,5 @@ export default {
     getUserApprovalCommittees,
     setPasswordResetDetails,
     checkResetTime,
+    getUserDues,
 };
