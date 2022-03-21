@@ -3,7 +3,7 @@
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-lg">
-          <router-link class="navbar-brand fw-bold" to="/">Boiler Books</router-link>
+          <router-link class="navbar-brand fw-bold" to="/">Boiler Books {{dev ? "[DEV]" : ""}}</router-link>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarlink" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -55,6 +55,7 @@ export default {
     return {
       auth_state: auth_state.state,
       year: new Date().getFullYear(),
+      dev: process.env.VUE_APP_MODE === "dev",
     }
   },
   computed: {
@@ -69,12 +70,10 @@ export default {
     }
   },
   mounted() {
-    fetch(`${process.env.BASE_URL}is_dev.txt`)
-    .then((response) => {
-      if (response.ok) {
-        document.getElementById("favicon").href=`${process.env.BASE_URL}dev-favicon.ico`;
-      }
-    })
+    if (this.dev) {
+      document.getElementById("favicon").href = `${process.env.BASE_URL}dev-favicon.ico`;
+      document.title = "Boiler Books [DEV]"
+    }
   }
 }
 </script>
