@@ -39,32 +39,15 @@ npm run serve
 
 Now you should be ready to launch the program in a web browser! Navigate to `http://localhost/ui/` to begin.
 
+### \[TODO\] Development environment with Docker
+
+WIP
+
 ## Deploying for production
 
-Boiler Books can be used with SystemD to manage processes. These steps assume you installed the dependencies and configurations from before
+Boiler Books can be used with SystemD to manage processes. A .service file is provided as an example.
 
-1. Build the output files
-2. Enable the nginx configuration
-3. Install the SystemD service
-4. Copy output files to the proper directory
-5. Start API
-
-```
-npm --prefix ./api run build
-npm --prefix ./ui run build
-
-cp ieee-money-prod.conf /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/ieee-money-prod.conf /etc/nginx/sites-enabled/ieee-money-prod.conf
-service nginx reload
-
-cp ieee-money.service /lib/systemd/system/
-
-cp -r ./api /srv/boilerbooks/api'
-cp -r ./ui/dist /srv/boilerbooks/ui
-
-systemctl daemon-reload
-systemctl start ieee-money
-```
+Boiler Books can also be deployed using docker-compose to network the db, api, and ui/proxy services.
 
 ## IEEE Deploy Information
 

@@ -34,7 +34,7 @@ const db_conn = mysql2.createConnection({
 
 db_conn.connect((err) => {
     if (err) {
-        console.log(err.stack);
+       logger.error(err.stack);
         process.exit(1);
     }
 

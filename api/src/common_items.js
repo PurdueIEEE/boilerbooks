@@ -183,14 +183,14 @@ const logger = winston.createLogger({
         format
     ),
 });
-if (process.env.NODE_ENV !== "production") {
-    logger.add(new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        ),
-    }));
-}
+logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.timestamp(),
+        winston.format.splat(),
+        format
+    ),
+}));
 // -------------------------------------------------
 
 export {
