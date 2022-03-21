@@ -5,7 +5,8 @@
   "license": "Apache 2.0",
   "scripts": {
     "serve": "vue-cli-service serve --port 3001 --mode dev",
-    "build": "vue-cli-service build --mode prod",
+    "build:prod": "vue-cli-service build --mode prod",
+    "build:dev": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
