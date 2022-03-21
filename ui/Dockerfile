@@ -2,7 +2,7 @@ FROM node:16.14-alpine as build
 ENV NODE_ENV=production
 WORKDIR /app
 COPY ["package.json", "package-lock.json", "./"]
-RUN npm ci --production
+RUN npm ci --include=dev
 COPY . .
 RUN npm run build
 
