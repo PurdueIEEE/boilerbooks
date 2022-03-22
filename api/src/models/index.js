@@ -25,21 +25,21 @@ import dues from "./dues.js";
 import { logger } from "../common_items.js";
 
 import mysql2 from "mysql2";
-const db_conn = mysql2.createConnection({
+
+// Using a pool allows connections to be remade
+//   Normally, MySQL will kill a connection if it was not
+//   used recently. Pooling them should remove that overhead
+//   check from our code and move it into the library.
+const db_conn = mysql2.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_DATABASE,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
-
-db_conn.connect((err) => {
-    if (err) {
-       logger.error(err.stack);
-        process.exit(1);
-    }
-
-    logger.info("MySQL connection started");
-});
+logger.info("MySQL connection pool started");
 
 export default {
     account,
