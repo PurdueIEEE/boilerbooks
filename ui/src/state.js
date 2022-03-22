@@ -39,7 +39,7 @@ let auth_state = {
     },
     clearAuthState() {
         localStorage.removeItem('authState');
-        document.cookie="apikey=; max-age=-1; SameSite=Strict; path='/'";
+        document.cookie="apikey=logout; max-age=-1; SameSite=Strict; path=/";
         this.state.uname = '';
         this.state.viewFinancials = false;
         this.state.viewApprove = false;

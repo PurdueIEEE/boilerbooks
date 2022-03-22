@@ -66,7 +66,7 @@ export default {
   methods: {
     logout() {
       auth_state.clearAuthState();
-      this.$router.push('/login');
+      this.$router.replace('/login');
     }
   },
   mounted() {
