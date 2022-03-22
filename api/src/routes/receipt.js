@@ -29,27 +29,41 @@ router.get("/:file", async(req, res, next) => {
     }
 
     try {
-        const [results]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
-        if (results.length === 0) {
-            res.status(404).send("Receipt not found");
-            return next();
+        // oh boy this sure is a great way to do it
+        // --- this solves a race condition where res.download(..) needs a callback
+        //       to run when the download finishes. But since it's asynchronous,
+        //       the rest of the code would continue running meaning the other checks would execute.
+        //       this can cause 404, 500, or other crashes.
+        //       By moving it to a for loop that we can 'break', we only do the download once and avoid
+        //       most chances for a race condition.
+        for(let i=0; i<1; i++) {
+            const [results]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
+            if (results.length === 0) {
+                res.status(404).send("Receipt not found");
+                return next();
+            }
+            // user is purchaser
+            if (results[0].username === req.context.request_user_id) {
+                break;
+            }
+            const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
+            if (results_1.length === 0) {
+                res.status(404).send("Receipt not found");
+                return next();
+            }
+            // user has approval power for committee
+            break;
         }
-        // user is purchaser
-        if (results[0].username === req.context.request_user_id) {
-            res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file);
+        res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, (err) => {
+            if (err) {
+                logger.error(err);
+                if (!res.headersSent) res.status(500).send("Internal Server Error");
+            }
             return next();
-        }
-        const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
-        if (results_1.length === 0) {
-            res.status(404).send("Receipt not found");
-            return next();
-        }
-        // user has approval power for committee
-        res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file);
-        return next();
+        });
     } catch (err) {
         logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
+        if (!res.headersSent) res.status(500).send("Internal Server Error");
         return next();
     }
 });
