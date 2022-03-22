@@ -36,9 +36,8 @@ router.get("/:file", async(req, res, next) => {
         }
         // user is purchaser
         if (results[0].username === req.context.request_user_id) {
-            res.download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, () => {
-                return next();
-            });
+            res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file);
+            return next();
         }
         const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
         if (results_1.length === 0) {
@@ -46,9 +45,8 @@ router.get("/:file", async(req, res, next) => {
             return next();
         }
         // user has approval power for committee
-        res.download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, () => {
-            return next();
-        });
+        res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file);
+        return next();
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
