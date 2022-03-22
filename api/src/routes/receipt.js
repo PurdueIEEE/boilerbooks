@@ -36,7 +36,7 @@ router.get("/:file", async(req, res, next) => {
         }
         // user is purchaser
         if (results[0].username === req.context.request_user_id) {
-            res.download(process.env.RECEIPT_BASEDIR + "/receipt/" + req.params.file, () => {
+            res.download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, () => {
                 return next();
             });
         }
@@ -46,7 +46,7 @@ router.get("/:file", async(req, res, next) => {
             return next();
         }
         // user has approval power for committee
-        res.download(process.env.RECEIPT_BASEDIR + "/receipt/" + req.params.file, () => {
+        res.download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, () => {
             return next();
         });
     } catch (err) {

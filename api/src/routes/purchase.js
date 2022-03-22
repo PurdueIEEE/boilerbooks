@@ -541,7 +541,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         }
         file_save_name = file_save_name.replaceAll(" ", "_");
         file_save_name = file_save_name.replaceAll(/['"!?#%&{}/<>$:@+`|=]/ig, "");
-        file_save_name = "/receipt/".concat("", file_save_name);
+        file_save_name = "/receipts/".concat("", file_save_name);
 
         // check if the file already exists
         try {
