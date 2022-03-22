@@ -73,13 +73,13 @@
       <span v-else>No receipt for this purchase</span>
     </div>
     <br>
-    <form v-on:submit.prevent="updateReceipt">
+    <form v-on:submit.prevent="updateReceipt" v-if="auth_state.viewTreasurer&&purchase.receipt">
       <div class="row">
         <div class="col-md-6 offset-md-2">
           <input id="receiptFile" type="file" class="form-control" accept="image/png, image/jpeg, application/pdf" required>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-success" type="submit" v-if="auth_state.viewTreasurer&&purchase.receipt">Update Receipt</button>
+          <button class="btn btn-success" type="submit">Update Receipt</button>
         </div>
       </div>
     </form>

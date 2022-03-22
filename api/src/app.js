@@ -96,7 +96,7 @@ app.use("/budgets", routes.budgets);
 app.use("/purchase", routes.purchase);
 app.use("/committee", routes.committee);
 app.use("/login", routes.login);
-app.use("/receipt", routes.receipt);
+app.use("/receipts", routes.receipt);
 app.use("/income", routes.income);
 app.use("/access", routes.access);
 app.use("/dues", routes.dues);
