@@ -63,7 +63,7 @@ function unescape_object(obj) {
 // -------------- fiscal year globals -------------
 
 /** CHANGE BELOW ANNUALLY **/
-const current_fiscal_year = "2017-2018";
+const current_fiscal_year = "2021-2022";
 /** CHANGE ABOVE ANNUALLY **/
 
 const first_fiscal_year = "2015-2016";
