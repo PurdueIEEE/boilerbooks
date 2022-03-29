@@ -20,10 +20,10 @@ Boiler Books can be run on any OS, but it has been tested with Ubuntu 20.04 LTS.
 ```
 apt install nginx mysql-server-8.0 nodejs postfix
 
-mysql < ieee-money.sql
+mysql < config/ieee-money.sql
 
-cp ieee-money-dev.conf /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/ieee-money-dev.conf /etc/nginx/sites-enabled/ieee-money-dev.conf
+cp config/nginx-dev.conf /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/nginx-dev.conf /etc/nginx/sites-enabled/ieee-money-dev.conf
 service nginx reload
 
 npm --prefix ./api ci
