@@ -36,11 +36,11 @@ All actions should be able to be completed using only the API. In BBv1, actions 
 2. Reports filterable based on committe, type, year
 3. Committee Chairs view transactions for specific committee
 
-### Dues Tracking (Not Implemented)
+### Dues Tracking
 
 1. Users view their current paid dues
-2. Committee Chairs enter members, [dues unpaid]
-3. Treasurer enters members [dues paid], marks unpaid dues as paid
+2. Committee Chairs view all dues paying members
+3. Treasurer enters members into database
 
 ## Endpoints
 
@@ -113,6 +113,17 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
         * GET: view committee income list for an optional year
     * `/committee/{committee_id}/summary/{year?}`
         * GET: view committee financial summary for an optional year
+
+<hr>
+
+* `/dues`: endpoint for dues tracking
+    * POST: add a new dues member
+    * `/dues/committees`
+        * GET: list all dues committees (different from fiscal committees)
+    * `/dues/summary/{year?}`
+        * GET: view total counts of dues members for each committee
+    * `/dues/all/{year?}`
+        * GET: view all dues paying members for a year
 
 <hr>
 

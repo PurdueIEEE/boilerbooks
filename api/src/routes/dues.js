@@ -83,7 +83,7 @@ router.post("/", async(req, res, next) => {
             return next();
         }
 
-        req.body.committees = req.body.committees.join(", ")
+        req.body.committees = req.body.committees.join(",")
         if (req.body.puid.length > 0)
             req.body.puid = crypto.createHash('sha512').update(req.body.puid).digest('hex');
 
@@ -118,7 +118,7 @@ router.get("/summary/:year?", async(req, res, next) => {
         const [results_1] = await req.context.models.dues.getDuesMembers(req.params.year);
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=0, out), {});
         results_1.forEach(dues => {
-            dues.committee.split(", ").forEach(comm => {
+            dues.committee.split(/(, )|(,)/).forEach(comm => {
                 resp_obj[comm] += 1;
             });
         });
