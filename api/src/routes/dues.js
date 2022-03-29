@@ -119,6 +119,9 @@ router.get("/summary/:year?", async(req, res, next) => {
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=0, out), {});
         results_1.forEach(dues => {
             dues.committee.split(/(?:, |,)+/).forEach(comm => {
+                if (comm === "None" && resp_obj[comm] == undefined) {
+                    resp_obj[comm] = 0; // Handle case where committee is 'None'
+                }
                 resp_obj[comm] += 1;
             });
         });
