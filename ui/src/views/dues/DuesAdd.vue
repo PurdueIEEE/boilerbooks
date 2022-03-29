@@ -20,8 +20,12 @@
         <label for="committeeCheck" class="form-label fw-bold">Committee(s)</label>
         <fieldset id="committeeCheck" class="d-flex flex-wrap justify-content-center">
           <div class="form-check p-3 m-2 border" v-for="comm in committeeList" v-bind:key="comm">
-            <input class="form-check-input" type="checkbox" v-bind:value="comm" v-bind:id="comm" v-model="memberCommittees">
+            <input class="form-check-input" type="checkbox" v-bind:value="comm" v-bind:id="comm" v-model="memberCommittees" v-bind:disabled="disableCommittee">
             <label class="form-check-label" v-bind:for="comm">{{comm}}</label>
+          </div>
+          <div class="form-check p-3 m-2 border">
+            <input class="form-check-input" type="checkbox" value="None" v-model="memberCommittees" v-bind:disabled="disableNone">
+            <label class="form-check-label"><b>None</b></label>
           </div>
         </fieldset>
       </div>
@@ -91,6 +95,14 @@ export default {
       console.log(error);
     });
   },
+  computed: {
+    disableNone() {
+      return this.memberCommittees.length !== 0 && !this.memberCommittees.includes("None");
+    },
+    disableCommittee() {
+      return this.memberCommittees.includes("None");
+    }
+  },
   methods: {
     submitDues() {
       this.dispmsg = "";
@@ -104,6 +116,11 @@ export default {
         this.error = true;
         this.dispmsg = "Member must be in at least one committee";
         return;
+      }
+
+      if (this.memberCommittees.includes("None") && this.memberCommittees.length > 1) {
+        this.error = true;
+        this.dispmsg = "Member cannot be in a committee and 'None'";
       }
 
       fetch('/api/v2/dues', {

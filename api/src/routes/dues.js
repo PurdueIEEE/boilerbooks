@@ -62,6 +62,10 @@ router.post("/", async(req, res, next) => {
 
     // validate each committee we are trying to add actually exists
     for (let comm of req.body.committees) {
+        if (comm === "None" && req.body.committees.length > 1) {
+            res.status(400).send("'None' and another committee selected");
+            return next();
+        }
         if (!dues_committees.includes(comm)) {
             res.status(400).send("Invalid committee value");
             return next();
