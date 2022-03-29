@@ -13,7 +13,7 @@
       <tbody>
         <tr v-for="(bal, comm) in totalBalances" v-bind:key="comm">
           <td>{{comm}}</td>
-          <td>${{bal}}</td>
+          <td>${{bal ? bal : "0.00"}}</td>
         </tr>
       </tbody>
     </table>
