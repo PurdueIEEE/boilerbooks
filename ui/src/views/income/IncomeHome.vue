@@ -29,7 +29,8 @@
       <div class="col-md-6">
         <label for="typeSelect" class="form-label fw-bold">Type</label>
         <select id="typeSelect" class="form-select" v-model="type" required>
-          <option selected>BOSO</option>
+          <option selected disabled value="">Select...</option>
+          <option>BOSO</option>
           <option>Cash</option>
           <option>Discount</option>
           <option>SOGA</option>
@@ -84,7 +85,7 @@ export default {
       source: '',
       amount: '',
       item: '',
-      type: 'BOSO',
+      type: '',
       status: 'Expected',
       comments: '',
     }
@@ -109,6 +110,7 @@ export default {
         return response.text();
       })
       .then((response) => {
+        if (this.error) return;
         this.dispmsg = response;
         this.committee = '';
         this.source = '';

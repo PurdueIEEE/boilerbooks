@@ -22,10 +22,10 @@
     <br>
     <div v-if="loaded">
       <div class="row my-3 fs-5 fw-bold">
-        <div class="col-md-3">Balance: <span v-bind:class="balanceWarnings">${{totalBalance.balance ? totalBalance.balance : '0.00'}}</span></div>
-        <div class="col-md-3">Income: ${{totalIncome.income ? totalIncome.income : '0.00'}}</div>
-        <div class="col-md-3">Spent: ${{totalSpent.spent ? totalSpent.spent : '0.00'}}</div>
-        <div class="col-md-3">Budget: ${{totalBudget.budget ? totalBudget.budget : '0.00'}}</div>
+        <div class="col-md-3">Balance: <span v-bind:class="balanceWarnings">${{totalBalance.balance ? parseFloat(totalBalance.balance).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</span></div>
+        <div class="col-md-3">Income: ${{totalIncome.income ? parseFloat(totalIncome.income).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
+        <div class="col-md-3">Spent: ${{totalSpent.spent ? parseFloat(totalSpent.spent).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
+        <div class="col-md-3">Budget: ${{totalBudget.budget ? parseFloat(totalBudget.budget).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
       </div>
 
       <h4 class="mt-4">{{header}} Financial Summary</h4>
