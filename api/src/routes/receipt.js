@@ -36,7 +36,7 @@ router.get("/:file", async(req, res, next) => {
         //       this can cause 404, 500, or other crashes.
         //       By moving it to a for loop that we can 'break', we only do the download once and avoid
         //       most chances for a race condition.
-        for(let i=0; i<1; i++) {
+        for (let i=0; i<1; i++) {
             const [results]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
             if (results.length === 0) {
                 res.status(404).send("Receipt not found");

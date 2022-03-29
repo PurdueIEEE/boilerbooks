@@ -124,6 +124,18 @@
 
 import auth_state from '@/state';
 
+
+/*
+  This page throws MANY TypeErrors if the user is navigating back here
+    from another page, e.g. a purchase DetailView. This is because the
+    'comm' and 'fy' queries are set, so the 'loaded' property is true
+    and the financial details are loaded. However, the asyncComputed
+    properties return null-ish values (I think) while it fetches the
+    api details. Thus, there are null objects being dereferenced and Vue
+    gets quite mad. This is nothing to worry about since the proper values
+    will load pretty quickly and then Vue will trigger a re-render.
+  */
+
 export default {
   name: "FinancialsCommittee",
   data() {

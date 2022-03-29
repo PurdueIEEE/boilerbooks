@@ -43,8 +43,8 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.name === '' ||
-        req.body.email === '') {
+    if (req.body.name === "" ||
+        req.body.email === "") {
         res.status(400).send("Dues details must be completed");
         return next();
     }
@@ -87,9 +87,10 @@ router.post("/", async(req, res, next) => {
             return next();
         }
 
-        req.body.committees = req.body.committees.join(",")
-        if (req.body.puid.length > 0)
-            req.body.puid = crypto.createHash('sha512').update(req.body.puid).digest('hex');
+        req.body.committees = req.body.committees.join(",");
+        if (req.body.puid.length > 0) {
+            req.body.puid = crypto.createHash("sha512").update(req.body.puid).digest("hex");
+        }
 
         await req.context.models.dues.createNewMember(req.body);
 
@@ -113,7 +114,7 @@ router.get("/summary/:year?", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, '%', ACCESS_LEVEL.officer);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send({});
             return next();
@@ -149,7 +150,7 @@ router.get("/all/:year?", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, '%', ACCESS_LEVEL.officer);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send([]);
             return next();

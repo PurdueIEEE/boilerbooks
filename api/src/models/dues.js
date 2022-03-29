@@ -42,5 +42,5 @@ async function getDuesMembers(year) {
 export default {
     createNewMember,
     getMemberByEmail,
-    getDuesMembers
-}
+    getDuesMembers,
+};

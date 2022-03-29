@@ -188,7 +188,10 @@ function getUserAccessLevel(user, res, next) {
 // Private method only used here
 async function generateAPIKey(user, res, next) {
 
-    while(true) {
+    // Yeah technically this while loop is always true
+    // but this is a hacky fix to an unlikey problem so eh
+    // eslint-disable-next-line
+    while (true) {
         let newKey = uuidv4(); // UUIDs are not strictly great api keys
         //  but they are good enough for our purposes
 
@@ -205,7 +208,7 @@ async function generateAPIKey(user, res, next) {
                 "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
                 [newKey, user.uname]
             );
-            res.cookie("apikey", newKey, { maxAge:1000*60*60*24, sameSite:'strict'}); // cookie is valid for 24 hours
+            res.cookie("apikey", newKey, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
             res.status(201).send(user);
             next();
             break;
