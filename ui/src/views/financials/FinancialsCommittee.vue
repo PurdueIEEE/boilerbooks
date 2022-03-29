@@ -132,6 +132,8 @@ export default {
       fiscalList: [],
       committee: '',
       fiscalyear: '',
+      found_comm: false,
+      found_fy: false,
       error1: false,
       error2: false,
       dispmsg: ''
@@ -193,6 +195,15 @@ export default {
     .catch((error) => {
       console.log(error);
     });
+
+    if (this.$route.query.comm) {
+      this.found_comm = true;
+      this.committee = this.$route.query.comm;
+    }
+    if (this.$route.query.fy) {
+      this.found_fy = true;
+      this.fiscalyear = this.$route.query.fy;
+    }
   },
   computed: {
     loaded() {
@@ -205,6 +216,7 @@ export default {
       return `${this.fiscalyear} ${this.committeeList[this.committee][1]}`
     },
     balanceWarnings() {
+      if (this.totalBalance === null || this.totalBalance === undefined) return {};
       return {'text-danger':this.totalBalance.balance<100,'text-warning':(this.totalBalance.balance<200&&this.totalBalance.balance>=100)}
     }
   },
@@ -212,6 +224,22 @@ export default {
     goToItem(id) {
       return `/detail-view?id=${id}`;
     },
+  },
+  watch: {
+    committee: function(newVal) {
+      if (this.found_comm) {
+        this.found_comm = false;
+        return;
+      }
+      this.$router.push({path: '/financials/committee', query: {comm: newVal, fy: this.fiscalyear}});
+    },
+    fiscalyear: function(newVal) {
+      if (this.found_fy) {
+        this.found_fy = false;
+        return;
+      }
+      this.$router.push({path: '/financials/committee', query: {comm: this.committee, fy: newVal}});
+    }
   },
   asyncComputed: {
     async totalBalance() {
