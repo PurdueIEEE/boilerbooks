@@ -190,10 +190,7 @@ const mailer = nodemailer.createTransport({
     secure: false,
     ignoreTLS: true,
 },{
-    from: "boilerbooks@purdueieee.org",
-    envelope: {
-        from: 'Boiler Books <boilerbooks@purdueieee.org',
-    }
+    from: "Boiler Books <boilerbooks@purdueieee.org>",
 });
 mailer.verify((err) => {
     if (err) {
