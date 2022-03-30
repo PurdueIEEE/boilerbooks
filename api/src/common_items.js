@@ -147,17 +147,6 @@ const ACCESS_LEVEL = Object.freeze({
 });
 // -------------------------------------------------
 
-// ------------------ SMTP mailer ------------------
-import nodemailer from "nodemailer";
-const mailer = nodemailer.createTransport({
-    sendmail: true,
-    newline: "unix",
-    path: "/usr/sbin/sendmail",
-},{
-    from: "boilerbooks@purdueieee.org",
-});
-// -------------------------------------------------
-
 // ----------------- Logging -----------------------
 import winston from "winston";
 import "winston-daily-rotate-file";
@@ -191,6 +180,29 @@ logger.add(new winston.transports.Console({
         format
     ),
 }));
+// -------------------------------------------------
+
+// ------------------ SMTP mailer ------------------
+import nodemailer from "nodemailer";
+const mailer = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false,
+    ignoreTLS: true,
+},{
+    from: "boilerbooks@purdueieee.org",
+    envelope: {
+        from: 'Boiler Books <boilerbooks@purdueieee.org',
+    }
+});
+mailer.verify((err) => {
+    if (err) {
+        logger.error(err);
+        process.exit(1);
+    } else {
+        logger.info("SMTP connection verified");
+    }
+});
 // -------------------------------------------------
 
 export {
