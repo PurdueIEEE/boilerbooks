@@ -79,7 +79,7 @@ async function approvePurchase(purchase) {
         cost=?, status=?, fundsource=?, comments=?
         WHERE Purchases.purchaseID = ? AND
         Purchases.status='Requested'`,
-        [purchase.approver, purchase.item, purchase.reason, purchase.vendor, purchase.cost, purchase.status, purchase.fundsource, purchase.comments, purchase.id]
+        [purchase.approver, purchase.item, purchase.reason, purchase.vendor, purchase.price, purchase.status, purchase.fundsource, purchase.comments, purchase.id]
     );
 }
 
@@ -96,7 +96,7 @@ async function completePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), purchasedate=?, cost=?, status=?, comments=?,
         receipt=? WHERE Purchases.purchaseID = ?`,
-        [purchase.purchasedate, purchase.cost, "Purchased", purchase.comments, purchase.receipt, purchase.id]
+        [purchase.purchasedate, purchase.price, "Purchased", purchase.comments, purchase.receipt, purchase.id]
     );
 }
 

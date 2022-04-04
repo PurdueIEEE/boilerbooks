@@ -19,6 +19,11 @@ import { committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
+
+const new_type = ["BOSO", "Cash", "Discount", "SOGA"];
+const new_status = ["Expected", "Received", "Unreceived"];
+
+
 router.post("/", async(req, res, next) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
@@ -47,13 +52,13 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape type, so check it first
-    if (req.body.type !== "BOSO" && req.body.type !== "Cash" && req.body.type !== "Discount" && req.body.type !== "SOGA") {
+    if (!new_type.includes(req.body.type)) {
         res.status(400).send("Type must be proper value");
         return next();
     }
 
     // can't escape status so check it first
-    if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
+    if (!new_status.includes(req.body.status)) {
         res.status(400).send("Status must be proper value");
         return next();
     }
@@ -67,7 +72,7 @@ router.post("/", async(req, res, next) => {
     try {
         const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
         if (results.length === 0) {
-            res.status(403).send("Not allowed to create donation"); // silently fail
+            res.status(403).send("Not allowed to create donation");
             return next();
         }
     } catch (err) {
@@ -76,19 +81,10 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
-    const donation = {
-        committee: req.body.committee,
-        source: req.body.source,
-        amount: req.body.amount,
-        item: req.body.item,
-        type: req.body.type,
-        status: req.body.status,
-        comments: req.body.comments,
-        user: req.context.request_user_id,
-    };
+    req.body.user = req.context.request_user_id;
 
     try {
-        const [results] = await req.context.models.income.createNewDonation(donation);
+        const [results] = await req.context.models.income.createNewDonation(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Donation cannot be created, try again later");
             return next();
@@ -138,7 +134,7 @@ router.put("/:incomeID", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.status !== "Expected" && req.body.status !== "Received" && req.body.status !== "Unreceived") {
+    if (!new_status.includes(req.body.status)) {
         res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
         return next();
     }

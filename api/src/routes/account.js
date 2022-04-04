@@ -78,19 +78,7 @@ router.post("/", (req, res, next) => {
         return next();
     }
 
-    const user = {
-        fname: req.body.fname,
-        lname: req.body.lname,
-        uname: req.body.uname,
-        email: req.body.email,
-        address: req.body.address,
-        city: req.body.city,
-        state: req.body.state,
-        zip: req.body.zip,
-        pass: req.body.pass1,
-    };
-
-    req.context.models.account.createUser(user, res, next);
+    req.context.models.account.createUser(req.body, res, next);
 });
 
 // ---------------------------
@@ -160,19 +148,10 @@ router.put("/:userID", async(req, res, next) => {
         return next();
     }
 
-    const user = {
-        fname: req.body.fname,
-        lname: req.body.lname,
-        uname: req.context.request_user_id,
-        email: req.body.email,
-        address: req.body.address,
-        city: req.body.city,
-        state: req.body.state,
-        zip: req.body.zip,
-    };
+    req.body.uname = req.context.request_user_id;
 
     try {
-        await req.context.models.account.updateUser(user);
+        await req.context.models.account.updateUser(req.body);
         res.status(200).send("Account Details Updated");
         return next();
     } catch (err) {

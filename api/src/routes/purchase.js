@@ -39,6 +39,12 @@ const fileHandler = multer({
 
 const router = Router();
 
+
+const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
+const approve_status = ["Approved", "Denied"];
+const approve_fundsource = ["BOSO", "Cash", "SOGA"];
+
+
 /*
     Create new purchase
 */
@@ -70,20 +76,11 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
-    const purchase = {
-        user: req.context.request_user_id,
-        committee: req.body.committee,
-        price: req.body.price,
-        item: req.body.item,
-        vendor: req.body.vendor,
-        reason: req.body.reason,
-        comments: req.body.comments,
-        category: req.body.category,
-    };
+    req.body.user = req.context.request_user_id;
 
     /** Create the purchase request **/
     try {
-        const [results] = await req.context.models.purchase.createNewPurchase(purchase);
+        const [results] = await req.context.models.purchase.createNewPurchase(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase cannot be created, try again later");
             return next();
@@ -120,13 +117,13 @@ router.post("/", async(req, res, next) => {
     try {
         await mailer.sendMail({
             to: emails,
-            subject: `New Purchase Request for ${purchase.committee}`,
-            text: `A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}\n` +
+            subject: `New Purchase Request for ${req.body.committee}`,
+            text: `A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}\n` +
             "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${lastID}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>New Purchase Request!</h2>
-            <p>A request was made by ${purchase.user} for ${purchase.item} costing $${purchase.price}.</p>
+            <p>A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}.</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${lastID}">here</a>.</p>
             <br>
@@ -148,7 +145,7 @@ router.post("/treasurer", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.status !== "Processing Reimbursement" && req.body.status !== "Reimbursed") {
+    if (!treasurer_status.includes(req.body.status)) {
         res.status(400).send("Purchase status must be 'Processing Reimbursement' or 'Reimbursed'");
         return next();
     }
@@ -364,11 +361,11 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.status !== "Approved" && req.body.status !== "Denied") {
+    if (!approve_status.includes(req.body.status)) {
         res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
         return next();
     }
-    if (req.body.fundsource !== "BOSO" && req.body.fundsource !== "Cash" && req.body.fundsource !== "SOGA") {
+    if (!approve_fundsource.includes(req.body.fundsource)) {
         res.status(400).send("Purchase funding source must be 'BOSO' or 'Cash' or 'SOGA'");
         return next();
     }
@@ -410,21 +407,12 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         return next();
     }
 
-    const purchase = {
-        id: req.params.purchaseID,
-        approver: req.context.request_user_id,
-        item: req.body.item,
-        vendor: req.body.vendor,
-        reason: req.body.reason,
-        cost: req.body.price,
-        status: req.body.status,
-        comments: req.body.comments,
-        fundsource: req.body.fundsource,
-    };
+    req.body.approver = req.context.request_user_id;
+    req.body.id = req.params.purchaseID;
 
     /** update request **/
     try {
-        const [results] = await req.context.models.purchase.approvePurchase(purchase);
+        const [results] = await req.context.models.purchase.approvePurchase(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase not in 'Requested' status");
             return next();
@@ -440,19 +428,19 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
     /** email requester with result **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
-        const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(purchase.id);
-        const [user_deets ] = await req.context.models.account.getUserByID(purchase_deets[0].username);
+        const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [user_deets] = await req.context.models.account.getUserByID(purchase_deets[0].username);
         await mailer.sendMail({
             to: user_deets[0].email,
             subject: "Purchase Status Updated!",
             text: `Your request for ${purchase_deets[0].item} was ${purchase_deets[0].status}\n` +
             "Please visit Boiler Books at your earliest convenience to complete the purchase.\n" +
-            `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase.id}.\n\n` +
+            `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
             <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${purchase_deets[0].committee}</em> was ${purchase_deets[0].status}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
-            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase.id}">here</a>.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });
@@ -563,15 +551,10 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
         }
 
-        const purchase = {
-            id: req.params.purchaseID,
-            purchasedate: req.body.purchasedate,
-            cost: req.body.price,
-            comments: req.body.comments,
-            receipt: file_save_name,
-        };
+        req.body.receipt = file_save_name;
+        req.body.id = req.params.purchaseID;
 
-        await req.context.models.purchase.completePurchase(purchase);
+        await req.context.models.purchase.completePurchase(req.body);
 
     } catch (err) {
         logger.error(err.stack);
