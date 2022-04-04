@@ -161,6 +161,7 @@ export default {
     .then((response) => {
       // API key must have expired
       if (response.status === 401) {
+        auth_state.clearAuthState();
         this.$router.replace('/login');
         return response.text()
       }
@@ -189,6 +190,7 @@ export default {
     .then((response) => {
       // API key must have expired
       if (response.status === 401) {
+        auth_state.clearAuthState();
         this.$router.replace('/login');
         return response.text()
       }
@@ -268,6 +270,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -294,6 +297,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -320,6 +324,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -346,6 +351,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -372,6 +378,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -398,6 +405,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }
@@ -424,6 +432,7 @@ export default {
       .then((response) => {
         // API key must have expired
         if (response.status === 401) {
+          auth_state.clearAuthState();
           this.$router.replace('/login');
           return response.text()
         }

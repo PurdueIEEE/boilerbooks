@@ -28,6 +28,6 @@
 */
 
 export default {
-  name: 'PurchaseHome',
+  name: 'BudgetHome',
 }
 </script>
