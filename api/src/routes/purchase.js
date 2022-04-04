@@ -116,7 +116,7 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
-    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
         await mailer.sendMail({
             to: emails,
@@ -191,7 +191,7 @@ router.post("/treasurer", async(req, res, next) => {
     res.status(201).send("Purchase(s) updated");
 
     /** Send email to purchasers **/
-    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
         for (let id of commaIDlist) {
             const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(id);
@@ -437,7 +437,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
     res.status(201).send(`Purchase ${req.body.status}`);
 
     /** email requester with result **/
-    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
         const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(purchase.id);
         const [user_deets ] = await req.context.models.account.getUserByID(purchase_deets[0].username);
@@ -579,7 +579,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     }
 
     /** send email to treasurer **/
-    if (process.env.SEND_MAIL !== "yes") return; // SEND_MAIL must be "yes" or no mail is sent
+    if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
         const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         await mailer.sendMail({
