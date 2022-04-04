@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { logger } from "../common_items.js";
+import { ACCESS_LEVEL, logger } from "../common_items.js";
 
 const router = Router();
 
@@ -46,7 +46,7 @@ router.get("/:file", async(req, res, next) => {
             if (results[0].username === req.context.request_user_id) {
                 break;
             }
-            const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
+            const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
             if (results_1.length === 0) {
                 res.status(404).send("Receipt not found");
                 return next();

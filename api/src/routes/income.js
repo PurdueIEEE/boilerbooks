@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { committee_name_swap, logger } from "../common_items.js";
+import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
@@ -70,7 +70,7 @@ router.post("/", async(req, res, next) => {
 
     // Make sure user actually is allowed to create donations
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(403).send("Not allowed to create donation");
             return next();

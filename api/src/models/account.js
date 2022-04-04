@@ -49,6 +49,18 @@ async function getUserApprovals(user, committee="%", min_level=ACCESS_LEVEL.memb
     );
 }
 
+async function canApprovePurchase(user, purchase) {
+    return db_conn.promise().execute(
+        `SELECT 1 FROM Purchases p INNER JOIN approval a ON p.committee = a.committee
+        WHERE p.purchaseID = ?
+        AND a.username = ?
+        AND p.cost <= (SELECT MAX(ap.amount) FROM approval ap
+        WHERE ap.username = p.username
+        AND ap.committee = p.committee)`,
+        [purchase, user]
+    );
+}
+
 async function getUserTreasurer(user) {
     return db_conn.promise().execute(
         `SELECT COUNT(U3.username) as validuser FROM Users U3
@@ -233,4 +245,5 @@ export default {
     setPasswordResetDetails,
     checkResetTime,
     getUserDues,
+    canApprovePurchase,
 };

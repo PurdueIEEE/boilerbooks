@@ -19,7 +19,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp";
 
-import { committee_name_swap, mailer, logger } from "../common_items.js";
+import { committee_name_swap, mailer, logger, ACCESS_LEVEL } from "../common_items.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -232,7 +232,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee);
+        const [results_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
 
         // No approval powers for committee
         if (results_1.length === 0) {
@@ -394,7 +394,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
 
     // check that the user has approval power first
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee);
+        const [results] = await req.context.models.account.canApprovePurchase(req.context.request_user_id, req.params.purchaseID);
         // No approval powers for committee
         if (results.length === 0) {
             res.status(404).send("Purchase not found");

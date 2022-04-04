@@ -18,7 +18,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list, current_fiscal_year, logger } from "../common_items.js";
+import { committee_lut, fiscal_year_list, current_fiscal_year, logger, ACCESS_LEVEL } from "../common_items.js";
 
 /*
     Get a list of all committees
@@ -62,7 +62,7 @@ router.get("/:commID/balance", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -103,7 +103,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -148,7 +148,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -193,7 +193,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -238,7 +238,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -279,7 +279,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -320,7 +320,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();

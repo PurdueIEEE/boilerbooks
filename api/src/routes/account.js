@@ -18,7 +18,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, committee_lut, logger, mailer } from "../common_items.js";
+import { committee_name_swap, committee_lut, logger, mailer, ACCESS_LEVEL } from "../common_items.js";
 
 import bcrypt from "bcrypt";
 const bcrypt_rounds = 10;
@@ -327,7 +327,7 @@ router.get("/:userID/balances", async(req, res, next) => {
 
     try {
         for (let committee of committees) {
-            const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee);
+            const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee, ACCESS_LEVEL.internal_leader);
             if (results.length !== 0) {
                 const [results_1] = await req.context.models.committee.getCommitteeBalance(committee);
                 outputBalances[committee_name_swap[committee]] = results_1[0].balance;
