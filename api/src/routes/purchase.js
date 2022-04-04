@@ -79,12 +79,14 @@ router.post("/", async(req, res, next) => {
     req.body.user = req.context.request_user_id;
 
     /** Create the purchase request **/
+    let insert_id = 0;
     try {
         const [results] = await req.context.models.purchase.createNewPurchase(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase cannot be created, try again later");
             return next();
         }
+        insert_id = results.insertId;
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error: Purchase not created");
@@ -93,14 +95,11 @@ router.post("/", async(req, res, next) => {
 
     /** Get names of approvers and send back to user **/
     let emails = "";
-    let lastID = "";
     try {
-        const [results] = await req.context.models.purchase.getLastInsertedID();
-        lastID = results[0]["LAST_INSERT_ID()"];
-        const [results_1] = await req.context.models.purchase.getPurchaseApprovers(lastID);
+        const [results] = await req.context.models.purchase.getPurchaseApprovers(insert_id);
 
         let names = "";
-        results_1.forEach(approver => {
+        results.forEach(approver => {
             names += approver.name + ", ";
             emails += approver.email + ", ";
         });
