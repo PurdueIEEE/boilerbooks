@@ -23,7 +23,9 @@
       </div>
       <div class="col-md-6">
         <label for="categoryName" class="form-label fw-bold">Category</label>
-        <h3>{{purchase.category}}</h3>
+        <select id="categoryName" class="form-select" v-model="category" required>
+          <option v-for="key in categoryList" v-bind:key="key.category">{{key.category}}</option>
+        </select>
       </div>
       <div class="col-12">
         <label for="itemName" class="form-label fw-bold">Item being Purchased</label>
@@ -94,6 +96,7 @@ export default {
       funding: 'BOSO',
       approvalList: [],
       currentApprove: '',
+      category: '',
     }
   },
   methods: {
@@ -103,7 +106,8 @@ export default {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status}),
+        body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,
+              price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status,category:this.category}),
       })
       .then((response) => {
         // API key must have expired
@@ -162,6 +166,7 @@ export default {
         return {
           purchasedby:'',
           committee: '',
+          committeeAPI: '',
           category: '',
           item: '',
           purchasereason: '',
@@ -197,6 +202,7 @@ export default {
           return {
             purchasedby:'',
             committee: '',
+            committeeAPI: '',
             category: '',
             item: '',
             purchasereason: '',
@@ -215,6 +221,7 @@ export default {
         return {
           purchasedby:'',
           committee: '',
+          committeeAPI: '',
           category: '',
           item: '',
           purchasereason: '',
@@ -224,7 +231,44 @@ export default {
           costTooHigh: false,
           lowBalance: false,
         };
+      });
+    },
+    async categoryList() {
+      this.dispmsg = '';
+      if (this.purchase.committeeAPI === '') {
+        return [];
+      }
+
+      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
+        method: 'get',
+        credentials: 'include'
       })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          auth_state.clearAuthState();
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+          return [];
+        }
+
+        this.category = this.purchase.category;
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      });
     }
   }
 }

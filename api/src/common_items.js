@@ -107,6 +107,18 @@ const committee_name_swap =
     "ROV":"ROV",
     "SOGA":"SOGA",
 };
+// mini-LUT for db enum : api name
+const committee_name_api =
+{
+    "General IEEE":"general",
+    "Aerial Robotics":"aerial",
+    "Computer Society":"csociety",
+    "EMBS":"embs",
+    "MTT-S":"mtt-s",
+    "Racing":"racing",
+    "ROV":"rov",
+    "SOGA":"soga",
+}
 // -------------------------------------------------
 
 // ------------- dues committee lut ----------------
@@ -208,6 +220,7 @@ export {
     fiscal_year_list,
     committee_lut,
     committee_name_swap,
+    committee_name_api,
     dues_committees,
     dues_amount,
     ACCESS_LEVEL,

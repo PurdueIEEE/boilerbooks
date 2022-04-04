@@ -76,10 +76,10 @@ async function getPurchaseApprovers(purchase) {
 async function approvePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), approvedby=?, item=?, purchasereason=?, vendor=?,
-        cost=?, status=?, fundsource=?, comments=?
+        cost=?, status=?, fundsource=?, comments=?, category=?
         WHERE Purchases.purchaseID = ? AND
         Purchases.status='Requested'`,
-        [purchase.approver, purchase.item, purchase.reason, purchase.vendor, purchase.price, purchase.status, purchase.fundsource, purchase.comments, purchase.id]
+        [purchase.approver, purchase.item, purchase.reason, purchase.vendor, purchase.price, purchase.status, purchase.fundsource, purchase.comments, purchase.category, purchase.id]
     );
 }
 

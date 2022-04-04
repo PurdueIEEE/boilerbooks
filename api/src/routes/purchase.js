@@ -19,7 +19,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp";
 
-import { committee_name_swap, mailer, logger, ACCESS_LEVEL } from "../common_items.js";
+import { committee_name_swap, committee_name_api, mailer, logger, ACCESS_LEVEL } from "../common_items.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -239,6 +239,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             // User is purchaser
             if (req.context.request_user_id === results[0].username) {
                 results[0].committee = committee_name_swap[results[0].committee];
+                results[0].committeeAPI = committee_name_api[results[0].committee];
                 res.status(200).send(results[0]);
                 return next();
             }
@@ -246,7 +247,9 @@ router.get("/:purchaseID", async(req, res, next) => {
             return next();
         }
 
-        const [results_2 ] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
+        const [results_2] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
+        results[0].committee = committee_name_swap[results[0].committee];
+        results[0].committeeAPI = committee_name_api[results[0].committee];
         results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
         results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
         // Approval powers found
@@ -344,7 +347,8 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         req.body.comments === undefined ||
         req.body.fundsource === undefined ||
         req.body.status ===  undefined ||
-        req.body.committee === undefined) {
+        req.body.committee === undefined ||
+        req.body.category === undefined) {
         res.status(400).send("All purchase details must be completed");
         return next();
     }
@@ -355,7 +359,8 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         req.body.reason === "" ||
         req.body.fundsource === "" ||
         req.body.status === "" ||
-        req.body.committee === "") {
+        req.body.committee === "" ||
+        req.body.category === "") {
         res.status(400).send("All purchase details must be completed");
         return next();
     }
