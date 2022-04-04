@@ -43,8 +43,12 @@
             </p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Category:
-              <span class="fw-bold">{{purchase.category}}</span></p>
+            <div class="fs-5">Category:
+              <span class="fw-bold" v-if="!editPurchase">{{purchase.category}}</span>
+              <select class="form-select" v-model="category" v-if="editPurchase">
+                <option v-for="key in categoryList" v-bind:key="key.category">{{key.category}}</option>
+              </select>
+            </div>
           </div>
           <div class="col-md-6 border border-secondary p-3">
             <p class="fs-5">Approved By: <span class="fw-bold">{{purchase.approvedby}}</span></p>
@@ -117,6 +121,7 @@ export default {
       cost: '',
       vendor: '',
       comments: '',
+      category: '',
       item: '',
       editPurchase: false,
     }
@@ -158,6 +163,7 @@ export default {
         this.vendor = response.vendor;
         this.item = response.item;
         this.comments = response.comments;
+        this.category = response.category;
         this.cost = response.cost;
       })
       .catch((error) => {
@@ -170,7 +176,7 @@ export default {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments}),
+        body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments,category:this.category}),
       })
       .then((response) => {
         // API key must have expired
@@ -239,6 +245,44 @@ export default {
     allowedToEdit() {
       if (this.purchase.status === undefined) return false;
       return this.purchase.status==='Requested' || this.purchase.status==='Approved' || this.purchase.status==='Purchased';
+    }
+  },
+  asyncComputed: {
+    async categoryList() {
+      this.dispmsg = '';
+      if (this.purchase.committeeAPI === undefined) {
+        return [];
+      }
+
+      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
+        method: 'get',
+        credentials: 'include'
+      })
+      .then((response) => {
+        // API key must have expired
+        if (response.status === 401) {
+          auth_state.clearAuthState();
+          this.$router.replace('/login');
+          return response.text()
+        }
+        if (!response.ok) {
+          this.error = true;
+          return response.text();
+        }
+        return response.json();
+      })
+      .then((response) => {
+        if (this.error) {
+          this.dispmsg = response;
+          return [];
+        }
+
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      });
     }
   }
 }

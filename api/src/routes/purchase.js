@@ -268,6 +268,7 @@ router.put("/:purchaseID", async(req,res, next) => {
     if (req.body.cost === undefined ||
         req.body.vendor === undefined ||
         req.body.reason === undefined ||
+        req.body.category === undefined ||
         req.body.comments === undefined) {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -275,6 +276,7 @@ router.put("/:purchaseID", async(req,res, next) => {
 
     if (req.body.cost === "" ||
         req.body.vendor === "" ||
+        req.body.category === "" ||
         req.body.reason === "") {
         res.status(400).send("All purchase details must be completed");
         return next();

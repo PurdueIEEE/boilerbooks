@@ -38,9 +38,9 @@ async function createNewPurchase(purchase) {
 
 async function updatePurchase(purchase) {
     return db_conn.promise().execute(
-        `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?
+        `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?, category=?
         WHERE Purchases.purchaseID=? AND Purchases.status IN ('Requested', 'Approved', 'Purchased')`,
-        [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.purchaseID]
+        [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.category, purchase.purchaseID]
     );
 }
 
