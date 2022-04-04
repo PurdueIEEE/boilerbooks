@@ -292,6 +292,7 @@ router.put("/:purchaseID", async(req,res, next) => {
         const [results_1] = await req.context.models.purchase.updatePurchase(req.body);
         if (results_1.affectedRows === 0) {
             res.status(400).send("Not able to update purchase, try again later");
+            return next();
         }
         res.status(200).send("Updated purchase");
     } catch (err) {

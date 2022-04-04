@@ -57,6 +57,7 @@
             <th>Purchase ID</th>
             <th>Date</th>
             <th>Item</th>
+            <th>Category</th>
             <th>Vendor</th>
             <th>Purchaser</th>
             <th>Amount</th>
@@ -68,6 +69,7 @@
             <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.purchaseid}}</router-link></td>
             <td>{{purchase.date}}</td>
             <td>{{purchase.item}}</td>
+            <td>{{purchase.category}}</td>
             <td>{{purchase.vendor}}</td>
             <td>{{purchase.purchasedby}}</td>
             <td>${{purchase.cost}}</td>
