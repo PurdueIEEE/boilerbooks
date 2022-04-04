@@ -54,7 +54,7 @@ router.get("/:file", async(req, res, next) => {
             // user has approval power for committee
             break;
         }
-        res.status(200).download(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, (err) => {
+        res.status(200).sendFile(process.env.RECEIPT_BASEDIR + "/receipts/" + req.params.file, (err) => {
             if (err) {
                 logger.error(err);
                 if (!res.headersSent) res.status(500).send("Internal Server Error");
