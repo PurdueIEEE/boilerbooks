@@ -4,8 +4,8 @@
     <br>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
-    <p class="lead">Last Modified at <u>{{purchase.mdate}}</u></p>
-    <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer" v-on:click="editPurchase=!editPurchase">Update Purchase Details</button>
+    <p class="lead">Last Modified at <u>{{localDate}}</u></p>
+    <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer&&allowedToEdit" v-on:click="editPurchase=!editPurchase">Update Purchase Details</button>
     <button class="btn btn-secondary" v-else-if="editPurchase" v-on:click="finishEdit">Finish Purchase Edit</button>
     <br><br>
     <div class="row">
@@ -229,6 +229,16 @@ export default {
   computed: {
     fullRecipt() {
       return `/api/v2${this.purchase.receipt}`;
+    },
+    localDate() {
+      if (this.purchase.mdate === undefined) return "";
+      const d = new Date(this.purchase.mdate);
+      return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ` +
+              `${d.getHours().toString().padStart(2, "0")}:${(d.getMinutes()+1).toString().padStart(2, "0")}:${(d.getSeconds()+1).toString().padStart(2, "0")}`;
+    },
+    allowedToEdit() {
+      if (this.purchase.status === undefined) return false;
+      return this.purchase.status==='Requested' || this.purchase.status==='Approved' || this.purchase.status==='Purchased';
     }
   }
 }
