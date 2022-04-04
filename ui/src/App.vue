@@ -34,7 +34,8 @@
     <footer>
         <div class="container-fluid text-center py-3">
             <p class="text-center fs-5 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="dark-link">View page on GitHub</a></p>
-            <p class="text-center lead">Copyright © {{this.year}} Purdue IEEE and Hadi Ahmed</p>
+            <br>
+            <p class="text-center lead">Copyright © {{this.year}} Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
         </div>
     </footer>
   </div>
