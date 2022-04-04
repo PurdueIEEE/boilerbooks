@@ -13,11 +13,11 @@
                 <a class="nav-link dropdown-toggle" id="navbarlinks_common" role="button" data-bs-toggle="dropdown" aria-expanded="false" v-if="showUser"><i class="bi bi-arrow-right-square-fill me-2"></i>Navigate To:</a>
                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarlinks_common" v-if="showUser">
                     <li><router-link class="dropdown-item" to="/purchase">Purchasing</router-link></li>
-                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/purchase">Income and Donations</router-link></li>
-                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/purchase">Financials</router-link></li>
-                    <li><router-link class="dropdown-item" to="/purchase">Club Dues</router-link></li>
-                    <li v-if="auth_state.viewOfficer"><router-link class="dropdown-item" to="/purchase">Budgets</router-link></li>
-                    <li v-if="auth_state.viewTreasurer"><router-link class="dropdown-item" to="/purchase">Access Roles</router-link></li>
+                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/income">Income and Donations</router-link></li>
+                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/financials">Financials</router-link></li>
+                    <li><router-link class="dropdown-item" to="/dues">Club Dues</router-link></li>
+                    <li v-if="auth_state.viewOfficer"><router-link class="dropdown-item" to="/budget">Budgets</router-link></li>
+                    <li v-if="auth_state.viewTreasurer"><router-link class="dropdown-item" to="/access">Access Roles</router-link></li>
                 </ul>
               </li>
               <li class="nav-item mx-2" v-if="showUser"><router-link class="nav-link" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>

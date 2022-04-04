@@ -29,7 +29,9 @@
           <td>{{income.refnumber}}</td>
           <td>
             <button class="btn btn-outline-info my-1" v-if="income.status !== 'Expected'" v-on:click="updateStatus(income.incomeid, 'Expected')">Expected</button>
+            <br v-if="income.status !== 'Expected'">
             <button class="btn btn-outline-success my-1" v-if="income.status !== 'Received'" v-on:click="updateStatus(income.incomeid, 'Received')">Received</button>
+            <br v-if="income.status !== 'Received'">
             <button class="btn btn-outline-dark my-1" v-if="income.status !== 'Unreceived'" v-on:click="updateStatus(income.incomeid, 'Unreceived')">Unreceived</button>
           </td>
         </tr>

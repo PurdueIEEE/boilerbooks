@@ -69,7 +69,7 @@
     </div>
     <br><br>
     <div class="fs-3">
-      <a v-bind:href="fullRecipt" target="_blank" v-if="purchase.receipt">Open receipt in new tab </a>
+      <a v-bind:href="fullRecipt" target="_blank" v-if="purchase.receipt">Open receipt in new tab</a>
       <span v-else>No receipt for this purchase</span>
     </div>
     <br>
