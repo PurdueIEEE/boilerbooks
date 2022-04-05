@@ -254,7 +254,7 @@ export default {
         return [];
       }
 
-      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
+      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
         method: 'get',
         credentials: 'include'
       })

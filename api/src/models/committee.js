@@ -17,10 +17,10 @@
 import { db_conn } from "./index.js";
 import { current_fiscal_year } from "../common_items.js";
 
-async function getCommitteeCategories(comm) {
+async function getCommitteeCategories(comm, year=current_fiscal_year) {
     return db_conn.promise().execute(
         "SELECT category FROM Budget WHERE committee=? AND year=? AND status='Approved'",
-        [comm, current_fiscal_year]
+        [comm, year]
     );
 }
 

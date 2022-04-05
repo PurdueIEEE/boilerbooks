@@ -32,15 +32,24 @@ router.get("/", (req, res, next) => {
 /*
     Get a list of all committee budget categories for the current year
 */
-router.get("/:commID/categories", async(req, res, next) => {
+router.get("/:commID/categories/:year?", async(req, res, next) => {
     // commKey must be one of the above values, that is in the DB
     if (!(req.params.commID in committee_lut)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
 
+    if (req.params.year === undefined) {
+        req.params.year = current_fiscal_year;
+    }
+
+    if (!(fiscal_year_list.includes(req.params.year))) {
+        res.status(404).send("Invalid fiscal year");
+        return next();
+    }
+
     try {
-        const [results] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0]);
+        const [results] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0], req.params.year);
         res.status(200).send(results);
         return next();
     } catch (err) {
