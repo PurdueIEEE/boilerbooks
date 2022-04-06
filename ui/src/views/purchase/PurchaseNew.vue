@@ -66,7 +66,7 @@
   limitations under the License.
 */
 
-import auth_state from '@/state';
+import {fetchWrapperJSON, fetchWrapperTXT} from '@/api_wrapper';
 
 export default {
   name: 'PurchaseNew',
@@ -85,25 +85,19 @@ export default {
     }
   },
   methods: {
-    submitRequest() {
+    async submitRequest() {
       this.dispmsg = '';
-      fetch(`/api/v2/purchase`, {
+      const response = await fetchWrapperTXT(`/api/v2/purchase`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.error;
+
+      if (!response.response) {
         this.dispmsg = response;
         this.committee = '';
         this.category = '';
@@ -112,69 +106,40 @@ export default {
         this.vendor = '';
         this.price = '';
         this.comments = '';
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
     }
   },
-  mounted() {
-    fetch(`/api/v2/committee`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.committeeList = response.response;
   },
   asyncComputed: {
     async categoryList() {
       this.category = '';
       if (this.committee === '') return [];
 
-      // Not sure if this is valid, Promises confuse me sometimes
-      return await fetch(`/api/v2/committee/${this.committee}/categories`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/categories`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          return [];
-        }
-
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        return [];
+      }
+
+      return response.response;
     }
   }
 }

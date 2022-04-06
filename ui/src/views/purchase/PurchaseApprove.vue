@@ -86,6 +86,7 @@
 */
 
 import auth_state from '@/state';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'PurchaseApprove',
@@ -100,64 +101,38 @@ export default {
     }
   },
   methods: {
-    approvePurchase(status, id) {
+    async approvePurchase(status, id) {
       this.dispmsg = '';
-      fetch(`/api/v2/purchase/${id}/approve`, {
+      const response = await fetchWrapperTXT(`/api/v2/purchase/${id}/approve`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,
               price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status,category:this.category}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        if (response.ok) {
-          this.approvalList = this.approvalList.filter((p) => {return p.purchaseID !== id});
-          this.currentApprove = '';
-        }
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-      })
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.approvalList = this.approvalList.filter((p) => {return p.purchaseID !== id});
+        this.currentApprove = '';
+      }
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/approvals`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/approvals`, {
         method: 'get',
         credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-
-      this.approvalList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.approvalList = response.response;
   },
   asyncComputed: {
     async purchase() {
@@ -178,46 +153,14 @@ export default {
         };
       }
 
-      // Not sure if this is valid, but it works...
-      return await fetch(`/api/v2/purchase/${this.currentApprove}`, {
+      const response = await fetchWrapperJSON(`/api/v2/purchase/${this.currentApprove}`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return {
-            purchasedby:'',
-            committee: '',
-            committeeAPI: '',
-            category: '',
-            item: '',
-            purchasereason: '',
-            vendor: '',
-            cost: '',
-            comments: '',
-            costTooHigh: false,
-            lowBalance: false,
-          };
-        }
+      });
 
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
         return {
           purchasedby:'',
           committee: '',
@@ -231,7 +174,9 @@ export default {
           costTooHigh: false,
           lowBalance: false,
         };
-      });
+      }
+
+      return response.response;
     },
     async categoryList() {
       this.dispmsg = '';
@@ -239,36 +184,18 @@ export default {
         return [];
       }
 
-      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
         method: 'get',
         credentials: 'include'
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return [];
-        }
-
-        this.category = this.purchase.category;
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response
+        return [];
+      }
+
+      return response.response;
     }
   }
 }
