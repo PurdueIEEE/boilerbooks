@@ -43,6 +43,8 @@
   limitations under the License.
 */
 
+import {fetchWrapperTXT} from '@/api_wrapper';
+
 export default {
   name: "PasswordReset",
   data() {
@@ -54,7 +56,7 @@ export default {
     }
   },
   methods: {
-    resetPassword() {
+    async resetPassword() {
       if (this.pass1 !== this.pass2) {
         this.dispmsg = "Passwords do not match";
         this.error = true;
@@ -68,22 +70,13 @@ export default {
       }
 
       this.dispmsg = "";
-      fetch(`/api/v2/login/reset`, {
-        method: 'post',
+      const response = await fetchWrapperTXT(`/api/v2/account/${this.$route.query.id}`, {
+        method: 'get',
         credentials: 'include',
-        headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({pass1:this.pass1, pass2:this.pass2, uname: this.$route.query.user, rstlink:this.$route.query.rstlink}),
-      })
-      .then((response) => {
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error
+      this.dispmsg = response.response;
     }
   }
 }

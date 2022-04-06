@@ -77,20 +77,18 @@
       </DataTable>
 
       <h4 class="mt-4">{{header}} Income</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Source</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Item (if donated)</th>
-            <th>Status</th>
-            <th>Ref Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="income in incomeTable" v-bind:key="income.incomeid">
+      <DataTable v-bind:rows="incomeTable">
+        <template v-slot:header>
+          <th>Date</th>
+          <th>Source</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Item (if donated)</th>
+          <th>Status</th>
+          <th>Ref Number</th>
+        </template>
+       <template v-slot:data="filteredData">
+          <tr v-for="income in filteredData.data" v-bind:key="income.incomeid">
             <td>{{income.date}}</td>
             <td>{{income.source}}</td>
             <td>{{income.type}}</td>
@@ -99,8 +97,8 @@
             <td>{{income.status}}</td>
             <td>{{income.refnumber}}</td>
           </tr>
-        </tbody>
-      </table>
+       </template>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -124,19 +122,8 @@
 
 import auth_state from '@/state';
 import DataTable from '@/components/DataTable.vue';
-import {fetchWrapperJSON} from '@/api_wrapper';
+import { fetchWrapperJSON } from '@/api_wrapper';
 
-
-/*
-  This page throws MANY TypeErrors if the user is navigating back here
-    from another page, e.g. a purchase DetailView. This is because the
-    'comm' and 'fy' queries are set, so the 'loaded' property is true
-    and the financial details are loaded. However, the asyncComputed
-    properties return null-ish values (I think) while it fetches the
-    api details. Thus, there are null objects being dereferenced and Vue
-    gets quite mad. This is nothing to worry about since the proper values
-    will load pretty quickly and then Vue will trigger a re-render.
-*/
 
 export default {
   name: "FinancialsCommittee",
@@ -228,198 +215,139 @@ export default {
     }
   },
   asyncComputed: {
-    async totalBalance() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return {balance:''};
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/balance`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
+    totalBalance: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return {balance:''};
         }
-        if (!response.ok) {
+
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/balance`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
           return {balance:'--.--'};
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return {balance:'--.--'};
-      });
+        return response.response;
+      },
+      default: {balance:''},
     },
-    async totalBudget() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return {budget:''};
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/budget/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
+    totalBudget: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return {budget:''};
         }
-        if (!response.ok) {
+
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/budget/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
           return {budget:'--.--'};
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return {budget:'--.--'};
-      });
+        return response.response;
+      },
+      default: {budget:''},
     },
-    async totalIncome() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return {income:''};
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/incometotal/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          return {income:'--.--'};
+    totalIncome: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return {budget:''};
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return {income:'--.--'};
-      });
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/incometotal/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
+          return {budget:'--.--'};
+        }
+
+        return response.response;
+      },
+      default: {income:''},
     },
-    async totalSpent() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return {spent:''};
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/expensetotal/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          return {spent:'--.--'};
+    totalSpent: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return {budget:''};
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return {spent:'--.--'};
-      });
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/expensetotal/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
+          return {budget:'--.--'};
+        }
+
+        return response.response;
+      },
+      default: {spent:''},
     },
-    async financialSummary() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return {};
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          return {};
-        }
-
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return {};
-      });
-    },
-    expenseTable: {
-      get() {
+    financialSummary: {
+      async get() {
         if (this.committee === '' || this.fiscalyear === '') {
           return [];
         }
 
-        return fetch(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}`, {
           method: 'get',
           credentials: 'include',
-        })
-        .then((response) => {
-          // API key must have expired
-          if (response.status === 401) {
-            auth_state.clearAuthState();
-            this.$router.replace('/login');
-            return response.text()
-          }
-          if (!response.ok) {
-            return [];
-          }
-
-          return response.json();
-        })
-        .catch((error) => {
-          console.log(error);
-          return [];
         });
-      },
-      default: []
-    },
-    async incomeTable() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return [];
-      }
 
-      return await fetch(`/api/v2/committee/${this.committee}/income/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
+        if (response.error) {
           return [];
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
-      });
-    }
+        return response.response;
+      },
+      default: [],
+    },
+    expenseTable: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return [];
+        }
+
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
+          return [];
+        }
+
+        return response.response;
+      },
+      default: [],
+    },
+    incomeTable: {
+      async get() {
+        if (this.committee === '' || this.fiscalyear === '') {
+          return [];
+        }
+
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/income/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        });
+
+        if (response.error) {
+          return [];
+        }
+
+        return response.response;
+      },
+      default: [],
+    },
   }
 }
 </script>

@@ -108,6 +108,7 @@
 */
 
 import auth_state from '@/state';
+import {fetchWrapperJSON, fetchWrapperTXT} from '@/api_wrapper';
 
 export default {
   name: 'DetailView',
@@ -130,106 +131,67 @@ export default {
     this.init();
   },
   methods: {
-    init() {
+    async init() {
       if (this.$route.query.id === undefined || this.$route.query.id === '') {
         return;
       }
-      fetch(`/api/v2/purchase/${this.$route.query.id}`, {
+
+      const response = await fetchWrapperJSON(`/api/v2/purchase/${this.$route.query.id}`, {
           method: 'get',
           credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return;
-        }
-
-        this.purchase = response;
-        this.reason = response.purchasereason;
-        this.vendor = response.vendor;
-        this.item = response.item;
-        this.comments = response.comments;
-        this.category = response.category;
-        this.cost = response.cost;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        return;
+      }
+
+      this.purchase = response.response;
+      this.reason = response.response.purchasereason;
+      this.vendor = response.response.vendor;
+      this.item = response.response.item;
+      this.comments = response.response.comments;
+      this.category = response.response.category;
+      this.cost = response.response.cost;
     },
-    finishEdit() {
+    async finishEdit() {
       this.dispmsg = '';
-      fetch(`/api/v2/purchase/${this.$route.query.id}`, {
+      const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments,category:this.category}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) {
-          this.editPurchase = false;
-          this.init();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.editPurchase = false;
+        this.init();
+      }
     },
-    updateReceipt() {
+    async updateReceipt() {
       this.dispmsg = '';
       const formData = new FormData();
       const fileInput = document.querySelector('#receiptFile');
 
       formData.append('receipt', fileInput.files[0]);
 
-      fetch(`/api/v2/purchase/${this.$route.query.id}/receipt`, {
+      const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}/receipt`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({}),
         body: formData,
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        if (response.ok) {
-          this.currentComplete = '';
-          this.init();
-        }
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.init();
+      }
     }
   },
   computed: {
@@ -248,41 +210,27 @@ export default {
     }
   },
   asyncComputed: {
-    async categoryList() {
-      this.dispmsg = '';
-      if (this.purchase.committeeAPI === undefined) {
-        return [];
-      }
-
-      return await fetch(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include'
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
+    categoryList: {
+      async get() {
+        this.dispmsg = '';
+        if (this.purchase.committeeAPI === undefined) {
           return [];
         }
 
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
-      });
+        const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include'
+        });
+
+        if (response.error) {
+          this.error = true;
+          this.dispmsg = response.response;
+          return;
+        }
+
+        return response.response;
+      },
+      default: [],
     }
   }
 }

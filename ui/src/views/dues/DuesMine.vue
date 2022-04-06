@@ -4,39 +4,24 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <div class="text-center">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
+      <DataTable v-bind:rows="rows">
+        <template v-slot:header>
             <th>Name</th>
             <th>Email</th>
             <th>Committee(s)</th>
             <th>Year</th>
             <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="data in paginatedData" v-bind:key="data.key">
+        </template>
+        <template v-slot:data="paginatedData">
+          <tr v-for="data in paginatedData.data" v-bind:key="data.key">
             <td>{{data.name}}</td>
             <td>{{data.email}}</td>
             <td>{{data.committee}}</td>
             <td>{{data.fiscal_year}}</td>
             <td>{{data.amount}}</td>
           </tr>
-        </tbody>
-      </table>
-      <div class="row">
-        <span class="col">Showing {{currPageStart}} - {{currPageEnd}} of {{rows.length}} entries</span>
-        <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==0" v-on:click="currPageRaw-=1">Prev</button></span>
-        <span class="col">Page {{currPage+1}} of {{maxPage+1}}</span>
-        <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==maxPage" v-on:click="currPageRaw+=1">Next</button></span>
-        <span class="col">
-          <select class="form-select" v-model="maxElemPerPage">
-            <option value="10">10 entries</option>
-            <option value="25">25 entries</option>
-            <option value="50">50 entries</option>
-          </select>
-        </span>
-      </div>
+        </template>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -58,12 +43,14 @@
   limitations under the License.
 */
 
-import mixin from '@/mixins/DataTables';
+import DataTable from '@/components/DataTable.vue';
 import auth_state from '@/state';
 
 export default {
   name: "DuesMine",
-  mixins: [mixin],
+  components: {
+    DataTable
+  },
   data() {
     return {
       rows: [],

@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import auth_state from '@/state';
 /*
    Copyright 2022 Purdue IEEE and Hadi Ahmed
 
@@ -53,6 +52,8 @@ import auth_state from '@/state';
    limitations under the License.
 */
 
+import {fetchWrapperJSON} from '@/api_wrapper';
+
 export default {
   name: 'UserView',
   data() {
@@ -62,39 +63,23 @@ export default {
       dispmsg: '',
     }
   },
-  mounted() {
+  async mounted() {
     if (this.$route.query.id === undefined || this.$route.query.id === '') {
       return;
     }
-    fetch(`/api/v2/account/${this.$route.query.id}`, {
+
+    const response = await fetchWrapperJSON(`/api/v2/account/${this.$route.query.id}`, {
         method: 'get',
         credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-
-      this.user = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.user = response.response;
   }
 }
 </script>

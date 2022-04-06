@@ -38,6 +38,7 @@
 */
 
 import auth_state from '@/state';
+import {fetchWrapperJSON} from '@/api_wrapper';
 
 export default {
   name: "FinancialsHome",
@@ -48,36 +49,19 @@ export default {
       dispmsg: '',
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/balances`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/balances`, {
         method: 'get',
         credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-
-      this.totalBalances = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.totalBalances = response.response;
   }
 }
 </script>

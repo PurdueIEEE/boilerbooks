@@ -105,6 +105,7 @@
 */
 
 import auth_state from '@/state';
+import {fetchWrapperJSON} from '@/api_wrapper';
 
 export default {
   name: 'Login',
@@ -139,39 +140,29 @@ export default {
     }
   },
   methods: {
-    login() {
+    async login() {
       this.error = false;
-      fetch(`/api/v2/login`, {
+      const response = await fetchWrapperJSON(`/api/v2/login`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
-      })
-      .then((response) => {
-        if (!response.ok) {
-          this.error = true;
-          return response.text()
-        }
-
-        return response.json()
-      })
-      .then((response) => {
-        if (this.error) {
-          this.errmsg = response;
-        } else {
-          auth_state.newAuthState(response);
-          if (this.$route.query.returnto === undefined) {
-            this.$router.push('/');
-          } else {
-            this.$router.push(this.$route.query.returnto);
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.errmsg = response.response;
+        return;
+      } else {
+        auth_state.newAuthState(response.response);
+        if (this.$route.query.returnto === undefined) {
+          this.$router.push('/');
+        } else {
+          this.$router.push(this.$route.query.returnto);
+        }
+      }
     },
-    newAccount() {
+    async newAccount() {
       if (this.new_pass1 !== this.new_pass2) {
         this.errmsg = "Passwords do not match"
         this.error = true;
@@ -185,7 +176,7 @@ export default {
       }
 
       this.error = false;
-      fetch(`/api/v2/account`, {
+      const response = await fetchWrapperJSON(`/api/v2/account`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
@@ -193,30 +184,20 @@ export default {
                               email:this.new_email,address:this.new_address,city:this.new_city,
                               state:this.new_state,zip:this.new_zip,pass1:this.new_pass1,pass2:this.new_pass2,
                               createpin:this.new_pin}),
-      })
-      .then((response) => {
-        if (!response.ok) {
-          this.error = true;
-          return response.text()
-        }
-
-        return response.json()
-      })
-      .then((response) => {
-        if (this.error) {
-          this.errmsg = response;
-        } else {
-          auth_state.newAuthState(response);
-          if (this.$route.query.returnto === undefined) {
-            this.$router.push('/');
-          } else {
-            this.$router.push(this.$route.query.returnto);
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.errmsg = response.response;
+        return;
+      } else {
+        auth_state.newAuthState(response.response);
+        if (this.$route.query.returnto === undefined) {
+          this.$router.push('/');
+        } else {
+          this.$router.push(this.$route.query.returnto);
+        }
+      }
     },
     swapLoginNew() {
       this.login_status = !this.login_status;

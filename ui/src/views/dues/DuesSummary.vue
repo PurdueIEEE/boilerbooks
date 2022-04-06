@@ -20,35 +20,20 @@
     <p class="fs-4">{{rows.length}} total members in current fiscal year.</p>
     <br>
     <h3>All Members</h3>
-    <table class="table table-striped table-hover" style="table-layout: fixed;">
-      <thead>
-        <tr>
+    <DataTable v-bind:rows="rows">
+      <template v-slot:header>
           <th>Name</th>
           <th>Email</th>
           <th>Committee(s)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="data in paginatedData" v-bind:key="data.key">
+      </template>
+      <template v-slot:data="paginatedData">
+        <tr v-for="data in paginatedData.data" v-bind:key="data.key">
           <td>{{data.name}}</td>
           <td>{{data.email}}</td>
           <td>{{data.committee}}</td>
         </tr>
-      </tbody>
-    </table>
-    <div class="row">
-      <span class="col">Showing {{currPageStart}} - {{currPageEnd}} of {{rows.length}} entries</span>
-      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==0" v-on:click="currPageRaw-=1">Prev</button></span>
-      <span class="col">Page {{currPage+1}} of {{maxPage+1}}</span>
-      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==maxPage" v-on:click="currPageRaw+=1">Next</button></span>
-      <span class="col">
-        <select class="form-select" v-model="maxElemPerPage">
-          <option value="10">10 entries</option>
-          <option value="25">25 entries</option>
-          <option value="50">50 entries</option>
-        </select>
-      </span>
-    </div>
+      </template>
+    </DataTable>
 
   </div>
 </template>
@@ -70,12 +55,14 @@
   limitations under the License.
 */
 
-import mixin from "@/mixins/DataTables";
+import DataTable from '@/components/DataTable.vue'
 import auth_state from "@/state";
 
 export default {
   name: "DuesSummary",
-  mixins: [mixin],
+  components: {
+    DataTable,
+  },
   data() {
     return {
       duesSumm: {},

@@ -67,6 +67,8 @@
   limitations under the License.
 */
 
+import {fetchWrapperTXT} from '@/api_wrapper';
+
 export default {
   name: 'Forgot',
   data() {
@@ -78,47 +80,41 @@ export default {
     }
   },
   methods: {
-    forgotUsername() {
+    async forgotUsername() {
       this.dispmsg = '';
       this.error = false;
-      fetch(`/api/v2/login/forgot-user`, {
+      const response = await fetchWrapperTXT(`/api/v2/login/forgot-user`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({email:this.forgot_user_email}),
-      })
-      .then((response) => {
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) this.forgot_user_email = '';
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.dispmsg = response.response;
+      this.error = response.error;
+
+      if (!response.error)
+      {
+        this.forgot_user_email = '';
+      }
     },
-    forgotPassword() {
+    async forgotPassword() {
       this.dispmsg = '';
       this.error = false;
-      fetch(`/api/v2/login/forgot-pass`, {
+      const response = await fetchWrapperTXT(`/api/v2/login/forgot-pass`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({user:this.forgot_pass_user}),
-      })
-      .then((response) => {
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) this.forgot_pass_user = '';
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.dispmsg = response.response;
+      this.error = response.error;
+
+      if (!response.error)
+      {
+        this.forgot_pass_user = '';
+      }
     }
   }
 }
