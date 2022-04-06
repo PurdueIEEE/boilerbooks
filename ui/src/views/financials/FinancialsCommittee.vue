@@ -51,21 +51,19 @@
       <small><span class="text-danger">*</span> = Budget item not approved</small>
 
       <h4 class="mt-4">{{header}} Expenses</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Purchase ID</th>
-            <th>Date</th>
-            <th>Item</th>
-            <th>Category</th>
-            <th>Vendor</th>
-            <th>Purchaser</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="purchase in expenseTable" v-bind:key="purchase.purchaseid">
+      <DataTable v-bind:rows="expenseTable">
+        <template v-slot:header>
+          <th>Purchase ID</th>
+          <th>Date</th>
+          <th>Item</th>
+          <th>Category</th>
+          <th>Vendor</th>
+          <th>Purchaser</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </template>
+        <template v-slot:data="filteredData">
+          <tr v-for="purchase in filteredData.data" v-bind:key="purchase.purchaseid">
             <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.purchaseid}}</router-link></td>
             <td>{{purchase.date}}</td>
             <td>{{purchase.item}}</td>
@@ -75,8 +73,8 @@
             <td>${{purchase.cost}}</td>
             <td>{{purchase.status}}</td>
           </tr>
-        </tbody>
-      </table>
+        </template>
+      </DataTable>
 
       <h4 class="mt-4">{{header}} Income</h4>
       <table class="table table-striped">
@@ -125,6 +123,8 @@
 */
 
 import auth_state from '@/state';
+import DataTable from '@/components/DataTable.vue';
+import {fetchWrapperJSON} from '@/api_wrapper';
 
 
 /*
@@ -136,10 +136,13 @@ import auth_state from '@/state';
     api details. Thus, there are null objects being dereferenced and Vue
     gets quite mad. This is nothing to worry about since the proper values
     will load pretty quickly and then Vue will trigger a re-render.
-  */
+*/
 
 export default {
   name: "FinancialsCommittee",
+  components: {
+    DataTable,
+  },
   data() {
     return {
       committeeList: {},
@@ -153,64 +156,31 @@ export default {
       dispmsg: ''
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
+  async mounted() {
+    const committeeList = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error1 = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error1) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
 
-    fetch(`/api/v2/budgets/years`, {
+    const fiscalList = await fetchWrapperJSON(`/api/v2/budgets/years`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error2 = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error2) {
-        this.dispmsg = response;
-        return;
-      }
-      this.fiscalList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (committeeList.error) {
+      this.error1 = true;
+      this.dispmsg = committeeList.response;
+      return;
+    }
+
+    if (fiscalList.error) {
+      this.error2 = true;
+      this.dispmsg = fiscalList.response;
+      return;
+    }
+
+    this.committeeList = committeeList.response;
+    this.fiscalList = fiscalList.response
 
     if (this.$route.query.comm) {
       this.found_comm = true;
@@ -393,32 +363,35 @@ export default {
         return {};
       });
     },
-    async expenseTable() {
-      if (this.committee === '' || this.fiscalyear === '') {
-        return [];
-      }
-
-      return await fetch(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
+    expenseTable: {
+      get() {
+        if (this.committee === '' || this.fiscalyear === '') {
           return [];
         }
 
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
-      });
+        return fetch(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
+          method: 'get',
+          credentials: 'include',
+        })
+        .then((response) => {
+          // API key must have expired
+          if (response.status === 401) {
+            auth_state.clearAuthState();
+            this.$router.replace('/login');
+            return response.text()
+          }
+          if (!response.ok) {
+            return [];
+          }
+
+          return response.json();
+        })
+        .catch((error) => {
+          console.log(error);
+          return [];
+        });
+      },
+      default: []
     },
     async incomeTable() {
       if (this.committee === '' || this.fiscalyear === '') {

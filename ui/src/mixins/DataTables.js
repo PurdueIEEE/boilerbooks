@@ -14,12 +14,12 @@
   limitations under the License.
 */
 
-
 let DataTableMixin = {
   data() {
     return {
       currPageRaw: 0,
       maxElemPerPage: 10,
+      deprecated: console.warn("[DataTableMixin] Deprecated, use components/DataTable.vue"),
     }
   },
   computed: {
