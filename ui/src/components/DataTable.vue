@@ -79,19 +79,20 @@ export default {
     },
     searchData() {
       let rowsToKeep = [];
-      let searchRE;
       try {
-        searchRE = new RegExp(`.*${this.useRegex.length ? this.searchKey : this.escapeRegEx(this.searchKey)}.*`);
-      } catch (e) {
-        return this.rows;
-      }
-      for (let row of this.rows) {
-        for (let key in row) {
-          if (searchRE.test(row[key])) {
-            rowsToKeep.push(row);
-            break;
+        const searchRE = new RegExp(`.*${this.useRegex.length ? this.searchKey : this.escapeRegEx(this.searchKey.toLowerCase())}.*`);
+        for (let row of this.rows) {
+          for (let key in row) {
+            if (searchRE.test(this.useRegex.length ? row[key] :
+                              row[key] ? row[key].toString().toLowerCase() : '')) {
+              rowsToKeep.push(row);
+              break;
+            }
           }
         }
+      } catch (e) {
+        console.log(e)
+        return this.rows;
       }
       return rowsToKeep;
     },
