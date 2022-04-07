@@ -91,7 +91,7 @@ router.post("/", (req, res, next) => {
 router.get("/:userID", async(req, res, next) => {
     try {
         const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0 || req.context.request_user_id !== req.params.userID) {
+        if (results.validuser === 0 && req.context.request_user_id !== req.params.userID) {
             res.status(404).send("User not found");
             return next();
         }
