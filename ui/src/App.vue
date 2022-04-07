@@ -1,0 +1,110 @@
+<template>
+  <div id="app">
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-lg">
+          <router-link class="navbar-brand fw-bold" to="/">Boiler Books {{dev ? "[DEV]" : ""}}</router-link>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarlink" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarlink">
+            <ul class="navbar-nav ms-auto mb-2">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarlinks_common" role="button" data-bs-toggle="dropdown" aria-expanded="false" v-if="showUser"><i class="bi bi-arrow-right-square-fill me-2"></i>Navigate To:</a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarlinks_common" v-if="showUser">
+                    <li><router-link class="dropdown-item" to="/purchase">Purchasing</router-link></li>
+                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/income">Income and Donations</router-link></li>
+                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/financials">Financials</router-link></li>
+                    <li><router-link class="dropdown-item" to="/dues">Club Dues</router-link></li>
+                    <li v-if="auth_state.viewOfficer"><router-link class="dropdown-item" to="/budget">Budgets</router-link></li>
+                    <li v-if="auth_state.viewTreasurer"><router-link class="dropdown-item" to="/access">Access Roles</router-link></li>
+                </ul>
+              </li>
+              <li class="nav-item mx-2" v-if="showUser"><router-link class="nav-link" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
+              <li class="nav-item mx-2"><router-link class="nav-link" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
+              <li class="nav-item mx-2" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
+              <li class="nav-item mx-2"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/IEEE-Kite.svg" alt="" width="20" height="20">Purdue IEEE</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+    <router-view/>
+
+    <footer>
+        <div class="container-fluid text-center py-3">
+            <p class="text-center fs-5 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="dark-link">View page on GitHub</a></p>
+            <br>
+            <p class="text-center lead">Copyright © {{this.year}} Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
+        </div>
+    </footer>
+  </div>
+</template>
+
+<script>
+/*
+  Copyright 2022 Purdue IEEE and Hadi Ahmed
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+
+import auth_state from '@/state';
+
+export default {
+  name:"App",
+  data() {
+    return {
+      auth_state: auth_state.state,
+      year: new Date().getFullYear(),
+      dev: process.env.VUE_APP_MODE === "dev",
+    }
+  },
+  computed: {
+    showUser() {
+      return this.auth_state.uname !== '';
+    }
+  },
+  methods: {
+    logout() {
+      auth_state.clearAuthState();
+      this.$router.replace('/login');
+    }
+  },
+  mounted() {
+    if (this.dev) {
+      document.getElementById("favicon").href = `${process.env.BASE_URL}dev-favicon.ico`;
+      document.title = "Boiler Books [DEV]"
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  text-align: center;
+}
+
+.dark-link {
+  text-decoration: none;
+  color: black;
+}
+
+.dark-link:hover {
+  text-decoration: underline;
+  color: black;
+}
+
+.debug {
+  outline: 2px solid red;
+}
+</style>

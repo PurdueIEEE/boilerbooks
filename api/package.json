@@ -1,0 +1,37 @@
+{
+  "name": "boilerbooks-api",
+  "version": "2.0.0",
+  "description": "Backend API for the Purdue IEEE boilerbooks accounting software",
+  "main": "src/app.js",
+  "private": true,
+  "type":"module",
+  "scripts": {
+    "serve": "nodemon --exec babel-node src/app.js",
+    "lint": "eslint --fix src/",
+    "build": "babel --env-name build src -d dist"
+  },
+  "author": "Purdue IEEE",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jimp": "^0.16.1",
+    "multer": "^1.4.4",
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.2",
+    "uuid": "^8.3.2",
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.6.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "eslint": "^8.6.0",
+    "nodemon": "^2.0.15"
+  }
+}
