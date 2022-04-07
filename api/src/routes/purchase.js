@@ -189,22 +189,35 @@ router.post("/treasurer", async(req, res, next) => {
     /** Send email to purchasers **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
+        const email_to_send = {};
         for (let id of commaIDlist) {
-            const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(id);
-            const [user_deets ] = await req.context.models.account.getUserByID(purchase_deets[0].username);
-
-            let text = `Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}\n`;
-            let html = `<h2>Your request for ${purchase_deets[0].item} is now ${purchase_deets[0].status}</h2>`;
-            if (purchase_deets[0].status === "Reimbursed") {
-                text += "Please stop by BHEE 014 to pick up your check.\n\n";
-                html += "<p>Please stop by BHEE 014 to pick up your check</p>";
+            const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(id);
+            if (email_to_send[purchase_deets[0].username] === undefined) {
+                email_to_send[purchase_deets[0].username] = [purchase_deets[0].item];
             } else {
-                text += `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}.\n\n`;
-                html += `<p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${purchase_deets[0].purchaseid}">here</a>.</p>`;
+                email_to_send[purchase_deets[0].username].push(purchase_deets[0].item);
             }
+        }
+
+        for (let username in email_to_send) {
+            const [user_deets] = await req.context.models.account.getUserByID(username);
+            let text = `Your purchase request(s) are now ${req.body.status}\n`;
+            let html = `<h2>Your purchase request(s) are now ${req.body.status}</h2><ul>`;
+            for (let purchase of email_to_send[username]) {
+                text += `* ${purchase}\n`;
+                html += `<li>${purchase}</li>`;
+            }
+
+            if (req.body.status === "Reimbursed") {
+                text += "Please stop by BHEE 014 to pick up your check.\n\n";
+                html += "</ul><p>Please stop by BHEE 014 to pick up your check</p>";
+            } else {
+                text += `You always view the most up-to-date status of your purchases at https://money.purdueieee.org/ui/.\n\n`;
+                html += `</ul><p>You always view the most up-to-date status of your purchases <a href="https://money.purdueieee.org/ui/">here</a>.</p>`;
+            }
+
             text += "This email was automatically sent by Boiler Books";
             html += "<br><small>This email was automatically sent by Boiler Books</small>";
-
             await mailer.sendMail({
                 to: user_deets[0].email,
                 subject: "Purchase Status Updated!",
