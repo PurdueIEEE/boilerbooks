@@ -159,6 +159,10 @@ const routes = [
       {
         path: 'committee',
         component: () => import(/* webpackChunkName: "financials_committee" */ '../views/financials/FinancialsCommittee.vue'),
+      },
+      {
+        path: 'export',
+        component: () => import(/* webpackChunkName: "financials_export" */ '../views/financials/FinancialsExport.vue'),
       }
     ],
     meta: {

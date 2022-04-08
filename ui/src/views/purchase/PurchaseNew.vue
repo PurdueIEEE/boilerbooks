@@ -95,7 +95,7 @@ export default {
       });
 
       this.error = response.error;
-      this.dispmsg = response.error;
+      this.dispmsg = response.response;
 
       if (!response.response) {
         this.dispmsg = response;

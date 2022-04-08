@@ -351,4 +351,65 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 });
 
+/*
+    Get a CSV file of all purchases for a given year
+*/
+router.get("/:commID/csv", async(req, res, next) => {
+    if (!(req.params.commID in committee_lut)) {
+        res.status(404).send("Invalid committee value");
+        return next();
+    }
+
+    if (req.query.start === undefined) {
+        req.query.start = `${current_fiscal_year.split('-')[0]}-08-01`;
+    }
+
+    if (req.query.end === undefined) {
+        req.query.end = `${current_fiscal_year.split('-')[1]}-08-01`;
+    }
+
+    if ((req.query.start.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
+        res.status(400).send("Start date must be in the form YYYY-MM-DD");
+        return next();
+    }
+
+    if ((req.query.end.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
+        res.status(400).send("End date must be in the form YYYY-MM-DD");
+        return next();
+    }
+
+    if (req.query.end < req.query.start) {
+        res.status(400).send("Start date must be less than the end date");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        if (results.length === 0) {
+            res.status(404).send("Invalid committee value");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.committee.getCommitteePurchasesByDates(committee_lut[req.params.commID][0], req.query.start, req.query.end);
+        let csvString = "Date,Purchaser,Item,Vendor,Cost,Reason\n";
+
+        for (let purchase of results) {
+            csvString += `"${purchase.date.replaceAll(`"`, `""`)}","${purchase.pby.replaceAll(`"`, `""`)}","${purchase.item.replaceAll(`"`, `""`)}","${purchase.vendor.replaceAll(`"`, `""`)}","${purchase.cost.replaceAll(`"`, `""`)}","${purchase.purchasereason.replaceAll(`"`, `""`)}"\n`;
+        }
+
+        res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
 export default router;

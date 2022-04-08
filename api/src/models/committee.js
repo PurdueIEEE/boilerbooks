@@ -72,6 +72,15 @@ async function getCommitteePurchases(comm, year) {
     );
 }
 
+async function getCommitteePurchasesByDates(comm, start, end) {
+    return db_conn.promise().execute(
+        `SELECT DATE_FORMAT(p.purchasedate, '%Y-%m-%d') date, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) pby, p.item, p.vendor, p.cost, p.purchasereason
+        FROM Purchases p WHERE p.committee = ? AND p.purchasedate BETWEEN ? AND ?
+        AND p.status IN ('Purchased','Processing Reimbursement','Reimbursed')`,
+        [comm, start, end]
+    );
+}
+
 async function getCommitteeIncome(comm, year) {
     return db_conn.promise().execute(
         `SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date, I.amount as income_amount
@@ -104,4 +113,5 @@ export default {
     getCommitteePurchases,
     getCommitteeIncome,
     getCommitteeBudgetSummary,
+    getCommitteePurchasesByDates,
 };

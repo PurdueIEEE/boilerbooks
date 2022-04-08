@@ -43,6 +43,7 @@ export default {
       return {
         home: route == '/financials' || route == '/financials/',
         committee: route.startsWith('/financials/committee'),
+        export: route.startsWith('/financials/export'),
       }
     }
   }

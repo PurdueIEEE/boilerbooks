@@ -138,7 +138,6 @@ export default {
   },
   asyncComputed: {
     async purchase() {
-      this.dispmsg = '';
       if (this.currentComplete === '') {
         return {
           committee: '',
@@ -151,6 +150,7 @@ export default {
         };
       }
 
+      this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/purchase/${this.currentComplete}`, {
         method: 'get',
         credentials: 'include',

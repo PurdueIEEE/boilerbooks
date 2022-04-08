@@ -119,12 +119,12 @@ router.post("/", async(req, res, next) => {
             subject: `New Purchase Request for ${req.body.committee}`,
             text: `A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}\n` +
             "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
-            `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${lastID}.\n\n` +
+            `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${insert_id}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>New Purchase Request!</h2>
             <p>A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}.</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
-            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${lastID}">here</a>.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${insert_id}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });

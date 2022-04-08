@@ -136,7 +136,6 @@ export default {
   },
   asyncComputed: {
     async purchase() {
-      this.dispmsg = '';
       if (this.currentApprove === '') {
         return {
           purchasedby:'',
@@ -153,6 +152,7 @@ export default {
         };
       }
 
+      this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/purchase/${this.currentApprove}`, {
         method: 'get',
         credentials: 'include',
@@ -176,14 +176,15 @@ export default {
         };
       }
 
+      this.category = response.response.category;
       return response.response;
     },
     async categoryList() {
-      this.dispmsg = '';
       if (this.purchase.committeeAPI === '') {
         return [];
       }
 
+      this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
         method: 'get',
         credentials: 'include'
