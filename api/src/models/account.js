@@ -55,9 +55,9 @@ async function canApprovePurchase(user, purchase) {
         WHERE p.purchaseID = ?
         AND a.username = ?
         AND p.cost <= (SELECT MAX(ap.amount) FROM approval ap
-        WHERE ap.username = p.username
+        WHERE ap.username = ?
         AND ap.committee = p.committee)`,
-        [purchase, user]
+        [purchase, user, user]
     );
 }
 
