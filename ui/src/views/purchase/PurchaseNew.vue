@@ -97,8 +97,7 @@ export default {
       this.error = response.error;
       this.dispmsg = response.response;
 
-      if (!response.response) {
-        this.dispmsg = response;
+      if (!response.error) {
         this.committee = '';
         this.category = '';
         this.itemName = '';
