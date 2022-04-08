@@ -583,6 +583,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         return next();
     }
 
+    res.status(201).send("Purchase completed");
+
     /** send email to treasurer **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
@@ -604,7 +606,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         logger.error(err);
     }
 
-    res.status(201).send("Purchase completed");
     return next();
 }, (err, req, res, next) => {
     // This catches too large files
