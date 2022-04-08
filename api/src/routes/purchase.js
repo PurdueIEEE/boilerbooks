@@ -567,7 +567,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             const img = await jimp.read(req.file.path);
             img.write(process.env.RECEIPT_BASEDIR+file_save_name);
         } else {
-            await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+            await fs.copyFile(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name)
+            await fs.unlink(req.file.path);
         }
 
         req.body.receipt = file_save_name;
@@ -666,7 +667,8 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
             const img = await jimp.read(req.file.path);
             img.write(process.env.RECEIPT_BASEDIR+file_save_name);
         } else {
-            await fs.rename(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+            await fs.copyFile(req.file.path, process.env.RECEIPT_BASEDIR+file_save_name);
+            await fs.unlink(req.file.path);
         }
 
         await req.context.models.purchase.updateReceipt(req.params.purchaseID, file_save_name);
