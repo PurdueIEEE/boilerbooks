@@ -113,9 +113,8 @@ async function getPurchaseByUser(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.purchaseid, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 		p.cost, p.comments, p.username purchasedby, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
-		FROM Purchases p
-		WHERE p.username = ?
-		ORDER BY p.purchasedate`,
+		FROM Purchases p WHERE p.username = ?
+		ORDER BY p.purchaseID DESC`,
         [id]
     );
 }
