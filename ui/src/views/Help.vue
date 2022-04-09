@@ -6,10 +6,7 @@
     <p class="fs-5">
     It was developed on behalf of IEEE to track all purchases for the organization.
     The system allows any IEEE member to create an account and request to purchase
-    something on behalf of the indicated committee. The purchase may then be approved
-    or denied by the committee chair (or designated member). If the purchase is
-    approved, the member will then proceed to buy the item. After it is bought the
-    receipt shall be uploaded to allow for timely reimbursement by the IEEE treasurer.
+    something on behalf of the indicated committee.
     </p>
     <p class="fs-5">
     In addition to being a convenient system to request and approve purchases, members

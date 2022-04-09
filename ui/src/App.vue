@@ -8,22 +8,16 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarlink">
-            <ul class="navbar-nav ms-auto mb-2">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarlinks_common" role="button" data-bs-toggle="dropdown" aria-expanded="false" v-if="showUser"><i class="bi bi-arrow-right-square-fill me-2"></i>Navigate To:</a>
-                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarlinks_common" v-if="showUser">
-                    <li><router-link class="dropdown-item" to="/purchase">Purchasing</router-link></li>
-                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/income">Income and Donations</router-link></li>
-                    <li v-if="auth_state.viewFinancials"><router-link class="dropdown-item" to="/financials">Financials</router-link></li>
-                    <li><router-link class="dropdown-item" to="/dues">Club Dues</router-link></li>
-                    <li v-if="auth_state.viewOfficer"><router-link class="dropdown-item" to="/budget">Budgets</router-link></li>
-                    <li v-if="auth_state.viewTreasurer"><router-link class="dropdown-item" to="/access">Access Roles</router-link></li>
-                </ul>
-              </li>
-              <li class="nav-item mx-2" v-if="showUser"><router-link class="nav-link" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
-              <li class="nav-item mx-2"><router-link class="nav-link" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
-              <li class="nav-item mx-2" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
-              <li class="nav-item mx-2"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/IEEE-Kite.svg" alt="" width="20" height="20">Purdue IEEE</a></li>
+            <ul class="navbar-nav ms-auto mb-1">
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" to="/purchase"><i class="bi bi-cart-plus-fill me-1"></i>Purchasing</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" to="/income"><i class="bi bi-piggy-bank-fill me-1"></i>Income</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" to="/financials"><i class="bi bi-bank2 me-1"></i>Financials</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" to="/dues"><i class="bi bi-cash-coin me-1"></i>Dues</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><span class="nav-link">|</span></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
+              <li class="nav-item mx-1"><router-link class="nav-link" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
+              <li class="nav-item mx-1"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/IEEE-Kite.svg" alt="" width="20" height="20">Purdue IEEE</a></li>
             </ul>
           </div>
         </div>
