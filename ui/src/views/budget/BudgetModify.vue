@@ -18,11 +18,11 @@
       <form v-on:submit.prevent="pushNewBudget">
 
         <div v-for="(item, idx) in currBudget" v-bind:key="item.category" class="p-3 m-2 bg-light border rounded-3 row text-start">
-          <div class="col-md-5">
+          <div class="col-md-5 mt-1">
             <label v-bind:for="'cat-input-'+idx" class="form-label fw-bold">Category</label>
             <input v-bind:id="'cat-input-'+idx" type="text" v-model="currEditBudget[idx].category" class="form-control" required>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-5 mt-1">
             <label v-bind:for="'amt-input-'+idx" class="form-label fw-bold">Amount</label>
             <div class="input-group">
               <span class="input-group-text">$</span>
@@ -30,16 +30,16 @@
             </div>
           </div>
           <div class="col-md-2 d-flex align-items-center justify-content-center">
-            <button class="btn btn-danger p-2" v-on:click="removeLineItem(idx)"><i class="bi bi-trash-fill"></i>Delete</button>
+            <button class="btn btn-danger p-2 m-1" v-on:click="removeLineItem(idx)"><i class="bi bi-trash-fill"></i>Delete</button>
           </div>
         </div>
 
         <div class="p-3 m-2 bg-light border rounded-3 row text-start">
-          <div class="col-md-5">
+          <div class="col-md-5 mt-1">
             <label for="cat-input-new" class="form-label fw-bold">Category</label>
             <input id="cat-input-new" type="text" v-model="newCat" class="form-control" placeholder="Category name...">
           </div>
-          <div class="col-md-5">
+          <div class="col-md-5 mt-1">
             <label for="amt-input-new" class="form-label fw-bold">Amount</label>
             <div class="input-group">
               <span class="input-group-text">$</span>
@@ -47,7 +47,7 @@
             </div>
           </div>
           <div class="col-md-2 d-flex align-items-center justify-content-center">
-            <button class="btn btn-success p-2" type="button" v-on:click="addNewLineItem"><i class="bi bi-plus-lg"></i>Add</button>
+            <button class="btn btn-success p-2 m-1" type="button" v-on:click="addNewLineItem"><i class="bi bi-plus-lg"></i>Add</button>
           </div>
         </div>
 

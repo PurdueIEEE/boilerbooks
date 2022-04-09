@@ -6,7 +6,7 @@
     <!-- Begin the DIV SOUP -->
     <div class="row mt-5 justify-content-center">
 
-        <div class="col-3 d-flex align-items-stretch mb-3">
+        <div class="col-md-3 d-flex align-items-stretch mb-3">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Purchasing</h5>
@@ -18,7 +18,7 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewFinancials">
+        <div class="col-md-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewFinancials">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Income and Donations</h5>
@@ -30,7 +30,7 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewFinancials">
+        <div class="col-md-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewFinancials">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">View Financials</h5>
@@ -42,7 +42,7 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3">
+        <div class="col-md-3 d-flex align-items-stretch mb-3">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Club Dues</h5>
@@ -54,7 +54,7 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewOfficer">
+        <div class="col-md-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewOfficer">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Committee Budgets</h5>
@@ -66,7 +66,7 @@
         </div>
         </div>
 
-        <div class="col-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewTreasurer">
+        <div class="col-md-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewTreasurer">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Adjust Access Roles</h5>
