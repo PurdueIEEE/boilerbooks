@@ -35,7 +35,7 @@
         <label for="costDollars" class="form-label fw-bold">Cost</label>
         <div class="input-group">
           <span class="input-group-text">$</span>
-          <input id="costDollars" type="number" step=".01" class="form-control" v-model="purchase.cost" required>
+          <input id="costDollars" type="number" step=".01" class="form-control" v-model="purchase.cost" v-bind:max="purchase.maxCost" required>
         </div>
       </div>
       <div class="col-12">
@@ -146,6 +146,7 @@ export default {
           purchasereason: '',
           vendor: '',
           cost: '',
+          maxCost: '',
           comments: '',
         };
       }
@@ -166,6 +167,7 @@ export default {
           purchasereason: '',
           vendor: '',
           cost: '',
+          maxCost: '',
           comments: '',
         };
       }

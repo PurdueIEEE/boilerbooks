@@ -251,6 +251,9 @@ router.get("/:purchaseID", async(req, res, next) => {
         if (results_1.length === 0) {
             // User is purchaser
             if (req.context.request_user_id === results[0].username) {
+                if (results[0].status === 'Approved' || results[0].status === 'Approved') {
+                    results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
+                }
                 results[0].committee = committee_name_swap[results[0].committee];
                 results[0].committeeAPI = committee_name_api[results[0].committee];
                 res.status(200).send(results[0]);
@@ -261,6 +264,9 @@ router.get("/:purchaseID", async(req, res, next) => {
         }
 
         const [results_2] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
+        if (results[0].status === 'Requested' || results[0].status === 'Approved') {
+            results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
+        }
         results[0].committee = committee_name_swap[results[0].committee];
         results[0].committeeAPI = committee_name_api[results[0].committee];
         results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
