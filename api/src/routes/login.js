@@ -107,13 +107,13 @@ router.post("/forgot-pass", async(req, res, next) => {
             subject: "Boiler Books Password Reset",
             text: `Hello! A password reset was requested for ${req.body.user}.\n` +
                   "Please go to the following URL to reset your password:\n" +
-                  `http://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}\n` +
+                  `https://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}\n` +
                   "This link will expire in 24 hours. If you did not request a password reset, please ignore this message.\n\n" +
                   "This email was automatically sent by Boiler Books",
             html: `<h2>Hello! A password reset was requested for ${req.body.user}</h2>
                    <p>Please go to the following URL to reset your password:<p>
-                   <p><a href="http://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}">Reset My Password</a></p>
-                   <p>If the above link did not work, copy/paste this into your browser: http://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}</p>
+                   <p><a href="https://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}">Reset My Password</a></p>
+                   <p>If the above link did not work, copy/paste this into your browser: https://${process.env.HTTP_HOST}/ui/passwordreset?user=${req.body.user}&rstlink=${encodeURIComponent(reset_hash)}</p>
                    <p>This link will expire in 24 hours. If you did not request a password reset, please ignore this message.</p>
                    <br>
                    <small>This email was automatically sent by Boiler Books</small>`,
