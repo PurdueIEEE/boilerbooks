@@ -22,7 +22,7 @@ Boiler Books can be run on any OS, but it has been tested with Ubuntu 20.04 LTS.
 5. Create a `.env` file for the API, with database and private variables - use `.env.git` as an example:
 6. Start the servers
 
-```
+```sh
 apt install nginx mysql-server-8.0 nodejs postfix
 
 mysql < config/ieee-money.sql
