@@ -6,6 +6,11 @@ This system has three components: the database, the API, and the UI. The databas
 
 Boiler Books is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
+## Updating the fiscal year
+
+Modify the `current_fiscal_year` variable in [api/src/common_items.js](https://github.com/PurdueIEEE/boilerbooks/blob/master/api/src/common_items.js#L66).
+
+
 ## Setting up a development environment
 
 Boiler Books can be run on any OS, but it has been tested with Ubuntu 20.04 LTS.
