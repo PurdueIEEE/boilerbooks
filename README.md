@@ -6,64 +6,25 @@ This system has three components: the database, the API, and the UI. The databas
 
 Boiler Books is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
-## Updating the fiscal year
+## Documentation
 
-Modify the `current_fiscal_year` variable in [api/src/common_items.js](https://github.com/PurdueIEEE/boilerbooks/blob/master/api/src/common_items.js#L66).
+All the documentation is available in the `docs/` folder, broken up by topic.
 
+* Updating the Fiscal Year to match the current one: [updating_fiscalyear.md](docs/updating_fiscalyear.md)
+* Setting up a development environment: [development.md](docs/development.md)
+* Deploying app for production: [deployment.md](docs/deployment.md)
+* API endpoint documentation: [api_endpoint.md](docs/api_endpoints.md)
 
-## Setting up a development environment
+## Features
 
-Boiler Books can be run on any OS, but it has been tested with Ubuntu 20.04 LTS.
+Boiler Books allows any user to create purchase reqeusts on behalf of committees, broken up by budget category. Authorized committee members approve or deny these requests, and the request user can complete their purchase. Finally, the treasurer can reimburse the user for purchases.
 
-1. Install the required packages
-2. Use the given file to initialize the database, tables, and columns
-3. Copy the nginx reverse proxy file so all requests are redirected
-4. Install all NPM packages for the UI and API:
-5. Create a `.env` file for the API, with database and private variables - use `.env.git` as an example:
-6. Start the servers
+Income is also tracked through Boiler Books. Any authorized committee member can create a donation they expect to receive, and the treasurer can modify the income status as it arrives.
 
-```sh
-apt install nginx mysql-server-8.0 nodejs postfix
+Any authorized committee member can view summaries for the committees, listing budgetary breakdowns, income and expense breakdowns, and export purchases as a CSV.
 
-mysql < config/ieee-money.sql
+All users can see the dues they have paid thus far and officers can view all dues paying members. Treasurers can report new dues at the start of the semester.
 
-cp config/nginx-dev.conf /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/nginx-dev.conf /etc/nginx/sites-enabled/ieee-money-dev.conf
-service nginx reload
+Officers must submit budgets to the treasurer who can approve the budget request for the current fiscal year. Once approved, any user can create purchase requests.
 
-npm --prefix ./api ci
-npm --prefix ./ui ci
-
-cp ./api/.env.git ./api/.env
-
-cd api
-npm run serve
-cd ui
-npm run serve
-```
-
-Now you should be ready to launch the program in a web browser! Navigate to `http://localhost/ui/` to begin.
-
-### \[TODO\] Development environment with Docker
-
-WIP
-
-## Deploying for production
-
-Boiler Books can be used with SystemD to manage processes. A .service file is provided as an example.
-
-Boiler Books can also be deployed using docker-compose to network the db, api, and ui/proxy services.
-
-## IEEE Deploy Information
-
-### Backups
-
-Backups occur daily and are uploaded automatically to alternate storage.
-
-### SSL
-
-SSL certificates are auto renewed with Let's Encrypt certbot.
-
-### Mail
-
-A proper mailing agent must be configured on the server - `sendmail` may require extra configuration if not using the compatibility binary provided through `postfix`
+The treasurer can add and remove authorized committee members, officers, and other treasurers from the permission list.
