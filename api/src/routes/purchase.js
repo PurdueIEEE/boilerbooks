@@ -644,7 +644,8 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
         }
 
         /** setup file and remove the temp **/
-        const old_file = results_1[0].receipt.match(/(?<pre>\/receipt\/[^_]+_??[^_]*?_[^_]+_.+?_[0-9]+)(_reupload_(?<reup>[0-9]))?\.(pdf|jpg)/);
+        // Regex is fun, ask Grant Geyer what it does
+        const old_file = results_1[0].receipt.match(/(?<pre>\/receipts\/[^_]+_??[^_]*?_[^_]+_.+?_[0-9]+)(_reupload_(?<reup>[0-9]))?\.(pdf|jpg)/);
         const fileType = req.file.mimetype.split("/")[1]; // dirty hack to get the file type from the MIME type
 
         let reup_num = 1;
