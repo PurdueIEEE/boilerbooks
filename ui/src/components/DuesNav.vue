@@ -1,8 +1,8 @@
 <template>
   <div class="list-group list-group-flush">
-    <router-link to="/dues/mydues" class="list-group-item" v-bind:class="{active:current.mydues}">View My Dues</router-link>
-    <router-link to="/dues/summary" class="list-group-item" v-bind:class="{active:current.summary}" v-if="auth_state.viewOfficer">Committee Dues Summary</router-link>
-    <router-link to="/dues/add" class="list-group-item" v-bind:class="{active:current.add}" v-if="auth_state.viewTreasurer">Add New Dues</router-link>
+    <router-link to="/dues/mydues" class="list-group-item" exact-active-class="active">View My Dues</router-link>
+    <router-link to="/dues/summary" class="list-group-item" exact-active-class="active" v-if="auth_state.viewOfficer">Committee Dues Summary</router-link>
+    <router-link to="/dues/add" class="list-group-item" exact-active-class="active" v-if="auth_state.viewTreasurer">Add New Dues</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>
 </template>

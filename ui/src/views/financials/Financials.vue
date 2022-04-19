@@ -3,7 +3,7 @@
     <h1>IEEE Financials</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <FinancialsNav v-bind:current="current"></FinancialsNav>
+        <FinancialsNav></FinancialsNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -35,17 +35,6 @@ export default {
   name: 'Financials',
   components: {
     FinancialsNav,
-  },
-  computed: {
-    current() {
-      let route = this.$route.path;
-
-      return {
-        home: route == '/financials' || route == '/financials/',
-        committee: route.startsWith('/financials/committee'),
-        export: route.startsWith('/financials/export'),
-      }
-    }
   }
 }
 </script>

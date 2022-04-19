@@ -3,7 +3,7 @@
     <h1>IEEE Local Dues</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <DuesNav v-bind:current="current"></DuesNav>
+        <DuesNav></DuesNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -35,18 +35,6 @@ export default {
   name: 'Dues',
   components: {
     DuesNav,
-  },
-  computed: {
-    current() {
-      let route = this.$route.path;
-
-      return {
-        home: route == '/dues' || route == '/dues/',
-        mydues: route.startsWith('/dues/mydues'),
-        summary: route.startsWith('/dues/summary'),
-        add: route.startsWith('/dues/add'),
-      }
-    }
   }
 }
 </script>
