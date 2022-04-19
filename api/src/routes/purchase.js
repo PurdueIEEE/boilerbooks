@@ -44,6 +44,33 @@ const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
 const approve_status = ["Approved", "Denied"];
 const approve_fundsource = ["BOSO", "Cash", "SOGA"];
 
+/*
+    Get all processing or reimbursed purchases
+*/
+router.get("/", async(req, res, next) => {
+    // Check that user is treasurer
+    try {
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send([]); // silently fail on no authorization
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.purchase.getAllReimbursements();
+        res.status(200).send(results);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
 
 /*
     Create new purchase
@@ -551,7 +578,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.jpg`;
         } else {
             // handle JPG / JPEG / PDF like normal
-            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType}`;
+            //  if the filetype is JPEG, change the file extension to .jpg for BOSO
+            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType === "jpeg" ? "jpg" : fileType}`;
         }
         file_save_name = file_save_name.replaceAll(" ", "_");
         file_save_name = file_save_name.replaceAll(/['"!?#%&{}/<>$:@+`|=]/ig, "");
@@ -645,7 +673,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
 
         /** setup file and remove the temp **/
         // Regex is fun, ask Grant Geyer what it does
-        const old_file = results_1[0].receipt.match(/(?<pre>\/receipts\/[^_]+_??[^_]*?_[^_]+_.+?_[0-9]+)(_reupload_(?<reup>[0-9]))?\.(pdf|jpg)/);
+        const old_file = results_1[0].receipt.match(/(?<pre>\/receipts\/[^_]+_??[^_]*?_[^_]+_.+?_[0-9]+)(_reupload_(?<reup>[0-9]))?\.(png|jpg|pdf|PDF|jpeg)/);
         const fileType = req.file.mimetype.split("/")[1]; // dirty hack to get the file type from the MIME type
 
         let reup_num = 1;

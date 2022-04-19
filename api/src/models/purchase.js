@@ -73,6 +73,17 @@ async function getPurchaseApprovers(purchase) {
     );
 }
 
+async function getAllReimbursements() {
+    return db_conn.promise().execute(
+        `SELECT DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, DATE_FORMAT(p.modifydate, '%Y-%m-%dT%H:%i:%sZ') as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+        p.cost, p.comments, p.fundsource, p.fiscalyear, p.username, p.purchaseid,
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+        FROM Purchases p
+        WHERE p.status IN ('Processing Reimbursement', 'Reimbursed')`
+    );
+}
+
 async function approvePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), approvedby=?, item=?, purchasereason=?, vendor=?,
@@ -174,4 +185,5 @@ export default {
     getTreasurer,
     updatePurchase,
     updateReceipt,
+    getAllReimbursements,
 };

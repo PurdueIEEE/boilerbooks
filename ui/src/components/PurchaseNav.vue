@@ -1,10 +1,11 @@
 <template>
   <div class="list-group list-group-flush">
-    <router-link to="/purchase/new" class="list-group-item" v-bind:class="{active:current.request}">Request Purchase</router-link>
-    <router-link to="/purchase/approve" class="list-group-item" v-bind:class="{active:current.approve}" v-if="auth_state.viewApprove">Approve Purchase</router-link>
-    <router-link to="/purchase/complete" class="list-group-item" v-bind:class="{active:current.complete}">Complete Purchase</router-link>
-    <router-link to="/purchase/reimburse" class="list-group-item" v-bind:class="{active:current.reimburse}" v-if="auth_state.viewTreasurer">Reimburse Purchases</router-link>
-    <router-link to="/purchase/view" class="list-group-item" v-bind:class="{active:current.view}">View Purchases</router-link>
+    <router-link to="/purchase/new" class="list-group-item" active-class="active">Request Purchase</router-link>
+    <router-link to="/purchase/approve" class="list-group-item" active-class="active" v-if="auth_state.viewApprove">Approve Purchase</router-link>
+    <router-link to="/purchase/complete" class="list-group-item" active-class="active">Complete Purchase</router-link>
+    <router-link to="/purchase/reimburse" class="list-group-item"  v-if="auth_state.viewTreasurer">Reimburse Purchases</router-link>
+    <router-link to="/purchase/view" class="list-group-item" active-class="active">View My Purchases</router-link>
+    <router-link to="/purchase/reimbursements" class="list-group-item" active-class="active" v-if="auth_state.viewTreasurer">View All Purchases</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>
 </template>
@@ -35,8 +36,5 @@ export default {
       auth_state: auth_state.state,
     }
   },
-  props: {
-    current: Object
-  }
 }
 </script>

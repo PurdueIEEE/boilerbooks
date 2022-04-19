@@ -21,7 +21,7 @@ const router = Router();
 
 router.get("/:file", async(req, res, next) => {
     // make sure that only purchaser, approvers, and treasurers can view receipts
-    const id_from_file = /.*?_(?<pnum>[0-9]+)(_reupload_[0-9]+)?\.(png|jpg|pdf|jpeg)$/gm;
+    const id_from_file = /.*?_(?<pnum>[0-9]+)(_reupload_[0-9]+)?\.(png|jpg|pdf|PDF|jpeg)$/gm;
     const match = id_from_file.exec(req.params.file);
     if (match === null || match.groups.pnum === undefined || match.groups.pnum === null) {
         res.status(404).send("Receipt not found");
