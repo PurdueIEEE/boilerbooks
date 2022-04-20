@@ -62,7 +62,7 @@ async function getCommitteeIncomeTotals(comm, year) {
 
 async function getCommitteePurchases(comm, year) {
     return db_conn.promise().execute(
-        `SELECT p.purchaseid, DATE_FORMAT(p.purchasedate,'%m/%d/%Y') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
+        `SELECT p.purchaseid, DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
 		p.cost, p.comments,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
 		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
@@ -83,7 +83,7 @@ async function getCommitteePurchasesByDates(comm, start, end) {
 
 async function getCommitteeIncome(comm, year) {
     return db_conn.promise().execute(
-        `SELECT *, DATE_FORMAT(updated,'%m/%d/%Y') as date, I.amount as income_amount
+        `SELECT *, DATE_FORMAT(updated,'%Y-%m-%d') as date, I.amount as income_amount
 		FROM Income I
 		WHERE I.committee = ?
 		AND I.fiscalyear = ?
