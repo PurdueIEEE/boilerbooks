@@ -9,13 +9,13 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarlink">
             <ul class="navbar-nav ms-auto mb-1">
-              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" exact-active-class="active" to="/purchase"><i class="bi bi-cart-plus-fill me-1"></i>Purchasing</router-link></li>
-              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" exact-active-class="active" to="/income"><i class="bi bi-piggy-bank-fill me-1"></i>Income</router-link></li>
-              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" exact-active-class="active" to="/financials"><i class="bi bi-bank2 me-1"></i>Financials</router-link></li>
-              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" exact-active-class="active" to="/dues"><i class="bi bi-cash-coin me-1"></i>Dues</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/purchase"><i class="bi bi-cart-plus-fill me-1"></i>Purchasing</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" active-class="active" to="/income"><i class="bi bi-piggy-bank-fill me-1"></i>Income</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" active-class="active" to="/financials"><i class="bi bi-bank2 me-1"></i>Financials</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/dues"><i class="bi bi-cash-coin me-1"></i>Dues</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><span class="nav-link">|</span></li>
-              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" exact-active-class="active" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
-              <li class="nav-item mx-1"><router-link class="nav-link" exact-active-class="active" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
+              <li class="nav-item mx-1"><router-link class="nav-link" active-class="active" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
               <li class="nav-item mx-1"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/IEEE-Kite.svg" alt="" width="20" height="20">Purdue IEEE</a></li>
             </ul>
