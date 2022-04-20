@@ -15,18 +15,24 @@
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <slot name="header"></slot>
+          <th v-for="header in row_headers" v-bind:key="header[0]">
+            <i class="bi bi-caret-down-fill sort-arrow" v-bind:class="{'sort-arrow-selected': sortKey===header[1]&&!sortKeyAsc}" v-on:click="sortDesc(header[1])" v-if="header[1]!==''"></i>
+            {{header[0]}}
+            <i class="bi bi-caret-up-fill sort-arrow" v-bind:class="{'sort-arrow-selected': sortKey===header[1]&&sortKeyAsc}" v-on:click="sortAsc(header[1])" v-if="header[1]!==''"></i>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <slot name="data" v-bind:data="paginatedData"></slot>
+        <tr v-for="row in paginatedData" v-bind:key="row[row_key]">
+          <slot name="data" v-bind:row="row"></slot>
+        </tr>
       </tbody>
     </table>
     <div class="row">
       <span class="col">Showing {{currPageStart}} - {{currPageEnd}} of {{searchData.length}} entries<span v-if="searchKey !== ''"><br>Filtered from {{rows.length}} entries</span></span>
-      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==0" v-on:click="currPageRaw-=1">Prev</button></span>
+      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==0" v-on:click="currPage-=1">Prev</button></span>
       <span class="col">Page {{currPage+1}} of {{maxPage+1}}</span>
-      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==maxPage" v-on:click="currPageRaw+=1">Next</button></span>
+      <span class="col"><button class="btn btn-secondary" v-bind:disabled="currPage==maxPage" v-on:click="currPage+=1">Next</button></span>
       <span class="col">
         <select class="form-select" v-model="maxElemPerPage">
           <option value="10">10 entries</option>
@@ -58,10 +64,12 @@ export default {
   name: "DataTable",
   data() {
     return {
-      currPageRaw: 0,
+      currPage: 0,
       maxElemPerPage: 10,
       searchKey: '',
       useRegex: [],
+      sortKey: '',
+      sortKeyAsc: false,
     }
   },
   props: {
@@ -69,21 +77,32 @@ export default {
       type: Array,
       required: true,
     },
+    row_key: {
+      type: String,
+      required: true,
+    },
+    row_headers: {
+      type: Array,
+      required: true,
+    }
+  },
+  watch: {
+    maxPage(newVal) {
+      // prevent the currPage from exceeding the actual max page
+      if (this.currPage > newVal) {
+        this.currPage = this.maxPage;
+      }
+    }
   },
   computed: {
-    currPage() {
-      if (this.currPageRaw > this.maxPage) {
-        return this.maxPage
-      }
-      return this.currPageRaw;
-    },
     searchData() {
       let rowsToKeep = [];
       try {
         const searchRE = new RegExp(`.*${this.useRegex.length ? this.searchKey : this.escapeRegEx(this.searchKey.toLowerCase())}.*`);
         for (let row of this.rows) {
           for (let key in row) {
-            if (searchRE.test(this.useRegex.length ? row[key] :
+            if (searchRE.test(this.useRegex.length ?
+                              row[key] ? row[key] : '' :
                               row[key] ? row[key].toString().toLowerCase() : '')) {
               rowsToKeep.push(row);
               break;
@@ -96,31 +115,76 @@ export default {
       }
       return rowsToKeep;
     },
+    sortData() {
+      if (this.sortKey === '') return this.searchData;
+      // Allows us to deep copy the array, could be converted to a watch property later
+      let sortData = JSON.parse(JSON.stringify(this.searchData));
+      sortData.sort((a, b) => {
+        if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
+          < (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
+          return this.sortKeyAsc ? -1 : 1;
+        }
+        if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
+          > (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
+          return this.sortKeyAsc ? 1 : -1;
+        }
+        return 0;
+      });
+      return sortData;
+    },
     paginatedData() {
-      if (this.searchData.length < this.maxElemPerPage) {
-        return this.searchData;
+      if (this.sortData.length < this.maxElemPerPage) {
+        return this.sortData;
       }
-      return this.searchData.slice((this.currPage) * this.maxElemPerPage, (this.currPage + 1) * this.maxElemPerPage);
+      return this.sortData.slice((this.currPage) * this.maxElemPerPage, (this.currPage + 1) * this.maxElemPerPage);
     },
     maxPage() {
-      if (this.searchData.length == 0) return 0;
-      return Math.floor((this.searchData.length - 1) / this.maxElemPerPage);
+      if (this.sortData.length == 0) return 0;
+      return Math.floor((this.sortData.length - 1) / this.maxElemPerPage);
     },
     currPageEnd() {
       if (this.currPage == this.maxPage) {
-        return this.searchData.length
+        return this.sortData.length
       }
       return (this.currPage+1)*this.maxElemPerPage
     },
     currPageStart() {
-      if (this.searchData.length == 0) return 0;
+      if (this.sortData.length == 0) return 0;
       return (this.currPage*this.maxElemPerPage) + 1;
     }
   },
   methods: {
     escapeRegEx(str) {
       return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
+    },
+    sortAsc(key) {
+      if (this.sortKey === key) {
+        this.sortKey = '';
+        return;
+      }
+      this.sortKey = key;
+      this.sortKeyAsc = true;
+    },
+    sortDesc(key) {
+      if (this.sortKey === key) {
+        this.sortKey = '';
+        return;
+      }
+      this.sortKey = key;
+      this.sortKeyAsc = false;
     }
   }
 }
 </script>
+
+<style scoped>
+  .sort-arrow {
+    color:black;
+  }
+  .sort-arrow:hover {
+    color: #00629B;
+  }
+  .sort-arrow-selected {
+    color: #CFB991;
+  }
+</style>
