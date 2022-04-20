@@ -4,22 +4,22 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <div class="text-center">
-      <DataTable v-bind:rows="rows">
-        <template v-slot:header>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Committee(s)</th>
-            <th>Year</th>
-            <th>Amount</th>
-        </template>
-        <template v-slot:data="paginatedData">
-          <tr v-for="data in paginatedData.data" v-bind:key="data.key">
-            <td>{{data.name}}</td>
-            <td>{{data.email}}</td>
-            <td>{{data.committee}}</td>
-            <td>{{data.fiscal_year}}</td>
-            <td>{{data.amount}}</td>
-          </tr>
+      <DataTable
+        v-bind:rows="rows"
+        v-bind:row_key="'duesid'"
+        v-bind:row_headers="[
+        ['Name','name'],
+        ['Email','email'],
+        ['Committee(s)','committee'],
+        ['Year','fiscal_year'],
+        ['Amount','amount']]"
+      >
+        <template v-slot:data="dues">
+          <td>{{dues.row.name}}</td>
+          <td>{{dues.row.email}}</td>
+          <td>{{dues.row.committee}}</td>
+          <td>{{dues.row.fiscal_year}}</td>
+          <td>{{dues.row.amount}}</td>
         </template>
       </DataTable>
     </div>

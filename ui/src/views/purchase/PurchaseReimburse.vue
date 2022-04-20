@@ -5,32 +5,32 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <!-- As much as I would like, all the fields do not fit here -->
-    <DataTable v-bind:rows="rows">
-      <template v-slot:header>
-        <th>Purchase ID</th>
-        <th>Date</th>
-        <th>Item</th>
-        <th>Vendor</th>
-        <th>Committee</th>
-        <th>Purchaser</th>
-        <th>Amount</th>
-        <th>Funding</th>
-        <th>Status</th>
-        <th>Process</th>
-      </template>
-      <template v-slot:data="paginatedData">
-        <tr v-for="purchase in paginatedData.data" v-bind:key="purchase.purchaseID">
-          <td><router-link v-bind:to="goToItem(purchase.purchaseID)" class="link-primary text-decoration-none">{{purchase.purchaseID}}</router-link></td>
-          <td>{{purchase.date}}</td>
-          <td><a v-bind:href="computeReceipt(purchase.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.item}}</a></td>
-          <td>{{purchase.vendor}}</td>
-          <td>{{purchase.committee}}</td>
-          <td><router-link v-bind:to="goToUser(purchase.username)" class="link-primary text-decoration-none">{{purchase.purchasedby}}</router-link></td>
-          <td>${{purchase.cost}}</td>
-          <td>{{purchase.fundsource}}</td>
-          <td>{{purchase.status}}</td>
-          <td><button class="btn btn-secondary" v-on:click="addToBox(purchase.purchaseID)">Add</button></td>
-        </tr>
+    <DataTable
+      v-bind:rows="rows"
+      v-bind:row_key="'purchaseID'"
+      v-bind:row_headers="[
+        ['Purchase ID', 'purchaseID'],
+        ['Date','date'],
+        ['Item','item'],
+        ['Vendor','vendor'],
+        ['Committee','committee'],
+        ['Purchaser','purchasedby'],
+        ['Amount','cost'],
+        ['Funding','fundsource'],
+        ['Status','status'],
+        ['Process','']]"
+      >
+      <template v-slot:data="purchase">
+        <td><router-link v-bind:to="goToItem(purchase.row.purchaseID)" class="link-primary text-decoration-none">{{purchase.row.purchaseID}}</router-link></td>
+        <td>{{purchase.row.date}}</td>
+        <td><a v-bind:href="computeReceipt(purchase.row.receipt)" class="link-primary text-decoration-none" target="_blank">{{purchase.row.item}}</a></td>
+        <td>{{purchase.row.vendor}}</td>
+        <td>{{purchase.row.committee}}</td>
+        <td><router-link v-bind:to="goToUser(purchase.row.username)" class="link-primary text-decoration-none">{{purchase.row.purchasedby}}</router-link></td>
+        <td>${{purchase.row.cost}}</td>
+        <td>{{purchase.row.fundsource}}</td>
+        <td>{{purchase.row.status}}</td>
+        <td><button class="btn btn-secondary" v-on:click="addToBox(purchase.row.purchaseID)">Add</button></td>
       </template>
     </DataTable>
     <div class="row">

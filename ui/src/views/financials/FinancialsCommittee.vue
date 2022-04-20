@@ -51,52 +51,52 @@
       <small><span class="text-danger">*</span> = Budget item not approved</small>
 
       <h4 class="mt-4">{{header}} Expenses</h4>
-      <DataTable v-bind:rows="expenseTable">
-        <template v-slot:header>
-          <th>Purchase ID</th>
-          <th>Date</th>
-          <th>Item</th>
-          <th>Category</th>
-          <th>Vendor</th>
-          <th>Purchaser</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </template>
-        <template v-slot:data="filteredData">
-          <tr v-for="purchase in filteredData.data" v-bind:key="purchase.purchaseid">
-            <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.purchaseid}}</router-link></td>
-            <td>{{purchase.date}}</td>
-            <td>{{purchase.item}}</td>
-            <td>{{purchase.category}}</td>
-            <td>{{purchase.vendor}}</td>
-            <td>{{purchase.purchasedby}}</td>
-            <td>${{purchase.cost}}</td>
-            <td>{{purchase.status}}</td>
-          </tr>
+      <DataTable
+        v-bind:rows="expenseTable"
+        v-bind:row_key="'purchaseid'"
+        v-bind:row_headers="[
+          ['Purchase ID','purchaseid'],
+          ['Date','date'],
+          ['Item','item'],
+          ['Category','category'],
+          ['Vendor','vendor'],
+          ['Purchaser','purchasedby'],
+          ['Amount','cost'],
+          ['Status','status']]"
+      >
+        <template v-slot:data="purchase">
+          <td><router-link v-bind:to="goToItem(purchase.row.purchaseid)" class="link-primary text-decoration-none">{{purchase.row.purchaseid}}</router-link></td>
+          <td>{{purchase.row.date}}</td>
+          <td>{{purchase.row.item}}</td>
+          <td>{{purchase.row.category}}</td>
+          <td>{{purchase.row.vendor}}</td>
+          <td>{{purchase.row.purchasedby}}</td>
+          <td>${{purchase.row.cost}}</td>
+          <td>{{purchase.row.status}}</td>
         </template>
       </DataTable>
 
       <h4 class="mt-4">{{header}} Income</h4>
-      <DataTable v-bind:rows="incomeTable">
-        <template v-slot:header>
-          <th>Date</th>
-          <th>Source</th>
-          <th>Type</th>
-          <th>Amount</th>
-          <th>Item (if donated)</th>
-          <th>Status</th>
-          <th>Ref Number</th>
-        </template>
-       <template v-slot:data="filteredData">
-          <tr v-for="income in filteredData.data" v-bind:key="income.incomeid">
-            <td>{{income.date}}</td>
-            <td>{{income.source}}</td>
-            <td>{{income.type}}</td>
-            <td>${{income.amount}}</td>
-            <td>{{income.item}}</td>
-            <td>{{income.status}}</td>
-            <td>{{income.refnumber}}</td>
-          </tr>
+      <DataTable
+        v-bind:rows="incomeTable"
+        v-bind:row_key="'incomeid'"
+        v-bind:row_headers="[
+          ['Date','date'],
+          ['Source','source'],
+          ['Type','type'],
+          ['Amount','amount'],
+          ['Item (if donated)','item'],
+          ['Status','status'],
+          ['Ref Number','refnumber']]"
+      >
+       <template v-slot:data="income">
+          <td>{{income.row.date}}</td>
+          <td>{{income.row.source}}</td>
+          <td>{{income.row.type}}</td>
+          <td>${{income.row.amount}}</td>
+          <td>{{income.row.item}}</td>
+          <td>{{income.row.status}}</td>
+          <td>{{income.row.refnumber}}</td>
        </template>
       </DataTable>
     </div>

@@ -34,7 +34,7 @@ async function getMemberByEmail(email, fiscal_year) {
 
 async function getDuesMembers(year) {
     return db_conn.promise().execute(
-        "SELECT name, email, committee FROM Dues WHERE fiscal_year=?",
+        "SELECT duesid, name, email, committee FROM Dues WHERE fiscal_year=?",
         [year]
     );
 }

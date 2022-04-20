@@ -20,18 +20,18 @@
     <p class="fs-4">{{rows.length}} total members in current fiscal year.</p>
     <br>
     <h3>All Members</h3>
-    <DataTable v-bind:rows="rows">
-      <template v-slot:header>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Committee(s)</th>
-      </template>
-      <template v-slot:data="paginatedData">
-        <tr v-for="data in paginatedData.data" v-bind:key="data.key">
-          <td>{{data.name}}</td>
-          <td>{{data.email}}</td>
-          <td>{{data.committee}}</td>
-        </tr>
+    <DataTable
+      v-bind:rows="rows"
+      v-bind:row_keys="''"
+      v-bind:row_headers="[
+      ['Name','name'],
+      ['Email','email'],
+      ['Committee(s)','committee']]"
+    >
+      <template v-slot:data="dues">
+        <td>{{dues.row.name}}</td>
+        <td>{{dues.row.email}}</td>
+        <td>{{dues.row.committee}}</td>
       </template>
     </DataTable>
 

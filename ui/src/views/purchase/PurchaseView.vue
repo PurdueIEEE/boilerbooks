@@ -5,28 +5,28 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <!-- As much as I would like, all the fields do not fit here -->
-    <DataTable v-bind:rows="rows">
-      <template v-slot:header>
-        <th>Date</th>
-        <th>Item</th>
-        <th>Vendor</th>
-        <th>Committee</th>
-        <th>Approver</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Cancel</th>
-      </template>
-      <template v-slot:data="paginatedData">
-        <tr v-for="purchase in paginatedData.data" v-bind:key="purchase.purchaseid">
-          <td>{{purchase.date}}</td>
-          <td><router-link v-bind:to="goToItem(purchase.purchaseid)" class="link-primary text-decoration-none">{{purchase.item}}</router-link></td>
-          <td>{{purchase.vendor}}</td>
-          <td>{{purchase.committee}}</td>
-          <td>{{purchase.approvedby}}</td>
-          <td>${{purchase.cost}}</td>
-          <td>{{purchase.status}}</td>
-          <td><button class="btn btn-danger" v-if="purchase.status === 'Requested' || purchase.status === 'Approved' || purchase.status === 'Purchased'" v-on:click="cancelPurchase(purchase.purchaseid)">Cancel</button></td>
-        </tr>
+    <DataTable
+      v-bind:rows="rows"
+      v-bind:row_key="'purchaseid'"
+      v-bind:row_headers="[
+        ['Date','date'],
+        ['Item','item'],
+        ['Vendor','vendor'],
+        ['Committee','committee'],
+        ['Approver','approvedby'],
+        ['Amount','cost'],
+        ['Status','status'],
+        ['Cancel','']]"
+    >
+      <template v-slot:data="purchase">
+        <td>{{purchase.row.date}}</td>
+        <td><router-link v-bind:to="goToItem(purchase.row.purchaseid)" class="link-primary text-decoration-none">{{purchase.row.item}}</router-link></td>
+        <td>{{purchase.row.vendor}}</td>
+        <td>{{purchase.row.committee}}</td>
+        <td>{{purchase.row.approvedby}}</td>
+        <td>${{purchase.row.cost}}</td>
+        <td>{{purchase.row.status}}</td>
+        <td><button class="btn btn-danger" v-if="purchase.row.status === 'Requested' || purchase.row.status === 'Approved' || purchase.row.status === 'Purchased'" v-on:click="cancelPurchase(purchase.row.purchaseid)">Cancel</button></td>
       </template>
     </DataTable>
   </div>

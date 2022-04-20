@@ -3,36 +3,36 @@
     <h3>Modify Income</h3>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
-    <DataTable v-bind:rows="rows">
-      <template v-slot:header>
-        <th>Date</th>
-        <th>Source</th>
-        <th>Type</th>
-        <th>Amount</th>
-        <th>Committee</th>
-        <th>Item</th>
-        <th>Status</th>
-        <th>Ref Number</th>
-        <th>Modify</th>
-      </template>
-      <template v-slot:data="paginatedData">
-        <tr v-for="income in paginatedData.data" v-bind:key="income.incomeid">
-          <td>{{income.date}}</td>
-          <td>{{income.source}}</td>
-          <td>{{income.type}}</td>
-          <td>${{income.amount}}</td>
-          <td>{{income.committee}}</td>
-          <td>{{income.item}}</td>
-          <td>{{income.status}}</td>
-          <td>{{income.refnumber}}</td>
+    <DataTable
+      v-bind:rows="rows"
+      v-bind:row_key="'incomeid'"
+      v-bind:row_headers="[
+        ['Date','date'],
+        ['Source','source'],
+        ['Type','type'],
+        ['Amount','amount'],
+        ['Committee','committee'],
+        ['Item','item'],
+        ['Status','status'],
+        ['Ref Number','refnumber'],
+        ['Modify','']]"
+    >
+      <template v-slot:data="income">
+          <td>{{income.row.date}}</td>
+          <td>{{income.row.source}}</td>
+          <td>{{income.row.type}}</td>
+          <td>${{income.row.amount}}</td>
+          <td>{{income.row.committee}}</td>
+          <td>{{income.row.item}}</td>
+          <td>{{income.row.status}}</td>
+          <td>{{income.row.refnumber}}</td>
           <td>
-            <button class="btn btn-outline-info my-1" v-if="income.status !== 'Expected'" v-on:click="updateStatus(income.incomeid, 'Expected')">Expected</button>
-            <br v-if="income.status !== 'Expected'">
-            <button class="btn btn-outline-success my-1" v-if="income.status !== 'Received'" v-on:click="updateStatus(income.incomeid, 'Received')">Received</button>
-            <br v-if="income.status !== 'Received'">
-            <button class="btn btn-outline-dark my-1" v-if="income.status !== 'Unreceived'" v-on:click="updateStatus(income.incomeid, 'Unreceived')">Unreceived</button>
+            <button class="btn btn-outline-info my-1" v-if="income.row.status !== 'Expected'" v-on:click="updateStatus(income.row.incomeid, 'Expected')">Expected</button>
+            <br v-if="income.row.status !== 'Expected'">
+            <button class="btn btn-outline-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received')">Received</button>
+            <br v-if="income.row.status !== 'Received'">
+            <button class="btn btn-outline-dark my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived')">Unreceived</button>
           </td>
-        </tr>
       </template>
     </DataTable>
   </div>

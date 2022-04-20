@@ -79,7 +79,7 @@ async function getUserApprovalCommittees(user) {
 
 async function getUserDues(user) {
     return db_conn.promise().execute(
-        `SELECT D.name, D.email, D.committee, D.fiscal_year, D.amount FROM Dues D
+        `SELECT D.duesid, D.name, D.email, D.committee, D.fiscal_year, D.amount FROM Dues D
         INNER JOIN Users U ON D.email = U.email
         WHERE U.username=?`,
         [user]

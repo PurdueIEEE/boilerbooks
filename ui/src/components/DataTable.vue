@@ -16,9 +16,9 @@
       <thead>
         <tr>
           <th v-for="header in row_headers" v-bind:key="header[0]">
-            <i class="bi bi-caret-down-fill sort-arrow" v-bind:class="{'sort-arrow-selected': sortKey===header[1]&&!sortKeyAsc}" v-on:click="sortDesc(header[1])" v-if="header[1]!==''"></i>
-            {{header[0]}}
             <i class="bi bi-caret-up-fill sort-arrow" v-bind:class="{'sort-arrow-selected': sortKey===header[1]&&sortKeyAsc}" v-on:click="sortAsc(header[1])" v-if="header[1]!==''"></i>
+            <i class="bi bi-caret-down-fill sort-arrow" v-bind:class="{'sort-arrow-selected': sortKey===header[1]&&!sortKeyAsc}" v-on:click="sortDesc(header[1])" v-if="header[1]!==''"></i>
+            <br>{{header[0]}}
           </th>
         </tr>
       </thead>
@@ -158,7 +158,7 @@ export default {
       return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
     },
     sortAsc(key) {
-      if (this.sortKey === key) {
+      if (this.sortKey === key && this.sortKeyAsc) {
         this.sortKey = '';
         return;
       }
@@ -166,7 +166,7 @@ export default {
       this.sortKeyAsc = true;
     },
     sortDesc(key) {
-      if (this.sortKey === key) {
+      if (this.sortKey === key && !this.sortKeyAsc) {
         this.sortKey = '';
         return;
       }
