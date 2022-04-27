@@ -1,9 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
-    <h1>IEEE Local Dues</h1>
+    <h1>Adjust Access Roles</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <DuesNav></DuesNav>
+        <AccessNav></AccessNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -29,12 +29,12 @@
   limitations under the License.
 */
 
-import DuesNav from '@/components/DuesNav.vue';
+import AccessNav from '@/components/AccessNav.vue';
 
 export default {
-  name: 'Dues',
+  name: "AccessFrame",
   components: {
-    DuesNav,
+    AccessNav,
   }
 }
 </script>

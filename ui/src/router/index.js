@@ -15,7 +15,7 @@
 */
 
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import Home from '../views/BoilerBooksHome.vue'
 import auth_state from '@/state'
 
 const routes = [
@@ -33,7 +33,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "help" */ '../views/Help.vue'),
+    component: () => import(/* webpackChunkName: "help" */ '../views/BoilerBooksHelp.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -41,7 +41,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '../views/LoginSignup.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -49,7 +49,7 @@ const routes = [
   {
     path: '/forgot',
     name: 'Forgot',
-    component: () => import(/* webpackChunkName: "forgot" */ '../views/Forgot.vue'),
+    component: () => import(/* webpackChunkName: "forgot" */ '../views/ForgotUserPass.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -81,7 +81,7 @@ const routes = [
   {
     path: '/myaccount',
     name: 'Account',
-    component: () => import(/* webpackChunkName: "account" */ '../views/account/Account.vue'),
+    component: () => import(/* webpackChunkName: "account" */ '../views/account/AccountSettings.vue'),
     meta: {
       requiresAuth: true,
     }
@@ -89,14 +89,14 @@ const routes = [
   {
     path: '/myaccount/password',
     name: 'Password',
-    component: () => import(/* webpackChunkName: "password" */ '../views/account/Password.vue'),
+    component: () => import(/* webpackChunkName: "password" */ '../views/account/ChangePassword.vue'),
     meta: {
       requiresAuth: true,
     }
   },
   {
     path: '/purchase',
-    component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/Purchase.vue'),
+    component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/PurchaseFrame.vue'),
     children: [
       {
         path:'',
@@ -133,7 +133,7 @@ const routes = [
   },
   {
     path: '/income',
-    component: () => import(/* webpackChunkName: "income" */ '../views/income/Income.vue'),
+    component: () => import(/* webpackChunkName: "income" */ '../views/income/IncomeFrame.vue'),
     children: [
       {
         path: '',
@@ -150,7 +150,7 @@ const routes = [
   },
   {
     path: '/financials',
-    component: () => import(/* webpackChunkName: "financials" */ '../views/financials/Financials.vue'),
+    component: () => import(/* webpackChunkName: "financials" */ '../views/financials/FinancialsFrame.vue'),
     children: [
       {
         path: '',
@@ -171,7 +171,7 @@ const routes = [
   },
   {
     path: '/dues',
-    component: () => import(/* webpackChunkName: "dues" */ '../views/dues/Dues.vue'),
+    component: () => import(/* webpackChunkName: "dues" */ '../views/dues/DuesFrame.vue'),
     children: [
       {
         path: '',
@@ -196,7 +196,7 @@ const routes = [
   },
   {
     path: '/budget',
-    component: () => import(/* webpackChunkName: "budget" */ '../views/budget/Budget.vue'),
+    component: () => import(/* webpackChunkName: "budget" */ '../views/budget/BudgetFrame.vue'),
     children: [
       {
         path: '',
@@ -217,7 +217,7 @@ const routes = [
   },
   {
     path: '/access',
-    component: () => import(/* webpackChunkName: "access" */ '../views/access/Access.vue'),
+    component: () => import(/* webpackChunkName: "access" */ '../views/access/AccessFrame.vue'),
     children: [
       {
         path: '',

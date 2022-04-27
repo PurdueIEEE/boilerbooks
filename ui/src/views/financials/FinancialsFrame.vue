@@ -1,9 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
-    <h1>Purchasing</h1>
+    <h1>IEEE Financials</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <PurchaseNav></PurchaseNav>
+        <FinancialsNav></FinancialsNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -29,12 +29,12 @@
   limitations under the License.
 */
 
-import PurchaseNav from '@/components/PurchaseNav.vue'
+import FinancialsNav from '@/components/FinancialsNav.vue';
 
 export default {
-  name: 'Purchase',
+  name: 'FinancialsFrame',
   components: {
-    PurchaseNav
+    FinancialsNav,
   }
 }
 </script>

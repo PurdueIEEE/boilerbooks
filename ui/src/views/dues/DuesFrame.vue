@@ -1,9 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
-    <h1>IEEE Financials</h1>
+    <h1>IEEE Local Dues</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <FinancialsNav></FinancialsNav>
+        <DuesNav></DuesNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -29,12 +29,12 @@
   limitations under the License.
 */
 
-import FinancialsNav from '@/components/FinancialsNav.vue';
+import DuesNav from '@/components/DuesNav.vue';
 
 export default {
-  name: 'Financials',
+  name: 'DuesFrame',
   components: {
-    FinancialsNav,
+    DuesNav,
   }
 }
 </script>

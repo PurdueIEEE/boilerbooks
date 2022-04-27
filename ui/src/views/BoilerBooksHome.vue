@@ -103,7 +103,7 @@
 import auth_state from '@/state';
 
 export default {
-  name: 'Home',
+  name: 'BoilerBooksHome',
   data() {
     return {
       auth_state: auth_state.state,
