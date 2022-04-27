@@ -2,26 +2,25 @@
   "name": "boilerbooks-ui",
   "version": "2.0.0",
   "private": true,
-  "license": "Apache 2.0",
   "scripts": {
     "serve": "vue-cli-service serve --port 3001 --mode dev",
-    "build:prod": "vue-cli-service build --mode prod",
+    "lint": "vue-cli-service lint",
     "build:dev": "vue-cli-service build --mode dev",
-    "lint": "vue-cli-service lint"
+    "build:prod": "vue-cli-service build --mode prod"
   },
   "dependencies": {
-    "@vue/compiler-sfc": "^3.2.33",
     "core-js": "^3.22.2",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.4",
+    "@vue/cli-service": "~5.0.4",
+    "@vue/compiler-sfc": "^3.2.33",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2"
-  }
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3"
+  },
+  "license": "Apache 2.0"
 }
