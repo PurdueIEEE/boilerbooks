@@ -14,7 +14,7 @@
     </div>
     <div class="my-3" v-if="committee!==''">
       <p class="fs-2">Current total budget: <span class="fw-bold">${{currBudgetTotal.toFixed(2)}}</span></p>
-      <p class="fs-2">Current budget status: <span v-bind:class="budgetStatus()">{{financialSummary.length == 0 ? "Not Submitted" : financialSummary[0].budget}}</span>
+      <p class="fs-2">Current budget status: <span v-bind:class="budgetStatus()">{{financialSummary.length == 0 ? "Not Submitted" : financialSummary[0].budget}}</span></p>
       <form v-on:submit.prevent="pushNewBudget">
 
         <div v-for="(item, idx) in currBudget" v-bind:key="item.category" class="p-3 m-2 bg-light border rounded-3 row text-start">

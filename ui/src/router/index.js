@@ -14,13 +14,9 @@
   limitations under the License.
 */
 
-
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import auth_state from '@/state'
-
-Vue.use(VueRouter)
 
 const routes = [
   {
@@ -103,7 +99,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/Purchase.vue'),
     children: [
       {
-        path:'/',
+        path:'',
         component: () => import(/* webpackChunkName: "purchase_home" */ '../views/purchase/PurchaseHome.vue'),
       },
       {
@@ -140,7 +136,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "income" */ '../views/income/Income.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import(/* webpackChunkName: "income_home" */ '../views/income/IncomeHome.vue'),
       },
       {
@@ -157,7 +153,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "financials" */ '../views/financials/Financials.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import(/* webpackChunkName: "financials_home" */ '../views/financials/FinancialsHome.vue'),
       },
       {
@@ -178,7 +174,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "dues" */ '../views/dues/Dues.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import(/* webpackChunkName: "dues_home" */ '../views/dues/DuesHome.vue'),
       },
       {
@@ -203,7 +199,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "budget" */ '../views/budget/Budget.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import(/* webpackChunkName: "budget_home" */ '../views/budget/BudgetHome.vue'),
       },
       {
@@ -224,7 +220,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "access" */ '../views/access/Access.vue'),
     children: [
       {
-        path: '/',
+        path: '',
         component: () => import(/* webpackChunkName: "access_home" */ '../views/access/AccessHome.vue'),
       },
       {
@@ -245,7 +241,7 @@ const routes = [
     }
   },
   {
-    path: '*',
+    path: '/:pathMatch(.*)*',
     component: () => import(/* webpackChunkName: "notfound" */ '../views/NotFound.vue'),
     meta: {
       requiresAuth: false,
@@ -253,10 +249,9 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
+const router = createRouter({
   routes,
-  base: process.env.BASE_URL,
-  mode: 'history',
+  history: createWebHistory(process.env.BASE_URL),
 });
 
 // Make sure user is logged in before moving

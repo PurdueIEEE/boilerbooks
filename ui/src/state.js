@@ -14,14 +14,16 @@
    limitations under the License.
 */
 
+import { reactive } from 'vue';
+
 let auth_state = {
-    state: {
+    state: reactive({
         uname: "",
         viewFinancials: false,
         viewApprove: false,
         viewOfficer: false,
         viewTreasurer: false,
-    },
+    }),
     newAuthState(newAuth) {
         localStorage.setItem('authState', JSON.stringify(newAuth));
         this.state.uname = newAuth.uname;
