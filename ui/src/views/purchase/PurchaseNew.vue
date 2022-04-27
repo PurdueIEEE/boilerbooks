@@ -82,6 +82,7 @@ export default {
       comments: '',
       error: false,
       dispmsg: '',
+      categoryList: [],
     }
   },
   methods: {
@@ -122,12 +123,12 @@ export default {
 
     this.committeeList = response.response;
   },
-  asyncComputed: {
-    async categoryList() {
+  watch: {
+    async committee(newVal) {
       this.category = '';
-      if (this.committee === '') return [];
+      if (this.committee === '') return;
 
-      const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/categories`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/categories`, {
         method: 'get',
         credentials: 'include',
       });
@@ -135,10 +136,10 @@ export default {
       if (response.error) {
         this.error = true;
         this.dispmsg = response.response;
-        return [];
+        return;
       }
 
-      return response.response;
+      this.categoryList = response.response;
     }
   }
 }
