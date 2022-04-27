@@ -75,6 +75,7 @@
 */
 
 import auth_state from '@/state';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'BudgetModify',
@@ -86,6 +87,7 @@ export default {
       committeeList: [],
       currBudget: [],
       currEditBudget: [],
+      financialSummary: [],
       newCat: '',
       newAmt: '',
     }
@@ -111,62 +113,36 @@ export default {
       this.currBudget.splice(idx, 1);
       this.currEditBudget.splice(idx, 1);
     },
-    pushNewBudget() {
+    async pushNewBudget() {
       this.dispmsg = '';
-      fetch(`/api/v2/budgets/${this.committee}`, {
+      const response = await fetchWrapperTXT(`/api/v2/budgets/${this.committee}`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify(this.currEditBudget), // dump the entire budget and let the API deal with it
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        this.committee = '';
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.committee = '';
+      }
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.committeeList = response.response;
   },
   computed: {
     currBudgetTotal() {
@@ -177,41 +153,25 @@ export default {
       return temp_sum;
     }
   },
-  asyncComputed: {
-    async financialSummary() {
+  watch: {
+    async committee(newVal) {
       if (this.committee === '') {
-        return [];
+        return;
       }
 
-      return await fetch(`/api/v2/committee/${this.committee}/summary`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/summary`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          return [];
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        // this is a hacky way to deep clone the object
-        // javascript is a perfect language with no flaws
-        this.currBudget = JSON.parse(JSON.stringify(response));
-        this.currEditBudget = JSON.parse(JSON.stringify(response));
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
-        return [];
       });
-    },
+
+      if (response.error) {
+        return;
+      }
+
+      this.currBudget = JSON.parse(JSON.stringify(response.response));
+      this.currEditBudget = JSON.parse(JSON.stringify(response.response));
+      this.financialSummary = response.response;
+    }
   }
 }
 </script>

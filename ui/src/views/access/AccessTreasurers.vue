@@ -55,7 +55,7 @@
   limitations under the License.
 */
 
-import auth_state from "@/state";
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'AccessTreasurers',
@@ -72,85 +72,46 @@ export default {
     this.init();
   },
   methods: {
-    init() {
-      fetch(`/api/v2/access/treasurers`, {
+    async init() {
+      const response = await fetchWrapperJSON(`/api/v2/access/treasurers`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return;
-        }
-        this.treasurerList = response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        return;
+      }
+
+      this.treasurerList = response.response;
     },
-    remove(username) {
-      fetch(`/api/v2/access/approvals/${username}`, {
+    async remove(username) {
+      const response = await fetchWrapperTXT(`/api/v2/access/approvals/${username}`, {
         method: 'delete',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text();
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) this.init();
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+      this.init();
     },
-    create() {
-      fetch(`/api/v2/access/treasurers`, {
+    async create() {
+      const response = await fetchWrapperTXT(`/api/v2/access/treasurers`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({username:this.username,role:this.role}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text();
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) this.init();
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
         this.username = '';
         this.role = '';
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        this.init();
+      }
     }
   }
 }

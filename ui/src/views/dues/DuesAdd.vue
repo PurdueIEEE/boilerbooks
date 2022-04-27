@@ -53,7 +53,7 @@
   limitations under the License.
 */
 
-import auth_state from '@/state';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: "DuesAdd",
@@ -68,35 +68,19 @@ export default {
       committeeList: [],
     }
   },
-  mounted() {
-    fetch(`/api/v2/dues/committees`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/dues/committees`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.committeeList = response.response;
   },
   computed: {
     disableNone() {
@@ -107,7 +91,7 @@ export default {
     }
   },
   methods: {
-    submitDues() {
+    async submitDues() {
       this.dispmsg = "";
       if (this.memberID.length > 0 && !(/^00[0-9]{8}$/.test(this.memberID))) {
         this.error = true;
@@ -126,33 +110,21 @@ export default {
         this.dispmsg = "Member cannot be in a committee and 'None'";
       }
 
-      fetch('/api/v2/dues', {
+      const response = await fetchWrapperTXT('/api/v2/dues', {
         method: "post",
         credentials: "include",
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({name:this.memberName,email:this.memberEmail,puid:this.memberID,committees:this.memberCommittees})
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) {
-          this.memberName = '';
-          this.memberEmail = '';
-          this.memberID = '';
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.memberName = '';
+        this.memberEmail = '';
+        this.memberID = '';
+      }
     }
   }
 }

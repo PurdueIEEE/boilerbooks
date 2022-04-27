@@ -33,7 +33,7 @@
   limitations under the License.
 */
 
-import auth_state from "@/state";
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'BudgetApprove',
@@ -45,100 +45,54 @@ export default {
       committeeList: {},
     }
   },
-  mounted() {
-    fetch(`/api/v2/committee`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
 
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.committeeList = response.response;
     this.init();
   },
   methods: {
-    approveBudget(comm) {
-      fetch(`/api/v2/budgets/${comm}`, {
+    async approveBudget(comm) {
+      const response = await fetchWrapperTXT(`/api/v2/budgets/${comm}`, {
         method: 'put',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) {
-          this.init();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.init();
+      }
     },
-    init() {
-      fetch(`/api/v2/budgets/submitted`, {
+    async init() {
+      const response = await fetchWrapperJSON(`/api/v2/budgets/submitted`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        if (!response.ok) {
-          this.error = true;
-          return response.text();
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return;
-        }
-
-        let filtered_response = {}
-        for (let committee in response) {
-          if (response[committee].length !== 0) {
-            filtered_response[committee] = response[committee];
-          }
-        }
-        this.submittedBudgets = filtered_response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        return;
+      }
+
+      let filtered_response = {}
+      for (let committee in response.response) {
+        if (response.response[committee].length !== 0) {
+          filtered_response[committee] = response.response[committee];
+        }
+      }
+      this.submittedBudgets = filtered_response;
     }
   }
 }

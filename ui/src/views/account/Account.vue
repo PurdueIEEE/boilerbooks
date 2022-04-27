@@ -92,6 +92,7 @@
 */
 
 import auth_state from '@/state';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'Account',
@@ -109,64 +110,40 @@ export default {
     }
   },
   methods: {
-    updateAccount() {
-      fetch(`/api/v2/account/${auth_state.state.uname}`, {
+    async updateAccount() {
+      const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
-      })
-      .then((response) => {
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        //setTimeout(() => {this.dispmsg = '';}, 2000);
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
     },
     changePassword() {
       this.$router.push('/myaccount/password');
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}`, {
-        method: 'get',
-        credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        if (!response.ok) {
-          return response.text()
-        }
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}`, {
+      method: 'get',
+      credentials: 'include',
+    });
 
-        return response.json()
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-        }
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
 
-        this.fname = response.first;
-        this.lname = response.last;
-        this.email = response.email;
-        this.address = response.address;
-        this.city = response.city;
-        this.state = response.state;
-        this.zip = response.zip;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.fname = response.response.first;
+    this.lname = response.response.last;
+    this.email = response.response.email;
+    this.address = response.response.address;
+    this.city = response.response.city;
+    this.state = response.response.state;
+    this.zip = response.response.zip;
   }
 }
 </script>

@@ -22,7 +22,7 @@
     <h3>All Members</h3>
     <DataTable
       v-bind:rows="rows"
-      v-bind:row_keys="''"
+      v-bind:row_key="'duesid'"
       v-bind:row_headers="[
       ['Name','name'],
       ['Email','email'],
@@ -56,7 +56,7 @@
 */
 
 import DataTable from '@/components/DataTable.vue'
-import auth_state from "@/state";
+import { fetchWrapperJSON } from '@/api_wrapper';
 
 export default {
   name: "DuesSummary",
@@ -71,64 +71,31 @@ export default {
       dispmsg: '',
     }
   },
-  mounted() {
-    fetch('/api/v2/dues/summary',{
+  async mounted() {
+    const duesSum = await fetchWrapperJSON('/api/v2/dues/summary',{
       method: 'get',
       credentials: 'include'
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.duesSumm = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
 
-    fetch('/api/v2/dues/all',{
+    const duesAll = await fetchWrapperJSON('/api/v2/dues/all',{
       method: 'get',
       credentials: 'include'
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.rows = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (duesSum.error) {
+      this.error = true;
+      this.dispmsg = duesSum.response;
+      return;
+    }
+
+    if (duesAll.error) {
+      this.error = true;
+      this.dispmsg = duesAll.response;
+      return;
+    }
+
+    this.duesSumm = duesSum.response;
+    this.rows = duesAll.response;
   }
 }
 </script>

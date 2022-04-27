@@ -17,10 +17,10 @@ async function fetchWrapperJSON(url, fetch_opts) {
                 response: responseTxt,
             };
         } else {
-            const responstJson = await response.json();
+            const responseJson = await response.json();
             return {
                 error:false,
-                response: responstJson,
+                response: responseJson,
             }
         }
     } catch (err) {

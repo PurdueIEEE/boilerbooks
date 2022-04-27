@@ -63,6 +63,7 @@
 
 import auth_state from '@/state';
 import DataTable from '@/components/DataTable.vue';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'PurchaseReimburse',
@@ -100,63 +101,36 @@ export default {
           }
       }
     },
-    processPurchase(status) {
+    async processPurchase(status) {
       this.dispmsg = '';
-      fetch(`/api/v2/purchase/treasurer`, {
+      const response = await fetchWrapperTXT(`/api/v2/purchase/treasurer`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({status:status, idList:this.processList}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text();
-        }
-        this.error = !response.ok
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
         this.processList = '';
         this.init();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
     },
-    init() {
-      fetch(`/api/v2/account/${auth_state.state.uname}/reimbursements`, {
+    async init() {
+      const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/reimbursements`, {
           method: 'get',
           credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text();
-        }
-        this.error = !response.ok
-        if (!response.ok) {
-          return response.text();
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return;
-        }
-
-        this.rows = response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response
+        return;
+      }
+
+      this.rows = response.response;
     }
   }
 }

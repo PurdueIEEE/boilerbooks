@@ -361,11 +361,11 @@ router.get("/:commID/csv", async(req, res, next) => {
     }
 
     if (req.query.start === undefined) {
-        req.query.start = `${current_fiscal_year.split('-')[0]}-08-01`;
+        req.query.start = `${current_fiscal_year.split("-")[0]}-08-01`;
     }
 
     if (req.query.end === undefined) {
-        req.query.end = `${current_fiscal_year.split('-')[1]}-08-01`;
+        req.query.end = `${current_fiscal_year.split("-")[1]}-08-01`;
     }
 
     if ((req.query.start.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
@@ -400,7 +400,7 @@ router.get("/:commID/csv", async(req, res, next) => {
         let csvString = "Date,Purchaser,Item,Vendor,Cost,Reason\n";
 
         for (let purchase of results) {
-            csvString += `"${purchase.date.replaceAll(`"`, `""`)}","${purchase.pby.replaceAll(`"`, `""`)}","${purchase.item.replaceAll(`"`, `""`)}","${purchase.vendor.replaceAll(`"`, `""`)}","${purchase.cost.replaceAll(`"`, `""`)}","${purchase.purchasereason.replaceAll(`"`, `""`)}"\n`;
+            csvString += `"${purchase.date.replaceAll("\"", "\"\"")}","${purchase.pby.replaceAll("\"", "\"\"")}","${purchase.item.replaceAll("\"", "\"\"")}","${purchase.vendor.replaceAll("\"", "\"\"")}","${purchase.cost.replaceAll("\"", "\"\"")}","${purchase.purchasereason.replaceAll("\"", "\"\"")}"\n`;
         }
 
         res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);

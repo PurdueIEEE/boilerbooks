@@ -55,6 +55,7 @@
 */
 
 import auth_state from '@/state';
+import { fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'Account',
@@ -74,35 +75,26 @@ export default {
     }
   },
   methods: {
-    changePassword() {
+    async changePassword() {
       if (this.new_pass !== this.new_pass_again) {
         return;
       }
 
       this.dispmsg = '';
-      fetch(`/api/v2/account/${auth_state.state.uname}`, {
+      const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,pass1:this.new_pass,pass2:this.new_pass_again}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        //setTimeout(() => {this.dispmsg = '';}, 2000);
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.new_pass = '';
+        this.new_pass_again = '';
+      }
     }
   },
 }

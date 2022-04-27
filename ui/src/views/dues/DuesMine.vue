@@ -45,6 +45,7 @@
 
 import DataTable from '@/components/DataTable.vue';
 import auth_state from '@/state';
+import { fetchWrapperJSON } from '@/api_wrapper';
 
 export default {
   name: "DuesMine",
@@ -58,36 +59,19 @@ export default {
       dispmsg: '',
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/dues`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/dues`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
+    });
 
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
 
-      this.rows = response;
-    })
-    .catch((error) => {
-      console.log(error);
-    })
+    this.rows = response.response;
   }
 }
 </script>

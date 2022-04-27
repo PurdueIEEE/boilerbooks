@@ -56,7 +56,7 @@
 */
 
 import DataTable from '@/components/DataTable.vue';
-import auth_state from "@/state";
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'IncomeModify',
@@ -74,67 +74,40 @@ export default {
     this.init();
   },
   methods: {
-    init() {
-      fetch(`/api/v2/income`, {
+    async init() {
+      const response = await fetchWrapperJSON(`/api/v2/income`, {
         method: 'get',
         credentials: 'include',
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        if (!response.ok) {
-          return response.text();
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (this.error) {
-          this.dispmsg = response;
-          return;
-        }
-
-        this.rows = response;
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        return;
+      }
+
+      this.rows = response.response;
     },
-    updateStatus(id, status) {
+    async updateStatus(id, status) {
       let refnumber = "";
       if (status === "Received") {
         refnumber = prompt("Enter the reference number for this income:");
       }
 
       this.dispmsg = '';
-      fetch(`/api/v2/income/${id}`, {
+      const response = await fetchWrapperTXT(`/api/v2/income/${id}`, {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({status:status, refnumber:refnumber}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text();
-        }
-        this.error = !response.ok
-        return response.text();
-      })
-      .then((response) => {
-        this.dispmsg = response;
-        if (!this.error) this.init();
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.init();
+      }
     }
   }
 }

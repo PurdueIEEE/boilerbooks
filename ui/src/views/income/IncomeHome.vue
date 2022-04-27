@@ -73,6 +73,7 @@
 */
 
 import auth_state from '@/state';
+import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
   name: 'IncomeHome',
@@ -91,70 +92,44 @@ export default {
     }
   },
   methods: {
-    submitIncome() {
+    async submitIncome() {
       this.dispmsg = '';
-      fetch(`/api/v2/income`, {
+
+      const response = await fetchWrapperTXT(`/api/v2/income`, {
         method: 'post',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],source:this.source,item:this.item,
                               amount:this.amount,status:this.status,type:this.type,comments:this.comments}),
-      })
-      .then((response) => {
-        // API key must have expired
-        if (response.status === 401) {
-          auth_state.clearAuthState();
-          this.$router.replace('/login');
-          return response.text()
-        }
-        this.error = !response.ok;
-        return response.text();
-      })
-      .then((response) => {
-        if (this.error) return;
-        this.dispmsg = response;
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
         this.committee = '';
         this.source = '';
         this.amount = '';
         this.item = '';
-        this.type = 'BOSO';
+        this.type = '';
         this.status = 'Expected';
         this.comments = '';
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
     }
   },
-  mounted() {
-    fetch(`/api/v2/account/${auth_state.state.uname}/committees`, {
+  async mounted() {
+    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
-    })
-    .then((response) => {
-      // API key must have expired
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        this.$router.replace('/login');
-        return response.text()
-      }
-      if (!response.ok) {
-        this.error = true;
-        return response.text();
-      }
-
-      return response.json();
-    })
-    .then((response) => {
-      if (this.error) {
-        this.dispmsg = response;
-        return;
-      }
-      this.committeeList = response;
-    })
-    .catch((error) => {
-      console.log(error);
     });
+
+    if (response.error) {
+      this.error = true;
+      this.dispmsg = response.response;
+      return;
+    }
+
+    this.committeeList = response.response;
   }
 }
 </script>
