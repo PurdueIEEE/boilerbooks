@@ -98,6 +98,8 @@ export default {
       approvalList: [],
       currentApprove: '',
       category: '',
+      purchase: {purchasedby:'',committee:'',committeeAPI:'',category:'',item:'',purchasereason:'',vendor:'',cost:'',maxCost:'',comments:'',costTooHigh:false,lowBalance:false},
+      categoryList: [],
     }
   },
   methods: {
@@ -134,27 +136,15 @@ export default {
 
     this.approvalList = response.response;
   },
-  asyncComputed: {
-    async purchase() {
-      if (this.currentApprove === '') {
-        return {
-          purchasedby:'',
-          committee: '',
-          committeeAPI: '',
-          category: '',
-          item: '',
-          purchasereason: '',
-          vendor: '',
-          cost: '',
-          maxCost: '',
-          comments: '',
-          costTooHigh: false,
-          lowBalance: false,
-        };
+  watch: {
+    async currentApprove(newVal) {
+      if (newVal === '') {
+        this.purchase = {purchasedby:'',committee:'',committeeAPI:'',category:'',item:'',purchasereason:'',vendor:'',cost:'',maxCost:'',comments:'',costTooHigh:false,lowBalance:false};
+        return;
       }
 
       this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/purchase/${this.currentApprove}`, {
+      const response = await fetchWrapperJSON(`/api/v2/purchase/${newVal}`, {
         method: 'get',
         credentials: 'include',
       });
@@ -162,32 +152,21 @@ export default {
       if (response.error) {
         this.error = true;
         this.dispmsg = response.response;
-        return {
-          purchasedby:'',
-          committee: '',
-          committeeAPI: '',
-          category: '',
-          item: '',
-          purchasereason: '',
-          vendor: '',
-          cost: '',
-          maxCost: '',
-          comments: '',
-          costTooHigh: false,
-          lowBalance: false,
-        };
+        this.purchase = {purchasedby:'',committee:'',committeeAPI:'',category:'',item:'',purchasereason:'',vendor:'',cost:'',maxCost:'',comments:'',costTooHigh:false,lowBalance:false};
+        return;
       }
 
-      this.category = response.response.category;
-      return response.response;
+      this.purchase = response.response;
+      this.category = response.response.category
     },
-    async categoryList() {
-      if (this.purchase.committeeAPI === '') {
-        return [];
+    async 'purchase.committeeAPI'(newVal) {
+      if (newVal === '') {
+        this.categoryList = [];
+        return
       }
 
       this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/categories`, {
         method: 'get',
         credentials: 'include'
       });
@@ -195,10 +174,11 @@ export default {
       if (response.error) {
         this.error = true;
         this.dispmsg = response.response
-        return [];
+        this.categoryList = [];
+        return;
       }
 
-      return response.response;
+      this.categoryList = response.response;
     }
   }
 }

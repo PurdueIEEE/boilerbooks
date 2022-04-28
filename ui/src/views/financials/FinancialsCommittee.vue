@@ -140,7 +140,14 @@ export default {
       found_fy: false,
       error1: false,
       error2: false,
-      dispmsg: ''
+      dispmsg: '',
+      totalBalance: {balance:''},
+      totalBudget: {budget:''},
+      totalIncome: {income:''},
+      totalSpent: {spent:''},
+      financialSummary: [],
+      expenseTable: [],
+      incomeTable: [],
     }
   },
   async mounted() {
@@ -191,6 +198,9 @@ export default {
     balanceWarnings() {
       if (this.totalBalance === null || this.totalBalance === undefined) return {};
       return {'text-danger':this.totalBalance.balance<100,'text-warning':(this.totalBalance.balance<200&&this.totalBalance.balance>=100)}
+    },
+    comm_fy() {
+      return `${this.committee}|${this.fiscalyear}`;
     }
   },
   methods: {
@@ -212,142 +222,79 @@ export default {
         return;
       }
       this.$router.push({path: '/financials/committee', query: {comm: this.committee, fy: newVal}});
+    },
+    async comm_fy(newVal) {
+      const committee = newVal.split('|')[0];
+      const fiscalyear = newVal.split('|')[1];
+      if (committee === '' || fiscalyear === '') {
+        this.totalBalance = {balance:''};
+        this.totalBudget = {budget:''};
+        this.totalIncome = {income:''};
+        this.totalSpent = {spent:''};
+        this.financialSummary = [];
+        this.expenseTable = [];
+        this.incomeTable = [];
+        return;
+      }
+
+      // First fire the requests off
+      const totalBalanceP = fetchWrapperJSON(`/api/v2/committee/${committee}/balance`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const totalBudgetP = fetchWrapperJSON(`/api/v2/committee/${committee}/budget/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const totalIncomeP = fetchWrapperJSON(`/api/v2/committee/${committee}/incometotal/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const totalSpentP = fetchWrapperJSON(`/api/v2/committee/${committee}/expensetotal/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const financialSummaryP = fetchWrapperJSON(`/api/v2/committee/${committee}/summary/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const expenseTableP = fetchWrapperJSON(`/api/v2/committee/${committee}/purchases/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+      const incomeTableP = fetchWrapperJSON(`/api/v2/committee/${committee}/income/${fiscalyear}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+
+      // Then wait for them to come back
+      const totalBalance = await totalBalanceP;
+      const totalBudget = await totalBudgetP;
+      const totalIncome = await totalIncomeP;
+      const totalSpent = await totalSpentP;
+      const financialSummary = await financialSummaryP;
+      const expenseTable = await expenseTableP;
+      const incomeTable = await incomeTableP;
+
+      if (totalBudget.error || totalBalance.error || totalIncome.error || totalSpent.error || financialSummary.error || expenseTable.error || incomeTable.error) {
+        this.totalBalance = {balance:'--.--'};
+        this.totalBudget = {budget:'--.--'};
+        this.totalIncome = {income:'--.--'};
+        this.totalSpent = {spent:'--.--'};
+        this.financialSummary = [];
+        this.expenseTable = [];
+        this.incomeTable = [];
+        return;
+      }
+
+      this.totalBalance = totalBalance.response;
+      this.totalBudget = totalBudget.response;
+      this.totalIncome = totalIncome.response;
+      this.totalSpent = totalSpent.response;
+      this.financialSummary = financialSummary.response;
+      this.expenseTable = expenseTable.response;
+      this.incomeTable = incomeTable.response;
     }
-  },
-  asyncComputed: {
-    totalBalance: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return {balance:''};
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/balance`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return {balance:'--.--'};
-        }
-
-        return response.response;
-      },
-      default: {balance:''},
-    },
-    totalBudget: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return {budget:''};
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/budget/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return {budget:'--.--'};
-        }
-
-        return response.response;
-      },
-      default: {budget:''},
-    },
-    totalIncome: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return {budget:''};
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/incometotal/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return {budget:'--.--'};
-        }
-
-        return response.response;
-      },
-      default: {income:''},
-    },
-    totalSpent: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return {budget:''};
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/expensetotal/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return {budget:'--.--'};
-        }
-
-        return response.response;
-      },
-      default: {spent:''},
-    },
-    financialSummary: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return [];
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return [];
-        }
-
-        return response.response;
-      },
-      default: [],
-    },
-    expenseTable: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return [];
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/purchases/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return [];
-        }
-
-        return response.response;
-      },
-      default: [],
-    },
-    incomeTable: {
-      async get() {
-        if (this.committee === '' || this.fiscalyear === '') {
-          return [];
-        }
-
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/income/${this.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include',
-        });
-
-        if (response.error) {
-          return [];
-        }
-
-        return response.response;
-      },
-      default: [],
-    },
   }
 }
 </script>

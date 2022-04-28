@@ -58,7 +58,7 @@ import auth_state from '@/state';
 import { fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
-  name: 'Account',
+  name: 'ChangePassword',
   data() {
     return {
       current: '',

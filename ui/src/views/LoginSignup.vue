@@ -108,7 +108,7 @@ import auth_state from '@/state';
 import {fetchWrapperJSON} from '@/api_wrapper';
 
 export default {
-  name: 'Login',
+  name: 'LoginSignup',
   data() {
     return {
       login_status: true,

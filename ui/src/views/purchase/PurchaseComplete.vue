@@ -87,6 +87,7 @@ export default {
       completionList: [],
       currentComplete: '',
       purchasedate: `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${(today.getDate()).toString().padStart(2,'0')}`,
+      purchase: {committee: '',category: '',item: '',purchasereason: '',vendor: '',cost: '',maxCost: '',comments: ''},
     }
   },
   methods: {
@@ -136,23 +137,15 @@ export default {
   mounted() {
     this.init();
   },
-  asyncComputed: {
-    async purchase() {
-      if (this.currentComplete === '') {
-        return {
-          committee: '',
-          category: '',
-          item: '',
-          purchasereason: '',
-          vendor: '',
-          cost: '',
-          maxCost: '',
-          comments: '',
-        };
+  watch: {
+    async currentComplete(newVal) {
+      if (newVal === '') {
+        this.purchase = {committee: '',category: '',item: '',purchasereason: '',vendor: '',cost: '',maxCost: '',comments: ''};
+        return;
       }
 
       this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/purchase/${this.currentComplete}`, {
+      const response = await fetchWrapperJSON(`/api/v2/purchase/${newVal}`, {
         method: 'get',
         credentials: 'include',
       });
@@ -160,19 +153,11 @@ export default {
       if (response.error) {
         this.error = true;
         this.dispmsg = response.response;
-        return {
-          committee: '',
-          category: '',
-          item: '',
-          purchasereason: '',
-          vendor: '',
-          cost: '',
-          maxCost: '',
-          comments: '',
-        };
+        this.purchase = {committee: '',category: '',item: '',purchasereason: '',vendor: '',cost: '',maxCost: '',comments: ''};
+        return;
       }
 
-      return response.response;
+      this.purchase = response.response;
     }
   }
 }

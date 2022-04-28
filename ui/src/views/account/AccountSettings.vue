@@ -95,7 +95,7 @@ import auth_state from '@/state';
 import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 
 export default {
-  name: 'Account',
+  name: 'AccountSettings',
   data() {
     return {
       fname: '',

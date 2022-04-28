@@ -1,9 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
-    <h1>Committee Budgets</h1>
+    <h1>Income and Donations</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <BudgetNav></BudgetNav>
+        <IncomeNav></IncomeNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -29,12 +29,12 @@
   limitations under the License.
 */
 
-import BudgetNav from '@/components/BudgetNav.vue';
+import IncomeNav from '@/components/IncomeNav.vue';
 
 export default {
-  name: 'Budget',
+  name: 'IncomeFrame',
   components: {
-    BudgetNav,
+    IncomeNav,
   }
 }
 </script>

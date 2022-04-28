@@ -70,7 +70,7 @@
 import {fetchWrapperTXT} from '@/api_wrapper';
 
 export default {
-  name: 'Forgot',
+  name: 'ForgotUserPass',
   data() {
     return {
       dispmsg: '',

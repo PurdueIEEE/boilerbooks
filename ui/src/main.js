@@ -14,16 +14,11 @@
    limitations under the License.
 */
 
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import AsyncComputed from 'vue-async-computed';
 
-Vue.config.productionTip = false
+const app = createApp(App);
+app.use(router);
 
-Vue.use(AsyncComputed);
-
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+app.mount("#app");

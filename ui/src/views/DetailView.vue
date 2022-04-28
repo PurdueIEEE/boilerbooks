@@ -125,6 +125,7 @@ export default {
       category: '',
       item: '',
       editPurchase: false,
+      categoryList: [],
     }
   },
   mounted() {
@@ -209,28 +210,27 @@ export default {
       return this.purchase.status==='Requested' || this.purchase.status==='Approved' || this.purchase.status==='Purchased';
     }
   },
-  asyncComputed: {
-    categoryList: {
-      async get() {
-        this.dispmsg = '';
-        if (this.purchase.committeeAPI === undefined) {
-          return [];
-        }
+  watch: {
+    async 'purchase.committeeAPI'(newVal) {
+      if (newVal === undefined || newVal === '') {
+        this.categoryList = [];
+        return;
+      }
 
-        const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
-          method: 'get',
-          credentials: 'include'
-        });
+      this.dispmsg = '';
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
+        method: 'get',
+        credentials: 'include'
+      });
 
-        if (response.error) {
-          this.error = true;
-          this.dispmsg = response.response;
-          return;
-        }
+      if (response.error) {
+        this.error = true;
+        this.dispmsg = response.response;
+        this.categoryList = [];
+        return;
+      }
 
-        return response.response;
-      },
-      default: [],
+      this.categoryList = response.response;
     }
   }
 }

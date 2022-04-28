@@ -1,9 +1,9 @@
 <template>
   <div class="container-lg my-5 pt-5">
-    <h1>Adjust Access Roles</h1>
+    <h1>Committee Budgets</h1>
     <div class="row mt-5">
       <div class="col-md-3">
-        <AccessNav></AccessNav>
+        <BudgetNav></BudgetNav>
       </div>
       <div class="col-md-9">
         <router-view></router-view>
@@ -29,12 +29,12 @@
   limitations under the License.
 */
 
-import AccessNav from '@/components/AccessNav.vue';
+import BudgetNav from '@/components/BudgetNav.vue';
 
 export default {
-  name: "Access",
+  name: 'BudgetFrame',
   components: {
-    AccessNav,
+    BudgetNav,
   }
 }
 </script>
