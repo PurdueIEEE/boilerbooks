@@ -16,6 +16,9 @@
             <input type="password" name="login_pass" id="login_pass" class="form-control" v-model="login_pass" required>
           </div>
         </div>
+        <div class="text-danger">
+          <p v-if="showCapsWarning">Caps Lock is on!</p>
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
       <div class="mt-3">
@@ -75,6 +78,9 @@
               <label for="new_pin" class="form-label">IEEE Code</label>
               <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter the code given by IEEE to enable account creation" required>
             </div>
+            <div class="text-center text-danger">
+              <p v-if="showCapsWarning">Caps Lock is on!</p>
+            </div>
             <div class="col-12 mt-4 text-center">
               <button type="submit" class="btn btn-primary">Submit</button>
             </div>
@@ -127,7 +133,16 @@ export default {
       new_pin: '',
       error: false,
       errmsg: '',
+      showCapsWarning: false,
     }
+  },
+  created() {
+    window.addEventListener('keyup', (e) => {
+      // If any input is highlighted, this will always trigger as 'true'
+      //  even if CapsLock is being depressed. I can not figure out a good way to
+      //  prevent this.
+      this.showCapsWarning = e.getModifierState('CapsLock');
+    });
   },
   mounted() {
     let user = null;

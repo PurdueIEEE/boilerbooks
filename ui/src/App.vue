@@ -55,7 +55,7 @@
 import auth_state from '@/state';
 
 export default {
-  name:"App",
+  name:"BoilerBooks",
   data() {
     return {
       auth_state: auth_state.state,
