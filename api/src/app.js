@@ -21,9 +21,10 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 // Import files
-import models, { db_conn } from "./models/index.js";
-import { logger } from "./common_items.js";
+import { db_conn, db_check } from "./models/index.js";
+import { logger, smtp_check } from "./common_items.js";
 import routes from "./routes/index.js";
+import checkAPI from "./middleware/checkAPI.js";
 
 // Create Express
 const app = express();
@@ -35,60 +36,7 @@ app.use(express.urlencoded({extended: true,}));
 app.use(cookieParser());
 
 // Setup our middleware
-app.use((req, res, next) => {
-    // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl === "/account" || req.originalUrl.startsWith("/login")) {
-        req.context = {
-            models,
-        };
-        next();
-    } else {
-        // use an API key with the Authorization header
-        if (req.cookies.apikey === undefined) {
-            logger.info(`[] - "${req.originalUrl}" - Return 401`);
-            if (req.originalUrl.startsWith("/receipt")) {
-                return res.redirect("/ui/login");
-            }
-            return res.status(401).send("Must authenticate first");
-        }
-
-        db_conn.execute(
-            "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
-            [req.cookies.apikey],
-            function(err, results, fields) {
-                if (err) {
-                    logger.error(err.stack);
-                    return res.status(500).send("Internal Server Error");
-                }
-
-                if (results.length === 0) {
-                    logger.info(`[] - "${req.originalUrl}" - Return 401`);
-                    if (req.originalUrl.startsWith("/receipt")) {
-                        return res.redirect("/ui/login");
-                    }
-                    return res.status(401).send("Invalid API Key");
-                }
-
-                const dbtime = new Date(results[0].apikeygentime);
-                const exptime = new Date(dbtime.setHours(dbtime.getHours() + 24)); // key expires after 24 hours
-                const now = new Date();
-                if (now >= exptime) {
-                    logger.info(`[] - "${req.originalUrl}" - Return 401`);
-                    if (req.originalUrl.startsWith("/receipt")) {
-                        return res.redirect("/ui/login");
-                    }
-                    return res.status(401).send("Invalid API Key");
-                }
-
-                req.context = {
-                    models,
-                    request_user_id: results[0].username,
-                };
-                next();
-            }
-        );
-    }
-});
+app.use(checkAPI);
 
 // Setup our routes
 app.use("/account", routes.account);
@@ -108,27 +56,33 @@ app.use((req, res, next) => {
     next();
 });
 
-// Start and attach app
-const server = app.listen(process.env.PORT, () =>
-    logger.info(`App listening on port ${process.env.PORT}`)
-);
+// Before attaching the process, make sure the database and smtp server are online
+let aux_check_num = setInterval(() => {
+    if (db_check() && smtp_check()) {
+        clearInterval(aux_check_num);
+        // Start and attach app
+        const server = app.listen(process.env.PORT, () => {
+            logger.info(`App listening on port ${process.env.PORT}`);
+        });
 
-process.on("SIGTERM", () => {
-    logger.warn("SIGTERM signal received: closing server");
-    server.close(() => {
-        logger.warn("HTTP server closed");
-    });
-    db_conn.end(() => {
-        logger.warn("MySQL connection closed");
-    });
-});
+        process.on("SIGTERM", () => {
+            logger.warn("SIGTERM signal received: closing server");
+            server.close(() => {
+                logger.warn("HTTP server closed");
+            });
+            db_conn.end(() => {
+                logger.warn("MySQL connection closed");
+            });
+        });
 
-process.on("SIGINT", () => {
-    logger.warn("SIGINT signal received: closing server");
-    server.close(() => {
-        logger.warn("HTTP server closed");
-    });
-    db_conn.end(() => {
-        logger.warn("MySQL connection closed");
-    });
-});
+        process.on("SIGINT", () => {
+            logger.warn("SIGINT signal received: closing server");
+            server.close(() => {
+                logger.warn("HTTP server closed");
+            });
+            db_conn.end(() => {
+                logger.warn("MySQL connection closed");
+            });
+        });
+    }
+}, 500); // 500ms is offset from all the wait periods

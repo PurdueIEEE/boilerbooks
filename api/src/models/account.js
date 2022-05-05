@@ -18,9 +18,6 @@ import { db_conn } from "./index.js";
 import { ACCESS_LEVEL, logger } from "../common_items.js";
 import { v4 as uuidv4} from "uuid";
 
-import bcrypt from "bcrypt";
-const bcrypt_rounds = 10;
-
 async function getUserByID(id) {
     return db_conn.promise().execute(
         "SELECT email, first, last, address, city, state, zip FROM Users WHERE username = ?",
@@ -107,98 +104,29 @@ async function checkResetTime(user, rstlink) {
     );
 }
 
-// Cannot be a promise because of bcrypt
-function createUser(user, res, next) {
-    bcrypt.hash(user.pass, bcrypt_rounds, function(err, hash) {
-        db_conn.execute(
-            "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
-            [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash],
-            function(err, results, fields) {
-                if (err && err.code === "ER_DUP_ENTRY") {
-                    res.status(400).send("Username already exists");
-                    return next();
-                }
-                else if (err) {
-                    logger.error(err.stack);
-                    res.status(500).send("Internal Server Error");
-                    return next();
-                }
-
-                const newUser = {
-                    uname: user.uname,
-                };
-                return getUserAccessLevel(newUser, res, next);
-            }
-        );
-    });
+async function createUser(user, hash) {
+    return db_conn.promise().execute(
+        "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
+        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash]
+    );
 }
 
-// Cannot be a promise because of bcrypt
-function loginUser(userInfo, res, next) {
-    db_conn.execute(
+async function loginUser(user) {
+    return db_conn.promise().execute(
         "SELECT password, email, first, last FROM Users WHERE Users.username = ?",
-        [userInfo.uname],
-        function(err, results, fields) {
-            if (err) {
-                logger.error(err.stack);
-                res.status(500).send("Internal Server Error");
-                return next();
-            }
-
-            if (results.length === 0) {
-                res.status(400).send("Incorrect Username or Password");
-                return next();
-            }
-
-            bcrypt.compare(userInfo.pass, results[0].password, function(err, result) {
-                if (!result) {
-                    res.status(400).send("Incorrect Username or Password");
-                    return next();
-                }
-
-                const user = {
-                    uname: userInfo.uname,
-                };
-                return getUserAccessLevel(user, res, next);
-            });
-        }
+        [user]
     );
 }
 
-// Private method only used here
-function getUserAccessLevel(user, res, next) {
-    db_conn.execute(
+async function getUserAccessLevel(user) {
+    return db_conn.promise().execute(
         "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPrivilege FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
-        [user.uname, ACCESS_LEVEL.member],
-        function(err, results, fields) {
-            if (err) {
-                logger.error(err.stack);
-                res.status(500).send("Internal Server Error");
-                return next();
-            }
-            // user.viewFinancials: Expected Donations, View Financials
-            // user.viewApprove: Approve Purchases
-            // user.viewOfficer: View Committee Dues, Committee Budgets
-            // user.viewTreasurer: Reimburse Purchases, View Income, Add Dues, Adjust Access Roles
-            if (results[0].maxPrivilege !== null) {
-                user.viewFinancials = true;
-                user.viewApprove = results[0].maxAmount > 0;
-                user.viewOfficer = results[0].maxPrivilege >= ACCESS_LEVEL.officer;
-                user.viewTreasurer = results[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
-            } else {
-                user.viewFinancials = false;
-                user.viewApprove = false;
-                user.viewOfficer = false;
-                user.viewTreasurer = false;
-            }
-
-            return generateAPIKey(user, res, next);
-        }
+        [user, ACCESS_LEVEL.member]
     );
 }
 
 // Private method only used here
-async function generateAPIKey(user, res, next) {
+async function generateAPIKey(user) {
 
     // Yeah technically this while loop is always true
     // but this is a hacky fix to an unlikey problem so eh
@@ -209,26 +137,17 @@ async function generateAPIKey(user, res, next) {
 
         // test for the (unlikely) situation that the generated
         //   api key already exists
-        try {
-            const [test] = await db_conn.promise().execute(
-                "SELECT username FROM Users WHERE apikey=?",
-                [newKey]
-            );
-            if (test.length !== 0) continue;
+        const [test] = await db_conn.promise().execute(
+            "SELECT username FROM Users WHERE apikey=?",
+            [newKey]
+        );
+        if (test.length !== 0) continue;
 
-            await db_conn.promise().execute(
-                "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
-                [newKey, user.uname]
-            );
-            res.cookie("apikey", newKey, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
-            res.status(201).send(user);
-            next();
-            break;
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).send("Internal Server Error");
-            return next();
-        }
+        await db_conn.promise().execute(
+            "UPDATE Users SET apikeygentime = NOW(), apikey = ? WHERE username = ?",
+            [newKey, user]
+        );
+        return newKey;
     }
 }
 
@@ -246,4 +165,6 @@ export default {
     checkResetTime,
     getUserDues,
     canApprovePurchase,
+    getUserAccessLevel,
+    generateAPIKey,
 };

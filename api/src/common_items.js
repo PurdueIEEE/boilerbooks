@@ -118,7 +118,7 @@ const committee_name_api =
     "Racing":"racing",
     "ROV":"rov",
     "SOGA":"soga",
-}
+};
 // -------------------------------------------------
 
 // ------------- dues committee lut ----------------
@@ -204,14 +204,30 @@ const mailer = nodemailer.createTransport({
 },{
     from: "Boiler Books <boilerbooks@purdueieee.org>",
 });
-mailer.verify((err) => {
-    if (err) {
-        logger.error(err);
-        process.exit(1);
-    } else {
-        logger.info("SMTP connection verified");
-    }
-});
+
+// Backoff smtp startup check
+let try_count = 0;
+let smtp_good = false;
+function smtp_startup() {
+    mailer.verify((err) => {
+        if (!err) {
+            logger.info("SMTP connection verified");
+            smtp_good = true;
+            return;
+        }
+        logger.error(`SMTP connection fail ${try_count}: ${err.message}`);
+        try_count += 1;
+        if (try_count >= 5) {
+            logger.error("SMTP connection failed to verify");
+            process.exit(1);
+        }
+        setTimeout(smtp_startup, try_count * 1000); // Retry the startup, backoff longer each time
+    });
+}
+function smtp_check() {
+    return smtp_good;
+}
+smtp_startup();
 // -------------------------------------------------
 
 export {
@@ -226,4 +242,5 @@ export {
     ACCESS_LEVEL,
     mailer,
     logger,
+    smtp_check,
 };

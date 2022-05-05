@@ -29,9 +29,8 @@ const bcrypt_rounds = 10;
 
 /*
     Creates a new user account
-    cannot be async because of bcrypt
 */
-router.post("/", (req, res, next) => {
+router.post("/", async(req, res, next) => {
     if (req.body.fname === undefined ||
         req.body.lname === undefined ||
         req.body.uname === undefined ||
@@ -78,7 +77,53 @@ router.post("/", (req, res, next) => {
         return next();
     }
 
-    req.context.models.account.createUser(req.body, res, next);
+    bcrypt.hash(req.body.pass1, bcrypt_rounds, async(error, hash) => {
+        if (error) {
+            logger.error(error);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
+
+        try {
+            // First try and create the account
+            await req.context.models.account.createUser(req.body, hash);
+
+            // Setup the return object
+            const user = {
+                uname: req.body.uname,
+            };
+
+            // Get all privilege levels
+            const [response] = await req.context.models.account.getUserAccessLevel(req.body.uname);
+            if (response[0].maxPrivilege !== null) {
+                user.viewFinancials = true;
+                user.viewApprove = response[0].maxAmount > 0;
+                user.viewOfficer = response[0].maxPrivilege >= ACCESS_LEVEL.officer;
+                user.viewTreasurer = response[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+            } else {
+                user.viewFinancials = false;
+                user.viewApprove = false;
+                user.viewOfficer = false;
+                user.viewTreasurer = false;
+            }
+
+            // Generate the API key now
+            const response_1 = await req.context.models.account.generateAPIKey(req.body.uname);
+            res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
+            res.status(201).send(user);
+            return next();
+        } catch (err) {
+            // Username already exists
+            if (err.code === "ER_DUP_ENTRY") {
+                res.status(400).send("Username already exists");
+                return next();
+            } else {
+                logger.error(err.stack);
+                res.status(500).send("Internal Server Error");
+                return next();
+            }
+        }
+    });
 });
 
 // ---------------------------

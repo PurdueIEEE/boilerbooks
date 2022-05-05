@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { mailer, logger } from "../common_items.js";
+import { mailer, logger, ACCESS_LEVEL } from "../common_items.js";
 
 import crypto from "crypto";
 
@@ -30,20 +30,58 @@ const router = Router();
 
 /*
     Logs user in
-    cannot be async because of bcrypt
 */
 router.post("/", async(req, res, next) => {
     if (req.body.uname === undefined || req.body.uname === "" ||
         req.body.pass === undefined || req.body.pass === "") {
-        return res.status(400).send("Fill out login details");
+        res.status(400).send("Fill out login details");
+        return next();
     }
 
-    const user = {
-        uname: req.body.uname,
-        pass: req.body.pass,
-    };
+    try {
+        // Check if username exists
+        const [results] = await req.context.models.account.loginUser(req.body.uname);
+        if (results.length === 0) {
+            res.status(400).send("Incorrect Username or Password");
+            return next();
+        }
 
-    req.context.models.account.loginUser(user, res, next);
+        // Verify password
+        const match = await bcrypt.compare(req.body.pass, results[0].password);
+        if (!match) {
+            res.status(400).send("Incorrect Username or Password");
+            return next();
+        }
+
+        // Setup the return object
+        const user = {
+            uname: req.body.uname,
+        };
+
+        // Get all privilege levels
+        const [response] = await req.context.models.account.getUserAccessLevel(req.body.uname);
+        if (response[0].maxPrivilege !== null) {
+            user.viewFinancials = true;
+            user.viewApprove = response[0].maxAmount > 0;
+            user.viewOfficer = response[0].maxPrivilege >= ACCESS_LEVEL.officer;
+            user.viewTreasurer = response[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+        } else {
+            user.viewFinancials = false;
+            user.viewApprove = false;
+            user.viewOfficer = false;
+            user.viewTreasurer = false;
+        }
+
+        // Generate the API key now
+        const response_1 = await req.context.models.account.generateAPIKey(req.body.uname);
+        res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
+        res.status(201).send(user);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
 });
 
 /*
@@ -52,7 +90,7 @@ router.post("/", async(req, res, next) => {
 router.post("/forgot-user", async(req, res, next) => {
     if (req.body.email === undefined || req.body.email === "") {
         res.status(400).send("Email must be included");
-        next();
+        return next();
     }
 
     try {
