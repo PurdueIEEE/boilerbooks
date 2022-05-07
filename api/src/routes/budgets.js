@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { fiscal_year_list, current_fiscal_year, committee_lut, ACCESS_LEVEL, logger } from "../common_items.js";
+import { fiscal_year_list, committee_lut, ACCESS_LEVEL, logger, max_fiscal_year_count } from "../common_items.js";
 
 const router = Router();
 
@@ -56,7 +56,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // Clear the old budget from the database
     try {
-        await req.context.models.budgets.clearBudget(committee_lut[req.params.comm][0], current_fiscal_year);
+        await req.context.models.budgets.clearBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
@@ -79,7 +79,7 @@ router.post("/:comm", async(req, res, next) => {
                 category: item.category,
                 amount: item.amount,
                 committee: committee_lut[req.params.comm][0],
-                year: current_fiscal_year,
+                year: max_fiscal_year_count,
             };
 
             await req.context.models.budgets.addBudget(budget);
@@ -111,7 +111,7 @@ router.put("/:comm", async(req, res, next) => {
             return next();
         }
 
-        await req.context.models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], current_fiscal_year);
+        await req.context.models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
 
         res.status(200).send("Approved Budget");
         return next();
@@ -138,7 +138,7 @@ router.get("/submitted", async(req, res, next) => {
         const budgets = {};
 
         for (let committee in committee_lut) {
-            const [results_1] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], current_fiscal_year);
+            const [results_1] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], max_fiscal_year_count);
             budgets[committee] = results_1;
         }
 

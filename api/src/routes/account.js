@@ -68,12 +68,17 @@ router.post("/", async(req, res, next) => {
     }
 
     if (req.body.createpin !== process.env.ACCOUNT_PIN) {
-        res.status(400).send("Incorrect Creation PIN");
+        res.status(400).send("Incorrect Account Creation PIN");
         return next();
     }
 
     if (req.body.pass1 !== req.body.pass2) {
         res.status(400).send("Passwords do not match");
+        return next();
+    }
+
+    if (req.body.pass1.length < 8) {
+        res.status(400).send("Password length must be greater than 8 characters");
         return next();
     }
 
@@ -433,6 +438,7 @@ router.get("/:userID/dues", async(req, res, next) => {
         res.status(200).send(results);
         return next();
     } catch (err) {
+        logger.error(err.stack);
         res.status(500).send("Internal Server Error");
         return next();
     }

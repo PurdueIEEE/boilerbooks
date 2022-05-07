@@ -19,6 +19,9 @@ import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
+/*
+    Get all treasurers
+*/
 router.get("/treasurers", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
@@ -37,6 +40,9 @@ router.get("/treasurers", async(req, res, next) => {
     }
 });
 
+/*
+    Get all officers
+*/
 router.get("/officers", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
@@ -55,6 +61,9 @@ router.get("/officers", async(req, res, next) => {
     }
 });
 
+/*
+    Get all internal leaders
+*/
 router.get("/internals", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
@@ -73,6 +82,9 @@ router.get("/internals", async(req, res, next) => {
     }
 });
 
+/*
+    Add a new treasurer
+*/
 router.post("/treasurers", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "") {
@@ -123,6 +135,9 @@ router.post("/treasurers", async(req, res, next) => {
     }
 });
 
+/*
+    Add a new officer
+*/
 router.post("/officers", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
@@ -170,6 +185,9 @@ router.post("/officers", async(req, res, next) => {
     }
 });
 
+/*
+    Add a new internal leader
+*/
 router.post("/internals", async(req, res, next) => {
     if (req.body.username === undefined || req.body.username === "" ||
         req.body.role === undefined || req.body.role === "" ||
@@ -218,6 +236,9 @@ router.post("/internals", async(req, res, next) => {
     }
 });
 
+/*
+    Delete a user's permissions
+*/
 router.delete("/approvals/:approver", async(req, res, next) => {
     if (req.params.approver === "") { // Sanity Check
         res.status(400).send("Bad Treasurer ID");

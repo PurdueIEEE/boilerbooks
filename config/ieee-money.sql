@@ -22,7 +22,7 @@ CREATE TABLE `Budget` (
   `category` varchar(250) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
-  `year` enum('2015-2016','2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
+  `fiscal_year` int(10) NOT NULL,
   `status` enum('Submitted','Approved') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -34,8 +34,13 @@ CREATE TABLE `Dues` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `duesid` int(11) NOT NULL,
   `committee` varchar(255) NOT NULL,
-  `fiscal_year` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
+  `fiscal_year` int(10) NOT NULL,
   `amount` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `fiscal_year` (
+  `fyid` INT(10) NOT NULL,
+  `fiscal_year` CHAR(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Income` (
@@ -49,7 +54,7 @@ CREATE TABLE `Income` (
   `comments` varchar(10000) DEFAULT NULL,
   `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
   `addedby` varchar(100) NOT NULL,
-  `fiscalyear` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022',
+  `fiscal_year` int(10) NOT NULL,
   `refnumber` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -69,7 +74,7 @@ CREATE TABLE `Purchases` (
   `approvedby` varchar(50) DEFAULT NULL,
   `fundsource` enum('BOSO','Cash','SOGA') DEFAULT NULL,
   `comments` varchar(500) NOT NULL,
-  `fiscalyear` enum('2016-2017','2017-2018','2018-2019','2019-2020','2020-2021','2021-2022','') NOT NULL DEFAULT '2021-2022'
+  `fiscal_year` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `Users` (
@@ -100,6 +105,9 @@ ALTER TABLE `Budget`
 ALTER TABLE `Dues`
   ADD PRIMARY KEY (`duesid`);
 
+ALTER TABLE `fiscal_year`
+  ADD PRIMARY KEY (`fyid`);
+
 ALTER TABLE `Income`
   ADD PRIMARY KEY (`incomeid`);
 
@@ -120,6 +128,9 @@ ALTER TABLE `Budget`
 
 ALTER TABLE `Dues`
   MODIFY `duesid` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `fiscal_year`
+  MODIFY `fyid` int(10) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `Income`
   MODIFY `incomeid` int(11) NOT NULL AUTO_INCREMENT;

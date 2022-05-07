@@ -15,13 +15,13 @@
 */
 
 import { db_conn } from "./index.js";
-import { current_fiscal_year, dues_amount } from "../common_items.js";
+import { dues_amount, max_fiscal_year_count } from "../common_items.js";
 
 async function createNewMember(dues) {
     return db_conn.promise().execute(
         `INSERT INTO Dues (timestamp, name, email, id_hash, committee, fiscal_year, amount)
         VALUES (NOW(), ?,?,?,?,?,?)`,
-        [dues.name, dues.email, dues.puid, dues.committees, current_fiscal_year, dues_amount]
+        [dues.name, dues.email, dues.puid, dues.committees, max_fiscal_year_count, dues_amount]
     );
 }
 

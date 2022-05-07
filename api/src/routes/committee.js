@@ -18,7 +18,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_lut, fiscal_year_list, current_fiscal_year, logger, ACCESS_LEVEL } from "../common_items.js";
+import { committee_lut, fiscal_year_list, current_fiscal_year, logger, ACCESS_LEVEL, fiscal_year_lut } from "../common_items.js";
 
 /*
     Get a list of all committees
@@ -49,7 +49,7 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeCategories(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -124,7 +124,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeBudgetTotals(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeBudgetTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -169,7 +169,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeExpenseTotals(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeExpenseTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -214,7 +214,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeIncomeTotals(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeIncomeTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -259,7 +259,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteePurchases(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteePurchases(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -300,7 +300,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeIncome(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeIncome(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -341,7 +341,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], req.params.year);
+        const [results] = await req.context.models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {

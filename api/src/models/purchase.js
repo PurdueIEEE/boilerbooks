@@ -15,14 +15,15 @@
 */
 
 import { db_conn } from "./index.js";
-import { ACCESS_LEVEL, current_fiscal_year } from "../common_items.js";
+import { ACCESS_LEVEL, max_fiscal_year_count } from "../common_items.js";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, DATE_FORMAT(p.modifydate, '%Y-%m-%dT%H:%i:%sZ') as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-        p.cost, p.comments, p.fundsource, p.fiscalyear, p.username, p.purchaseid,
+        p.cost, p.comments, p.fundsource, p.username, p.purchaseid,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
-        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby,
+        (SELECT fiscal_year FROM fiscal_year WHERE fyid = p.fiscal_year) fiscal_year
         FROM Purchases p
         WHERE p.purchaseID = ?`,
         [id]
@@ -31,8 +32,8 @@ async function getFullPurchaseByID(id) {
 
 async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
-        "INSERT INTO Purchases (fiscalyear,username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
-        [current_fiscal_year, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
+        "INSERT INTO Purchases (fiscal_year,username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
+        [max_fiscal_year_count, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
     );
 }
 
@@ -76,7 +77,7 @@ async function getPurchaseApprovers(purchase) {
 async function getAllReimbursements() {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, DATE_FORMAT(p.modifydate, '%Y-%m-%dT%H:%i:%sZ') as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-        p.cost, p.comments, p.fundsource, p.fiscalyear, p.username, p.purchaseid,
+        p.cost, p.comments, p.fundsource, p.fiscal_year, p.username, p.purchaseid,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
         FROM Purchases p

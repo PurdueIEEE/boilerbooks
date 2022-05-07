@@ -20,7 +20,7 @@ import crypto from "crypto";
 
 const router = Router();
 
-import { ACCESS_LEVEL, current_fiscal_year, dues_committees, logger } from "../common_items.js";
+import { ACCESS_LEVEL, current_fiscal_year, dues_committees, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
 
 /*
     Get a list of all dues committees
@@ -80,7 +80,7 @@ router.post("/", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getMemberByEmail(req.body.email, current_fiscal_year);
+        const [results_1] = await req.context.models.dues.getMemberByEmail(req.body.email, max_fiscal_year_count);
         if (results_1.length) {
             // 409 is an unusual status code but sort of applies here?
             res.status(409).send("Member email already exists");
@@ -120,7 +120,7 @@ router.get("/summary/:year?", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesMembers(req.params.year);
+        const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=0, out), {});
         results_1.forEach(dues => {
             dues.committee.split(/(?:, |,)+/).forEach(comm => {
@@ -156,7 +156,7 @@ router.get("/all/:year?", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesMembers(req.params.year);
+        const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         res.status(200).send(results_1);
         return next();
     } catch (err) {

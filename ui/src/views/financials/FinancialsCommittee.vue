@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>View Committee Financials</h3>
-    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error1,'text-danger':error1}">{{dispmsg}}</div>
     <br v-else>
     <div class="row g-3 text-start">
       <div class="col-md-6">
@@ -277,10 +277,10 @@ export default {
       const incomeTable = await incomeTableP;
 
       if (totalBudget.error || totalBalance.error || totalIncome.error || totalSpent.error || financialSummary.error || expenseTable.error || incomeTable.error) {
-        this.totalBalance = {balance:'--.--'};
-        this.totalBudget = {budget:'--.--'};
-        this.totalIncome = {income:'--.--'};
-        this.totalSpent = {spent:'--.--'};
+        this.totalBalance = {balance:'0.00'};
+        this.totalBudget = {budget:'0.00'};
+        this.totalIncome = {income:'0.00'};
+        this.totalSpent = {spent:'0.00'};
         this.financialSummary = [];
         this.expenseTable = [];
         this.incomeTable = [];

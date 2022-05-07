@@ -15,7 +15,7 @@
 */
 
 import { db_conn } from "./index.js";
-import { ACCESS_LEVEL, logger } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
 import { v4 as uuidv4} from "uuid";
 
 async function getUserByID(id) {
@@ -76,7 +76,9 @@ async function getUserApprovalCommittees(user) {
 
 async function getUserDues(user) {
     return db_conn.promise().execute(
-        `SELECT D.duesid, D.name, D.email, D.committee, D.fiscal_year, D.amount FROM Dues D
+        `SELECT D.duesid, D.name, D.email, D.committee, D.amount,
+        (SELECT fiscal_year FROM fiscal_year WHERE fyid = D.fiscal_year) fiscal_year
+        FROM Dues D
         INNER JOIN Users U ON D.email = U.email
         WHERE U.username=?`,
         [user]
@@ -125,7 +127,6 @@ async function getUserAccessLevel(user) {
     );
 }
 
-// Private method only used here
 async function generateAPIKey(user) {
 
     // Yeah technically this while loop is always true

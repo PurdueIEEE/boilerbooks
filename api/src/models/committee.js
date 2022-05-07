@@ -15,29 +15,30 @@
 */
 
 import { db_conn } from "./index.js";
-import { current_fiscal_year } from "../common_items.js";
+import { max_fiscal_year_count } from "../common_items.js";
 
-async function getCommitteeCategories(comm, year=current_fiscal_year) {
+async function getCommitteeCategories(comm, year=max_fiscal_year_count) {
     return db_conn.promise().execute(
-        "SELECT category FROM Budget WHERE committee=? AND year=? AND status='Approved'",
+        "SELECT category FROM Budget WHERE committee=? AND fiscal_year=? AND status='Approved'",
         [comm, year]
     );
 }
 
+// Fun fact: this will return a null if there is not at least 1 purchase and at least 1 income
 async function getCommitteeBalance(comm) {
     return db_conn.promise().execute(
         `SELECT (SELECT SUM(amount) AS income FROM Income
-        WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = ? AND status = ?)
+        WHERE committee = ? AND status = "Received")
         -
-        (SELECT SUM(Purchases.cost) AS spend FROM Purchases
-        WHERE Purchases.committee = ? AND Purchases.status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved',NULL)) AS balance`,
-        [comm, "Received", comm]
+        (SELECT SUM(cost) AS spend FROM Purchases
+        WHERE committee = ? AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')) AS balance`,
+        [comm, comm]
     );
 }
 
 async function getCommitteeBudgetTotals(comm, year) {
     return db_conn.promise().execute(
-        "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.year = ? AND status='Approved'",
+        "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.fiscal_year = ? AND status='Approved'",
         [comm, year]
     );
 }
@@ -46,7 +47,7 @@ async function getCommitteeExpenseTotals(comm, year) {
     return db_conn.promise().execute(
         `SELECT SUM(Purchases.cost) AS spent FROM Purchases
 		WHERE Purchases.committee = ? AND Purchases.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL)
-		AND Purchases.fiscalyear = ?`,
+		AND Purchases.fiscal_year = ?`,
         [comm, year]
     );
 }
@@ -55,7 +56,7 @@ async function getCommitteeIncomeTotals(comm, year) {
     return db_conn.promise().execute(
         `SELECT SUM(amount) AS income FROM Income
 		WHERE type in ('BOSO', 'Cash', 'SOGA') AND committee = ? AND status = 'Received'
-		AND fiscalyear = ?`,
+		AND fiscal_year = ?`,
         [comm, year]
     );
 }
@@ -67,7 +68,7 @@ async function getCommitteePurchases(comm, year) {
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
 		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby
 		FROM Purchases p
-		WHERE p.committee = ? AND p.fiscalyear = ? AND p.status != 'Denied'`,
+		WHERE p.committee = ? AND p.fiscal_year = ? AND p.status != 'Denied'`,
         [comm, year]
     );
 }
@@ -86,7 +87,7 @@ async function getCommitteeIncome(comm, year) {
         `SELECT *, DATE_FORMAT(updated,'%Y-%m-%d') as date, I.amount as income_amount
 		FROM Income I
 		WHERE I.committee = ?
-		AND I.fiscalyear = ?
+		AND I.fiscal_year = ?
 		ORDER BY I.updated`,
         [comm, year]
     );
@@ -94,11 +95,11 @@ async function getCommitteeIncome(comm, year) {
 
 async function getCommitteeBudgetSummary(comm, year) {
     return db_conn.promise().execute(
-        `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscalyear = ?)) THEN P.cost ELSE 0 END) AS spent,
+        `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscal_year = ?)) THEN P.cost ELSE 0 END) AS spent,
         B.amount, B.status AS budget FROM Budget B
 		LEFT JOIN Purchases P ON B.category = P.category
 		WHERE B.committee = ?
-		AND B.year = ?
+		AND B.fiscal_year = ?
 		GROUP BY B.category, B.amount, B.status`,
         [comm, year, comm, year]
     );

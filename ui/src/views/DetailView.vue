@@ -60,7 +60,7 @@
             <p class="fs-5">Funding Source: <span class="fw-bold">{{purchase.fundsource}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
-            <p class="fs-5">Fiscal Year: <span class="fw-bold">{{purchase.fiscalyear}}</span></p>
+            <p class="fs-5">Fiscal Year: <span class="fw-bold">{{purchase.fiscal_year}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
             <p class="fs-5">Comments:
@@ -218,7 +218,7 @@ export default {
       }
 
       this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalyear}`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscal_year}`, {
         method: 'get',
         credentials: 'include'
       });

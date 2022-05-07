@@ -18,21 +18,21 @@ import { db_conn } from "./index.js";
 
 async function clearBudget(comm, year) {
     return db_conn.promise().execute(
-        "DELETE FROM Budget WHERE committee=? AND year=?",
+        "DELETE FROM Budget WHERE committee=? AND fiscal_year=?",
         [comm, year]
     );
 }
 
 async function addBudget(budget) {
     return db_conn.promise().execute(
-        "INSERT INTO Budget (category,amount,committee,year,status) VALUES (?,?,?,?,?)",
+        "INSERT INTO Budget (category,amount,committee,fiscal_year,status) VALUES (?,?,?,?,?)",
         [budget.category, budget.amount, budget.committee, budget.year, "Submitted"]
     );
 }
 
 async function getCommitteeSubmittedBudget(comm, year) {
     return db_conn.promise().execute(
-        "SELECT category, amount FROM Budget WHERE year=? AND committee=? AND status='Submitted'",
+        "SELECT category, amount FROM Budget WHERE fiscal_year=? AND committee=? AND status='Submitted'",
         [year, comm]
     );
 }
@@ -40,7 +40,7 @@ async function getCommitteeSubmittedBudget(comm, year) {
 async function approveCommitteeBudget(comm, year) {
     console.log(comm, year);
     return db_conn.promise().execute(
-        "UPDATE Budget SET status='Approved' WHERE (committee=? AND year=?)",
+        "UPDATE Budget SET status='Approved' WHERE (committee=? AND fiscal_year=?)",
         [comm, year]
     );
 }

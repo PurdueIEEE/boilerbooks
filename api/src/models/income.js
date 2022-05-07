@@ -15,12 +15,12 @@
 */
 
 import { db_conn } from "./index.js";
-import { current_fiscal_year } from "../common_items.js";
+import { max_fiscal_year_count } from "../common_items.js";
 
 async function createNewDonation(donation) {
     return db_conn.promise().execute(
-        "INSERT INTO Income (updated, committee, source, amount, item, type, status, comments, addedby, fiscalyear, refnumber) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
-        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.status, donation.comments, donation.user, current_fiscal_year]
+        "INSERT INTO Income (updated, committee, source, amount, item, type, status, comments, addedby, fiscal_year, refnumber) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
+        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.status, donation.comments, donation.user, max_fiscal_year_count]
     );
 }
 

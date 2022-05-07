@@ -73,6 +73,13 @@ const fiscal_year_list = [];
 for (let year = yearEnd; year >= yearStart; year--) {
     fiscal_year_list.push(`${year}-${year+1}`);
 }
+const fiscal_year_lut = fiscal_year_list.slice().reverse().reduce(
+    (result, curr, index, array) => {
+        result[curr] = index+1;
+        return result;
+    }, {});
+const min_fiscal_year_count = 1;
+const max_fiscal_year_count = fiscal_year_list.length;
 // -------------------------------------------------
 
 // ------------ financial committee lut ------------
@@ -234,6 +241,9 @@ export {
     current_fiscal_year,
     first_fiscal_year,
     fiscal_year_list,
+    fiscal_year_lut,
+    min_fiscal_year_count,
+    max_fiscal_year_count,
     committee_lut,
     committee_name_swap,
     committee_name_api,
