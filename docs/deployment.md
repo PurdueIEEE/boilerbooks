@@ -17,13 +17,30 @@ The deployment can be restarted with `systemctl restart boilerbooks.service`:
 
 ## Deploying with Docker-Compoe
 
-Coming Soon
+* Create a `docker-compose.yml` file and setup 4 (or 3) services:
+    * `ui_proxy` for the frontend and internal reverse proxy
+    * `api` for the actual API
+    * `db` for the database, probably MySQL
+    * (optional) `pma` for PHPMyAdmin
+* Point the `ui_proxy` and `api` services to build off the given Dockerfiles
+    * The API uses [api/Dockerfile](/api/Dockerfile)
+    * The UI can use [ui/Dockerfile.dev](/ui/Dockerfile.dev) for developments builds
+    * The UI can use [ui/Dockerfile.prod](/ui/Dockerfile.prod) for production builds
+* Set the environment variables for the api as defined in [the dotenv file](/api/.env.git)
+* Bind mount the necessary logs, database volumes, etc. to the host machine
+    * Optionally, use Docker volumes instead
+* Setup a network link for the SMTP server to the Docker gateway
+* Run the command `docker-compose up --build -d`
 
 ## IEEE Deploy Information
 
 ### Deployment
 
-Deployment is handled with dockr-compose and uses the Dockerfiles provided.
+Deployment is handled with docker-compose and uses the Dockerfiles provided.
+
+To redeploy the application, ssh to the server and cd to the service folder.
+
+Run a commands to redeploy the application: `docker-compose up --build -d`
 
 ### Backups
 
