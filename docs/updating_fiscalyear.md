@@ -11,7 +11,7 @@ Add the fiscal year as a entry in the fiscal year lookup table. Update the comma
 These commands must be run in a sh/bash/tcsh shell session _after_ connecting to the IEEE server.
 
 * Run the command `docker exec -it boilerbooks-prod_db mysql -u root -p ieee-money` to enter the MySQL shell
-* Run the command ``INSERT INTO `fiscal_year` (fiscal_year) VALUES ('2022-2023');`` in the MySQL shell
+* Run the command ``INSERT INTO `fiscal_year` (fiscal_year) VALUES ('2022-2023');`` in the MySQL shell (change `2022-2023` to the current year)
 
 ## Updating the code
 
