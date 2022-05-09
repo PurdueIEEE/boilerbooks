@@ -36,11 +36,19 @@ The deployment can be restarted with `systemctl restart boilerbooks.service`:
 
 ### Deployment
 
-Deployment is handled with docker-compose and uses the Dockerfiles provided.
+Deployment is handled with docker-compose and uses the Dockerfiles provided. You must have access to an SSH-capable program.
 
 To redeploy the application, ssh to the server and cd to the service folder.
 
-Run a commands to redeploy the application: `docker-compose up --build -d`
+Run a few commands to redeploy the application:
+
+```
+cd boilerbooks
+git pull
+cd ..
+docker-compose down
+docker-compose up --build -d
+```
 
 ### Backups
 

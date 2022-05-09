@@ -8,7 +8,7 @@ Boiler Books is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
 ## Documentation
 
-All the documentation is available in the `docs/` folder, broken up by topic.
+All the documentation is available in the `docs/` folder, broken up by topic. For a full reference of server infrastructure, refer to the **Purdue IEEE Infrastructure Guide** stored with the Purdue IEEE president.
 
 * Updating the Fiscal Year to match the current one: [updating_fiscalyear.md](docs/updating_fiscalyear.md)
 * Setting up a development environment: [development.md](docs/development.md)
