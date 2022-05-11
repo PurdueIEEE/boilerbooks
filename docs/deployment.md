@@ -36,9 +36,15 @@ The deployment can be restarted with `systemctl restart boilerbooks.service`:
 
 ### Deployment
 
-Deployment is handled with docker-compose and uses the Dockerfiles provided. You must have access to an SSH-capable program.
+Deployment is handled with docker-compose and uses the Dockerfiles provided.
 
-To redeploy the application, ssh to the server and cd to the service folder.
+**GitHub Actions will automatically auto-deploy the production application after a push to the master branch.**
+
+If the deploy succeds, a green '✓' will appear next to the commit message. If the deploy fails, a red '✕' will appear next to the commit message. A full artifact log is visible in the 'Actions' tab.
+
+<br>
+
+To manually redeploy the application, ssh to the server and cd to the service folder.
 
 Run a few commands to redeploy the application:
 
@@ -46,7 +52,6 @@ Run a few commands to redeploy the application:
 cd boilerbooks
 git pull
 cd ..
-docker-compose down
 docker-compose up --build -d
 ```
 

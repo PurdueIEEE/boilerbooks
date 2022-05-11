@@ -19,5 +19,5 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "cd ${{ secrets.DEPLOY_DIRECTORY }}/boilerbooks; git pull;"
       - name: "Deploy Boiler Books"
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "cd ${{ secrets.DEPLOY_DIRECTORY }}; docker-compose up --build -d;"
-      - name: "Deploy Cleanup"
+      - name: "Clean SSH Key"
         run: rm ~/.ssh/id_github
