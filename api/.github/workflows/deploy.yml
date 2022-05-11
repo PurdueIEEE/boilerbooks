@@ -1,0 +1,21 @@
+name: deploy-boilerbooks
+on:
+  push:
+    branches:
+      master
+jobs:
+  deploy:
+    name: Deploy Boiler Books
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      env:
+        ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh_host: ${{ secrets.SSH_HOST }}
+        ssh_user: ${{ secrets.SSH_USER }}
+      run: |
+        mkdir ~/.ssh
+        echo "$ssh_key" > ~/.ssh/id_github
+        chmod 600 ~/.ssh/id_github
+        ssh ${ssh_user}@${ssh_host} -i ~/.ssh/id_github "echo GH actions working > test.txt"
+        rm ~/.ssh/id_github
