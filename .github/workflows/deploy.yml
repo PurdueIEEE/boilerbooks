@@ -8,11 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: "Deploy Boiler Books"
+      - name: "Install SSH Private Key"
         run: |
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_github
           chmod 600 ~/.ssh/id_github
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "echo GH actions working > test.txt"
-          rm ~/.ssh/id_github
+      - name: "Add SSH Known Hosts"
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: "Update Code"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "cd ${{ secrets.DEPLOY_DIRECTORY }}/boilerbooks; git pull;"
+      - name: "Deploy Boiler Books"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "cd ${{ secrets.DEPLOY_DIRECTORY }}; docker-compose up --build -d;"
+      - name: "Deploy Cleanup"
+        run: rm ~/.ssh/id_github
