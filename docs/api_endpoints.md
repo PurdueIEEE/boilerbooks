@@ -81,6 +81,10 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
         * GET: all committee balances user can view
     * `/account/{user_id}/committees`
         * GET: all committee where user has approval powers
+    * `/account/{user_id}/committee/purchases`
+        * GET: last committee for which a user made a purchase
+    * `/account/{user_id}/committee/income`
+        * GET: last committee for which a user entered any income
 
 <hr>
 
