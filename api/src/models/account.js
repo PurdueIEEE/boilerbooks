@@ -85,6 +85,13 @@ async function getUserDues(user) {
     );
 }
 
+async function getLastPurchaseCommittee(user) {
+    return db_conn.promise().execute(
+        "SELECT purchaseid, committee FROM Purchases WHERE username=? ORDER BY purchaseid DESC",
+        [user]
+    );
+}
+
 async function updatePassword(user) {
     return db_conn.promise().execute(
         "UPDATE Users SET modifydate=NOW(), password=?, resettime=NULL WHERE username=?",
@@ -165,6 +172,7 @@ export default {
     setPasswordResetDetails,
     checkResetTime,
     getUserDues,
+    getLastPurchaseCommittee,
     canApprovePurchase,
     getUserAccessLevel,
     generateAPIKey,

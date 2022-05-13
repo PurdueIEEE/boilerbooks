@@ -67,6 +67,7 @@
 */
 
 import {fetchWrapperJSON, fetchWrapperTXT} from '@/api_wrapper';
+import auth_state from '@/state';
 
 export default {
   name: 'PurchaseNew',
@@ -99,7 +100,6 @@ export default {
       this.dispmsg = response.response;
 
       if (!response.error) {
-        this.committee = '';
         this.category = '';
         this.itemName = '';
         this.itemReason = '';
@@ -110,18 +110,24 @@ export default {
     }
   },
   async mounted() {
-    const response = await fetchWrapperJSON(`/api/v2/committee`, {
+    const response_comm = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
       credentials: 'include',
     });
 
-    if (response.error) {
+    const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/purchases`, {
+      method: 'get',
+      credentials: 'include',
+    });
+
+    if (response_comm.error || response_lastcomm.error) {
       this.error = true;
-      this.dispmsg = response.response;
+      this.dispmsg = response_comm.response;
       return;
     }
 
-    this.committeeList = response.response;
+    this.committeeList = response_comm.response;
+    this.committee = response_lastcomm.response;
   },
   watch: {
     async committee(newVal) {

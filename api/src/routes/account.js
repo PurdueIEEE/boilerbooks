@@ -18,7 +18,7 @@ import { Router } from "express";
 
 const router = Router();
 
-import { committee_name_swap, committee_lut, logger, mailer, ACCESS_LEVEL } from "../common_items.js";
+import { committee_name_swap, committee_lut, logger, mailer, ACCESS_LEVEL, committee_name_api } from "../common_items.js";
 
 import bcrypt from "bcrypt";
 const bcrypt_rounds = 10;
@@ -437,6 +437,28 @@ router.get("/:userID/dues", async(req, res, next) => {
         const [results] = await req.context.models.account.getUserDues(req.context.request_user_id);
         res.status(200).send(results);
         return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+router.get("/:userID/committee/purchases", async(req, res, next) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        res.status(404).send("User not found");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.account.getLastPurchaseCommittee(req.context.request_user_id);
+        if (results.length > 0) {
+            res.status(200).send(committee_name_api[results[0].committee]);
+            return next();
+        } else {
+            res.status(200).send("");
+            return next();
+        }
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
