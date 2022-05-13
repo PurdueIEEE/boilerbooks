@@ -466,4 +466,26 @@ router.get("/:userID/committee/purchases", async(req, res, next) => {
     }
 });
 
+router.get("/:userID/committee/income", async(req, res, next) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        res.status(404).send("User not found");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.account.getLastIncomeCommittee(req.context.request_user_id);
+        if (results.length > 0) {
+            res.status(200).send(committee_name_api[results[0].committee]);
+            return next();
+        } else {
+            res.status(200).send("");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
 export default router;

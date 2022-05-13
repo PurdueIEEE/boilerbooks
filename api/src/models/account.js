@@ -92,6 +92,14 @@ async function getLastPurchaseCommittee(user) {
     );
 }
 
+async function getLastIncomeCommittee(user) {
+    return db_conn.promise().execute(
+        "SELECT incomeid, committee FROM Income WHERE addedby=? ORDER BY incomeid DESC",
+        [user]
+    );
+}
+
+
 async function updatePassword(user) {
     return db_conn.promise().execute(
         "UPDATE Users SET modifydate=NOW(), password=?, resettime=NULL WHERE username=?",
@@ -173,6 +181,7 @@ export default {
     checkResetTime,
     getUserDues,
     getLastPurchaseCommittee,
+    getLastIncomeCommittee,
     canApprovePurchase,
     getUserAccessLevel,
     generateAPIKey,

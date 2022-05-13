@@ -107,7 +107,6 @@ export default {
       this.dispmsg = response.response;
 
       if (!response.error) {
-        this.committee = '';
         this.source = '';
         this.amount = '';
         this.item = '';
@@ -118,18 +117,24 @@ export default {
     }
   },
   async mounted() {
-    const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
+    const response_comm = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
       credentials: 'include',
     });
 
-    if (response.error) {
+    const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/income`, {
+      method: 'get',
+      credentials: 'include',
+    });
+
+    if (response_comm.error || response_lastcomm.error) {
       this.error = true;
-      this.dispmsg = response.response;
+      this.dispmsg = response_comm.error ? response_comm.response : response_lastcomm.response;
       return;
     }
 
-    this.committeeList = response.response;
+    this.committeeList = response_comm.response;
+    this.committee = response_lastcomm.response;
   }
 }
 </script>
