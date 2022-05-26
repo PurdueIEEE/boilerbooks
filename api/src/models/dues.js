@@ -19,8 +19,8 @@ import { dues_amount, max_fiscal_year_count } from "../common_items.js";
 
 async function createNewMember(dues) {
     return db_conn.promise().execute(
-        `INSERT INTO Dues (timestamp, name, email, id_hash, committee, fiscal_year, amount)
-        VALUES (NOW(), ?,?,?,?,?,?)`,
+        `INSERT INTO Dues (timestamp, name, email, id_hash, committee, fiscal_year, amount, status)
+        VALUES (NOW(), ?,?,?,?,?,?,'Unpaid')`,
         [dues.name, dues.email, dues.puid, dues.committees, max_fiscal_year_count, dues_amount]
     );
 }
@@ -34,7 +34,7 @@ async function getMemberByEmail(email, fiscal_year) {
 
 async function getDuesMembers(year) {
     return db_conn.promise().execute(
-        "SELECT duesid, name, email, committee FROM Dues WHERE fiscal_year=?",
+        "SELECT duesid, name, email, committee, status FROM Dues WHERE fiscal_year=?",
         [year]
     );
 }

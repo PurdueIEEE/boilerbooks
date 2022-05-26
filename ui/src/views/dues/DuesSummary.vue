@@ -7,13 +7,15 @@
       <thead>
         <tr>
           <th>Committee</th>
-          <th>Members</th>
+          <th>Total Members</th>
+          <th># Paid / # Unpaid</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(val, comm) in duesSumm" v-bind:key="comm">
           <td>{{comm}}</td>
-          <td>{{val}}</td>
+          <td>{{val[0] + val[1]}}</td>
+          <td>{{val[0]}} / {{val[1]}}</td>
         </tr>
       </tbody>
     </table>
@@ -26,12 +28,14 @@
       v-bind:row_headers="[
       ['Name','name'],
       ['Email','email'],
-      ['Committee(s)','committee']]"
+      ['Committee(s)','committee'],
+      ['Status','status']]"
     >
       <template v-slot:data="dues">
         <td>{{dues.row.name}}</td>
         <td>{{dues.row.email}}</td>
         <td>{{dues.row.committee}}</td>
+        <td>{{dues.row.status}}</td>
       </template>
     </DataTable>
 

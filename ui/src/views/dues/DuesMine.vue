@@ -12,7 +12,8 @@
         ['Email','email'],
         ['Committee(s)','committee'],
         ['Year','fiscal_year'],
-        ['Amount','amount']]"
+        ['Amount','amount'],
+        ['Status','status']]"
       >
         <template v-slot:data="dues">
           <td>{{dues.row.name}}</td>
@@ -20,6 +21,7 @@
           <td>{{dues.row.committee}}</td>
           <td>{{dues.row.fiscal_year}}</td>
           <td>{{dues.row.amount}}</td>
+          <td v-bind:class="{'text-danger':dues.row.status==='Unpaid'}">{{dues.row.status}}</td>
         </template>
       </DataTable>
     </div>

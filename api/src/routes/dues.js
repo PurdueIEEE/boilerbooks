@@ -73,9 +73,9 @@ router.post("/", async(req, res, next) => {
     }
 
     try {
-        // first make sure user is actually a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        // first make sure user is actually an officer
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, '%', ACCESS_LEVEL.officer);
+        if (results.length === 0) {
             res.status(200).send([]);
             return next();
         }
@@ -121,13 +121,18 @@ router.get("/summary/:year?", async(req, res, next) => {
         }
 
         const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
-        const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=0, out), {});
+        const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=[0,0], out), {});
         results_1.forEach(dues => {
             dues.committee.split(/(?:, |,)+/).forEach(comm => {
                 if (comm === "None" && resp_obj[comm] == undefined) {
-                    resp_obj[comm] = 0; // Handle case where committee is 'None'
+                    resp_obj[comm] = [0,0]; // Handle case where committee is 'None'
                 }
-                resp_obj[comm] += 1;
+
+                if (dues.status === "Paid" || dues.status === "Exempt") {
+                    resp_obj[comm][0] += 1;
+                } else {
+                    resp_obj[comm][1] += 1;
+                }
             });
         });
 
