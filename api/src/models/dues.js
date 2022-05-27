@@ -34,8 +34,15 @@ async function getMemberByEmail(email, fiscal_year) {
 
 async function getDuesMembers(year) {
     return db_conn.promise().execute(
-        "SELECT duesid, name, email, committee, status FROM Dues WHERE fiscal_year=?",
+        "SELECT D.duesid, D.name, D.email, D.committee, (SELECT fiscal_year FROM fiscal_year WHERE fyid=D.fiscal_year) AS fiscal_year, D.status FROM Dues D WHERE fiscal_year=?",
         [year]
+    );
+}
+
+async function updateDuesMemberStatus(id, status) {
+    return db_conn.promise().execute(
+        "UPDATE Dues SET status=? WHERE duesid=?",
+        [status, id]
     );
 }
 
@@ -43,4 +50,5 @@ export default {
     createNewMember,
     getMemberByEmail,
     getDuesMembers,
+    updateDuesMemberStatus,
 };

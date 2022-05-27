@@ -22,6 +22,8 @@ const router = Router();
 
 import { ACCESS_LEVEL, current_fiscal_year, dues_committees, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
 
+const payment_status = ["Paid", "Exempt"];
+
 /*
     Get a list of all dues committees
 */
@@ -74,7 +76,7 @@ router.post("/", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, '%', ACCESS_LEVEL.officer);
+        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send([]);
             return next();
@@ -102,6 +104,38 @@ router.post("/", async(req, res, next) => {
 
     res.status(201).send("Member added!");
     return next();
+});
+
+/*
+    Update the payment status of a dues member
+*/
+router.put("/:duesid", async(req, res, next) => {
+    if (req.body.status === undefined || req.body.status === "") {
+        res.status(400).send("Include a new payment status");
+        return next();
+    }
+
+    if (!payment_status.includes(req.body.status)) {
+        res.status(400).send("Payment status must be 'Paid' or 'Exempt'");
+        return next();
+    }
+
+    try {
+        // check the user is a treasurer
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send("Member status updated"); // silently failed on no authorization
+            return next();
+        }
+
+        await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status);
+        res.status(200).send("Member status updated");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
 });
 
 /*
