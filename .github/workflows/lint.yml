@@ -20,4 +20,4 @@ jobs:
       - name: "Lint API"
         run: npm --prefix ./api run lint
       - name: "Lint UI"
-        run: npm --prfix ./ui run lint
+        run: npm --prefix ./ui run lint
