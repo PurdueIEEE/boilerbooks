@@ -3,6 +3,16 @@
     <h3>Total Reported Dues</h3>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
+    <div class="row g-3 text-start">
+      <div class="col-md-12">
+        <label for="FiscalSelect" class="form-label fw-bold">Fiscal Year</label>
+        <select id="FiscalSelect" class="form-select" v-model="fiscalyear" required>
+          <option selected disabled value="">Select...</option>
+          <option v-for="year in fiscalList" v-bind:key="year">{{year}}</option>
+        </select>
+      </div>
+    </div>
+    <br/>
     <table class="table table-sm table-striped">
       <thead>
         <tr>
@@ -71,35 +81,55 @@ export default {
     return {
       duesSumm: {},
       rows: [],
+      fiscalList: [],
+      fiscalyear: '',
       error: false,
       dispmsg: '',
     }
   },
   async mounted() {
-    const duesSum = await fetchWrapperJSON('/api/v2/dues/summary',{
+    const fiscalList = await fetchWrapperJSON(`/api/v2/budgets/years`, {
       method: 'get',
-      credentials: 'include'
+      credentials: 'include',
     });
 
-    const duesAll = await fetchWrapperJSON('/api/v2/dues/all',{
-      method: 'get',
-      credentials: 'include'
-    });
-
-    if (duesSum.error) {
-      this.error = true;
-      this.dispmsg = duesSum.response;
+    if (fiscalList.error) {
+      this.error2 = true;
+      this.dispmsg = fiscalList.response;
       return;
     }
 
-    if (duesAll.error) {
-      this.error = true;
-      this.dispmsg = duesAll.response;
-      return;
-    }
+    this.fiscalList = fiscalList.response;
+  },
+  watch: {
+    async fiscalyear(newVal) {
+      this.dispmsg = '';
 
-    this.duesSumm = duesSum.response;
-    this.rows = duesAll.response;
+      const duesSum = await fetchWrapperJSON(`/api/v2/dues/summary/${newVal}`,{
+      method: 'get',
+        credentials: 'include'
+      });
+
+      const duesAll = await fetchWrapperJSON(`/api/v2/dues/all/${newVal}`,{
+        method: 'get',
+        credentials: 'include'
+      });
+
+      if (duesSum.error) {
+        this.error = true;
+        this.dispmsg = duesSum.response;
+        return;
+      }
+
+      if (duesAll.error) {
+        this.error = true;
+        this.dispmsg = duesAll.response;
+        return;
+      }
+
+      this.duesSumm = duesSum.response;
+      this.rows = duesAll.response;
+    }
   }
 }
 </script>
