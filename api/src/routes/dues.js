@@ -20,7 +20,7 @@ import crypto from "crypto";
 
 const router = Router();
 
-import { ACCESS_LEVEL, current_fiscal_year, dues_committees, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
+import { ACCESS_LEVEL, current_fiscal_year, dues_amount, dues_committees, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
 
 const payment_status = ["Paid", "Exempt"];
 
@@ -128,7 +128,7 @@ router.put("/:duesid", async(req, res, next) => {
             return next();
         }
 
-        await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status);
+        await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
         res.status(200).send("Member status updated");
         return next();
     } catch (err) {

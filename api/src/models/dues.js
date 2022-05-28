@@ -21,7 +21,7 @@ async function createNewMember(dues) {
     return db_conn.promise().execute(
         `INSERT INTO Dues (timestamp, name, email, id_hash, committee, fiscal_year, amount, status)
         VALUES (NOW(), ?,?,?,?,?,?,'Unpaid')`,
-        [dues.name, dues.email, dues.puid, dues.committees, max_fiscal_year_count, dues_amount]
+        [dues.name, dues.email, dues.puid, dues.committees, max_fiscal_year_count, 0]
     );
 }
 
@@ -39,10 +39,10 @@ async function getDuesMembers(year) {
     );
 }
 
-async function updateDuesMemberStatus(id, status) {
+async function updateDuesMemberStatus(id, status, amount) {
     return db_conn.promise().execute(
-        "UPDATE Dues SET status=? WHERE duesid=?",
-        [status, id]
+        "UPDATE Dues SET status=? , amount=? WHERE duesid=?",
+        [status, amount, id]
     );
 }
 
