@@ -60,7 +60,7 @@ async function getDuesIncomeActual(year) {
 
 async function getDuesIncomeExpected(year) {
     return db_conn.promise().execute(
-        `SELECT 1 FROM Dues WHERE fiscal_year=? AND status IN ('Paid', 'Unpaid')`,
+        "SELECT 1 FROM Dues WHERE fiscal_year=? AND status IN ('Paid', 'Unpaid')",
         [year]
     );
 }

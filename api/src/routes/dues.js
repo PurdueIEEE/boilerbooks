@@ -255,12 +255,12 @@ router.get("/expected/:year", async(req, res, next) => {
         // check the user is a treasurer
         const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            res.status(200).send({total:0}); // silently failed on no authorization
+            res.status(200).send({total:0,}); // silently failed on no authorization
             return next();
         }
 
         const [results_1] = await req.context.models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
-        res.status(200).send({total:results_1.length * dues_amount});
+        res.status(200).send({total:results_1.length * dues_amount,});
         return next();
     } catch (err) {
         logger.error(err.stack);
