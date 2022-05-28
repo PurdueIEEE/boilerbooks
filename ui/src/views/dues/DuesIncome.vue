@@ -108,7 +108,7 @@ export default {
     actualIncomeTotal() {
       let sum = 0;
       for(let income of this.actualIncome) {
-        sum += income.amount;
+        sum += parseFloat(income.amount);
       }
       return sum;
     }
