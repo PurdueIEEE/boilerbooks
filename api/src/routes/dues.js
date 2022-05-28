@@ -20,7 +20,7 @@ import crypto from "crypto";
 
 const router = Router();
 
-import { ACCESS_LEVEL, current_fiscal_year, dues_amount, dues_committees, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
+import { ACCESS_LEVEL, current_fiscal_year, dues_amount, dues_committees, fiscal_year_list, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
 
 const payment_status = ["Paid", "Exempt"];
 
@@ -146,6 +146,11 @@ router.get("/summary/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
+    if (!(fiscal_year_list.includes(req.params.year))) {
+        res.status(404).send("Invalid fiscal year");
+        return next();
+    }
+
     try {
         // first make sure user is actually an officer
         const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
@@ -187,6 +192,11 @@ router.get("/all/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
+    if (!(fiscal_year_list.includes(req.params.year))) {
+        res.status(404).send("Invalid fiscal year");
+        return next();
+    }
+
     try {
         // first make sure user is actually an officer
         const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
@@ -197,6 +207,60 @@ router.get("/all/:year?", async(req, res, next) => {
 
         const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         res.status(200).send(results_1);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+/*
+    Get actual dues income for a given year
+*/
+router.get("/income/:year", async(req, res, next) => {
+    if (!(fiscal_year_list.includes(req.params.year))) {
+        res.status(404).send("Invalid fiscal year");
+        return next();
+    }
+
+    try {
+        // check the user is a treasurer
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send([]); // silently failed on no authorization
+            return next();
+        }
+
+        const [results_1] = await req.context.models.dues.getDuesIncomeActual(fiscal_year_lut[req.params.year]);
+        res.status(200).send(results_1);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+/*
+    Get expected dues income for a given year
+*/
+router.get("/expected/:year", async(req, res, next) => {
+    if (!(fiscal_year_list.includes(req.params.year))) {
+        res.status(404).send("Invalid fiscal year");
+        return next();
+    }
+
+    try {
+        // check the user is a treasurer
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send({total:0}); // silently failed on no authorization
+            return next();
+        }
+
+        const [results_1] = await req.context.models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
+        res.status(200).send({total:results_1.length * dues_amount});
         return next();
     } catch (err) {
         logger.error(err.stack);

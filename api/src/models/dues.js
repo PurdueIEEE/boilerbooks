@@ -15,7 +15,7 @@
 */
 
 import { db_conn } from "./index.js";
-import { dues_amount, max_fiscal_year_count } from "../common_items.js";
+import { max_fiscal_year_count } from "../common_items.js";
 
 async function createNewMember(dues) {
     return db_conn.promise().execute(
@@ -46,9 +46,30 @@ async function updateDuesMemberStatus(id, status, amount) {
     );
 }
 
+async function getDuesIncomeActual(year) {
+    return db_conn.promise().execute(
+        `SELECT I.incomeid, I.source, I.amount, I.refnumber, I.status,
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = I.addedby) addedbyname,
+        (SELECT F.fiscal_year FROM fiscal_year F WHERE F.fyid=I.fiscal_year)
+        FROM Income I
+        WHERE LOWER(I.source) LIKE '%dues%'
+        AND I.fiscal_year = ?`,
+        [year]
+    );
+}
+
+async function getDuesIncomeExpected(year) {
+    return db_conn.promise().execute(
+        `SELECT 1 FROM Dues WHERE fiscal_year=? AND status IN ('Paid', 'Unpaid')`,
+        [year]
+    );
+}
+
 export default {
     createNewMember,
     getMemberByEmail,
     getDuesMembers,
     updateDuesMemberStatus,
+    getDuesIncomeActual,
+    getDuesIncomeExpected,
 };

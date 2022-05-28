@@ -53,16 +53,16 @@ import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
 import DataTable from '@/components/DataTable.vue';
 
 export default {
-    name: "DuesStatus",
+  name: "DuesStatus",
   components: {
     DataTable
   },
   data() {
-      return {
-          rows: [],
-          error: false,
-          dispmsg: "",
-      };
+    return {
+      rows: [],
+      error: false,
+      dispmsg: "",
+    };
   },
   async mounted() {
     this.init();

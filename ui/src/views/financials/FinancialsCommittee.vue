@@ -174,7 +174,7 @@ export default {
     }
 
     this.committeeList = committeeList.response;
-    this.fiscalList = fiscalList.response
+    this.fiscalList = fiscalList.response;
 
     if (this.$route.query.comm) {
       this.found_comm = true;
