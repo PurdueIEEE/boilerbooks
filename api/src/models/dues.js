@@ -41,8 +41,15 @@ async function getDuesMembers(year) {
 
 async function updateDuesMemberStatus(id, status, amount) {
     return db_conn.promise().execute(
-        "UPDATE Dues SET status=? , amount=? WHERE duesid=?",
+        "UPDATE Dues SET status=?, amount=? WHERE duesid=?",
         [status, amount, id]
+    );
+}
+
+async function updateMemberDetails(id, dues) {
+    return db_conn.promise().execute(
+        "UPDATE Dues SET name=?, email=?, committee=? WHERE duesid=?",
+        [dues.name, dues.email, dues.committees, id]
     );
 }
 
@@ -72,4 +79,5 @@ export default {
     updateDuesMemberStatus,
     getDuesIncomeActual,
     getDuesIncomeExpected,
+    updateMemberDetails,
 };

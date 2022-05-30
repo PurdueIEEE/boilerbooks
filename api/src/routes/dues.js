@@ -107,33 +107,74 @@ router.post("/", async(req, res, next) => {
 });
 
 /*
-    Update the payment status of a dues member
+    Update the payment status or information of a dues member
 */
 router.put("/:duesid", async(req, res, next) => {
-    if (req.body.status === undefined || req.body.status === "") {
-        res.status(400).send("Include a new payment status");
-        return next();
-    }
-
-    if (!payment_status.includes(req.body.status)) {
-        res.status(400).send("Payment status must be 'Paid' or 'Exempt'");
-        return next();
-    }
-
-    try {
-        // check the user is a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
-            res.status(200).send("Member status updated"); // silently failed on no authorization
+    // Path for updating dues payment status
+    if (req.body.status !== undefined && req.body.status !== "") {
+        if (!payment_status.includes(req.body.status)) {
+            res.status(400).send("Payment status must be 'Paid' or 'Exempt'");
             return next();
         }
 
-        await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
-        res.status(200).send("Member status updated");
-        return next();
-    } catch (err) {
-        logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
+        try {
+            // check the user is a treasurer
+            const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+            if (results.validuser === 0) {
+                res.status(200).send("Member status updated"); // silently fail on no authorization
+                return next();
+            }
+
+            await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
+            res.status(200).send("Member status updated");
+            return next();
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
+    } else if (req.body.email !== undefined && req.body.email !== '' &&
+               req.body.name !== undefined && req.body.name !== '' &&
+               req.body.committees !== undefined) {
+
+                if (typeof(req.body.committees) !== "object" ||
+                    req.body.committees.length === 0) {
+                    res.status(400).send("Member must be in at least one committee");
+                    return next();
+                }
+
+                // validate each committee we are trying to add actually exists
+                for (let comm of req.body.committees) {
+                    if (comm === "None" && req.body.committees.length > 1) {
+                        res.status(400).send("'None' and another committee selected");
+                        return next();
+                    }
+                    if (!dues_committees.includes(comm)) {
+                        res.status(400).send("Invalid committee value");
+                        return next();
+                    }
+                }
+
+                try {
+                    // first make sure user is actually a treasurer
+                    const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+                    if (results.validuser === 0) {
+                        res.status(200).send("Member details updated"); // Silently fail on no authorization
+                        return next();
+                    }
+
+                    req.body.committees = req.body.committees.join(",");
+
+                    await req.context.models.dues.updateMemberDetails(req.params.duesid, req.body);
+                    res.status(200).send("Member details updated");
+
+                } catch (err) {
+                    logger.error(err.stack);
+                    res.status(500).send("Internal Server Error");
+                    return next();
+                }
+    } else {
+        res.status(400).send("Fill out the proper update details");
         return next();
     }
 });
@@ -162,6 +203,8 @@ router.get("/summary/:year?", async(req, res, next) => {
         const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=[0,0], out), {});
         results_1.forEach(dues => {
+            // the shit regex is a holdover since some multi-committee dues use ', ' instead of ','
+            //  FIXME: this should probabaly be standardized in the db
             dues.committee.split(/(?:, |,)+/).forEach(comm => {
                 if (comm === "None" && resp_obj[comm] == undefined) {
                     resp_obj[comm] = [0,0]; // Handle case where committee is 'None'
