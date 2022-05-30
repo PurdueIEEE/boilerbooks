@@ -97,7 +97,7 @@ import DataTable from '@/components/DataTable.vue';
 import { Modal } from 'bootstrap';
 
 export default {
-  name: "DuesStatus",
+  name: "DuesEdit",
   components: {
     DataTable
   },

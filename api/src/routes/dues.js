@@ -133,46 +133,46 @@ router.put("/:duesid", async(req, res, next) => {
             res.status(500).send("Internal Server Error");
             return next();
         }
-    } else if (req.body.email !== undefined && req.body.email !== '' &&
-               req.body.name !== undefined && req.body.name !== '' &&
+    } else if (req.body.email !== undefined && req.body.email !== "" &&
+               req.body.name !== undefined && req.body.name !== "" &&
                req.body.committees !== undefined) {
 
-                if (typeof(req.body.committees) !== "object" ||
+        if (typeof(req.body.committees) !== "object" ||
                     req.body.committees.length === 0) {
-                    res.status(400).send("Member must be in at least one committee");
-                    return next();
-                }
+            res.status(400).send("Member must be in at least one committee");
+            return next();
+        }
 
-                // validate each committee we are trying to add actually exists
-                for (let comm of req.body.committees) {
-                    if (comm === "None" && req.body.committees.length > 1) {
-                        res.status(400).send("'None' and another committee selected");
-                        return next();
-                    }
-                    if (!dues_committees.includes(comm)) {
-                        res.status(400).send("Invalid committee value");
-                        return next();
-                    }
-                }
+        // validate each committee we are trying to add actually exists
+        for (let comm of req.body.committees) {
+            if (comm === "None" && req.body.committees.length > 1) {
+                res.status(400).send("'None' and another committee selected");
+                return next();
+            }
+            if (!dues_committees.includes(comm)) {
+                res.status(400).send("Invalid committee value");
+                return next();
+            }
+        }
 
-                try {
-                    // first make sure user is actually a treasurer
-                    const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
-                    if (results.validuser === 0) {
-                        res.status(200).send("Member details updated"); // Silently fail on no authorization
-                        return next();
-                    }
+        try {
+            // first make sure user is actually a treasurer
+            const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+            if (results.validuser === 0) {
+                res.status(200).send("Member details updated"); // Silently fail on no authorization
+                return next();
+            }
 
-                    req.body.committees = req.body.committees.join(",");
+            req.body.committees = req.body.committees.join(",");
 
-                    await req.context.models.dues.updateMemberDetails(req.params.duesid, req.body);
-                    res.status(200).send("Member details updated");
+            await req.context.models.dues.updateMemberDetails(req.params.duesid, req.body);
+            res.status(200).send("Member details updated");
 
-                } catch (err) {
-                    logger.error(err.stack);
-                    res.status(500).send("Internal Server Error");
-                    return next();
-                }
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
     } else {
         res.status(400).send("Fill out the proper update details");
         return next();

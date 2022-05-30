@@ -133,7 +133,7 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
     * `/dues/expected/{year}`
         * GET: get expected total dues income for a given year, excluding 'Exempt' members
     * `/dues/{dues_id}`
-        * PUT: update the dues payment status
+        * PUT: update the dues payment status OR the dues member details
 
 <hr>
 

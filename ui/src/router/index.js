@@ -190,8 +190,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "dues_add" */ '../views/dues/DuesAdd.vue'),
       },
       {
-        path: 'status',
-        component: () => import(/* webpackChunkName: "dues_status" */ '../views/dues/DuesStatus.vue'),
+        path: 'edit',
+        component: () => import(/* webpackChunkName: "dues_edit" */ '../views/dues/DuesEdit.vue'),
       },
       {
         path: 'income',
