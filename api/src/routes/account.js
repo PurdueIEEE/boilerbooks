@@ -82,6 +82,11 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.state.length !== 2) {
+        res.status(400).send("State must be a 2 letter abbreviation");
+        return next();
+    }
+
     bcrypt.hash(req.body.pass1, bcrypt_rounds, async(error, hash) => {
         if (error) {
             logger.error(error);
@@ -195,6 +200,11 @@ router.put("/:userID", async(req, res, next) => {
         req.body.state === "" ||
         req.body.zip === "") {
         res.status(400).send("All account details must be completed");
+        return next();
+    }
+
+    if (req.body.state.length !== 2) {
+        res.status(400).send("State must be a 2 letter abbreviation");
         return next();
     }
 
