@@ -16,6 +16,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/BoilerBooksHome.vue'
+import NotFound from '../views/NotFound.vue'
 import auth_state from '@/state'
 
 const routes = [
@@ -125,6 +126,10 @@ const routes = [
       {
         path: 'reimbursements',
         component: () => import(/* webpackChunkName: "purchase_reimbursements" */ '../views/purchase/PurchaseReimbursements.vue'),
+      },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
       }
     ],
     meta: {
@@ -142,6 +147,10 @@ const routes = [
       {
         path: 'modify',
         component: () => import(/* webpackChunkName: "income_modify" */ '../views/income/IncomeModify.vue'),
+      },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
       }
     ],
     meta: {
@@ -163,6 +172,10 @@ const routes = [
       {
         path: 'export',
         component: () => import(/* webpackChunkName: "financials_export" */ '../views/financials/FinancialsExport.vue'),
+      },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
       }
     ],
     meta: {
@@ -189,6 +202,10 @@ const routes = [
         path: 'add',
         component: () => import(/* webpackChunkName: "dues_add" */ '../views/dues/DuesAdd.vue'),
       },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
+      }
     ],
     meta: {
       requiresAuth: true,
@@ -210,6 +227,10 @@ const routes = [
         path: 'approve',
         component: () => import(/* webpackChunkName: "budget_approve" */ '../views/budget/BudgetApprove.vue'),
       },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
+      }
     ],
     meta: {
       requiresAuth: true,
@@ -235,6 +256,10 @@ const routes = [
         path: 'internal',
         component: () => import(/* webpackChunkName: "access_internal" */ '../views/access/AccessInternal.vue'),
       },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
+      }
     ],
     meta: {
       requiresAuth: true,
@@ -242,7 +267,7 @@ const routes = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: () => import(/* webpackChunkName: "notfound" */ '../views/NotFound.vue'),
+    component: NotFound,
     meta: {
       requiresAuth: false,
     }
