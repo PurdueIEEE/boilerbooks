@@ -2,7 +2,9 @@
   <div class="list-group list-group-flush">
     <router-link to="/dues/mydues" class="list-group-item" exact-active-class="active">View My Dues</router-link>
     <router-link to="/dues/summary" class="list-group-item" exact-active-class="active" v-if="auth_state.viewOfficer">Committee Dues Summary</router-link>
-    <router-link to="/dues/add" class="list-group-item" exact-active-class="active" v-if="auth_state.viewTreasurer">Add New Dues</router-link>
+    <router-link to="/dues/add" class="list-group-item" exact-active-class="active" v-if="auth_state.viewOfficer">Report New Member</router-link>
+    <router-link to="/dues/edit" class="list-group-item" exact-active-class="active" v-if="auth_state.viewTreasurer">Modify Dues Entries</router-link>
+    <router-link to="/dues/income" class="list-group-item" exact-active-class="active" v-if="auth_state.viewTreasurer">Check Dues Income</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>
 </template>

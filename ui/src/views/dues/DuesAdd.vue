@@ -13,8 +13,8 @@
         <input id="memberEmail" type="email" class="form-control" placeholder="pete@purdue.edu" v-model="memberEmail" required>
       </div>
       <div class="col-6">
-        <label for="memberID" class="form-label fw-bold">Purdue ID (optional)</label>
-        <input id="memberID" type="text" class="form-control" placeholder="0012345678" v-model="memberID">
+        <!--<label for="memberID" class="form-label fw-bold">Purdue ID (optional)</label>
+        <input id="memberID" type="text" class="form-control" placeholder="0012345678" v-model="memberID">-->
       </div>
       <div class="col-12">
         <label for="committeeCheck" class="form-label fw-bold">Committee(s)</label>

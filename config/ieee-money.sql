@@ -35,7 +35,8 @@ CREATE TABLE `Dues` (
   `duesid` int(11) NOT NULL,
   `committee` varchar(255) NOT NULL,
   `fiscal_year` int(10) NOT NULL,
-  `amount` float NOT NULL
+  `amount` float NOT NULL,
+  `status` enum('Paid', 'Unpaid', 'Exempt') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `fiscal_year` (

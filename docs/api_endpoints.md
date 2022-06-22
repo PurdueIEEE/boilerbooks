@@ -39,8 +39,8 @@ All actions should be able to be completed using only the API. In BBv1, actions 
 ### Dues Tracking
 
 1. Users view their current paid dues
-2. Committee Chairs view all dues paying members
-3. Treasurer enters members into database
+2. Committee Chairs view all dues paying members and enter members
+3. Treasurer marks dues as paid or exempt
 
 ## Endpoints
 
@@ -128,6 +128,12 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
         * GET: view total counts of dues members for each committee
     * `/dues/all/{year?}`
         * GET: view all dues paying members for a year
+    * `/dues/income/{year}`
+        * GET: view actual dues deposits for a given year, but results may be wrong
+    * `/dues/expected/{year}`
+        * GET: get expected total dues income for a given year, excluding 'Exempt' members
+    * `/dues/{dues_id}`
+        * PUT: update the dues payment status OR the dues member details
 
 <hr>
 

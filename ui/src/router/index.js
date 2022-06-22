@@ -32,7 +32,7 @@ const routes = [
     path: '/help',
     name: 'Help',
     // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
+    // this generates a separate chunk (<name>.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "help" */ '../views/BoilerBooksHelp.vue'),
     meta: {
@@ -201,6 +201,14 @@ const routes = [
       {
         path: 'add',
         component: () => import(/* webpackChunkName: "dues_add" */ '../views/dues/DuesAdd.vue'),
+      },
+      {
+        path: 'edit',
+        component: () => import(/* webpackChunkName: "dues_edit" */ '../views/dues/DuesEdit.vue'),
+      },
+      {
+        path: 'income',
+        component: () => import(/* webpackChunkName: "dues_income" */ '../views/dues/DuesIncome.vue'),
       },
       {
         path: ':pathMatch(.*)',
