@@ -179,13 +179,19 @@ export default {
     },
     async newAccount() {
       if (this.new_pass1 !== this.new_pass2) {
-        this.errmsg = "Passwords do not match"
+        this.errmsg = "Passwords do not match";
         this.error = true;
         return;
       }
 
       if (this.new_pass1.length < 8) {
-        this.errmsg = "Password must be at least 8 characters"
+        this.errmsg = "Password must be at least 8 characters";
+        this.error = true;
+        return;
+      }
+
+      if (this.new_state.length !== 2) {
+        this.errmsg = "State must be a 2 letter abbreviation";
         this.error = true;
         return;
       }

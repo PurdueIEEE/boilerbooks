@@ -1,0 +1,23 @@
+name: Code Lint Check
+on:
+  push:
+    branches:
+      master
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: "Setup API environment"
+        run: npm --prefix ./api ci
+      - name: "Setup UI environment"
+        run: npm --prefix ./ui ci
+      - name: "Lint API"
+        run: npm --prefix ./api run lint
+      - name: "Lint UI"
+        run: npm --prefix ./ui run lint

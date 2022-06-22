@@ -7,7 +7,7 @@
   "type":"module",
   "scripts": {
     "serve": "nodemon --exec babel-node src/app.js",
-    "lint": "eslint --fix src/",
+    "lint": "eslint src/ && echo No lint errors found",
     "build": "babel --env-name build src -d dist"
   },
   "author": "Purdue IEEE",

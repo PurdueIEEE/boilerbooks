@@ -111,6 +111,12 @@ export default {
   },
   methods: {
     async updateAccount() {
+      if (this.state.length !== 2) {
+        this.error = true;
+        this.dispmsg = "State must be a 2 letter abbreviation";
+        return;
+      }
+
       const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'put',
         credentials: 'include',
