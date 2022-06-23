@@ -70,9 +70,11 @@ export default {
       }
 
       this.dispmsg = "";
-      const response = await fetchWrapperTXT(`/api/v2/account/${this.$route.query.id}`, {
-        method: 'get',
+      const response = await fetchWrapperTXT('/api/v2/login/reset', {
+        method: 'post',
         credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
+        body: JSON.stringify({pass1:this.pass1, pass2:this.pass2, uname: this.$route.query.user, rstlink:this.$route.query.rstlink}),
       });
 
       this.error = response.error
