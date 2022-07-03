@@ -2,7 +2,7 @@
   <div class="container-lg my-5 pt-5">
     <h1>IEEE Financials</h1>
     <div class="row mt-5">
-      <div class="col-md-3">
+      <div class="col-md-3 mb-5">
         <FinancialsNav></FinancialsNav>
       </div>
       <div class="col-md-9">

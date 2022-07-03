@@ -42,12 +42,14 @@ async function fetchWrapperTXT(url, fetch_opts) {
         }
 
         const responseTxt = await response.text();
+        window.scrollTo(0,0);
         return {
             error:!response.ok,
             response: responseTxt,
         };
     } catch (err) {
         console.log(err);
+        window.scrollTo(0,0);
         return {
             error:true,
             response:"Network Error",

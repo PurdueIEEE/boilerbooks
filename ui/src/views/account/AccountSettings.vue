@@ -6,7 +6,7 @@
     <br v-else>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current First Name</h4>
       </div>
       <div class="col-md-8">
@@ -15,7 +15,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current Last Name</h4>
       </div>
       <div class="col-md-8">
@@ -24,7 +24,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current Email</h4>
       </div>
       <div class="col-md-8">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current Address</h4>
       </div>
       <div class="col-md-8">
@@ -42,7 +42,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current City</h4>
       </div>
       <div class="col-md-8">
@@ -51,7 +51,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current State</h4>
       </div>
       <div class="col-md-8">
@@ -60,7 +60,7 @@
     </div>
 
     <div class="row my-2">
-      <div class="text-end col-md-4">
+      <div class="label-responsive col-md-4">
         <h4>Current Zip Code</h4>
       </div>
       <div class="col-md-8">
@@ -153,3 +153,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.label-responsive {
+  text-align: right;
+}
+
+@media screen and (max-width: 770px) {
+  .label-responsive {
+    text-align: left;
+  }
+}
+</style>

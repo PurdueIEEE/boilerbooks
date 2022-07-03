@@ -2,7 +2,7 @@
   <div class="container-lg my-5 pt-5">
     <h1>Purchasing</h1>
     <div class="row mt-5">
-      <div class="col-md-3">
+      <div class="col-md-3 mb-5">
         <PurchaseNav></PurchaseNav>
       </div>
       <div class="col-md-9">
