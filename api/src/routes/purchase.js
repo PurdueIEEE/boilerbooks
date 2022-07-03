@@ -32,7 +32,7 @@ function fileFilter(req, file, cb) {
 }
 // create file upload handler
 const fileHandler = multer({
-    limits:{fileSize:2*1024*1024,}, // 2 MB
+    limits:{fileSize:5*1024*1024,}, // 2 MB
     dest:"/tmp/boilerbooks-tmp", // Files are just stored here while we process them
     fileFilter: fileFilter,
 });
@@ -722,7 +722,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
     return next();
 }, (err, req, res, next) => {
     // This catches too large files
-    res.status(400).send("Reciept must be less than 2MB");
+    res.status(400).send("Reciept must be less than 5 MB");
     return next();
 });
 
