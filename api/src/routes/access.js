@@ -92,6 +92,14 @@ router.post("/treasurers", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.username.length > 50) {
+        res.status(400).send("Username field too long");
+        return next();
+    }
+    if (req.body.username.role > 50) {
+        res.status(400).send("Role field too long");
+    }
+
     try {
         // first make sure user is actually a treasurer
         const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -151,6 +159,14 @@ router.post("/officers", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.username.length > 50) {
+        res.status(400).send("Username field too long");
+        return next();
+    }
+    if (req.body.username.role > 50) {
+        res.status(400).send("Role field too long");
+    }
+
     try {
         // first make sure user is actually a treasurer
         const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
@@ -200,6 +216,14 @@ router.post("/internals", async(req, res, next) => {
     if (committee_name_swap[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
+    }
+
+    if (req.body.username.length > 50) {
+        res.status(400).send("Username field too long");
+        return next();
+    }
+    if (req.body.username.role > 50) {
+        res.status(400).send("Role field too long");
     }
 
     try {

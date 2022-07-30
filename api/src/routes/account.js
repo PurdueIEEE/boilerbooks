@@ -61,6 +61,36 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.fname.length > 100) {
+        res.status(400).send("First Name is too long");
+        return next();
+    }
+    if (req.body.lname.length > 100) {
+        res.status(400).send("Last Name is too long");
+        return next();
+    }
+    if (req.body.email.length > 200) {
+        res.status(400).send("Email is too long");
+        return next();
+    }
+    if (req.body.address.length > 200) {
+        res.status(400).send("Address is too long");
+        return next();
+    }
+    if (req.body.city.length > 100) {
+        res.status(400).send("City is too long");
+        return next();
+    }
+
+    if (req.body.state.length !== 2) {
+        res.status(400).send("State must be a 2 letter abbreviation");
+        return next();
+    }
+
+    if (req.body.uname.length > 50) {
+        res.status(400).send("Username is too long");
+    }
+
     // eslint-disable-next-line
     if (req.body.uname.match(/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/)) {
         res.status(400).send("Username cannot contain any special characters");
@@ -79,11 +109,6 @@ router.post("/", async(req, res, next) => {
 
     if (req.body.pass1.length < 8) {
         res.status(400).send("Password length must be greater than 8 characters");
-        return next();
-    }
-
-    if (req.body.state.length !== 2) {
-        res.status(400).send("State must be a 2 letter abbreviation");
         return next();
     }
 

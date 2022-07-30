@@ -97,6 +97,23 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.item.length > 50) {
+        res.status(400).send("Item field too long");
+        return next();
+    }
+    if (req.body.reason.length > 50) {
+        res.status(400).send("Reason field too long");
+        return next();
+    }
+    if (req.body.vendor.length > 50) {
+        res.status(400).send("Vendor field too long");
+        return next();
+    }
+    if (req.body.comments.length > 500) {
+        res.status(400).send("Comments field too long");
+        return next();
+    }
+
     // can't escape committe so check for committee name first
     if (committee_name_swap[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
@@ -413,6 +430,23 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.item.length > 50) {
+        res.status(400).send("Item field too long");
+        return next();
+    }
+    if (req.body.reason.length > 50) {
+        res.status(400).send("Reason field too long");
+        return next();
+    }
+    if (req.body.vendor.length > 50) {
+        res.status(400).send("Vendor field too long");
+        return next();
+    }
+    if (req.body.comments.length > 500) {
+        res.status(400).send("Comments field too long");
+        return next();
+    }
+
     if (!approve_status.includes(req.body.status)) {
         res.status(400).send("Purchase status must be 'Approved' or 'Denied'");
         return next();
@@ -527,6 +561,40 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         return next();
     }
 
+    if (req.body.comments.length > 500) {
+        fs.unlink(req.file.path);
+        res.status(400).send("Comments field too long");
+        return next();
+    }
+
+    // can't escape the purchasedate, so check format instead
+    if ((req.body.purchasedate.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
+        fs.unlink(req.file.path);
+        res.status(400).send("Purchase Date must be in the form YYYY-MM-DD");
+        return next();
+    }
+
+    // The format is good, so check the actual validity of the date
+    // @see https://stackoverflow.com/a/62517465
+    const parts = req.body.purchasedate.split('-').map((p) => parseInt(p, 10));
+    parts[1] -= 1;
+    const date_check = new Date(parts[0], parts[1], parts[2]);
+    const date_good = (date_check.getFullYear() === parts[0]) && (date_check.getMonth() === parts[1]) && (date_check.getDate() === parts[2]);
+    if (!date_good) {
+        fs.unlink(req.file.path);
+        res.status(400).send("Purchase Date is invalid");
+        return next();
+    }
+
+    // Now that the format and validity of the date is good, make sure it's in the past
+    const today = new Date()
+    const today_string = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${(today.getDate()).toString().padStart(2,'0')}`;
+    if (req.body.purchasedate > today_string) {
+        fs.unlink(req.file.path);
+        res.status(400).send("Purchase Date cannot be in the future");
+        return next();
+    }
+
     try {
         const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
@@ -543,13 +611,6 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         logger.error(err.stack);
         fs.unlink(req.file.path);
         res.status(500).send("Internal Server Error");
-        return next();
-    }
-
-    // can't escape the purchasedate, so check format instead
-    if ((req.body.purchasedate.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {
-        fs.unlink(req.file.path);
-        res.status(400).send("Purchase Date must be in the form YYYY-MM-DD");
         return next();
     }
 

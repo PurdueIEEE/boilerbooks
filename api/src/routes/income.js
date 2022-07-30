@@ -45,6 +45,19 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
+    if (req.body.source.length > 50) {
+        res.status(400).send("Source field too long");
+        return next();
+    }
+    if (req.body.item.length > 50) {
+        res.status(400).send("Item field too long");
+        return next();
+    }
+    if (req.body.comments.length > 10000) {
+        res.status(400).send("Comments field too long");
+        return next();
+    }
+
     // can't escape committee so check committee name first
     if (committee_name_swap[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");

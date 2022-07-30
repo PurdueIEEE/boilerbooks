@@ -36,33 +36,33 @@
           <form class="row g-3" v-on:submit.prevent="newAccount()" name="new_form">
             <div class="col-md-6">
               <label for="new_fname" class="form-label">First name</label>
-              <input type="text" class="form-control" id="new_fname" v-model="new_fname" placeholder="Mitch" required>
+              <input type="text" class="form-control" id="new_fname" v-model="new_fname" placeholder="Purdue" required>
             </div>
             <div class="col-md-6">
               <label for="new_lname" class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="new_lname" v-model="new_lname" placeholder="Daniels" required>
+              <input type="text" class="form-control" id="new_lname" v-model="new_lname" placeholder="Pete" required>
             </div>
             <div class="col-md-6">
               <label for="new_email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="new_email" v-model="new_email" placeholder="president@purdue.edu" required>
+              <input type="email" class="form-control" id="new_email" v-model="new_email" placeholder="ppete@purdue.edu" required>
             </div>
             <div class="col-md-6">
               <label for="new_uname" class="form-label">Username</label>
-              <input type="text" class="form-control" id="new_uname" v-model="new_uname" placeholder="mdaniels" required>
+              <input type="text" class="form-control" id="new_uname" v-model="new_uname" placeholder="ppete" required>
             </div>
             <div class="col-12">
-              <label for="new_address" class="form-label">Address</label>
+              <label for="new_address" class="form-label">US Mailing Address</label>
               <input type="text" class="form-control" id="new_address" v-model="new_address" placeholder="610 Purdue Mall" required>
             </div>
             <div class="col-md-6">
               <label for="new_city" class="form-label">City</label>
               <input type="text" class="form-control" id="new_city" v-model="new_city" placeholder="West Lafayette" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="new_state" class="form-label">State</label>
               <input type="text" class="form-control" id="new_state" v-model="new_state" placeholder="IN" required>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label for="new_zip" class="form-label">Zip</label>
               <input type="text" class="form-control" id="new_zip" v-model="new_zip" placeholder="47907" required>
             </div>
