@@ -38,6 +38,7 @@ const db_conn = mysql2.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
+    charset: "latin1",
 });
 
 // Backoff pool startup check

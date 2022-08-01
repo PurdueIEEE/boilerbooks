@@ -576,7 +576,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
 
     // The format is good, so check the actual validity of the date
     // @see https://stackoverflow.com/a/62517465
-    const parts = req.body.purchasedate.split('-').map((p) => parseInt(p, 10));
+    const parts = req.body.purchasedate.split("-").map((p) => parseInt(p, 10));
     parts[1] -= 1;
     const date_check = new Date(parts[0], parts[1], parts[2]);
     const date_good = (date_check.getFullYear() === parts[0]) && (date_check.getMonth() === parts[1]) && (date_check.getDate() === parts[2]);
@@ -587,8 +587,8 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     }
 
     // Now that the format and validity of the date is good, make sure it's in the past
-    const today = new Date()
-    const today_string = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${(today.getDate()).toString().padStart(2,'0')}`;
+    const today = new Date();
+    const today_string = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,"0")}-${(today.getDate()).toString().padStart(2,"0")}`;
     if (req.body.purchasedate > today_string) {
         fs.unlink(req.file.path);
         res.status(400).send("Purchase Date cannot be in the future");
