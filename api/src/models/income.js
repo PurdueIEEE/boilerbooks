@@ -26,7 +26,7 @@ async function createNewDonation(donation) {
 
 async function getAllIncome() {
     return db_conn.promise().execute(
-        "SELECT DATE_FORMAT(i.updated,'%Y-%m-%d') as date,i.source,i.type,i.committee,i.amount,i.item,i.incomeid,i.status,i.refnumber FROM Income i ORDER BY i.updated DESC",
+        "SELECT i.incomeid, DATE_FORMAT(i.updated,'%Y-%m-%d') as date,i.source,i.type,i.committee,i.amount,i.item,i.incomeid,i.status,i.refnumber FROM Income i ORDER BY i.updated DESC",
         []
     );
 }

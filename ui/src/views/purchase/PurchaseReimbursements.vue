@@ -8,14 +8,14 @@
     <DataTable
       v-bind:rows="rows"
       v-bind:row_key="'purchaseid'"
-      v-bind:row_headers="[['Date','date'],['Item','item'],['Vendor','vendor'],['Committee','committee'],['Approver','approvedby'],['Amount','cost'],['Status','status']]"
+      v-bind:row_headers="[['Date','date'],['Item','item'],['Vendor','vendor'],['Committee','committee'],['Purchaser','purchasedby'],['Amount','cost'],['Status','status']]"
     >
       <template v-slot:data="purchase">
         <td>{{purchase.row.date}}</td>
         <td><router-link v-bind:to="goToItem(purchase.row.purchaseid)" class="link-primary text-decoration-none">{{purchase.row.item}}</router-link></td>
         <td>{{purchase.row.vendor}}</td>
         <td>{{purchase.row.committee}}</td>
-        <td>{{purchase.row.approvedby}}</td>
+        <td>{{purchase.row.purchasedby}}</td>
         <td>${{purchase.row.cost}}</td>
         <td>{{purchase.row.status}}</td>
       </template>
