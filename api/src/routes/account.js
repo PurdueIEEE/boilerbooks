@@ -401,7 +401,7 @@ router.get("/:userID/reimbursements", async(req, res, next) => {
 /*
     Get a list of all mailed checks for the user
 */
-router.get("/:userID/checks", async (req, res, next) => {
+router.get("/:userID/checks", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
         res.status(404).send("User not found");
         return next();

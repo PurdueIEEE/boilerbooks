@@ -245,7 +245,7 @@ router.post("/treasurer", async(req, res, next) => {
         const email_to_send_mail = {};
         for (let id of commaIDlist) {
             const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(id);
-            if (purchase_deets[0].check_type === 'Mailed') {
+            if (purchase_deets[0].check_type === "Mailed") {
                 if (email_to_send_mail[purchase_deets[0].username] === undefined) {
                     email_to_send_mail[purchase_deets[0].username] = [purchase_deets[0].item];
                 } else {
@@ -303,8 +303,8 @@ router.post("/treasurer", async(req, res, next) => {
                 text += "Your check should have arrived before this email was sent.\n\n";
                 html += "<p>Your check should have arrived before this email was sent.</p>";
             } else {
-                text += `Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.\n\n`;
-                html += `</ul><p>Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.</p>`;
+                text += "Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.\n\n";
+                html += "</ul><p>Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.</p>";
             }
 
             text += "This email was automatically sent by Boiler Books";
@@ -839,7 +839,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
 /*
     Mark a check as received
 */
-router.post("/:purchaseID/checks", async (req, res, next) => {
+router.post("/:purchaseID/checks", async(req, res, next) => {
     try {
         const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
@@ -851,12 +851,12 @@ router.post("/:purchaseID/checks", async (req, res, next) => {
             return next();
         }
 
-        if (results[0].check_type !== 'Mailed') {
+        if (results[0].check_type !== "Mailed") {
             res.status(400).send("Check was not mailed");
             return next();
         }
 
-        if (results[0].status !== 'Processing Reimbursement') {
+        if (results[0].status !== "Processing Reimbursement") {
             res.status(400).send("Check was not mailed");
             return next();
         }
