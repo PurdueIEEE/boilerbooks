@@ -120,6 +120,10 @@ const routes = [
         component: () => import(/* webpackChunkName: "purchase_reimburse" */ '../views/purchase/PurchaseReimburse.vue'),
       },
       {
+        path: 'checks',
+        component: () => import(/* webpackChunkName: "purchase_checks" */ '../views/purchase/PurchaseChecks.vue'),
+      },
+      {
         path:'view',
         component: () => import(/* webpackChunkName: "purchase_view" */ '../views/purchase/PurchaseView.vue'),
       },

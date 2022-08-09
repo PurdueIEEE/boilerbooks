@@ -399,6 +399,26 @@ router.get("/:userID/reimbursements", async(req, res, next) => {
 });
 
 /*
+    Get a list of all mailed checks for the user
+*/
+router.get("/:userID/checks", async (req, res, next) => {
+    if (req.context.request_user_id !== req.params.userID) {
+        res.status(404).send("User not found");
+        return next();
+    }
+
+    try {
+        const [results] = await req.context.models.purchase.getChecks(req.params.userID);
+        res.status(200).send(results);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+/*
     Get a list of all committee balances user can view
 */
 router.get("/:userID/balances", async(req, res, next) => {

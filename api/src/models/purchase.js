@@ -20,7 +20,7 @@ import { ACCESS_LEVEL, max_fiscal_year_count } from "../common_items.js";
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
         `SELECT DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, DATE_FORMAT(p.modifydate, '%Y-%m-%dT%H:%i:%sZ') as mdate, p.item, p.purchasereason, p.vendor, p.committee, p.category, p.receipt, p.status,
-        p.cost, p.comments, p.fundsource, p.username, p.purchaseid,
+        p.cost, p.comments, p.fundsource, p.username, p.purchaseid, p.check_type,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby,
         (SELECT fiscal_year FROM fiscal_year WHERE fyid = p.fiscal_year) fiscal_year
@@ -32,16 +32,16 @@ async function getFullPurchaseByID(id) {
 
 async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
-        "INSERT INTO Purchases (fiscal_year,username,item,purchasereason,vendor,committee,category,cost,status,comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?)",
-        [max_fiscal_year_count, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments]
+        "INSERT INTO Purchases (fiscal_year,username,item,purchasereason,vendor,committee,category,cost,status,comments,check_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?, ?)",
+        [max_fiscal_year_count, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments, purchase.checkType]
     );
 }
 
 async function updatePurchase(purchase) {
     return db_conn.promise().execute(
-        `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?, category=?
-        WHERE Purchases.purchaseID=? AND Purchases.status IN ('Requested', 'Approved', 'Purchased')`,
-        [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.category, purchase.purchaseID]
+        `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?, category=?, check_type=?
+        WHERE Purchases.purchaseID=? AND Purchases.status IN ('Requested', 'Approved', 'Purchased', 'Processing Reimbursement')`,
+        [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.category, purchase.check_type, purchase.purchaseID]
     );
 }
 
@@ -171,6 +171,24 @@ async function getTreasurer(id) {
     );
 }
 
+async function getChecks(id) {
+    return db_conn.promise().execute(
+        `SELECT DATE_FORMAT(p.purchasedate,'%Y-%m-%d') as date, p.item, p.purchaseID, p.vendor, p.committee, p.cost, p.username,
+		(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
+		FROM Purchases p
+		WHERE p.status='Processing Reimbursement'
+		AND p.check_type='Mailed' AND p.username=?`,
+        [id]
+    );
+}
+
+async function markReceived(id) {
+    return db_conn.promise().execute(
+        "Update Purchases SET status='Reimbursed' WHERE Purchases.purchaseID=?",
+        [id]
+    );
+}
+
 export default {
     getFullPurchaseByID,
     createNewPurchase,
@@ -187,4 +205,6 @@ export default {
     updatePurchase,
     updateReceipt,
     getAllReimbursements,
+    getChecks,
+    markReceived,
 };

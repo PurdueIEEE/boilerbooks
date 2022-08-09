@@ -43,6 +43,7 @@ const router = Router();
 const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
 const approve_status = ["Approved", "Denied"];
 const approve_fundsource = ["BOSO", "Cash", "SOGA"];
+const check_type = ["Pick-up", "Mailed"];
 
 /*
     Get all processing or reimbursed purchases
@@ -82,6 +83,7 @@ router.post("/", async(req, res, next) => {
         req.body.vendor === undefined ||
         req.body.reason === undefined ||
         req.body.comments === undefined ||
+        req.body.checkType === undefined||
         req.body.category === undefined) {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -92,6 +94,7 @@ router.post("/", async(req, res, next) => {
         req.body.item === "" ||
         req.body.vendor === "" ||
         req.body.reason === "" ||
+        req.body.checkType === "" ||
         req.body.category === "") {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -117,6 +120,11 @@ router.post("/", async(req, res, next) => {
     // can't escape committe so check for committee name first
     if (committee_name_swap[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
+        return next();
+    }
+
+    if (!check_type.includes(req.body.checkType)) {
+        res.status(400).send("Invalid check type");
         return next();
     }
 
@@ -152,7 +160,7 @@ router.post("/", async(req, res, next) => {
         res.status(201).send(`Purchase successfully submitted!\nIt can be reviewed by: ${names}`);
     } catch (err) {
         logger.error(err.stack);
-        res.status(500).send("Internal Server Error: Purchase created");
+        res.status(500).send("Internal Server Error: Purchase created but approvers not notified");
         return next();
     }
 
@@ -194,7 +202,7 @@ router.post("/treasurer", async(req, res, next) => {
     }
 
     if ((req.body.idList.match(/^(?:\d[,]?)+$/)).length === 0) {
-        res.status(400).send("ID list must be a comma seperated list of numbers");
+        res.status(400).send("Purchase ID list must be a comma seperated list of numbers");
         return next();
     }
 
@@ -233,21 +241,30 @@ router.post("/treasurer", async(req, res, next) => {
     /** Send email to purchasers **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
-        const email_to_send = {};
+        const email_to_send_pickup = {};
+        const email_to_send_mail = {};
         for (let id of commaIDlist) {
             const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(id);
-            if (email_to_send[purchase_deets[0].username] === undefined) {
-                email_to_send[purchase_deets[0].username] = [purchase_deets[0].item];
+            if (purchase_deets[0].check_type === 'Mailed') {
+                if (email_to_send_mail[purchase_deets[0].username] === undefined) {
+                    email_to_send_mail[purchase_deets[0].username] = [purchase_deets[0].item];
+                } else {
+                    email_to_send_mail[purchase_deets[0].username].push(purchase_deets[0].item);
+                }
             } else {
-                email_to_send[purchase_deets[0].username].push(purchase_deets[0].item);
+                if (email_to_send_pickup[purchase_deets[0].username] === undefined) {
+                    email_to_send_pickup[purchase_deets[0].username] = [purchase_deets[0].item];
+                } else {
+                    email_to_send_pickup[purchase_deets[0].username].push(purchase_deets[0].item);
+                }
             }
         }
 
-        for (let username in email_to_send) {
+        for (let username in email_to_send_pickup) {
             const [user_deets] = await req.context.models.account.getUserByID(username);
             let text = `Your purchase request(s) are now ${req.body.status}\n`;
             let html = `<h2>Your purchase request(s) are now ${req.body.status}</h2><ul>`;
-            for (let purchase of email_to_send[username]) {
+            for (let purchase of email_to_send_pickup[username]) {
                 text += `* ${purchase}\n`;
                 html += `<li>${purchase}</li>`;
             }
@@ -258,6 +275,36 @@ router.post("/treasurer", async(req, res, next) => {
             } else {
                 text += `You always view the most up-to-date status of your purchases at https://${process.env.HTTP_HOST}/ui/.\n\n`;
                 html += `</ul><p>You always view the most up-to-date status of your purchases <a href="https://${process.env.HTTP_HOST}/ui/">here</a>.</p>`;
+            }
+
+            text += "This email was automatically sent by Boiler Books";
+            html += "<br><small>This email was automatically sent by Boiler Books</small>";
+            await mailer.sendMail({
+                to: user_deets[0].email,
+                subject: "Purchase Status Updated!",
+                text,
+                html,
+            });
+        }
+
+        for (let username in email_to_send_mail) {
+            const [user_deets] = await req.context.models.account.getUserByID(username);
+            let text = `Your purchase request(s) are now ${req.body.status}\n`;
+            let html = `<h2>Your purchase request(s) are now ${req.body.status}</h2><ul>`;
+            for (let purchase of email_to_send_mail[username]) {
+                text += `* ${purchase}\n`;
+                html += `<li>${purchase}</li>`;
+            }
+
+            text += "You opted to mail this check to your mailing address.\n\n";
+            html += "</ul><p>You opted to mail this check to your mailing address.</p>";
+
+            if (req.body.status === "Reimbursed") {
+                text += "Your check should have arrived before this email was sent.\n\n";
+                html += "<p>Your check should have arrived before this email was sent.</p>";
+            } else {
+                text += `Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.\n\n`;
+                html += `</ul><p>Please check your mailbox over the next few weeks. Make sure to mark the check as received once it arrives.</p>`;
             }
 
             text += "This email was automatically sent by Boiler Books";
@@ -332,6 +379,7 @@ router.put("/:purchaseID", async(req,res, next) => {
         req.body.vendor === undefined ||
         req.body.reason === undefined ||
         req.body.category === undefined ||
+        req.body.check_type === undefined ||
         req.body.comments === undefined) {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -340,6 +388,7 @@ router.put("/:purchaseID", async(req,res, next) => {
     if (req.body.cost === "" ||
         req.body.vendor === "" ||
         req.body.category === "" ||
+        req.body.check_type === "" ||
         req.body.reason === "") {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -784,6 +833,44 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
 }, (err, req, res, next) => {
     // This catches too large files
     res.status(400).send("Reciept must be less than 5 MB");
+    return next();
+});
+
+/*
+    Mark a check as received
+*/
+router.post("/:purchaseID/checks", async (req, res, next) => {
+    try {
+        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        if (results.length === 0) {
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+        if (results[0].username !== req.context.request_user_id) {
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+
+        if (results[0].check_type !== 'Mailed') {
+            res.status(400).send("Check was not mailed");
+            return next();
+        }
+
+        if (results[0].status !== 'Processing Reimbursement') {
+            res.status(400).send("Check was not mailed");
+            return next();
+        }
+
+        await req.context.models.purchase.markReceived(req.params.purchaseID);
+
+    } catch (err) {
+        logger.error(err.stack);
+        fs.unlink(req.file.path);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    res.status(201).send("Check marked as recieved");
     return next();
 });
 
