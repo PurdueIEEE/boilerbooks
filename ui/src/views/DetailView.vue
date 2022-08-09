@@ -5,8 +5,11 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <p class="lead">Last Modified at <u>{{localDate}}</u></p>
-    <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer&&allowedToEdit" v-on:click="editPurchase=!editPurchase">Update Purchase Details</button>
-    <button class="btn btn-secondary" v-else-if="editPurchase" v-on:click="finishEdit">Finish Purchase Edit</button>
+    <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer&&allowedToEdit" v-on:click="editPurchase=true">Update Purchase Details</button>
+    <div v-else-if="editPurchase">
+      <button class="btn btn-success m-1" v-on:click="finishEdit">Finish Purchase Edit</button>
+      <button class="btn btn-secondary m-1" v-on:click="editPurchase=false">Cancel Purchase Edit</button>
+    </div>
     <br><br>
     <div class="row">
       <!-- This looks misaligned but its actually centered -->
@@ -45,7 +48,7 @@
           <div class="col-md-6 border border-secondary p-3">
             <div class="fs-5">Category:
               <span class="fw-bold" v-if="!editPurchase">{{purchase.category}}</span>
-              <select class="form-select" v-model="category" v-if="editPurchase">
+              <select class="form-select" v-else v-model="category">
                 <option v-for="key in categoryList" v-bind:key="key.category">{{key.category}}</option>
               </select>
             </div>
@@ -66,6 +69,15 @@
             <p class="fs-5">Comments:
               <span class="fw-bold" v-if="!editPurchase">{{purchase.comments}}</span>
               <input class="form-control" v-else v-model="comments">
+            </p>
+          </div>
+          <div class="offset-md-3 col-md-6 border border-secondary p-3">
+            <p class="fs-5">Check Type:
+              <span class="fw-bold" v-if="!editPurchase">{{purchase.check_type}}</span>
+              <select id="checkSelect" v-else class="form-select" v-model="check_type">
+                <option value="Pick-up">Pick-up</option>
+                <option value="Mailed">Mailed</option>
+              </select>
             </p>
           </div>
         </div>
@@ -124,6 +136,7 @@ export default {
       comments: '',
       category: '',
       item: '',
+      check_type: '',
       editPurchase: false,
       categoryList: [],
     }
@@ -155,6 +168,7 @@ export default {
       this.comments = response.response.comments;
       this.category = response.response.category;
       this.cost = response.response.cost;
+      this.check_type = response.response.check_type;
     },
     async finishEdit() {
       this.dispmsg = '';
@@ -162,7 +176,7 @@ export default {
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments,category:this.category}),
+        body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments,category:this.category,check_type:this.check_type}),
       });
 
       this.error = response.error;
