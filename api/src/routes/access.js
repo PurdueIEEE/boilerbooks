@@ -137,9 +137,14 @@ router.post("/treasurers", async(req, res, next) => {
         res.status(200).send("Treasurer added");
         return next();
     } catch (err) {
-        logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
-        return next();
+        if (err.code === "ER_NO_REFERENCED_ROW") {
+            res.status(400).send("No such user exists");
+            return next();
+        } else {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
     }
 });
 
@@ -195,9 +200,14 @@ router.post("/officers", async(req, res, next) => {
         res.status(200).send("Officer added");
         return next();
     } catch (err) {
-        logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
-        return next();
+        if (err.code === "ER_NO_REFERENCED_ROW") {
+            res.status(400).send("No such user exists");
+            return next();
+        } else {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
     }
 });
 
@@ -254,9 +264,14 @@ router.post("/internals", async(req, res, next) => {
         res.status(200).send("Internal Leader added");
         return next();
     } catch (err) {
-        logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
-        return next();
+        if (err.code === "ER_NO_REFERENCED_ROW") {
+            res.status(400).send("No such user exists");
+            return next();
+        } else {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
     }
 });
 
