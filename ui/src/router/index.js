@@ -34,7 +34,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (<name>.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "help" */ '../views/BoilerBooksHelp.vue'),
+    component: () => import('../views/BoilerBooksHelp.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -42,7 +42,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/LoginSignup.vue'),
+    component: () => import('../views/LoginSignup.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -50,7 +50,7 @@ const routes = [
   {
     path: '/forgot',
     name: 'Forgot',
-    component: () => import(/* webpackChunkName: "forgot" */ '../views/ForgotUserPass.vue'),
+    component: () => import('../views/ForgotUserPass.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -58,7 +58,7 @@ const routes = [
   {
     path: '/passwordreset',
     name: 'PasswordReset',
-    component: () => import(/* webpackChunkName: "passwordreset" */ '../views/PasswordReset.vue'),
+    component: () => import('../views/PasswordReset.vue'),
     meta: {
       requiresAuth: false,
     }
@@ -66,7 +66,7 @@ const routes = [
   {
     path: '/detail-view',
     name: 'DetailView',
-    component: () => import(/* webpackChunkName: "detailview" */ '../views/DetailView.vue'),
+    component: () => import('../views/DetailView.vue'),
     meta: {
       requiresAuth: true,
     }
@@ -74,7 +74,7 @@ const routes = [
   {
     path: '/user-view',
     name: 'UserView',
-    component: () => import(/* webpackChunkName: "userview" */ '../views/UserView.vue'),
+    component: () => import('../views/UserView.vue'),
     meta: {
       requiresAuth: true,
     }
@@ -82,7 +82,7 @@ const routes = [
   {
     path: '/myaccount',
     name: 'Account',
-    component: () => import(/* webpackChunkName: "account" */ '../views/account/AccountSettings.vue'),
+    component: () => import('../views/account/AccountSettings.vue'),
     meta: {
       requiresAuth: true,
     }
@@ -90,46 +90,46 @@ const routes = [
   {
     path: '/myaccount/password',
     name: 'Password',
-    component: () => import(/* webpackChunkName: "password" */ '../views/account/ChangePassword.vue'),
+    component: () => import('../views/account/ChangePassword.vue'),
     meta: {
       requiresAuth: true,
     }
   },
   {
     path: '/purchase',
-    component: () => import(/* webpackChunkName: "purchase" */ '../views/purchase/PurchaseFrame.vue'),
+    component: () => import('../views/purchase/PurchaseFrame.vue'),
     children: [
       {
         path:'',
-        component: () => import(/* webpackChunkName: "purchase_home" */ '../views/purchase/PurchaseHome.vue'),
+        component: () => import('../views/purchase/PurchaseHome.vue'),
       },
       {
         path:'new',
-        component: () => import(/* webpackChunkName: "purchase_new" */ '../views/purchase/PurchaseNew.vue'),
+        component: () => import('../views/purchase/PurchaseNew.vue'),
       },
       {
         path:'approve',
-        component: () => import(/* webpackChunkName: "purchase_approve" */ '../views/purchase/PurchaseApprove.vue'),
+        component: () => import('../views/purchase/PurchaseApprove.vue'),
       },
       {
         path:'complete',
-        component: () => import(/* webpackChunkName: "purchase_complete" */ '../views/purchase/PurchaseComplete.vue'),
+        component: () => import('../views/purchase/PurchaseComplete.vue'),
       },
       {
         path: 'reimburse',
-        component: () => import(/* webpackChunkName: "purchase_reimburse" */ '../views/purchase/PurchaseReimburse.vue'),
+        component: () => import('../views/purchase/PurchaseReimburse.vue'),
       },
       {
         path: 'checks',
-        component: () => import(/* webpackChunkName: "purchase_checks" */ '../views/purchase/PurchaseChecks.vue'),
+        component: () => import('../views/purchase/PurchaseChecks.vue'),
       },
       {
         path:'view',
-        component: () => import(/* webpackChunkName: "purchase_view" */ '../views/purchase/PurchaseView.vue'),
+        component: () => import('../views/purchase/PurchaseView.vue'),
       },
       {
         path: 'reimbursements',
-        component: () => import(/* webpackChunkName: "purchase_reimbursements" */ '../views/purchase/PurchaseReimbursements.vue'),
+        component: () => import('../views/purchase/PurchaseReimbursements.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -142,15 +142,15 @@ const routes = [
   },
   {
     path: '/income',
-    component: () => import(/* webpackChunkName: "income" */ '../views/income/IncomeFrame.vue'),
+    component: () => import('../views/income/IncomeFrame.vue'),
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "income_home" */ '../views/income/IncomeHome.vue'),
+        component: () => import('../views/income/IncomeHome.vue'),
       },
       {
         path: 'modify',
-        component: () => import(/* webpackChunkName: "income_modify" */ '../views/income/IncomeModify.vue'),
+        component: () => import('../views/income/IncomeModify.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -163,19 +163,19 @@ const routes = [
   },
   {
     path: '/financials',
-    component: () => import(/* webpackChunkName: "financials" */ '../views/financials/FinancialsFrame.vue'),
+    component: () => import('../views/financials/FinancialsFrame.vue'),
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "financials_home" */ '../views/financials/FinancialsHome.vue'),
+        component: () => import('../views/financials/FinancialsHome.vue'),
       },
       {
         path: 'committee',
-        component: () => import(/* webpackChunkName: "financials_committee" */ '../views/financials/FinancialsCommittee.vue'),
+        component: () => import('../views/financials/FinancialsCommittee.vue'),
       },
       {
         path: 'export',
-        component: () => import(/* webpackChunkName: "financials_export" */ '../views/financials/FinancialsExport.vue'),
+        component: () => import('../views/financials/FinancialsExport.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -188,31 +188,31 @@ const routes = [
   },
   {
     path: '/dues',
-    component: () => import(/* webpackChunkName: "dues" */ '../views/dues/DuesFrame.vue'),
+    component: () => import('../views/dues/DuesFrame.vue'),
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "dues_home" */ '../views/dues/DuesHome.vue'),
+        component: () => import('../views/dues/DuesHome.vue'),
       },
       {
         path: 'mydues',
-        component: () => import(/* webpackChunkName: "dues_mydues" */ '../views/dues/DuesMine.vue'),
+        component: () => import('../views/dues/DuesMine.vue'),
       },
       {
         path: 'summary',
-        component: () => import(/* webpackChunkName: "dues_summary" */ '../views/dues/DuesSummary.vue'),
+        component: () => import('../views/dues/DuesSummary.vue'),
       },
       {
         path: 'add',
-        component: () => import(/* webpackChunkName: "dues_add" */ '../views/dues/DuesAdd.vue'),
+        component: () => import('../views/dues/DuesAdd.vue'),
       },
       {
         path: 'edit',
-        component: () => import(/* webpackChunkName: "dues_edit" */ '../views/dues/DuesEdit.vue'),
+        component: () => import('../views/dues/DuesEdit.vue'),
       },
       {
         path: 'income',
-        component: () => import(/* webpackChunkName: "dues_income" */ '../views/dues/DuesIncome.vue'),
+        component: () => import('../views/dues/DuesIncome.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -225,19 +225,19 @@ const routes = [
   },
   {
     path: '/budget',
-    component: () => import(/* webpackChunkName: "budget" */ '../views/budget/BudgetFrame.vue'),
+    component: () => import('../views/budget/BudgetFrame.vue'),
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "budget_home" */ '../views/budget/BudgetHome.vue'),
+        component: () => import('../views/budget/BudgetHome.vue'),
       },
       {
         path: 'modify',
-        component: () => import(/* webpackChunkName: "budget_modify" */ '../views/budget/BudgetModify.vue'),
+        component: () => import('../views/budget/BudgetModify.vue'),
       },
       {
         path: 'approve',
-        component: () => import(/* webpackChunkName: "budget_approve" */ '../views/budget/BudgetApprove.vue'),
+        component: () => import('../views/budget/BudgetApprove.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -250,23 +250,23 @@ const routes = [
   },
   {
     path: '/access',
-    component: () => import(/* webpackChunkName: "access" */ '../views/access/AccessFrame.vue'),
+    component: () => import('../views/access/AccessFrame.vue'),
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "access_home" */ '../views/access/AccessHome.vue'),
+        component: () => import('../views/access/AccessHome.vue'),
       },
       {
         path: 'treasurers',
-        component: () => import(/* webpackChunkName: "access_treasurers" */ '../views/access/AccessTreasurers.vue'),
+        component: () => import('../views/access/AccessTreasurers.vue'),
       },
       {
         path: 'officers',
-        component: () => import(/* webpackChunkName: "access_officers" */ '../views/access/AccessOfficers.vue'),
+        component: () => import('../views/access/AccessOfficers.vue'),
       },
       {
         path: 'internal',
-        component: () => import(/* webpackChunkName: "access_internal" */ '../views/access/AccessInternal.vue'),
+        component: () => import('../views/access/AccessInternal.vue'),
       },
       {
         path: ':pathMatch(.*)',
@@ -288,7 +288,7 @@ const routes = [
 
 const router = createRouter({
   routes,
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
 });
 
 // Make sure user is logged in before moving
