@@ -60,7 +60,7 @@ export default {
     return {
       auth_state: auth_state.state,
       year: new Date().getFullYear(),
-      dev: import.meta.env.DEV
+      dev: import.meta.env.MODE === "dev"
     }
   },
   computed: {
