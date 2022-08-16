@@ -60,7 +60,7 @@ export default {
     return {
       auth_state: auth_state.state,
       year: new Date().getFullYear(),
-      dev: process.env.VUE_APP_MODE === "dev",
+      dev: import.meta.env.MODE === "dev"
     }
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
   },
   mounted() {
     if (this.dev) {
-      document.getElementById("favicon").href = `${process.env.BASE_URL}dev-favicon.ico`;
+      document.getElementById("favicon").href = `${import.meta.env.BASE_URL}dev-favicon.ico`;
       document.title = "Boiler Books [DEV]"
     }
   }
