@@ -397,10 +397,10 @@ router.get("/:commID/csv", async(req, res, next) => {
 
     try {
         const [results] = await req.context.models.committee.getCommitteePurchasesByDates(committee_lut[req.params.commID][0], req.query.start, req.query.end);
-        let csvString = "Date,Purchaser,Item,Vendor,Cost,Reason\n";
+        let csvString = "Purchase ID,Date,Purchaser,Item,Vendor,Cost,Reason\n";
 
         for (let purchase of results) {
-            csvString += `"${purchase.date.replaceAll("\"", "\"\"")}","${purchase.pby.replaceAll("\"", "\"\"")}","${purchase.item.replaceAll("\"", "\"\"")}","${purchase.vendor.replaceAll("\"", "\"\"")}","${purchase.cost.replaceAll("\"", "\"\"")}","${purchase.purchasereason.replaceAll("\"", "\"\"")}"\n`;
+            csvString += `"${purchase.purchaseid}","${purchase.date}","${purchase.pby.replaceAll("\"", "\"\"")}","${purchase.item.replaceAll("\"", "\"\"")}","${purchase.vendor.replaceAll("\"", "\"\"")}","${purchase.cost.replaceAll("\"", "\"\"")}","${purchase.purchasereason.replaceAll("\"", "\"\"")}"\n`;
         }
 
         res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);
