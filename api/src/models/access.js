@@ -41,7 +41,7 @@ async function addApproval(approval) {
 // Treasurers are special since they have one row per committee
 async function getTreasurers(level) {
     return db_conn.promise().execute(
-        "SELECT A.username, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = A.username) name FROM approval A WHERE privilege_level = ? GROUP BY A.username",
+        "SELECT A.username, A.role, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = A.username) name FROM approval A WHERE privilege_level = ? GROUP BY A.username, A.role",
         [level]
     );
 }

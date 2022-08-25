@@ -9,6 +9,7 @@
         <tr>
           <th>Name</th>
           <th>Username</th>
+          <th>Position</th>
           <th>Remove?</th>
         </tr>
       </thead>
@@ -16,6 +17,7 @@
         <tr v-for="user in treasurerList" v-bind:key="user.username">
           <td>{{user.name}}</td>
           <td>{{user.username}}</td>
+          <td>{{user.role}}</td>
           <td><button class="btn btn-danger" v-on:click="remove(user.username)">Remove</button></td>
         </tr>
       </tbody>
