@@ -6,7 +6,7 @@ async function fetchWrapperJSON(url, fetch_opts) {
         const response = await fetch(url, fetch_opts);
         if (response.status === 401) {
             auth_state.clearAuthState();
-            router.replace('/login');
+            router.replace(`/login?returnto=${router.currentRoute.value.path}`);
             return {error:true, response:''};
         }
 
