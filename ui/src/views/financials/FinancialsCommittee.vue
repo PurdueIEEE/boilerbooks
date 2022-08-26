@@ -81,6 +81,7 @@
         v-bind:rows="incomeTable"
         v-bind:row_key="'incomeid'"
         v-bind:row_headers="[
+          ['Income ID', 'incomeid']
           ['Date','date'],
           ['Source','source'],
           ['Type','type'],
@@ -90,6 +91,7 @@
           ['Ref Number','refnumber']]"
       >
        <template v-slot:data="income">
+          <td>{{income.row.incomeid}}</td>
           <td>{{income.row.date}}</td>
           <td>{{income.row.source}}</td>
           <td>{{income.row.type}}</td>
