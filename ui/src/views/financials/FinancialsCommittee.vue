@@ -81,7 +81,7 @@
         v-bind:rows="incomeTable"
         v-bind:row_key="'incomeid'"
         v-bind:row_headers="[
-          ['Income ID', 'incomeid']
+          ['Income ID', 'incomeid'],
           ['Date','date'],
           ['Source','source'],
           ['Type','type'],
