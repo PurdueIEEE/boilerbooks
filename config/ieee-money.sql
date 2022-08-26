@@ -73,7 +73,7 @@ CREATE TABLE `Purchases` (
   `cost` decimal(10,2) NOT NULL,
   `status` enum('Requested','Approved','Denied','Purchased','Processing Reimbursement','Reimbursed','Expired') NOT NULL,
   `approvedby` varchar(50) DEFAULT NULL,
-  `fundsource` enum('BOSO','Cash','SOGA') DEFAULT NULL,
+  `fundsource` enum('BOSO','Cash','SOGA','INSGC') DEFAULT NULL,
   `comments` varchar(500) NOT NULL,
   `check_type` enum('Pick-up', 'Mailed') NOT NULL,
   `fiscal_year` int(10) UNSIGNED NOT NULL

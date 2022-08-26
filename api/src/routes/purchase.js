@@ -42,7 +42,7 @@ const router = Router();
 
 const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
 const approve_status = ["Approved", "Denied"];
-const approve_fundsource = ["BOSO", "Cash", "SOGA"];
+const approve_fundsource = ["BOSO", "Cash", "SOGA", "INSGC"];
 const check_type = ["Pick-up", "Mailed"];
 
 /*

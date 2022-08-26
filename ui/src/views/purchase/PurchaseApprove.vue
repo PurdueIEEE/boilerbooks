@@ -56,6 +56,7 @@
           <option selected>BOSO</option>
           <option>Cash</option>
           <option>SOGA</option>
+          <option>INSGC</option>
         </select>
       </div>
       <div class="col-md-6 text-center">
