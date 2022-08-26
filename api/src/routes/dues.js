@@ -68,7 +68,7 @@ router.post("/", async(req, res, next) => {
             res.status(400).send("'None' and another committee selected");
             return next();
         }
-        if (!dues_committees.includes(comm)) {
+        if (!dues_committees.includes(comm) && comm !== "None") {
             res.status(400).send("Invalid committee value");
             return next();
         }
@@ -149,7 +149,7 @@ router.put("/:duesid", async(req, res, next) => {
                 res.status(400).send("'None' and another committee selected");
                 return next();
             }
-            if (!dues_committees.includes(comm)) {
+            if (!dues_committees.includes(comm) && comm !== "None") {
                 res.status(400).send("Invalid committee value");
                 return next();
             }
