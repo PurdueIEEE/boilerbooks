@@ -42,6 +42,7 @@ const router = Router();
 
 const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
 const approve_status = ["Approved", "Denied"];
+const expire_status = ["Requested","Approved"];
 const approve_fundsource = ["BOSO", "Cash", "SOGA", "INSGC"];
 const check_type = ["Pick-up", "Mailed"];
 
@@ -448,6 +449,39 @@ router.delete("/:purchaseID", async(req, res, next) => {
 
     res.status(200).send("Purchase canceled");
     return next();
+});
+
+/*
+    Expire a purchase
+*/
+router.post("/:purchaseID/expire", async(req, res, next) => {
+    // check that the user is a treasurer and the purchase is valid
+    try {
+        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+        const [results_1] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        if (results_1.length === 0) {
+            res.status(404).send("Purchase not found");
+            return next();
+        }
+
+        if (!expire_status.includes(results_1[0].status)) {
+            res.status(400).send("Cannot expire purchase");
+            return next();
+        }
+
+        await req.context.models.purchase.expirePurchase(req.params.purchaseID);
+        res.status(200).send("Purchase expired");
+        return next();
+
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
 });
 
 /*

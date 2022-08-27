@@ -184,7 +184,14 @@ async function getChecks(id) {
 
 async function markReceived(id) {
     return db_conn.promise().execute(
-        "Update Purchases SET status='Reimbursed' WHERE Purchases.purchaseID=?",
+        "UPDATE Purchases SET status='Reimbursed' WHERE Purchases.purchaseID=?",
+        [id]
+    );
+}
+
+async function expirePurchase(id) {
+    return db_conn.promise().execute(
+        "UPDATE Purchases SET status='Expired' WHERE Purchases.purchaseID=?",
         [id]
     );
 }
@@ -207,4 +214,5 @@ export default {
     getAllReimbursements,
     getChecks,
     markReceived,
+    expirePurchase,
 };

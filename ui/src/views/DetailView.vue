@@ -8,9 +8,12 @@
     <button class="btn btn-primary" v-if="!editPurchase&&auth_state.viewTreasurer&&allowedToEdit" v-on:click="editPurchase=true">Update Purchase Details</button>
     <div v-else-if="editPurchase">
       <button class="btn btn-success m-1" v-on:click="finishEdit">Finish Purchase Edit</button>
+      <br>
       <button class="btn btn-secondary m-1" v-on:click="editPurchase=false">Cancel Purchase Edit</button>
     </div>
-    <br><br>
+    <br v-if="!editPurchase&&auth_state.viewTreasurer&&allowedToEdit">
+    <button class="btn btn-danger m-3" v-if="auth_state.viewTreasurer&&allowedToExpire" v-on:click="expirePurchase">Expire Purchase</button>
+    <br>
     <div class="row">
       <!-- This looks misaligned but its actually centered -->
       <div class="col-md-8 offset-md-2">
@@ -207,7 +210,23 @@ export default {
       if (!response.error) {
         this.init();
       }
-    }
+    },
+    async expirePurchase() {
+      this.dispmsg = '';
+      const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}/expire`, {
+        method: 'post',
+        credentials: 'include',
+        headers: new Headers({'content-type': 'application/json'}),
+      });
+
+      this.error = response.error;
+      this.dispmsg = response.response;
+
+      if (!response.error) {
+        this.editPurchase = false;
+        this.init();
+      }
+    },
   },
   computed: {
     fullRecipt() {
@@ -221,7 +240,11 @@ export default {
     },
     allowedToEdit() {
       if (this.purchase.status === undefined) return false;
-      return this.purchase.status==='Requested' || this.purchase.status==='Approved' || this.purchase.status==='Purchased';
+      return this.purchase.status!=='Denied' && this.purchase.status!=='Expired';
+    },
+    allowedtoExpire() {
+      if (this.purchase.status === undefined) return false;
+      return this.purchase.status==='Requested' || this.purchase.status==='Approved';
     }
   },
   watch: {
