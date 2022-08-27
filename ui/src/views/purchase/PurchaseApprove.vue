@@ -160,26 +160,29 @@ export default {
       this.purchase = response.response;
       this.category = response.response.category
     },
-    async 'purchase.committeeAPI'(newVal) {
-      if (newVal === '') {
-        this.categoryList = [];
-        return
-      }
+    purchase: {
+      async handler(newVal) {
+        if (newVal.committeeAPI === '') {
+          this.categoryList = [];
+          return
+        }
 
-      this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/categories`, {
-        method: 'get',
-        credentials: 'include'
-      });
+        this.dispmsg = '';
+        const response = await fetchWrapperJSON(`/api/v2/committee/${newVal.committeeAPI}/categories/${newVal.fiscal_year}`, {
+          method: 'get',
+          credentials: 'include'
+        });
 
-      if (response.error) {
-        this.error = true;
-        this.dispmsg = response.response
-        this.categoryList = [];
-        return;
-      }
+        if (response.error) {
+          this.error = true;
+          this.dispmsg = response.response
+          this.categoryList = [];
+          return;
+        }
 
-      this.categoryList = response.response;
+        this.categoryList = response.response;
+      },
+      deep: true
     }
   }
 }
