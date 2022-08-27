@@ -80,6 +80,14 @@ const routes = [
     }
   },
   {
+    path: '/income-view',
+    name: 'IncomeView',
+    component: () => import('../views/IncomeView.vue'),
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/myaccount',
     name: 'Account',
     component: () => import('../views/account/AccountSettings.vue'),

@@ -140,6 +140,28 @@ router.get("/", async(req, res, next) => {
     }
 });
 
+router.get("/:incomeID", async(req, res, next) => {
+    // Make sure user actually is allowed to create donations
+    try {
+        const [results] = await req.context.models.income.getIncome(req.params.incomeID);
+        if (results.length === 0) {
+            res.status(404).send("Income not found");
+            return next();
+        }
+        const [results_0] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
+        if (results_0.length === 0) {
+            res.status(403).send("Income not found");
+            return next();
+        }
+        res.status(200).send(results[0]);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
 router.put("/:incomeID", async(req, res, next) => {
     if (req.body.status === undefined ||
         req.body.refnumber === undefined) {

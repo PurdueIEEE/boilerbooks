@@ -91,7 +91,7 @@
           ['Ref Number','refnumber']]"
       >
        <template v-slot:data="income">
-          <td>{{income.row.incomeid}}</td>
+          <td><router-link v-bind:to="goToIncome(income.row.incomeid)" class="link-primary text-decoration-none">{{income.row.incomeid}}</router-link></td>
           <td>{{income.row.date}}</td>
           <td>{{income.row.source}}</td>
           <td>{{income.row.type}}</td>
@@ -208,6 +208,9 @@ export default {
   methods: {
     goToItem(id) {
       return `/detail-view?id=${id}`;
+    },
+    goToIncome(id) {
+      return `/income-view?id=${id}`;
     },
   },
   watch: {

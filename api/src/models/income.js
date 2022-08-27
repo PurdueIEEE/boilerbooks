@@ -38,8 +38,19 @@ async function updateIncome(income) {
     );
 }
 
+async function getIncome(id) {
+    return db_conn.promise().execute(
+        `SELECT *, DATE_FORMAT(i.updated, '%Y-%m-%dT%H:%i:%sZ') AS mdate,
+        (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = i.addedby) reportedby,
+        (SELECT fiscal_year FROM fiscal_year WHERE fyid = i.fiscal_year) fiscal_year
+        FROM Income i WHERE i.incomeid = ?`,
+        [id]
+    );
+}
+
 export default {
     createNewDonation,
     getAllIncome,
     updateIncome,
+    getIncome,
 };
