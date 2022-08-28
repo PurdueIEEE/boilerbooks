@@ -50,11 +50,11 @@
           </tr>
         </tbody>
       </table>
-      <small><span class="text-danger">*</span> = Budget item not approved</small>
       <div>
         <input class="form-check-input me-2" type="checkbox" value="INSGC" v-model="useINSGC">
         <label class="form-check-label">View INSGC?</label>
       </div>
+      <small><span class="text-danger">*</span> = Budget item not approved</small>
 
       <h4 class="mt-4">{{header}} Expenses</h4>
       <DataTable
