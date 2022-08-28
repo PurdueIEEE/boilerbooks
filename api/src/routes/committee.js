@@ -329,6 +329,10 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
         return next();
     }
 
+    if (req.query.INSGC === undefined) {
+        req.query.INSGC = 'false';
+    }
+
     try {
         const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
@@ -342,7 +346,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year], req.query.INSGC === "true");
         res.status(200).send(results);
         return next();
     } catch (err) {

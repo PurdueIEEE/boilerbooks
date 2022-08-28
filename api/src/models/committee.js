@@ -93,15 +93,17 @@ async function getCommitteeIncome(comm, year) {
     );
 }
 
-async function getCommitteeBudgetSummary(comm, year) {
+async function getCommitteeBudgetSummary(comm, year, insgc) {
     return db_conn.promise().execute(
-        `SELECT B.category, SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscal_year = ?)) THEN P.cost ELSE 0 END) AS spent,
+        `SELECT B.category,
+        SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved', NULL) AND (P.committee = ?) AND (P.fiscal_year = ?)) THEN P.cost ELSE 0 END) AS spent,
+        ${insgc ? "SUM(CASE WHEN (P.status in ('Purchased','Processing Reimbursement','Reimbursed', 'Approved') AND (P.committee = ?) AND (P.fiscal_year = ?) AND (P.fundsource = 'INSGC')) THEN P.cost ELSE 0 END) AS insgc," : ""}
         B.amount, B.status AS budget FROM Budget B
 		LEFT JOIN Purchases P ON B.category = P.category
 		WHERE B.committee = ?
 		AND B.fiscal_year = ?
 		GROUP BY B.category, B.amount, B.status`,
-        [comm, year, comm, year]
+        function (){ return insgc ? [comm, year, comm, year, comm, year] : [comm, year, comm, year] }()
     );
 }
 

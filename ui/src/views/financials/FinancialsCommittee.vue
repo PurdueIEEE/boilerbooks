@@ -33,8 +33,9 @@
         <thead>
           <tr>
             <th>Category</th>
-            <th>Spent</th>
             <th>Budget</th>
+            <th>Spent</th>
+            <th v-if="boolINSGC">INSGC</th>
           </tr>
         </thead>
         <tbody>
@@ -43,12 +44,17 @@
               {{item.category}}
               <span v-if="item.budget !== 'Approved'" class="text-danger">*</span>
               </td>
-            <td>{{item.spent}}</td>
-            <td>{{item.amount}}</td>
+            <td>${{item.amount}}</td>
+            <td>${{item.spent}}</td>
+            <td v-if="boolINSGC">${{item.insgc}}</td>
           </tr>
         </tbody>
       </table>
       <small><span class="text-danger">*</span> = Budget item not approved</small>
+      <div>
+        <input class="form-check-input me-2" type="checkbox" value="INSGC" v-model="useINSGC">
+        <label class="form-check-label">View INSGC?</label>
+      </div>
 
       <h4 class="mt-4">{{header}} Expenses</h4>
       <DataTable
@@ -150,6 +156,7 @@ export default {
       financialSummary: [],
       expenseTable: [],
       incomeTable: [],
+      useINSGC: [],
     }
   },
   async mounted() {
@@ -203,6 +210,9 @@ export default {
     },
     comm_fy() {
       return `${this.committee}|${this.fiscalyear}`;
+    },
+    boolINSGC() {
+      return this.useINSGC.length !== 0;
     }
   },
   methods: {
@@ -259,7 +269,7 @@ export default {
         method: 'get',
         credentials: 'include',
       });
-      const financialSummaryP = fetchWrapperJSON(`/api/v2/committee/${committee}/summary/${fiscalyear}`, {
+      const financialSummaryP = fetchWrapperJSON(`/api/v2/committee/${committee}/summary/${fiscalyear}?INSGC=${this.boolINSGC}`, {
         method: 'get',
         credentials: 'include',
       });
@@ -299,6 +309,18 @@ export default {
       this.financialSummary = financialSummary.response;
       this.expenseTable = expenseTable.response;
       this.incomeTable = incomeTable.response;
+    },
+    async boolINSGC(newVal) {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}?INSGC=${newVal}`, {
+        method: 'get',
+        credentials: 'include',
+      });
+
+      if (response.error) {
+        return;
+      }
+
+      this.financialSummary = response.response;
     }
   }
 }
