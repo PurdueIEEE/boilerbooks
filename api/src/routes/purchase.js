@@ -19,6 +19,7 @@ import multer from "multer";
 import * as fs from "fs/promises";
 import jimp from "jimp";
 
+import Models from "../models/index.js";
 import { committee_name_swap, committee_name_api, mailer, logger, ACCESS_LEVEL } from "../common_items.js";
 
 // filter uploaded files based on type
@@ -39,7 +40,6 @@ const fileHandler = multer({
 
 const router = Router();
 
-
 const treasurer_status = ["Processing Reimbursement", "Reimbursed"];
 const approve_status = ["Approved", "Denied"];
 const expire_status = ["Requested","Approved"];
@@ -52,7 +52,7 @@ const check_type = ["Pick-up", "Mailed"];
 router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send([]); // silently fail on no authorization
             return next();
@@ -64,7 +64,7 @@ router.get("/", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.purchase.getAllReimbursements();
+        const [results] = await Models.purchase.getAllReimbursements();
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -134,7 +134,7 @@ router.post("/", async(req, res, next) => {
     /** Create the purchase request **/
     let insert_id = 0;
     try {
-        const [results] = await req.context.models.purchase.createNewPurchase(req.body);
+        const [results] = await Models.purchase.createNewPurchase(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase cannot be created, try again later");
             return next();
@@ -149,7 +149,7 @@ router.post("/", async(req, res, next) => {
     /** Get names of approvers and send back to user **/
     let emails = "";
     try {
-        const [results] = await req.context.models.purchase.getPurchaseApprovers(insert_id);
+        const [results] = await Models.purchase.getPurchaseApprovers(insert_id);
 
         let names = "";
         results.forEach(approver => {
@@ -209,7 +209,7 @@ router.post("/treasurer", async(req, res, next) => {
 
     // Check that user is treasurer
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
             return next();
@@ -225,7 +225,7 @@ router.post("/treasurer", async(req, res, next) => {
     try {
         for (let id of commaIDlist) {
             /** Update the purchase **/
-            const [results] = await req.context.models.purchase.reimbursePurchases(id, req.body.status);
+            const [results] = await Models.purchase.reimbursePurchases(id, req.body.status);
             if (results.affectedRows === 0) {
                 res.status(400).send("One or more purchase IDs are not currenty 'Purchased' or 'Processing Reimbursement'");
                 next();
@@ -245,7 +245,7 @@ router.post("/treasurer", async(req, res, next) => {
         const email_to_send_pickup = {};
         const email_to_send_mail = {};
         for (let id of commaIDlist) {
-            const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(id);
+            const [purchase_deets] = await Models.purchase.getFullPurchaseByID(id);
             if (purchase_deets[0].check_type === "Mailed") {
                 if (email_to_send_mail[purchase_deets[0].username] === undefined) {
                     email_to_send_mail[purchase_deets[0].username] = [purchase_deets[0].item];
@@ -262,7 +262,7 @@ router.post("/treasurer", async(req, res, next) => {
         }
 
         for (let username in email_to_send_pickup) {
-            const [user_deets] = await req.context.models.account.getUserByID(username);
+            const [user_deets] = await Models.account.getUserByID(username);
             let text = `Your purchase request(s) are now ${req.body.status}\n`;
             let html = `<h2>Your purchase request(s) are now ${req.body.status}</h2><ul>`;
             for (let purchase of email_to_send_pickup[username]) {
@@ -289,7 +289,7 @@ router.post("/treasurer", async(req, res, next) => {
         }
 
         for (let username in email_to_send_mail) {
-            const [user_deets] = await req.context.models.account.getUserByID(username);
+            const [user_deets] = await Models.account.getUserByID(username);
             let text = `Your purchase request(s) are now ${req.body.status}\n`;
             let html = `<h2>Your purchase request(s) are now ${req.body.status}</h2><ul>`;
             for (let purchase of email_to_send_mail[username]) {
@@ -330,14 +330,14 @@ router.get("/:purchaseID", async(req, res, next) => {
 
     /** get the basic params to check access control **/
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // No purchase found
         if (results.length === 0) {
             res.status(404).send("Purchase not found");
             return next();
         }
 
-        const [results_1] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
+        const [results_1] = await Models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
 
         // No approval powers for committee
         if (results_1.length === 0) {
@@ -355,7 +355,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             return next();
         }
 
-        const [results_2] = await req.context.models.committee.getCommitteeBalance(results[0].committee);
+        const [results_2] = await Models.committee.getCommitteeBalance(results[0].committee);
         if (results[0].status === "Requested" || results[0].status === "Approved") {
             results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
         }
@@ -397,13 +397,13 @@ router.put("/:purchaseID", async(req,res, next) => {
 
     try {
         // check the user is a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send("Updated Purchase");
             return next();
         }
         req.body.purchaseID = req.params.purchaseID;
-        const [results_1] = await req.context.models.purchase.updatePurchase(req.body);
+        const [results_1] = await Models.purchase.updatePurchase(req.body);
         if (results_1.affectedRows === 0) {
             res.status(400).send("Not able to update purchase, try again later");
             return next();
@@ -422,7 +422,7 @@ router.put("/:purchaseID", async(req,res, next) => {
 router.delete("/:purchaseID", async(req, res, next) => {
     // check that the user has approval power first
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // Make sure purchase exists and belongs to user
         if (results.length === 0 || results[0].username !== req.context.request_user_id) {
             res.status(404).send("Purchase not found");
@@ -436,7 +436,7 @@ router.delete("/:purchaseID", async(req, res, next) => {
 
     // Actually 'delete' the purchase
     try {
-        const [results] = await req.context.models.purchase.cancelPurchase(req.params.purchaseID);
+        const [results] = await Models.purchase.cancelPurchase(req.params.purchaseID);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase status is not 'Requested', 'Approved', 'Purchased'");
             return next();
@@ -457,12 +457,12 @@ router.delete("/:purchaseID", async(req, res, next) => {
 router.post("/:purchaseID/expire", async(req, res, next) => {
     // check that the user is a treasurer and the purchase is valid
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(404).send("Purchase not found");
             return next();
         }
-        const [results_1] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results_1] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results_1.length === 0) {
             res.status(404).send("Purchase not found");
             return next();
@@ -473,7 +473,7 @@ router.post("/:purchaseID/expire", async(req, res, next) => {
             return next();
         }
 
-        await req.context.models.purchase.expirePurchase(req.params.purchaseID);
+        await Models.purchase.expirePurchase(req.params.purchaseID);
         res.status(200).send("Purchase expired");
         return next();
 
@@ -540,7 +540,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
             res.status(404).send("Purchase not found");
             return next();
@@ -564,7 +564,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
 
     // check that the user has approval power first
     try {
-        const [results] = await req.context.models.account.canApprovePurchase(req.context.request_user_id, req.params.purchaseID);
+        const [results] = await Models.account.canApprovePurchase(req.context.request_user_id, req.params.purchaseID);
         // No approval powers for committee
         if (results.length === 0) {
             res.status(404).send("Purchase not found");
@@ -581,7 +581,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
 
     /** update request **/
     try {
-        const [results] = await req.context.models.purchase.approvePurchase(req.body);
+        const [results] = await Models.purchase.approvePurchase(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Purchase not in 'Requested' status");
             return next();
@@ -597,8 +597,8 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
     /** email requester with result **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
-        const [purchase_deets] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
-        const [user_deets] = await req.context.models.account.getUserByID(purchase_deets[0].username);
+        const [purchase_deets] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [user_deets] = await Models.account.getUserByID(purchase_deets[0].username);
         await mailer.sendMail({
             to: user_deets[0].email,
             subject: "Purchase Status Updated!",
@@ -679,7 +679,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     }
 
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
             fs.unlink(req.file.path);
             res.status(404).send("Purchase not found");
@@ -699,7 +699,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
 
     /** get the basic params to check access control **/
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         // No purchase found
         if (results.length === 0) {
             fs.unlink(req.file.path);
@@ -753,7 +753,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         req.body.receipt = file_save_name;
         req.body.id = req.params.purchaseID;
 
-        await req.context.models.purchase.completePurchase(req.body);
+        await Models.purchase.completePurchase(req.body);
 
     } catch (err) {
         logger.error(err.stack);
@@ -766,7 +766,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     /** send email to treasurer **/
     if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
     try {
-        const [purchase_deets ] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [purchase_deets ] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         await mailer.sendMail({
             to:  "purdue.ieee.treasurer@gmail.com",
             subject: `New Purchase By ${purchase_deets[0].committee}`,
@@ -802,13 +802,13 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
     }
 
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             fs.unlink(req.file.path);
             res.status(404).send("Purchase not found");
             return next();
         }
-        const [results_1] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results_1] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results_1.length === 0) {
             fs.unlink(req.file.path);
             res.status(404).send("Purchase not found");
@@ -853,7 +853,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
             fs.unlink(req.file.path);
         }
 
-        await req.context.models.purchase.updateReceipt(req.params.purchaseID, file_save_name);
+        await Models.purchase.updateReceipt(req.params.purchaseID, file_save_name);
 
     } catch (err) {
         logger.error(err.stack);
@@ -875,7 +875,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
 */
 router.post("/:purchaseID/checks", async(req, res, next) => {
     try {
-        const [results] = await req.context.models.purchase.getFullPurchaseByID(req.params.purchaseID);
+        const [results] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         if (results.length === 0) {
             res.status(404).send("Purchase not found");
             return next();
@@ -895,7 +895,7 @@ router.post("/:purchaseID/checks", async(req, res, next) => {
             return next();
         }
 
-        await req.context.models.purchase.markReceived(req.params.purchaseID);
+        await Models.purchase.markReceived(req.params.purchaseID);
 
     } catch (err) {
         logger.error(err.stack);

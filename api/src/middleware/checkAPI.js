@@ -1,12 +1,9 @@
-import models, { db_conn } from "../models/index.js";
+import { db_conn } from "../models/index.js";
 import { logger } from "../common_items.js";
 
 async function checkAPI(req, res, next) {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
     if (req.originalUrl === "/account" || req.originalUrl.startsWith("/login")) {
-        req.context = {
-            models,
-        };
         next();
     } else {
         // use an API key with the Authorization header
@@ -38,7 +35,6 @@ async function checkAPI(req, res, next) {
             }
 
             req.context = {
-                models,
                 request_user_id: results[0].username,
             };
             next();

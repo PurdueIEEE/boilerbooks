@@ -15,12 +15,12 @@
 */
 
 import { Router } from "express";
-
 import crypto from "crypto";
 
-const router = Router();
-
+import Models from "../models/index.js";
 import { ACCESS_LEVEL, current_fiscal_year, dues_amount, dues_committees, fiscal_year_list, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
+
+const router = Router();
 
 const payment_status = ["Paid", "Exempt"];
 
@@ -76,13 +76,13 @@ router.post("/", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send([]);
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getMemberByEmail(req.body.email, max_fiscal_year_count);
+        const [results_1] = await Models.dues.getMemberByEmail(req.body.email, max_fiscal_year_count);
         if (results_1.length) {
             // 409 is an unusual status code but sort of applies here?
             res.status(409).send("Member email already exists");
@@ -94,7 +94,7 @@ router.post("/", async(req, res, next) => {
             req.body.puid = crypto.createHash("sha512").update(req.body.puid).digest("hex");
         }
 
-        await req.context.models.dues.createNewMember(req.body);
+        await Models.dues.createNewMember(req.body);
 
     } catch (err) {
         logger.error(err.stack);
@@ -119,13 +119,13 @@ router.put("/:duesid", async(req, res, next) => {
 
         try {
             // check the user is a treasurer
-            const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+            const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
             if (results.validuser === 0) {
                 res.status(200).send("Member status updated"); // silently fail on no authorization
                 return next();
             }
 
-            await req.context.models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
+            await Models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
             res.status(200).send("Member status updated");
             return next();
         } catch (err) {
@@ -157,7 +157,7 @@ router.put("/:duesid", async(req, res, next) => {
 
         try {
             // first make sure user is actually a treasurer
-            const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+            const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
             if (results.validuser === 0) {
                 res.status(200).send("Member details updated"); // Silently fail on no authorization
                 return next();
@@ -165,7 +165,7 @@ router.put("/:duesid", async(req, res, next) => {
 
             req.body.committees = req.body.committees.join(",");
 
-            await req.context.models.dues.updateMemberDetails(req.params.duesid, req.body);
+            await Models.dues.updateMemberDetails(req.params.duesid, req.body);
             res.status(200).send("Member details updated");
 
         } catch (err) {
@@ -194,13 +194,13 @@ router.get("/summary/:year?", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send({});
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=[0,0], out), {});
         results_1.forEach(dues => {
             // the shit regex is a holdover since some multi-committee dues use ', ' instead of ','
@@ -242,13 +242,13 @@ router.get("/all/:year?", async(req, res, next) => {
 
     try {
         // first make sure user is actually an officer
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, "%", ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(200).send([]);
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -269,13 +269,13 @@ router.get("/income/:year", async(req, res, next) => {
 
     try {
         // check the user is a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send([]); // silently failed on no authorization
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesIncomeActual(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesIncomeActual(fiscal_year_lut[req.params.year]);
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -296,13 +296,13 @@ router.get("/expected/:year", async(req, res, next) => {
 
     try {
         // check the user is a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send({total:0,}); // silently failed on no authorization
             return next();
         }
 
-        const [results_1] = await req.context.models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
         res.status(200).send({total:results_1.length * dues_amount,});
         return next();
     } catch (err) {

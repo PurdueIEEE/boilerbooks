@@ -15,6 +15,8 @@
 */
 
 import { Router } from "express";
+
+import Models from "../models/index.js";
 import { fiscal_year_list, committee_lut, ACCESS_LEVEL, logger, max_fiscal_year_count } from "../common_items.js";
 
 const router = Router();
@@ -43,7 +45,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // First check the user has approval permissions
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -56,7 +58,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // Clear the old budget from the database
     try {
-        await req.context.models.budgets.clearBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
+        await Models.budgets.clearBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
@@ -82,7 +84,7 @@ router.post("/:comm", async(req, res, next) => {
                 year: max_fiscal_year_count,
             };
 
-            await req.context.models.budgets.addBudget(budget);
+            await Models.budgets.addBudget(budget);
         }
     } catch (err) {
         logger.error(err.stack);
@@ -105,13 +107,13 @@ router.put("/:comm", async(req, res, next) => {
 
     try {
         // first we make sure user is actually a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send("Approved Budget");
             return next();
         }
 
-        await req.context.models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
+        await Models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
 
         res.status(200).send("Approved Budget");
         return next();
@@ -129,7 +131,7 @@ router.put("/:comm", async(req, res, next) => {
 router.get("/submitted", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send({});
             return next();
@@ -138,7 +140,7 @@ router.get("/submitted", async(req, res, next) => {
         const budgets = {};
 
         for (let committee in committee_lut) {
-            const [results_1] = await req.context.models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], max_fiscal_year_count);
+            const [results_1] = await Models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], max_fiscal_year_count);
             budgets[committee] = results_1;
         }
 

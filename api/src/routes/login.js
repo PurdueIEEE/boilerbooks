@@ -15,14 +15,14 @@
 */
 
 import { Router } from "express";
+import crypto from "crypto";
+import bcrypt from "bcrypt";
+
+import Models from "../models/index.js";
 import { mailer, logger, ACCESS_LEVEL } from "../common_items.js";
 
-import crypto from "crypto";
-
-import bcrypt from "bcrypt";
-const bcrypt_rounds = 10;
-
 const router = Router();
+const bcrypt_rounds = 10;
 
 // ---------------------------
 // Start unauthenticated endpoints
@@ -40,7 +40,7 @@ router.post("/", async(req, res, next) => {
 
     try {
         // Check if username exists
-        const [results] = await req.context.models.account.loginUser(req.body.uname);
+        const [results] = await Models.account.loginUser(req.body.uname);
         if (results.length === 0) {
             res.status(400).send("Incorrect Username or Password");
             return next();
@@ -59,7 +59,7 @@ router.post("/", async(req, res, next) => {
         };
 
         // Get all privilege levels
-        const [response] = await req.context.models.account.getUserAccessLevel(req.body.uname);
+        const [response] = await Models.account.getUserAccessLevel(req.body.uname);
         if (response[0].maxPrivilege !== null) {
             user.viewFinancials = true;
             user.viewApprove = response[0].maxAmount > 0;
@@ -73,7 +73,7 @@ router.post("/", async(req, res, next) => {
         }
 
         // Generate the API key now
-        const response_1 = await req.context.models.account.generateAPIKey(req.body.uname);
+        const response_1 = await Models.account.generateAPIKey(req.body.uname);
         res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
         res.status(201).send(user);
         return next();
@@ -94,7 +94,7 @@ router.post("/forgot-user", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserByEmail(req.body.email);
+        const [results] = await Models.account.getUserByEmail(req.body.email);
         res.status(200).send("If that account exists, an email was send the provided address.");
         let list_of_users = results.map((element) => (element.username)).join(", ");
         await mailer.sendMail({
@@ -130,7 +130,7 @@ router.post("/forgot-pass", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.getUserByID(req.body.user);
+        const [results] = await Models.account.getUserByID(req.body.user);
         res.status(200).send("Instructions to reset your password were sent to your email");
 
         const buffer = crypto.randomBytes(64);
@@ -138,7 +138,7 @@ router.post("/forgot-pass", async(req, res, next) => {
         //  but this should be fine
         const reset_hash = await bcrypt.hash(buffer.toString("hex"), bcrypt_rounds);
 
-        await req.context.models.account.setPasswordResetDetails(req.body.user, reset_hash);
+        await Models.account.setPasswordResetDetails(req.body.user, reset_hash);
 
         await mailer.sendMail({
             to: results[0].email,
@@ -190,7 +190,7 @@ router.post("/reset", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.account.checkResetTime(req.body.uname, req.body.rstlink);
+        const [results] = await Models.account.checkResetTime(req.body.uname, req.body.rstlink);
 
         if (results.length === 0 || results[0].resettime === null) {
             res.status(401).send("Reset link expired!"); // silently fail
@@ -216,8 +216,8 @@ router.post("/reset", async(req, res, next) => {
         };
 
         try {
-            await req.context.models.account.updatePassword(user);
-            const [results, fields] = await req.context.models.account.getUserByID(req.body.uname);
+            await Models.account.updatePassword(user);
+            const [results, fields] = await Models.account.getUserByID(req.body.uname);
             res.status(200).send("Password Reset");
             await mailer.sendMail({
                 to: results[0].email,

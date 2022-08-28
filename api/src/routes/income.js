@@ -15,10 +15,11 @@
 */
 
 import { Router } from "express";
+
+import Models from "../models/index.js";
 import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
-
 
 const new_type = ["BOSO", "Cash", "Discount", "SOGA"];
 const new_status = ["Expected", "Received", "Unreceived"];
@@ -83,7 +84,7 @@ router.post("/", async(req, res, next) => {
 
     // Make sure user actually is allowed to create donations
     try {
-        const [results] = await req.context.models.account.getUserApprovals(req.context.request_user_id, req.body.committee, ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.body.committee, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(403).send("Not allowed to create donation");
             return next();
@@ -97,7 +98,7 @@ router.post("/", async(req, res, next) => {
     req.body.user = req.context.request_user_id;
 
     try {
-        const [results] = await req.context.models.income.createNewDonation(req.body);
+        const [results] = await Models.income.createNewDonation(req.body);
         if (results.affectedRows === 0) {
             res.status(400).send("Donation cannot be created, try again later");
             return next();
@@ -115,7 +116,7 @@ router.post("/", async(req, res, next) => {
 router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(404).send("Income not found");
             return next();
@@ -127,7 +128,7 @@ router.get("/", async(req, res, next) => {
     }
 
     try {
-        const [results] = await req.context.models.income.getAllIncome();
+        const [results] = await Models.income.getAllIncome();
         results.forEach(income => {
             income.committee = committee_name_swap[income.committee];
         });
@@ -143,12 +144,12 @@ router.get("/", async(req, res, next) => {
 router.get("/:incomeID", async(req, res, next) => {
     // Make sure user actually is allowed to create donations
     try {
-        const [results] = await req.context.models.income.getIncome(req.params.incomeID);
+        const [results] = await Models.income.getIncome(req.params.incomeID);
         if (results.length === 0) {
             res.status(404).send("Income not found");
             return next();
         }
-        const [results_0] = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
+        const [results_0] = await Models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
         if (results_0.length === 0) {
             res.status(403).send("Income not found");
             return next();
@@ -176,7 +177,7 @@ router.put("/:incomeID", async(req, res, next) => {
 
     // Check that user is treasurer
     try {
-        const [results] = await req.context.models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(404).send("Income not found");
             return next();
@@ -194,7 +195,7 @@ router.put("/:incomeID", async(req, res, next) => {
     };
 
     try {
-        await req.context.models.income.updateIncome(income);
+        await Models.income.updateIncome(income);
         res.status(200).send("Income updated");
         return next();
     } catch (err) {

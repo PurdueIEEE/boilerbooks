@@ -15,6 +15,8 @@
 */
 
 import { Router } from "express";
+
+import Models from "../models/index.js";
 import { ACCESS_LEVEL, logger } from "../common_items.js";
 
 const router = Router();
@@ -37,7 +39,7 @@ router.get("/:file", async(req, res, next) => {
         //       By moving it to a for loop that we can 'break', we only do the download once and avoid
         //       most chances for a race condition.
         for (let i=0; i<1; i++) {
-            const [results]  = await req.context.models.purchase.getFullPurchaseByID(match.groups.pnum);
+            const [results]  = await Models.purchase.getFullPurchaseByID(match.groups.pnum);
             if (results.length === 0) {
                 res.status(404).send("Receipt not found");
                 return next();
@@ -46,7 +48,7 @@ router.get("/:file", async(req, res, next) => {
             if (results[0].username === req.context.request_user_id) {
                 break;
             }
-            const [results_1]  = await req.context.models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
+            const [results_1]  = await Models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
             if (results_1.length === 0) {
                 res.status(404).send("Receipt not found");
                 return next();
