@@ -330,7 +330,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     if (req.query.INSGC === undefined) {
-        req.query.INSGC = 'false';
+        req.query.INSGC = "false";
     }
 
     try {

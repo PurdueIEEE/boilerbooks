@@ -103,7 +103,7 @@ async function getCommitteeBudgetSummary(comm, year, insgc) {
 		WHERE B.committee = ?
 		AND B.fiscal_year = ?
 		GROUP BY B.category, B.amount, B.status`,
-        function (){ return insgc ? [comm, year, comm, year, comm, year] : [comm, year, comm, year] }()
+        function() { return insgc ? [comm, year, comm, year, comm, year] : [comm, year, comm, year]; }()
     );
 }
 
