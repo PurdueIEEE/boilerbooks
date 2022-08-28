@@ -111,9 +111,9 @@ router.post("/treasurers", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, "General IEEE", true);
         if (results_1[0].approvalexists) {
-            res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send("User already has approval powers for General IEEE, please remove them before adding more");
             return next();
         }
 
@@ -132,9 +132,7 @@ router.post("/treasurers", async(req, res, next) => {
                 approval.amount = 1000000; // if they need more than this we have a problem
             }
             await Models.access.addApproval(approval);
-            if (committee === "General IEEE") {
-                approval.amount = 0; // reset back to 0
-            }
+            approval.amount = 0; // reset back to 0
         }
         res.status(200).send("Treasurer added");
         return next();
@@ -183,9 +181,9 @@ router.post("/officers", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_name_swap[req.body.committee]);
         if (results_1[0].approvalexists) {
-            res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send(`User already has approval powers for ${req.body.committee}, please remove them before adding more`);
             return next();
         }
 
@@ -247,9 +245,9 @@ router.post("/internals", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_name_swap[req.body.committee]);
         if (results_1[0].approvalexists) {
-            res.status(400).send("User already has approval powers, please remove them before adding more");
+            res.status(400).send(`User already has approval powers for ${committee_name_swap[req.body.committee]}, please remove them before adding more`);
             return next();
         }
 
@@ -280,12 +278,7 @@ router.post("/internals", async(req, res, next) => {
 /*
     Delete a user's permissions
 */
-router.delete("/approvals/:approver", async(req, res, next) => {
-    if (req.params.approver === "") { // Sanity Check
-        res.status(400).send("Bad Treasurer ID");
-        return next();
-    }
-
+router.delete("/approvals/:approverID", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
@@ -293,7 +286,28 @@ router.delete("/approvals/:approver", async(req, res, next) => {
             res.status(200).send("Access removed");
             return next();
         }
-        await Models.access.removeApproval(req.params.approver);
+        await Models.access.removeApproval(req.params.approverID);
+        res.status(200).send("Access removed");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+/*
+    Delete a treasurer
+*/
+router.delete("/treasurer/:username", async(req, res, next) => {
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send("Access removed");
+            return next();
+        }
+        await Models.access.removeTreasurer(req.params.username);
         res.status(200).send("Access removed");
         return next();
     } catch (err) {

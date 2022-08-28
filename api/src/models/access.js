@@ -17,17 +17,24 @@
 import { db_conn } from "./index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 
-async function checkApprovalExists(id) {
+async function checkApprovalExists(id, committee, checkTreasurer=false) {
     return db_conn.promise().execute(
-        "SELECT COUNT(A.username) AS approvalexists FROM approval A WHERE A.username=? AND A.privilege_level > ?",
-        [id, ACCESS_LEVEL.member]
+        `SELECT COUNT(A.username) AS approvalexists FROM approval A WHERE A.username=? AND A.privilege_level > ? AND A.committee = ? AND A.privilege_level ${checkTreasurer ? "<=" : "<"} ?`,
+        [id, ACCESS_LEVEL.member, committee, ACCESS_LEVEL.treasurer]
     );
 }
 
 async function removeApproval(id) {
     return db_conn.promise().execute(
-        "DELETE FROM approval WHERE username=?",
+        "DELETE FROM approval WHERE approvalID=?",
         [id]
+    );
+}
+
+async function removeTreasurer(id) {
+    return db_conn.promise().execute(
+        "DELETE FROM approval A WHERE A.username=? AND A.privilege_level = ?",
+        [id, ACCESS_LEVEL.treasurer]
     );
 }
 
@@ -48,7 +55,7 @@ async function getTreasurers(level) {
 
 async function getApprovals(level) {
     return db_conn.promise().execute(
-        "SELECT A.username, A.role, A.committee, A.amount, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = A.username) name FROM approval A WHERE privilege_level = ?",
+        "SELECT A.username, A.role, A.committee, A.amount, A.approvalID, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = A.username) name FROM approval A WHERE privilege_level = ?",
         [level]
     );
 }
@@ -58,5 +65,6 @@ export default {
     getTreasurers,
     checkApprovalExists,
     removeApproval,
+    removeTreasurer,
     addApproval,
 };

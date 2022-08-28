@@ -89,7 +89,7 @@ export default {
       this.treasurerList = response.response;
     },
     async remove(username) {
-      const response = await fetchWrapperTXT(`/api/v2/access/approvals/${username}`, {
+      const response = await fetchWrapperTXT(`/api/v2/access/treasurer/${username}`, {
         method: 'delete',
         credentials: 'include',
       });

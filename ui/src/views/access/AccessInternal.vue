@@ -22,7 +22,7 @@
           <td>{{user.role}}</td>
           <td>{{user.committee}}</td>
           <td>{{user.amount}}</td>
-          <td><button class="btn btn-danger" v-on:click="remove(user.username)">Remove</button></td>
+          <td><button class="btn btn-danger" v-on:click="remove(user.approvalID)">Remove</button></td>
         </tr>
       </tbody>
     </table>
