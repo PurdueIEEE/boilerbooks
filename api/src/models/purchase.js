@@ -40,7 +40,7 @@ async function createNewPurchase(purchase) {
 async function updatePurchase(purchase) {
     return db_conn.promise().execute(
         `UPDATE Purchases SET modifydate = NOW(), cost=?, vendor=?, purchasereason=?, comments=?, category=?, check_type=?
-        WHERE Purchases.purchaseID=? AND Purchases.status IN ('Requested', 'Approved', 'Purchased', 'Processing Reimbursement')`,
+        WHERE Purchases.purchaseID=? AND Purchases.status NOT IN ('Denied', 'Expired')`,
         [purchase.cost, purchase.vendor, purchase.reason, purchase.comments, purchase.category, purchase.check_type, purchase.purchaseID]
     );
 }
