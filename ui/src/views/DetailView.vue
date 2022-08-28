@@ -242,7 +242,7 @@ export default {
       if (this.purchase.status === undefined) return false;
       return this.purchase.status!=='Denied' && this.purchase.status!=='Expired';
     },
-    allowedtoExpire() {
+    allowedToExpire() {
       if (this.purchase.status === undefined) return false;
       return this.purchase.status==='Requested' || this.purchase.status==='Approved';
     }
