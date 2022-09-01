@@ -4,6 +4,7 @@ import { logger } from "../common_items.js";
 async function checkAPI(req, res, next) {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
     if (req.originalUrl === "/account" || req.originalUrl.startsWith("/login")) {
+        req.context = {};
         next();
     } else {
         // use an API key with the Authorization header
