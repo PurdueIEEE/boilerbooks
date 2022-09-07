@@ -2,6 +2,7 @@
   <div class="container-lg my-5 pt-5">
     <h1>Boiler Books v2</h1>
     <h3>Financial Recordkeeping Software</h3>
+    <h6 class="fst-italic">Now supporting Unicode and emojis!</h6>
 
     <!-- Begin the DIV SOUP -->
     <div class="row mt-5 justify-content-center">

@@ -38,7 +38,6 @@ async function getCommitteeSubmittedBudget(comm, year) {
 }
 
 async function approveCommitteeBudget(comm, year) {
-    console.log(comm, year);
     return db_conn.promise().execute(
         "UPDATE Budget SET status='Approved' WHERE (committee=? AND fiscal_year=?)",
         [comm, year]
