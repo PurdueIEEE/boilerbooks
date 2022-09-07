@@ -327,7 +327,7 @@ router.get("/expected/:year", async(req, res, next) => {
         }
 
         const [results_1] = await Models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
-        res.status(200).send({total:results_1.length * dues_amount[0],}); // randomly choose the first option
+        res.status(200).send({total:results_1.reduce((prev, curr) => { return prev + curr.amount; }, 0),});
         return next();
     } catch (err) {
         logger.error(err.stack);
