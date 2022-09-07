@@ -237,6 +237,19 @@ function smtp_check() {
 smtp_startup();
 // -------------------------------------------------
 
+// ---------------- utf-8 -> ascii ----------------
+function cleanUTF8(input) {
+    let clean = "";
+    for (let i = 0; i < input.length; i++) {
+        if (input.charCodeAt(i) > 127) {
+            clean += `&#${input.charCodeAt(i)};`;
+        } else {
+            clean += input[i];
+        }
+    }
+}
+// -------------------------------------------------
+
 export {
     current_fiscal_year,
     first_fiscal_year,
@@ -253,4 +266,5 @@ export {
     mailer,
     logger,
     smtp_check,
+    cleanUTF8,
 };

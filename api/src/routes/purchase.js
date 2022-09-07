@@ -20,7 +20,7 @@ import * as fs from "fs/promises";
 import jimp from "jimp";
 
 import Models from "../models/index.js";
-import { committee_name_swap, committee_name_api, mailer, logger, ACCESS_LEVEL } from "../common_items.js";
+import { committee_name_swap, committee_name_api, mailer, logger, ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -170,7 +170,7 @@ router.post("/", async(req, res, next) => {
         await mailer.sendMail({
             to: emails,
             subject: `New Purchase Request for ${req.body.committee}`,
-            text: `A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}\n` +
+            text: `A request was made by ${cleanUTF8(req.body.user)} for ${cleanUTF8(req.body.item)} costing $${req.body.price}\n` +
             "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${insert_id}.\n\n` +
             "This email was automatically sent by Boiler Books",
@@ -602,7 +602,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         await mailer.sendMail({
             to: user_deets[0].email,
             subject: "Purchase Status Updated!",
-            text: `Your request for ${purchase_deets[0].item} was ${purchase_deets[0].status}\n` +
+            text: `Your request for ${cleanUTF8(purchase_deets[0].item)} was ${purchase_deets[0].status}\n` +
             "Please visit Boiler Books at your earliest convenience to complete the purchase.\n" +
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
@@ -768,9 +768,9 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
     try {
         const [purchase_deets ] = await Models.purchase.getFullPurchaseByID(req.params.purchaseID);
         await mailer.sendMail({
-            to:  "purdue.ieee.treasurer@gmail.com",
+            to:  process.env.TREAS_EMAIL,
             subject: `New Purchase By ${purchase_deets[0].committee}`,
-            text: `${purchase_deets[0].committee} has just purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}.\n` +
+            text: `${purchase_deets[0].committee} has just purchased ${cleanUTF8(purchase_deets[0].item)} for $${purchase_deets[0].cost}.\n` +
             "Please visit Boiler Books at your earliest convenience to begin the reimbursement process.\n" +
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",

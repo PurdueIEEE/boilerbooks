@@ -93,8 +93,14 @@ router.post("/", async(req, res, next) => {
     }
 
     // eslint-disable-next-line
-    if (req.body.uname.match(/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/)) {
+    if (/[$&+,/:;=?@ "<>#%{}|\\^~\[\]`]/.test(req.body.uname)) {
         res.status(400).send("Username cannot contain any special characters");
+        return next();
+    }
+
+    // eslint-disable-next-line
+    if (/[^\u0000-\u007f]/.test(req.body.uname)) {
+        res.status(400).send("Username cannot contain any Unicode characters");
         return next();
     }
 
