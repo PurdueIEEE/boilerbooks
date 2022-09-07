@@ -34,6 +34,15 @@ router.get("/committees", (req, res, next) => {
 });
 
 /*
+    Get all current dues amounts
+*/
+router.get("/amount", (req, res, next) => {
+    // literally just gets a list of dues
+    res.status(200).send(dues_amount);
+    return next();
+});
+
+/*
     Create a new dues member
 */
 router.post("/", async(req, res, next) => {
@@ -117,6 +126,21 @@ router.put("/:duesid", async(req, res, next) => {
             return next();
         }
 
+        if (req.body.amount === undefined || req.body.amount === "") {
+            res.status(400).send("Must include amount");
+            return next();
+        }
+
+        if (req.body.status === "Paid" && !dues_amount.includes(req.body.amount)) {
+            res.status(400).send("Incorrect amount");
+            return next();
+        }
+
+        if (req.body.status === "Exempt" && req.body.amount !== 0) {
+            res.status(400).send("Cannot be 'Exempt' and have an amount");
+            return next();
+        }
+
         try {
             // check the user is a treasurer
             const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
@@ -125,7 +149,7 @@ router.put("/:duesid", async(req, res, next) => {
                 return next();
             }
 
-            await Models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.status === "Exempt" ? 0 : dues_amount);
+            await Models.dues.updateDuesMemberStatus(req.params.duesid, req.body.status, req.body.amount);
             res.status(200).send("Member status updated");
             return next();
         } catch (err) {
@@ -303,7 +327,7 @@ router.get("/expected/:year", async(req, res, next) => {
         }
 
         const [results_1] = await Models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
-        res.status(200).send({total:results_1.length * dues_amount,});
+        res.status(200).send({total:results_1.length * dues_amount[0],}); // randomly choose the first option
         return next();
     } catch (err) {
         logger.error(err.stack);

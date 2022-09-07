@@ -39,12 +39,14 @@
       ['Name','name'],
       ['Email','email'],
       ['Committee(s)','committee'],
+      ['Amount', 'amount'],
       ['Status','status']]"
     >
       <template v-slot:data="dues">
         <td>{{dues.row.name}}</td>
         <td>{{dues.row.email}}</td>
         <td>{{dues.row.committee}}</td>
+        <td>{{dues.row.amount}}</td>
         <td>{{dues.row.status}}</td>
       </template>
     </DataTable>

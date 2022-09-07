@@ -150,7 +150,7 @@ const dues_committees =
 // Current annual local dues
 
 /** CHANGE BELOW ANNUALLY **/
-const dues_amount = 15.0;
+const dues_amount = [15, 10];
 /** CHANGE ABOVE ANNUALLY **/
 
 // -------------------------------------------------

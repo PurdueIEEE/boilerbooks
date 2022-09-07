@@ -6,7 +6,7 @@
 
     <div class="modal" id="editDuesModal" tabindex="-1" aria-labelledby="editDuesModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
-        <form v-on:submit.prevent="updateDues()" class="modal-content">
+        <form v-on:submit.prevent="updateDues" class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="editDuesModalLabel">Edit Information for Dues Entry {{editId}}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -44,6 +44,31 @@
       </div>
     </div>
 
+    <div class="modal" id="duesAmountModal" tabindex="-1" aria-labelledby="duesAmountModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <form v-on:submit.prevent="updateStatus" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="duesAmountModalLabel">How much dues were paid?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 text-start">
+              <div class="col-md-6 offset-md-3">
+                <div class="form-check" v-for="amount in duesAmountList">
+                  <input class="form-check-input" type="radio" v-model="memberAmount" :value="amount" />
+                  <label class="form-check-label">${{amount}} paid</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Mark 'Paid'</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="text-center">
       <DataTable
         v-bind:rows="rows"
@@ -62,9 +87,9 @@
           <td>{{dues.row.fiscal_year}}</td>
           <td>{{dues.row.status}}</td>
           <td>
-            <button class="btn btn-outline-info my-1" v-on:click="updateStatus(dues.row.duesid, 'Paid')">Paid</button>
+            <button class="btn btn-outline-info my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Paid')">Paid</button>
             <br>
-            <button class="btn btn-outline-dark my-1" v-on:click="updateStatus(dues.row.duesid, 'Exempt')">Exempt</button>
+            <button class="btn btn-outline-dark my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Exempt')">Exempt</button>
           </td>
           <td><button class="btn btn-outline-primary" v-on:click="triggerUpdateModal(dues.row)">Edit</button></td>
         </template>
@@ -110,24 +135,43 @@ export default {
       editName: '',
       editEmail: '',
       editCommittee: [],
+      memberStatus: '',
+      memberID: '',
+      memberAmount: '',
       duesModal: null,
+      amountModal: null,
       committeeList: [],
+      duesAmountList: [],
     };
   },
   async mounted() {
     this.init();
-    const response = await fetchWrapperJSON(`/api/v2/dues/committees`, {
+    const response_c = await fetchWrapperJSON('/api/v2/dues/committees', {
       method: 'get',
       credentials: 'include',
     });
 
-    if (response.error) {
+    const response_d = await fetchWrapperJSON('/api/v2/dues/amount', {
+      method: 'get',
+      credentials: 'include',
+    });
+
+    if (response_c.error) {
       this.error = true;
-      this.dispmsg = response.response;
+      this.dispmsg = response_c.response;
       return;
     }
 
-    this.committeeList = response.response;
+    if (response_d.error) {
+      this.error = true;
+      this.dispmsg = response_d.response;
+      return;
+    }
+
+    this.committeeList = response_c.response;
+    this.duesAmountList = response_d.response;
+    this.duesModal = new Modal(document.getElementById('editDuesModal'), {backdrop:'static', 'keyboard':false});
+    this.amountModal = new Modal(document.getElementById('duesAmountModal'), {backdrop:'static', 'keyboard':false})
   },
   methods: {
     async init() {
@@ -143,15 +187,34 @@ export default {
       }
 
       this.rows = response.response;
-      this.duesModal = new Modal(document.getElementById('editDuesModal'), {backdrop:'static', 'keyboard':false});
     },
-    async updateStatus(id, status) {
+    triggerAmountModal(id, status) {
+      this.memberStatus = status;
+      this.memberID = id;
+      if (status === 'Exempt') {
+        this.memberAmount = 0;
+        this.updateStatus();
+        return;
+      }
+
+      // If there is only one amount to pay, don't bother the treasurer
+      if (this.duesAmountList.length === 1) {
+        this.memberAmount = this.duesAmountList[0];
+        this.updateStatus();
+        return;
+      }
+
+      this.amountModal.show();
+    },
+    async updateStatus() {
+      this.amountModal.hide();
+
       this.dispmsg = '';
-      const response = await fetchWrapperTXT(`/api/v2/dues/${id}`,{
+      const response = await fetchWrapperTXT(`/api/v2/dues/${this.memberID}`,{
         method: 'put',
         credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({status:status}),
+        body: JSON.stringify({status:this.memberStatus,amount:this.memberAmount}),
       });
 
       this.error = response.error;
