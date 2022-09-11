@@ -131,6 +131,10 @@ router.post("/forgot-pass", async(req, res, next) => {
 
     try {
         const [results] = await Models.account.getUserByID(req.body.user);
+        if (results.length === 0) {
+            res.status(404).send("No account found with that username - try 'Forgot Username' if you don't remember your username");
+            return next();
+        }
         res.status(200).send("Instructions to reset your password were sent to your email");
 
         const buffer = crypto.randomBytes(64);
