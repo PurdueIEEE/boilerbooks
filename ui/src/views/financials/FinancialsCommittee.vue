@@ -162,12 +162,10 @@ export default {
   async mounted() {
     const committeeList = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
-      credentials: 'include',
     });
 
     const fiscalList = await fetchWrapperJSON(`/api/v2/budgets/years`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (committeeList.error) {
@@ -255,31 +253,24 @@ export default {
       // First fire the requests off
       const totalBalanceP = fetchWrapperJSON(`/api/v2/committee/${committee}/balance`, {
         method: 'get',
-        credentials: 'include',
       });
       const totalBudgetP = fetchWrapperJSON(`/api/v2/committee/${committee}/budget/${fiscalyear}`, {
         method: 'get',
-        credentials: 'include',
       });
       const totalIncomeP = fetchWrapperJSON(`/api/v2/committee/${committee}/incometotal/${fiscalyear}`, {
         method: 'get',
-        credentials: 'include',
       });
       const totalSpentP = fetchWrapperJSON(`/api/v2/committee/${committee}/expensetotal/${fiscalyear}`, {
         method: 'get',
-        credentials: 'include',
       });
       const financialSummaryP = fetchWrapperJSON(`/api/v2/committee/${committee}/summary/${fiscalyear}?INSGC=${this.boolINSGC}`, {
         method: 'get',
-        credentials: 'include',
       });
       const expenseTableP = fetchWrapperJSON(`/api/v2/committee/${committee}/purchases/${fiscalyear}`, {
         method: 'get',
-        credentials: 'include',
       });
       const incomeTableP = fetchWrapperJSON(`/api/v2/committee/${committee}/income/${fiscalyear}`, {
         method: 'get',
-        credentials: 'include',
       });
 
       // Then wait for them to come back
@@ -313,7 +304,6 @@ export default {
     async boolINSGC(newVal) {
       const response = await fetchWrapperJSON(`/api/v2/committee/${this.committee}/summary/${this.fiscalyear}?INSGC=${newVal}`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {

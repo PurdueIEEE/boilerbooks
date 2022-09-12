@@ -85,7 +85,6 @@ export default {
       this.error = false;
       const response = await fetchWrapperTXT(`/api/v2/login/forgot-user`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({email:this.forgot_user_email}),
       });
@@ -103,7 +102,6 @@ export default {
       this.error = false;
       const response = await fetchWrapperTXT(`/api/v2/login/forgot-pass`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({user:this.forgot_pass_user}),
       });

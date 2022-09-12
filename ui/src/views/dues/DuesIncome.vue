@@ -93,7 +93,6 @@ export default {
   async mounted() {
     const fiscalList = await fetchWrapperJSON(`/api/v2/budgets/years`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (fiscalList.error) {
@@ -119,12 +118,10 @@ export default {
 
       const actualIncome = await fetchWrapperJSON(`/api/v2/dues/income/${newVal}`,{
         method: 'get',
-        credentials: 'include'
       });
 
       const expectedIncome = await fetchWrapperJSON(`/api/v2/dues/expected/${newVal}`,{
         method: 'get',
-        credentials: 'include'
       });
 
       if (actualIncome.error) {

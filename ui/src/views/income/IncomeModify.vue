@@ -79,7 +79,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/income`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {
@@ -99,7 +98,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/income/${id}`, {
         method: 'put',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({status:status, refnumber:refnumber}),
       });

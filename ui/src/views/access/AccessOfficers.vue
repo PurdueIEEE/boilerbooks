@@ -85,7 +85,6 @@ export default {
     this.init();
     const response = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {
@@ -100,7 +99,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/access/officers`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {
@@ -114,7 +112,6 @@ export default {
     async remove(username) {
       const response = await fetchWrapperTXT(`/api/v2/access/approvals/${username}`, {
         method: 'delete',
-        credentials: 'include',
       });
 
       this.error = response.error;
@@ -125,7 +122,6 @@ export default {
     async create() {
       const response = await fetchWrapperTXT(`/api/v2/access/officers`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({username:this.username,role:this.role,committee:this.committeeList[this.committee][0]}),
       });

@@ -97,7 +97,6 @@ export default {
 
       const response = await fetchWrapperTXT(`/api/v2/income`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],source:this.source,item:this.item,
                               amount:this.amount,status:this.status,type:this.type,comments:this.comments}),
@@ -119,12 +118,10 @@ export default {
   async mounted() {
     const response_comm = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
-      credentials: 'include',
     });
 
     const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/income`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response_comm.error || response_lastcomm.error) {

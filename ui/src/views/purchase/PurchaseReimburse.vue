@@ -105,7 +105,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/purchase/treasurer`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({status:status, idList:this.processList}),
       });
@@ -121,7 +120,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/reimbursements`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {

@@ -119,7 +119,6 @@ export default {
 
       const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'put',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
       });
@@ -134,7 +133,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {

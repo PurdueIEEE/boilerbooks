@@ -70,7 +70,6 @@ export default {
 
     const response = await fetchWrapperJSON(`/api/v2/account/${this.$route.query.id}`, {
         method: 'get',
-        credentials: 'include',
     });
 
     if (response.error) {

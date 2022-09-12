@@ -155,7 +155,6 @@ export default {
 
       const response = await fetchWrapperJSON(`/api/v2/purchase/${this.$route.query.id}`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {
@@ -177,7 +176,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}`, {
         method: 'put',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({reason:this.reason,cost:this.cost,vendor:this.vendor,comments:this.comments,category:this.category,check_type:this.check_type}),
       });
@@ -199,7 +197,6 @@ export default {
 
       const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}/receipt`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({}),
         body: formData,
       });
@@ -215,7 +212,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/purchase/${this.$route.query.id}/expire`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
       });
 
@@ -257,7 +253,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscal_year}`, {
         method: 'get',
-        credentials: 'include'
       });
 
       if (response.error) {

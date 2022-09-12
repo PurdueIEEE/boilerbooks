@@ -65,7 +65,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/purchase`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {

@@ -84,7 +84,6 @@ export default {
 
       const response = await fetchWrapperJSON(`/api/v2/income/${this.$route.query.id}`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {

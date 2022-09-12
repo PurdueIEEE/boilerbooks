@@ -117,7 +117,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/budgets/${this.committee}`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify(this.currEditBudget), // dump the entire budget and let the API deal with it
       });
@@ -133,7 +132,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {
@@ -161,7 +159,6 @@ export default {
 
       const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/summary`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {

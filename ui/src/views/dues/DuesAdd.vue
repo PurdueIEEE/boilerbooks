@@ -71,7 +71,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/dues/committees`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {
@@ -112,7 +111,6 @@ export default {
 
       const response = await fetchWrapperTXT('/api/v2/dues', {
         method: "post",
-        credentials: "include",
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({name:this.memberName,email:this.memberEmail,puid:this.memberID,committees:this.memberCommittees})
       });

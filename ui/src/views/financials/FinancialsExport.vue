@@ -62,7 +62,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {

@@ -73,7 +73,6 @@ export default {
     async markReceived(purchaseid) {
       const response = await fetchWrapperTXT(`/api/v2/purchase/${purchaseid}/checks`, {
         method: 'post',
-        credentials: 'include',
       });
 
       this.dispmsg = response.response;
@@ -87,7 +86,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/checks`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {

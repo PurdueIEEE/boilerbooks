@@ -48,7 +48,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response.error) {
@@ -64,7 +63,6 @@ export default {
     async approveBudget(comm) {
       const response = await fetchWrapperTXT(`/api/v2/budgets/${comm}`, {
         method: 'put',
-        credentials: 'include',
       });
 
       this.error = response.error;
@@ -77,7 +75,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/budgets/submitted`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {

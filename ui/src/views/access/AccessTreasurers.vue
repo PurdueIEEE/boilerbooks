@@ -77,7 +77,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/access/treasurers`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {
@@ -91,7 +90,6 @@ export default {
     async remove(username) {
       const response = await fetchWrapperTXT(`/api/v2/access/treasurer/${username}`, {
         method: 'delete',
-        credentials: 'include',
       });
 
       this.error = response.error;
@@ -101,7 +99,6 @@ export default {
     async create() {
       const response = await fetchWrapperTXT(`/api/v2/access/treasurers`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({username:this.username,role:this.role}),
       });

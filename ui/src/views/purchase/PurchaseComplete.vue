@@ -105,7 +105,6 @@ export default {
 
       const response = await fetchWrapperTXT(`/api/v2/purchase/${id}/complete`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({}),
         body: formData,
       });
@@ -122,7 +121,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/completions`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {
@@ -147,7 +145,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/purchase/${newVal}`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {

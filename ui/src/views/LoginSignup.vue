@@ -159,7 +159,6 @@ export default {
       this.error = false;
       const response = await fetchWrapperJSON(`/api/v2/login`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
       });
@@ -199,7 +198,6 @@ export default {
       this.error = false;
       const response = await fetchWrapperJSON(`/api/v2/account`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({fname:this.new_fname,lname:this.new_lname,uname:this.new_uname,
                               email:this.new_email,address:this.new_address,city:this.new_city,

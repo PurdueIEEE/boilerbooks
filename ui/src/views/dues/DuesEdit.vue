@@ -148,12 +148,10 @@ export default {
     this.init();
     const response_c = await fetchWrapperJSON('/api/v2/dues/committees', {
       method: 'get',
-      credentials: 'include',
     });
 
     const response_d = await fetchWrapperJSON('/api/v2/dues/amount', {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response_c.error) {
@@ -177,7 +175,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON('/api/v2/dues/all',{
         method: 'get',
-        credentials: 'include'
       });
 
       if (response.error) {
@@ -212,7 +209,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/dues/${this.memberID}`,{
         method: 'put',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({status:this.memberStatus,amount:this.memberAmount}),
       });
@@ -252,7 +248,6 @@ export default {
 
       const response = await fetchWrapperTXT(`/api/v2/dues/${this.editId}`, {
         method: 'put',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({name:this.editName,email:this.editEmail,committees:this.editCommittee})
       });

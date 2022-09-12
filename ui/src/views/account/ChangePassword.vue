@@ -83,7 +83,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:auth_state.state.uname,pass1:this.new_pass,pass2:this.new_pass_again}),
       });

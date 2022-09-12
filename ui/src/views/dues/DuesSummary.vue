@@ -92,7 +92,6 @@ export default {
   async mounted() {
     const fiscalList = await fetchWrapperJSON(`/api/v2/budgets/years`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (fiscalList.error) {
@@ -109,12 +108,10 @@ export default {
 
       const duesSum = await fetchWrapperJSON(`/api/v2/dues/summary/${newVal}`,{
       method: 'get',
-        credentials: 'include'
       });
 
       const duesAll = await fetchWrapperJSON(`/api/v2/dues/all/${newVal}`,{
         method: 'get',
-        credentials: 'include'
       });
 
       if (duesSum.error) {

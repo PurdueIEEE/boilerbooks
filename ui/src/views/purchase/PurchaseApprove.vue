@@ -108,7 +108,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/purchase/${id}/approve`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.purchase.committee,item:this.purchase.item,reason:this.purchase.purchasereason,vendor:this.purchase.vendor,
               price:this.purchase.cost,comments:this.purchase.comments,fundsource:this.funding,status:status,category:this.category}),
@@ -126,7 +125,6 @@ export default {
   async mounted() {
     const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/approvals`, {
         method: 'get',
-        credentials: 'include',
     });
 
     if (response.error) {
@@ -147,7 +145,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperJSON(`/api/v2/purchase/${newVal}`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {
@@ -170,7 +167,6 @@ export default {
         this.dispmsg = '';
         const response = await fetchWrapperJSON(`/api/v2/committee/${newVal.committeeAPI}/categories/${newVal.fiscal_year}`, {
           method: 'get',
-          credentials: 'include'
         });
 
         if (response.error) {

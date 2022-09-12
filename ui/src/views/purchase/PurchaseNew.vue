@@ -134,7 +134,6 @@ export default {
       this.dispmsg = '';
       const response = await fetchWrapperTXT(`/api/v2/purchase`, {
         method: 'post',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,
                               reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments,checkType:this.checkType}),
@@ -157,12 +156,10 @@ export default {
   async mounted() {
     const response_comm = await fetchWrapperJSON(`/api/v2/committee`, {
       method: 'get',
-      credentials: 'include',
     });
 
     const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/purchases`, {
       method: 'get',
-      credentials: 'include',
     });
 
     if (response_comm.error || response_lastcomm.error) {
@@ -182,7 +179,6 @@ export default {
 
       const response = await fetchWrapperJSON(`/api/v2/committee/${newVal}/categories`, {
         method: 'get',
-        credentials: 'include',
       });
 
       if (response.error) {

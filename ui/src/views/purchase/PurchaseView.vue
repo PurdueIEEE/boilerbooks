@@ -75,7 +75,6 @@ export default {
     async cancelPurchase(purchaseid) {
       const response = await fetchWrapperTXT(`/api/v2/purchase/${purchaseid}`, {
         method: 'delete',
-        credentials: 'include',
         headers: new Headers({'content-type': 'application/json'}),
       });
 
@@ -90,7 +89,6 @@ export default {
     async init() {
       const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/purchases`, {
           method: 'get',
-          credentials: 'include',
       });
 
       if (response.error) {
