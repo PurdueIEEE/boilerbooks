@@ -119,6 +119,9 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
+    // force emails lowercase for OIDC purposes
+    req.body.email = req.body.email.toLowerCase();
+
     bcrypt.hash(req.body.pass1, bcrypt_rounds, async(error, hash) => {
         if (error) {
             logger.error(error);
@@ -157,7 +160,7 @@ router.post("/", async(req, res, next) => {
         } catch (err) {
             // Username already exists
             if (err.code === "ER_DUP_ENTRY") {
-                res.status(400).send("Username already exists");
+                res.status(400).send("Username or email already exists");
                 return next();
             } else {
                 logger.error(err.stack);
