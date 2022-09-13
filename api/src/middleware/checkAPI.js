@@ -3,16 +3,13 @@ import { logger } from "../common_items.js";
 
 async function checkAPI(req, res, next) {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl.startsWith("/login")) {
+    if (req.originalUrl.startsWith("/login") || req.originalUrl.startsWith("/oidc")) {
         req.context = {};
         next();
     } else {
         // use an API key with the Authorization header
         if (req.cookies.apikey === undefined) {
             logger.info(`[] - "${req.originalUrl}" - Return 401`);
-            if (req.originalUrl.startsWith("/receipt")) {
-                return res.redirect("/ui/login");
-            }
             return res.status(401).send("Must authenticate first");
         }
 

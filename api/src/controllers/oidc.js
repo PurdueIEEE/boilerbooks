@@ -21,6 +21,47 @@ import { logger } from "../common_items.js";
 let oidcIssuer;
 let oidcClient;
 
+function get_oidc_login(req, res, next) {
+    const code_verifier = generators.codeVerifier();
+    req.session.code_verifier = code_verifier;
+    req.session.save((err) => {
+        if (err) {
+            logger.error(err);
+            res.status(500).send("Internal server error");
+            return next();
+        }
+
+        const code_challenge = generators.codeChallenge(code_verifier);
+
+        const oidc_url = oidcClient.authorizationUrl({ code_challenge, code_challenge_method: "S256", });
+
+        res.redirect(oidc_url);
+        next();
+    });
+}
+
+async function get_oidc_callback(req, res, next) {
+    if (!req.session.code_verifier) {
+        res.status(404).send("");
+        return next();
+    }
+    const params = oidcClient.callbackParams(req);
+    try {
+        const tokenSet = await oidcClient.callback(process.env.OIDC_REDIRECT_URI, params, { code_verifier: req.session.code_verifier, });
+        const userninfo = await oidcClient.userinfo(tokenSet);
+
+
+
+
+        res.status(200).send("Hmm");
+        next();
+    } catch (err) {
+        logger.error(err);
+        res.status(500).send("Internal server error");
+        return next();
+    }
+}
+
 let oidc_good = false;
 let try_count = 0;
 async function setupOIDC(cb) {
@@ -62,4 +103,8 @@ function oidc_check() {
 oidc_startup();
 
 
-export { oidc_check };
+export {
+    oidc_check,
+    get_oidc_login,
+    get_oidc_callback,
+};

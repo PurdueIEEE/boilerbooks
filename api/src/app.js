@@ -24,7 +24,6 @@ import routes from "./routes/index.js";
 const app = Router();
 
 // Setup our routes
-app.use("/login", routes.login);
 app.use("/account", routes.account);
 app.use("/budgets", routes.budgets);
 app.use("/purchase", routes.purchase);
@@ -33,6 +32,8 @@ app.use("/receipts", routes.receipt);
 app.use("/income", routes.income);
 app.use("/access", routes.access);
 app.use("/dues", routes.dues);
+app.use("/login", routes.login);
+app.use("/oidc", routes.oidc);
 
 
 export default app;

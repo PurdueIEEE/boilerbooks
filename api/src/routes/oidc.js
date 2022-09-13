@@ -14,26 +14,13 @@
    limitations under the License.
 */
 
-import account from "./account.js";
-import budgets from "./budgets.js";
-import purchase from "./purchase.js";
-import committee from "./committee.js";
-import login from "./login.js";
-import receipt from "./receipt.js";
-import income from "./income.js";
-import access from "./access.js";
-import dues from "./dues.js";
-import oidc from "./oidc.js";
+import { Router } from "express";
 
-export default {
-    account,
-    budgets,
-    purchase,
-    committee,
-    login,
-    receipt,
-    income,
-    access,
-    dues,
-    oidc,
-};
+import { get_oidc_login, get_oidc_callback, } from "../controllers/oidc.js";
+
+const router = Router();
+
+router.get("/login", get_oidc_login);
+router.get("/callback", get_oidc_callback);
+
+export default router;
