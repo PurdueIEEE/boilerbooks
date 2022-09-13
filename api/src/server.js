@@ -25,6 +25,7 @@ import app from "./app.js";
 import { db_conn, db_check } from "./models/index.js";
 import { logger, smtp_check } from "./common_items.js";
 import checkAPI from "./middleware/checkAPI.js";
+import { oidc_check } from "./controllers/oidc.js";
 
 const server = express();
 
@@ -49,7 +50,7 @@ server.use((req, res, next) => {
 
 // Before attaching the process, make sure the database and smtp server are online
 let aux_check_num = setInterval(() => {
-    if (db_check() && smtp_check()) {
+    if (db_check() && smtp_check() && oidc_check()) {
         clearInterval(aux_check_num);
         // Start and attach server
         const handle = server.listen(process.env.PORT, () => {
