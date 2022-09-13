@@ -17,6 +17,7 @@
 import { Issuer, generators } from "openid-client";
 
 import { logger } from "../common_items.js";
+import Models from "../models/index.js";
 
 let oidcIssuer;
 let oidcClient;
@@ -45,16 +46,24 @@ async function get_oidc_callback(req, res, next) {
         res.status(404).send("");
         return next();
     }
-    const params = oidcClient.callbackParams(req);
     try {
+        const params = oidcClient.callbackParams(req);
         const tokenSet = await oidcClient.callback(process.env.OIDC_REDIRECT_URI, params, { code_verifier: req.session.code_verifier, });
-        const userninfo = await oidcClient.userinfo(tokenSet);
+        const userinfo = await oidcClient.userinfo(tokenSet);
 
+        const [results] = await Models.account.loginOIDCUser(userinfo.email);
 
+        // SSO User does not have a Boiler Books account, we must register them at the U OIDC endpoint
+        if (results.length === 0) {
+            res.redirect("/ui/login");
+            return next();
+        }
 
-
-        res.status(200).send("Hmm");
-        next();
+        // SSO User does exist, so we must dump them to the UI OIDC endpoint
+        const response_1 = await Models.account.generateAPIKey(results[0].username);
+        res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
+        res.redirect("/ui/");
+        return next();
     } catch (err) {
         logger.error(err);
         res.status(500).send("Internal server error");
@@ -98,9 +107,12 @@ function oidc_startup() {
     });
 }
 function oidc_check() {
-    return oidc_good;
+    return process.env.USE_OIDC === "true" ? oidc_good : true;
 }
-oidc_startup();
+// Only do the startup if we are using OIDC
+if (process.env.USE_OIDC) {
+    oidc_startup();
+}
 
 
 export {

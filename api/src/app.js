@@ -32,8 +32,12 @@ app.use("/receipts", routes.receipt);
 app.use("/income", routes.income);
 app.use("/access", routes.access);
 app.use("/dues", routes.dues);
-app.use("/login", routes.login);
-app.use("/oidc", routes.oidc);
 
+// conditionally mount login routes
+if (process.env.USE_OIDC === "true") {
+    app.use("/oidc", routes.oidc);
+} else {
+    app.use("/login", routes.login);
+}
 
 export default app;

@@ -32,19 +32,21 @@ const server = express();
 server.set("trust proxy", 1);
 
 // Setup the session store
-server.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        sameSite: "lax", // setting it 'lax' allows us to send it through a redirect
-        maxAge: 1000*60*10, // The cookie is valid for 10 minutes
-        httpOnly: true,
-        secure: false,
-        domain: process.env.HTTP_HOST
-    },
-    name: "boilerbooks_api_session",
-}));
+if (process.env.USE_OIDC === "true") {
+    server.use(session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+            sameSite: "lax", // setting it 'lax' allows us to send it through a redirect
+            maxAge: 1000*60*10, // The cookie is valid for 10 minutes
+            httpOnly: true,
+            secure: false,
+            domain: process.env.HTTP_HOST
+        },
+        name: "boilerbooks_api_session",
+    }));
+}
 
 // Setup predefined middleware
 server.use(cors({ credentials:true, origin:true, maxAge:3600,})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)

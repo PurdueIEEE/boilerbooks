@@ -130,8 +130,15 @@ async function createUser(user, hash) {
 
 async function loginUser(user) {
     return db_conn.promise().execute(
-        "SELECT password, email, first, last FROM Users WHERE Users.username = ?",
+        "SELECT password, email FROM Users WHERE Users.username = ?",
         [user]
+    );
+}
+
+async function loginOIDCUser(email) {
+    return db_conn.promise().execute(
+        "SELECT username FROM Users WHERE Users.email = ?",
+        [email]
     );
 }
 
@@ -172,6 +179,7 @@ export default {
     getUserByEmail,
     createUser,
     loginUser,
+    loginOIDCUser,
     updateUser,
     updatePassword,
     getUserApprovals,
