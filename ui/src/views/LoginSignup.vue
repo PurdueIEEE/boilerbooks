@@ -157,7 +157,7 @@ export default {
   methods: {
     async login() {
       this.error = false;
-      const response = await fetchWrapperJSON(`/api/v2/login`, {
+      const response = await fetchWrapperJSON('/api/v2/login/password', {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({uname:this.login_uname, pass:this.login_pass}),
@@ -196,7 +196,7 @@ export default {
       }
 
       this.error = false;
-      const response = await fetchWrapperJSON(`/api/v2/account`, {
+      const response = await fetchWrapperJSON(`/api/v2/login`, {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({fname:this.new_fname,lname:this.new_lname,uname:this.new_uname,

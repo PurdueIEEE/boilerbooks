@@ -1,0 +1,79 @@
+/*
+   Copyright 2022 Purdue IEEE and Hadi Ahmed
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+// Import libraries
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+// Import files
+import app from "./app.js";
+import { db_conn, db_check } from "./models/index.js";
+import { logger, smtp_check } from "./common_items.js";
+import checkAPI from "./middleware/checkAPI.js";
+
+const server = express();
+
+// Setup predefined middleware
+server.use(cors({ credentials:true, origin:true, maxAge:3600,})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
+server.use(express.json());
+server.use(express.urlencoded({extended: true,}));
+server.use(cookieParser());
+
+// Setup our middleware
+server.use(checkAPI);
+
+// Mount our routes
+server.use(app);
+
+// Log every route and it's result
+//   does not catch invalid API keys
+server.use((req, res, next) => {
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - Return ${res.statusCode} - "${req.method} ${req.originalUrl}"`);
+    next();
+});
+
+// Before attaching the process, make sure the database and smtp server are online
+let aux_check_num = setInterval(() => {
+    if (db_check() && smtp_check()) {
+        clearInterval(aux_check_num);
+        // Start and attach server
+        const handle = server.listen(process.env.PORT, () => {
+            logger.info(`App listening on port ${process.env.PORT}`);
+        });
+
+        process.on("SIGTERM", () => {
+            logger.warn("SIGTERM signal received: closing server");
+            handle.close(() => {
+                logger.warn("HTTP server closed");
+            });
+            db_conn.end(() => {
+                logger.warn("MySQL connection closed");
+            });
+        });
+
+        process.on("SIGINT", () => {
+            logger.warn("SIGINT signal received: closing server");
+            handle.close(() => {
+                logger.warn("HTTP server closed");
+            });
+            db_conn.end(() => {
+                logger.warn("MySQL connection closed");
+            });
+        });
+    }
+}, 500); // 500ms is offset from all the wait periods
