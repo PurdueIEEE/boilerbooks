@@ -149,6 +149,13 @@ async function getUserAccessLevel(user) {
     );
 }
 
+async function associateAPIKeyToUser(key) {
+    return db_conn.promise().execute(
+        "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
+        [key]
+    );
+}
+
 async function generateAPIKey(user) {
 
     // Yeah technically this while loop is always true
@@ -193,4 +200,5 @@ export default {
     canApprovePurchase,
     getUserAccessLevel,
     generateAPIKey,
+    associateAPIKeyToUser,
 };

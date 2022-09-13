@@ -16,7 +16,7 @@
 
 import { Issuer, generators } from "openid-client";
 
-import { logger } from "../common_items.js";
+import { logger, ACCESS_LEVEL } from "../common_items.js";
 import Models from "../models/index.js";
 
 let oidcIssuer;
@@ -25,20 +25,13 @@ let oidcClient;
 function get_oidc_login(req, res, next) {
     const code_verifier = generators.codeVerifier();
     req.session.code_verifier = code_verifier;
-    req.session.save((err) => {
-        if (err) {
-            logger.error(err);
-            res.status(500).send("Internal server error");
-            return next();
-        }
+    req.session.save();
 
-        const code_challenge = generators.codeChallenge(code_verifier);
+    const code_challenge = generators.codeChallenge(code_verifier);
+    const oidc_url = oidcClient.authorizationUrl({ code_challenge, code_challenge_method: "S256", });
 
-        const oidc_url = oidcClient.authorizationUrl({ code_challenge, code_challenge_method: "S256", });
-
-        res.redirect(oidc_url);
-        next();
-    });
+    res.redirect(oidc_url);
+    next();
 }
 
 async function get_oidc_callback(req, res, next) {
@@ -50,6 +43,8 @@ async function get_oidc_callback(req, res, next) {
         const params = oidcClient.callbackParams(req);
         const tokenSet = await oidcClient.callback(process.env.OIDC_REDIRECT_URI, params, { code_verifier: req.session.code_verifier, });
         const userinfo = await oidcClient.userinfo(tokenSet);
+        req.session.userinfo = userinfo;
+        req.session.save();
 
         const [results] = await Models.account.loginOIDCUser(userinfo.email);
 
@@ -62,13 +57,78 @@ async function get_oidc_callback(req, res, next) {
         // SSO User does exist, so we must dump them to the UI OIDC endpoint
         const response_1 = await Models.account.generateAPIKey(results[0].username);
         res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
-        res.redirect("/ui/");
+        res.redirect("/ui/oidc/login");
         return next();
     } catch (err) {
         logger.error(err);
         res.status(500).send("Internal server error");
         return next();
     }
+}
+
+function get_oidc_logout(req, res, next) {
+    const logout_url = oidcClient.endSessionUrl();
+
+    res.redirect(logout_url);
+    next();
+}
+
+async function get_oidc_userinfo(req, res, next) {
+    if (!req.session.userinfo) {
+        res.status(401).send("Must authenticate first");
+        return next();
+    }
+
+    // There is an API key, so we know that the login was successful
+    //  This API endpoint is being hit for the permissions information
+    if (req.cookies && req.cookies.apikey) {
+        try {
+            const [results] = await Models.account.associateAPIKeyToUser(req.cookies.apikey);
+
+            if (results.length === 0) {
+                logger.info(`[] - "${req.originalUrl}" - Return 401`);
+                return res.status(401).send("Invalid API Key");
+            }
+
+            const dbtime = new Date(results[0].apikeygentime);
+            const exptime = new Date(dbtime.setHours(dbtime.getHours() + 24)); // key expires after 24 hours
+            const now = new Date();
+            if (now >= exptime) {
+                logger.info(`[] - "${req.originalUrl}" - Return 401`);
+                return res.status(401).send("Invalid API Key");
+            }
+
+            // Setup the return object
+            const user = {
+                uname: results[0].username,
+            };
+
+            // Get all privilege levels
+            const [response] = await Models.account.getUserAccessLevel(results[0].username);
+            if (response[0].maxPrivilege !== null) {
+                user.viewFinancials = true;
+                user.viewApprove = response[0].maxAmount > 0;
+                user.viewOfficer = response[0].maxPrivilege >= ACCESS_LEVEL.officer;
+                user.viewTreasurer = response[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+            } else {
+                user.viewFinancials = false;
+                user.viewApprove = false;
+                user.viewOfficer = false;
+                user.viewTreasurer = false;
+            }
+
+            res.status(200).send(user);
+            return next();
+        } catch (err) {
+            logger.error(err.stack);
+            logger.info(`[] - "${req.originalUrl}" - Return 500`);
+            return res.status(500).send("Internal Server Error");
+        }
+    }
+
+    // There is not an API key, so we know that the UI is trying to prefill information
+    res.status(200).send(req.session.userinfo);
+    next();
 }
 
 let oidc_good = false;
@@ -119,4 +179,6 @@ export {
     oidc_check,
     get_oidc_login,
     get_oidc_callback,
+    get_oidc_logout,
+    get_oidc_userinfo,
 };

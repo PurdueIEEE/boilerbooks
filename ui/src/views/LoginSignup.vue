@@ -1,7 +1,7 @@
 <template>
   <div class="container-lg my-5 pt-5">
 
-    <div v-if="login_status">
+    <div v-if="!useOIDC&&login_status">
       <h1>Please Sign In</h1>
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
       <form v-on:submit.prevent="login()" name="login_form">
@@ -28,7 +28,7 @@
       <button class="btn btn-link link-secondary mt-4 fw-bold" v-on:click="swapLoginNew">Make an account</button>
     </div>
 
-    <div v-else>
+    <div v-else-if="!useOIDC">
       <h1>Make a Boiler Books Account</h1>
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
       <div class="row">
@@ -90,6 +90,12 @@
       <button class="btn btn-link link-secondary mt-4 fw-bold" v-on:click="swapLoginNew">I already have an account</button>
     </div>
 
+    <div v-else class="mt-5">
+      <br><br><br><br><br><br><br>
+      <a href="/api/v2/oidc/login"><button type="button" class="btn btn-outline-secondary pb-3 px-3"><i class="bi bi-key-fill fs-2"></i><br><span class="fs-4 fw-bold">Login with Purdue IEEE SSO</span></button></a>
+      <br><br><br><br><br><br><br>
+    </div>
+
   </div>
 </template>
 
@@ -134,6 +140,7 @@ export default {
       error: false,
       errmsg: '',
       showCapsWarning: false,
+      useOIDC: import.meta.env.VITE_USE_OIDC === "true",
     }
   },
   created() {

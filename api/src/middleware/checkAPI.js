@@ -1,4 +1,4 @@
-import { db_conn } from "../models/index.js";
+import Models from "../models/index.js";
 import { logger } from "../common_items.js";
 
 async function checkAPI(req, res, next) {
@@ -14,10 +14,7 @@ async function checkAPI(req, res, next) {
         }
 
         try {
-            const [results] = await db_conn.promise().execute(
-                "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
-                [req.cookies.apikey]
-            );
+            const [results] = await Models.account.associateAPIKeyToUser(req.cookies.apikey);
 
             if (results.length === 0) {
                 logger.info(`[] - "${req.originalUrl}" - Return 401`);

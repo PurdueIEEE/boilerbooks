@@ -16,11 +16,13 @@
 
 import { Router } from "express";
 
-import { get_oidc_login, get_oidc_callback, } from "../controllers/oidc.js";
+import { get_oidc_login, get_oidc_callback, get_oidc_logout, get_oidc_userinfo } from "../controllers/oidc.js";
 
 const router = Router();
 
 router.get("/login", get_oidc_login);
 router.get("/callback", get_oidc_callback);
+router.get("/logout", get_oidc_logout);
+router.get("/userinfo", get_oidc_userinfo);
 
 export default router;
