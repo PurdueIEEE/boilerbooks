@@ -38,7 +38,7 @@ export default {
       return;
     }
 
-    auth_state.setAuthState(response.response);
+    auth_state.newAuthState(response.response);
     this.$router.replace("/");
   }
 }

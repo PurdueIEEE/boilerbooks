@@ -136,6 +136,7 @@ router.post("/", async(req, res, next) => {
             // Setup the return object
             const user = {
                 uname: req.body.uname,
+                full_name: req.body.fname + " " + req.body.lname,
             };
 
             // Get all privilege levels
@@ -199,6 +200,7 @@ router.post("/password", async(req, res, next) => {
         // Setup the return object
         const user = {
             uname: req.body.uname,
+            full_name: results[0].first + " " + results[0].last,
         };
 
         // Get all privilege levels

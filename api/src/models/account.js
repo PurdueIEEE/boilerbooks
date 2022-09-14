@@ -130,7 +130,7 @@ async function createUser(user, hash) {
 
 async function loginUser(user) {
     return db_conn.promise().execute(
-        "SELECT password, email FROM Users WHERE Users.username = ?",
+        "SELECT password, email, first, last FROM Users WHERE Users.username = ?",
         [user]
     );
 }
@@ -151,7 +151,7 @@ async function getUserAccessLevel(user) {
 
 async function associateAPIKeyToUser(key) {
     return db_conn.promise().execute(
-        "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
+        "SELECT username, apikeygentime, first, last FROM Users WHERE Users.apikey = ?",
         [key]
     );
 }

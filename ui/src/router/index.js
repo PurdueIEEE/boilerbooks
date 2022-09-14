@@ -292,6 +292,10 @@ const routes = [
       {
         path: 'login',
         component: () => import('../views/oidc/OIDCLogin.vue'),
+      },
+      {
+        path: 'register',
+        component: () => import('../views/oidc/OIDCRegister.vue'),
       }
     ],
     meta: {

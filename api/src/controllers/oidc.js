@@ -50,7 +50,7 @@ async function get_oidc_callback(req, res, next) {
 
         // SSO User does not have a Boiler Books account, we must register them at the U OIDC endpoint
         if (results.length === 0) {
-            res.redirect("/ui/login");
+            res.redirect("/ui/oidc/register");
             return next();
         }
 
@@ -101,6 +101,7 @@ async function get_oidc_userinfo(req, res, next) {
             // Setup the return object
             const user = {
                 uname: results[0].username,
+                full_name: results[0].first + " " + results[0].last,
             };
 
             // Get all privilege levels
@@ -129,6 +130,100 @@ async function get_oidc_userinfo(req, res, next) {
     // There is not an API key, so we know that the UI is trying to prefill information
     res.status(200).send(req.session.userinfo);
     next();
+}
+
+/*
+    Creates a new user account
+*/
+async function post_oidc_register(req, res, next) {
+    if (!req.session.userinfo) {
+        res.status(401).send("Must authenticate first");
+        return next();
+    }
+
+    if (req.body.address === undefined ||
+        req.body.city === undefined ||
+        req.body.state === undefined ||
+        req.body.zip === undefined ||
+        req.body.createpin === undefined) {
+        res.status(400).send("All account details must be completed");
+        return next();
+    }
+
+    if (req.body.address === "" ||
+        req.body.city === "" ||
+        req.body.state === "" ||
+        req.body.zip === "" ||
+        req.body.createpin === "") {
+        res.status(400).send("All account details must be completed");
+        return next();
+    }
+
+    if (req.body.address.length > 200) {
+        res.status(400).send("Address is too long");
+        return next();
+    }
+    if (req.body.city.length > 100) {
+        res.status(400).send("City is too long");
+        return next();
+    }
+
+    if (req.body.state.length !== 2) {
+        res.status(400).send("State must be a 2 letter abbreviation");
+        return next();
+    }
+
+    if (req.body.createpin !== process.env.ACCOUNT_PIN) {
+        res.status(400).send("Incorrect Account Creation PIN");
+        return next();
+    }
+
+    req.body.fname = req.session.userinfo.given_name;
+    req.body.lname = req.session.userinfo.family_name;
+    req.body.email = req.session.userinfo.email;
+    req.body.uname = req.session.userinfo.email.split("@")[0];
+
+    try {
+        // First try and create the account
+        await Models.account.createUser(req.body, "");
+
+        // Setup the return object
+        const user = {
+            uname: req.body.uname,
+            full_name: req.body.fname + " " + req.body.lname,
+        };
+
+        // Get all privilege levels
+        const [response] = await Models.account.getUserAccessLevel(req.body.uname);
+        if (response[0].maxPrivilege !== null) {
+            user.viewFinancials = true;
+            user.viewApprove = response[0].maxAmount > 0;
+            user.viewOfficer = response[0].maxPrivilege >= ACCESS_LEVEL.officer;
+            user.viewTreasurer = response[0].maxPrivilege >= ACCESS_LEVEL.treasurer;
+        } else {
+            user.viewFinancials = false;
+            user.viewApprove = false;
+            user.viewOfficer = false;
+            user.viewTreasurer = false;
+        }
+
+        // Generate the API key now
+        const response_1 = await Models.account.generateAPIKey(req.body.uname);
+        res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
+        res.status(201).send(user);
+        return next();
+    } catch (err) {
+        // Username already exists (should not ever get hit)
+        if (err.code === "ER_DUP_ENTRY") {
+            logger.error("DUPLICATE USERNAME/EMAIL:" + req.body.uname);
+            res.status(400).send("Unexpected Error: Please contact Purdue IEEE!");
+            return next();
+        } else {
+            logger.error(err.stack);
+            res.status(500).send("Internal Server Error");
+            return next();
+        }
+    }
 }
 
 let oidc_good = false;
@@ -170,7 +265,7 @@ function oidc_check() {
     return process.env.USE_OIDC === "true" ? oidc_good : true;
 }
 // Only do the startup if we are using OIDC
-if (process.env.USE_OIDC) {
+if (process.env.USE_OIDC === "true") {
     oidc_startup();
 }
 
@@ -181,4 +276,5 @@ export {
     get_oidc_callback,
     get_oidc_logout,
     get_oidc_userinfo,
+    post_oidc_register,
 };

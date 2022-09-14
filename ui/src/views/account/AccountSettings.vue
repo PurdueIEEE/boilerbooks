@@ -125,9 +125,20 @@ export default {
 
       this.error = response.error;
       this.dispmsg = response.response;
+
+      if (!this.error) {
+        auth_state.newAuthState({
+          ...auth_state.state,
+          full_name: this.fname + " " + this.lname,
+        })
+      }
     },
     changePassword() {
-      this.$router.push('/myaccount/password');
+      if (import.meta.env.VITE_USE_OIDC) {
+        window.location.href = import.meta.env.VITE_OIDC_ACCOUNT;
+      } else {
+        this.$router.push('/myaccount/password');
+      }
     }
   },
   async mounted() {
