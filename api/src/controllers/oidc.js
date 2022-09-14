@@ -240,7 +240,7 @@ async function setupOIDC(cb) {
         cb(false);
     } catch (err) {
         if (err.code) {
-            return cb({ message: err.code });
+            return cb({ message: err.code, });
         }
         cb({ message: err.error, });
     }

@@ -42,7 +42,7 @@ if (process.env.USE_OIDC === "true") {
             maxAge: 1000*60*10, // The cookie is valid for 10 minutes
             httpOnly: true,
             secure: false,
-            domain: process.env.HTTP_HOST
+            domain: process.env.HTTP_HOST,
         },
         name: "boilerbooks_api_session",
     }));
