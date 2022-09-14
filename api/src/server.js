@@ -18,6 +18,7 @@
 import "dotenv/config";
 import express from "express";
 import session from "express-session";
+import createMemoryStore from "memorystore";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -26,6 +27,7 @@ import app from "./app.js";
 import { db_conn, db_check } from "./models/index.js";
 import { logger, smtp_check } from "./common_items.js";
 import checkAPI from "./middleware/checkAPI.js";
+import apiLogger from "./middleware/logging.js";
 import { oidc_check } from "./controllers/oidc.js";
 
 const server = express();
@@ -33,6 +35,7 @@ server.set("trust proxy", 1);
 
 // Setup the session store
 if (process.env.USE_OIDC === "true") {
+    const MemoryStore = createMemoryStore(session);
     server.use(session({
         secret: process.env.SESSION_SECRET,
         resave: false,
@@ -45,11 +48,12 @@ if (process.env.USE_OIDC === "true") {
             domain: process.env.HTTP_HOST,
         },
         name: "boilerbooks_api_session",
+        store: new MemoryStore(),
     }));
 }
 
 // Setup predefined middleware
-server.use(cors({ credentials:true, origin:true, maxAge:3600,})); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
+server.use(cors({ credentials:true, origin:true, maxAge:3600, })); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
 server.use(express.json());
 server.use(express.urlencoded({extended: true,}));
 server.use(cookieParser());
@@ -60,12 +64,16 @@ server.use(checkAPI);
 // Mount our routes
 server.use(app);
 
-// Log every route and it's result
-//   does not catch invalid API keys
-server.use((req, res, next) => {
-    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - Return ${res.statusCode} - "${req.method} ${req.originalUrl}"`);
+// Add a catchall route
+server.all('*', (req, res, next) => {
+    if (!res.headersSent) {
+        res.status(404).send(`Cannot '${req.method}' ${req.path}`);
+    }
     next();
 });
+
+// Logging middleware
+server.use(apiLogger);
 
 // Before attaching the process, make sure the database and smtp server are online
 let aux_check_num = setInterval(() => {

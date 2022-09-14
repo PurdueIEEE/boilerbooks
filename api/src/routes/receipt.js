@@ -64,7 +64,7 @@ router.get("/:file", async(req, res, next) => {
             return next();
         });
     } catch (err) {
-        logger.error(err.stack);
+        logger.error(err);
         if (!res.headersSent) res.status(500).send("Internal Server Error");
         return next();
     }

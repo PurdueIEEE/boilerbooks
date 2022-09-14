@@ -4,4 +4,4 @@ WORKDIR /app
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm ci --production
 COPY . .
-CMD [ "node", "src/app.js" ]
+CMD [ "node", "src/server.js" ]
