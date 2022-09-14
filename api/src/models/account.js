@@ -34,8 +34,8 @@ async function getUserByEmail(email) {
 
 async function updateUser(user) {
     return db_conn.promise().execute(
-        "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=?, address=?, city=?, state=?, zip=? WHERE username=?",
-        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]
+        `UPDATE Users SET modifydate=NOW(), ${process.env.USE_OIDC === "true" ? "" : "first=?, last=?, email=?,"} address=?, city=?, state=?, zip=? WHERE username=?`,
+        function() { return process.env.USE_OIDC ? [user.address, user.city, user.state, user.zip, user.uname] : [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]}(),
     );
 }
 

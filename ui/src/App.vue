@@ -71,6 +71,7 @@ export default {
   methods: {
     logout() {
       auth_state.clearAuthState();
+      // TODO this should invalidate the API key
       if (import.meta.env.VITE_USE_OIDC) {
         window.location.href = '/api/v2/oidc/logout';
       }

@@ -10,7 +10,7 @@
         <h4>Current First Name</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="fname">
+        <input class="form-control" v-model="fname" v-bind:disabled="useOIDC">
       </div>
     </div>
 
@@ -19,7 +19,7 @@
         <h4>Current Last Name</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="lname">
+        <input class="form-control" v-model="lname" v-bind:disabled="useOIDC">
       </div>
     </div>
 
@@ -28,7 +28,7 @@
         <h4>Current Email</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="email">
+        <input class="form-control" v-model="email" v-bind:disabled="useOIDC">
       </div>
     </div>
 
@@ -107,6 +107,7 @@ export default {
       zip: '',
       dispmsg:'',
       error:false,
+      useOIDC: import.meta.env.VITE_USE_OIDC === "true"
     }
   },
   methods: {
@@ -120,13 +121,13 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}`, {
         method: 'put',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({uname:auth_state.state.uname,fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
+        body: JSON.stringify({fname:this.fname,lname:this.lname,email:this.email,address:this.address,city:this.city,state:this.state,zip:this.zip}),
       });
 
       this.error = response.error;
       this.dispmsg = response.response;
 
-      if (!this.error) {
+      if (!this.error && !this.useOIDC) {
         auth_state.newAuthState({
           ...auth_state.state,
           full_name: this.fname + " " + this.lname,
@@ -134,7 +135,7 @@ export default {
       }
     },
     changePassword() {
-      if (import.meta.env.VITE_USE_OIDC) {
+      if (this.useOIDC) {
         window.location.href = import.meta.env.VITE_OIDC_ACCOUNT;
       } else {
         this.$router.push('/myaccount/password');

@@ -65,10 +65,7 @@ router.put("/:userID", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.fname === undefined ||
-        req.body.lname === undefined ||
-        req.body.email === undefined ||
-        req.body.address === undefined ||
+    if (req.body.address === undefined ||
         req.body.city === undefined ||
         req.body.state === undefined ||
         req.body.zip === undefined) {
@@ -76,15 +73,25 @@ router.put("/:userID", async(req, res, next) => {
         return next();
     }
 
-    if (req.body.fname === "" ||
-        req.body.lname === "" ||
-        req.body.email === "" ||
-        req.body.address === "" ||
+    if (req.body.address === "" ||
         req.body.city === "" ||
         req.body.state === "" ||
         req.body.zip === "") {
         res.status(400).send("All account details must be completed");
         return next();
+    }
+
+    if (process.env.USE_OIDC !== "true") {
+        if(req.body.fname === undefined ||
+            req.body.lname === undefined ||
+            req.body.email === undefined) {
+            res.status(400).send("All account details must be completed");
+        }
+        if(req.body.fname === "" ||
+            req.body.lname === "" ||
+            req.body.email === "") {
+            res.status(400).send("All account details must be completed");
+        }
     }
 
     if (req.body.state.length !== 2) {
