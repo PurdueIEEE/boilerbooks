@@ -39,6 +39,13 @@ async function updateUser(user) {
     );
 }
 
+async function updateUserOIDC(fname, lname, username) {
+    return db_conn.promise().execute(
+        "UPDATE Users SET modifydate=NOW(), first=?, last=? WHERE username=?",
+        [fname, lname, username]
+    );
+}
+
 async function getUserApprovals(user, committee="%", min_level=ACCESS_LEVEL.member) {
     return db_conn.promise().execute(
         "SELECT username, committee FROM approval WHERE (committee LIKE ?) AND username = ? AND privilege_level >= ?",
@@ -201,4 +208,5 @@ export default {
     getUserAccessLevel,
     generateAPIKey,
     associateAPIKeyToUser,
+    updateUserOIDC,
 };

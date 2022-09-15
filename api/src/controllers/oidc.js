@@ -55,6 +55,13 @@ async function get_oidc_callback(req, res, next) {
         }
 
         // SSO User does exist, so we must dump them to the UI OIDC endpoint
+        //  First, we should check if any OIDC information differs from their given information
+        const response = await Models.account.getUserByID(results[0].username);
+        if (response[0].first !== userinfo.given_name ||
+            response[0].last !== userinfo.family_name) {
+            await Models.account.updateUserOIDC(userinfo.given_name, userinfo.family_name, results[0].username);
+        }
+
         const response_1 = await Models.account.generateAPIKey(results[0].username);
         res.cookie("apikey", response_1, { maxAge:1000*60*60*24, sameSite:"strict",}); // cookie is valid for 24 hours
         res.redirect("/ui/oidc/login");
