@@ -82,12 +82,12 @@ router.put("/:userID", async(req, res, next) => {
     }
 
     if (process.env.USE_OIDC !== "true") {
-        if(req.body.fname === undefined ||
+        if (req.body.fname === undefined ||
             req.body.lname === undefined ||
             req.body.email === undefined) {
             res.status(400).send("All account details must be completed");
         }
-        if(req.body.fname === "" ||
+        if (req.body.fname === "" ||
             req.body.lname === "" ||
             req.body.email === "") {
             res.status(400).send("All account details must be completed");

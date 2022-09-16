@@ -65,7 +65,7 @@ server.use(checkAPI);
 server.use(app);
 
 // Add a catchall route
-server.all('*', (req, res, next) => {
+server.all("*", (req, res, next) => {
     if (!res.headersSent) {
         res.status(404).send(`Cannot '${req.method}' ${req.path}`);
     }
