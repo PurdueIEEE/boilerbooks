@@ -14,10 +14,10 @@
               <li class="nav-item mx-1" v-if="showUser&&auth_state.viewFinancials"><router-link class="nav-link" active-class="active" to="/financials"><i class="bi bi-bank2 me-1"></i>Financials</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/dues"><i class="bi bi-cash-coin me-1"></i>Dues</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><span class="nav-link">|</span></li>
-              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.uname}}</router-link></li>
+              <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{auth_state.full_name}}</router-link></li>
               <li class="nav-item mx-1"><router-link class="nav-link" active-class="active" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
-              <li class="nav-item mx-1"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/IEEE-Kite.svg" alt="" width="20" height="20">Purdue IEEE</a></li>
+              <li class="nav-item mx-1"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/pieee-kite.svg" alt="" width="25" height="25">Purdue IEEE</a></li>
             </ul>
           </div>
         </div>
@@ -71,7 +71,10 @@ export default {
   methods: {
     logout() {
       auth_state.clearAuthState();
-      this.$router.replace('/login');
+      // TODO this should invalidate the API key
+      if (import.meta.env.VITE_USE_OIDC) {
+        window.location.href = '/api/v2/oidc/logout';
+      }
     }
   },
   mounted() {

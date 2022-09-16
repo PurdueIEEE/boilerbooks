@@ -16,5 +16,6 @@ export default defineConfig({
     },
     preview: {
         port: 3001
-    }
+    },
+    envDir: "./src/environment"
 });

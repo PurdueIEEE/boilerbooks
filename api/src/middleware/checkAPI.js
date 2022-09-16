@@ -1,26 +1,36 @@
-import { db_conn } from "../models/index.js";
+/*
+   Copyright 2022 Purdue IEEE and Hadi Ahmed
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+import Models from "../models/index.js";
 import { logger } from "../common_items.js";
 
 async function checkAPI(req, res, next) {
     // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl === "/account" || req.originalUrl.startsWith("/login")) {
+    if (req.originalUrl.startsWith("/login") || req.originalUrl.startsWith("/oidc")) {
         req.context = {};
         next();
     } else {
         // use an API key with the Authorization header
         if (req.cookies.apikey === undefined) {
             logger.info(`[] - "${req.originalUrl}" - Return 401`);
-            if (req.originalUrl.startsWith("/receipt")) {
-                return res.redirect("/ui/login");
-            }
             return res.status(401).send("Must authenticate first");
         }
 
         try {
-            const [results] = await db_conn.promise().execute(
-                "SELECT username, apikeygentime FROM Users WHERE Users.apikey = ?",
-                [req.cookies.apikey]
-            );
+            const [results] = await Models.account.associateAPIKeyToUser(req.cookies.apikey);
 
             if (results.length === 0) {
                 logger.info(`[] - "${req.originalUrl}" - Return 401`);

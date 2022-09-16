@@ -286,6 +286,23 @@ const routes = [
     }
   },
   {
+    path: '/oidc',
+    component: () => import('../views/oidc/OIDCFrame.vue'),
+    children: [
+      {
+        path: 'login',
+        component: () => import('../views/oidc/OIDCLogin.vue'),
+      },
+      {
+        path: 'register',
+        component: () => import('../views/oidc/OIDCRegister.vue'),
+      }
+    ],
+    meta: {
+      requiresAuth: false,
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     component: NotFound,
     meta: {

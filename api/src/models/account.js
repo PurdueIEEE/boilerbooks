@@ -34,8 +34,15 @@ async function getUserByEmail(email) {
 
 async function updateUser(user) {
     return db_conn.promise().execute(
-        "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=?, address=?, city=?, state=?, zip=? WHERE username=?",
-        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]
+        `UPDATE Users SET modifydate=NOW(), ${process.env.USE_OIDC === "true" ? "" : "first=?, last=?, email=?,"} address=?, city=?, state=?, zip=? WHERE username=?`,
+        function() { return process.env.USE_OIDC ? [user.address, user.city, user.state, user.zip, user.uname] : [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname]; }()
+    );
+}
+
+async function updateUserOIDC(fname, lname, username) {
+    return db_conn.promise().execute(
+        "UPDATE Users SET modifydate=NOW(), first=?, last=? WHERE username=?",
+        [fname, lname, username]
     );
 }
 
@@ -135,10 +142,24 @@ async function loginUser(user) {
     );
 }
 
+async function loginOIDCUser(email) {
+    return db_conn.promise().execute(
+        "SELECT username FROM Users WHERE Users.email = ?",
+        [email]
+    );
+}
+
 async function getUserAccessLevel(user) {
     return db_conn.promise().execute(
         "SELECT MAX(A.amount) AS maxAmount, MAX(A.privilege_level) AS maxPrivilege FROM approval A WHERE A.username = ? AND A.privilege_level > ?",
         [user, ACCESS_LEVEL.member]
+    );
+}
+
+async function associateAPIKeyToUser(key) {
+    return db_conn.promise().execute(
+        "SELECT username, apikeygentime, first, last FROM Users WHERE Users.apikey = ?",
+        [key]
     );
 }
 
@@ -172,6 +193,7 @@ export default {
     getUserByEmail,
     createUser,
     loginUser,
+    loginOIDCUser,
     updateUser,
     updatePassword,
     getUserApprovals,
@@ -185,4 +207,6 @@ export default {
     canApprovePurchase,
     getUserAccessLevel,
     generateAPIKey,
+    associateAPIKeyToUser,
+    updateUserOIDC,
 };

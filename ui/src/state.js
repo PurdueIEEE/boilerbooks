@@ -19,6 +19,7 @@ import { reactive } from 'vue';
 let auth_state = {
     state: reactive({
         uname: "",
+        full_name: "",
         viewFinancials: false,
         viewApprove: false,
         viewOfficer: false,
@@ -27,6 +28,7 @@ let auth_state = {
     newAuthState(newAuth) {
         localStorage.setItem('authState', JSON.stringify(newAuth));
         this.state.uname = newAuth.uname;
+        this.state.full_name = newAuth.full_name,
         this.state.viewFinancials = newAuth.viewFinancials;
         this.state.viewApprove = newAuth.viewApprove;
         this.state.viewOfficer = newAuth.viewOfficer;
@@ -34,6 +36,7 @@ let auth_state = {
     },
     setAuthState(newAuth) {
         this.state.uname = newAuth.uname;
+        this.state.full_name = newAuth.full_name,
         this.state.viewFinancials = newAuth.viewFinancials;
         this.state.viewApprove = newAuth.viewApprove;
         this.state.viewOfficer = newAuth.viewOfficer;
@@ -43,6 +46,7 @@ let auth_state = {
         localStorage.removeItem('authState');
         document.cookie="apikey=logout; max-age=-1; SameSite=Strict; path=/";
         this.state.uname = '';
+        this.state.full_name = '';
         this.state.viewFinancials = false;
         this.state.viewApprove = false;
         this.state.viewOfficer = false;

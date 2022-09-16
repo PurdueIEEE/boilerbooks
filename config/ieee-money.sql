@@ -121,6 +121,7 @@ ALTER TABLE `Purchases`
 ALTER TABLE `Users`
   ADD PRIMARY KEY (`userid`),
   ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
   ADD UNIQUE KEY `userid` (`userid`);
 
 -- Configure the primary keys

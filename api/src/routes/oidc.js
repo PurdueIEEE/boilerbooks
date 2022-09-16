@@ -14,30 +14,16 @@
    limitations under the License.
 */
 
-// Import libraries
 import { Router } from "express";
 
-// Import files
-import routes from "./routes/index.js";
+import { get_oidc_login, get_oidc_callback, get_oidc_logout, get_oidc_userinfo, post_oidc_register } from "../controllers/oidc.js";
 
-// Create Express
-const app = Router();
+const router = Router();
 
-// Setup our routes
-app.use("/account", routes.account);
-app.use("/budgets", routes.budgets);
-app.use("/purchase", routes.purchase);
-app.use("/committee", routes.committee);
-app.use("/receipts", routes.receipt);
-app.use("/income", routes.income);
-app.use("/access", routes.access);
-app.use("/dues", routes.dues);
+router.get("/login", get_oidc_login);
+router.get("/callback", get_oidc_callback);
+router.get("/logout", get_oidc_logout);
+router.get("/userinfo", get_oidc_userinfo);
+router.post("/register", post_oidc_register);
 
-// conditionally mount login routes
-if (process.env.USE_OIDC === "true") {
-    app.use("/oidc", routes.oidc);
-} else {
-    app.use("/login", routes.login);
-}
-
-export default app;
+export default router;

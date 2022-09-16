@@ -14,26 +14,13 @@
    limitations under the License.
 */
 
-import account from "./account.js";
-import budgets from "./budgets.js";
-import purchase from "./purchase.js";
-import committee from "./committee.js";
-import login from "./login.js";
-import receipt from "./receipt.js";
-import income from "./income.js";
-import access from "./access.js";
-import dues from "./dues.js";
-import oidc from "./oidc.js";
+import { logger } from "../common_items.js";
 
-export default {
-    account,
-    budgets,
-    purchase,
-    committee,
-    login,
-    receipt,
-    income,
-    access,
-    dues,
-    oidc,
-};
+async function apiLogger(req, res, next) {
+    // Log every route and it's result
+    //   does not catch invalid API keys
+    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - Return ${res.statusCode} - "${req.method} ${req.originalUrl}"`);
+    next();
+}
+
+export default apiLogger;
