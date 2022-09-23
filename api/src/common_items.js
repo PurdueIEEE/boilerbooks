@@ -137,7 +137,6 @@ const dues_committees =
     "EMBS",
     "Growth & Engagement",
     "MTT-S",
-    "Industrial Relations",
     "Learning",
     "Racing",
     "ROV",

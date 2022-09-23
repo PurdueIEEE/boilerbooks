@@ -230,8 +230,8 @@ router.get("/summary/:year?", async(req, res, next) => {
             // the shit regex is a holdover since some multi-committee dues use ', ' instead of ','
             //  FIXME: this should probabaly be standardized in the db
             dues.committee.split(/(?:, |,)+/).forEach(comm => {
-                if (comm === "None" && resp_obj[comm] == undefined) {
-                    resp_obj[comm] = [0,0]; // Handle case where committee is 'None'
+                if (resp_obj[comm] == undefined) {
+                    resp_obj[comm] = [0,0]; // Handle case where committee is not in the current matrix
                 }
 
                 if (dues.status === "Paid" || dues.status === "Exempt") {
