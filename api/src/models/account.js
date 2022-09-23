@@ -39,10 +39,10 @@ async function updateUser(user) {
     );
 }
 
-async function updateUserOIDC(fname, lname, username) {
+async function updateUserOIDC(fname, lname, email, username) {
     return db_conn.promise().execute(
-        "UPDATE Users SET modifydate=NOW(), first=?, last=? WHERE username=?",
-        [fname, lname, username]
+        "UPDATE Users SET modifydate=NOW(), first=?, last=?, email=? WHERE username=?",
+        [fname, lname, email, username]
     );
 }
 
@@ -128,10 +128,10 @@ async function checkResetTime(user, rstlink) {
     );
 }
 
-async function createUser(user, hash) {
+async function createUser(user, hash, oidc_id="") {
     return db_conn.promise().execute(
-        "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '')",
-        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash]
+        "INSERT INTO Users (first,last,email,address,city,state,zip,cert,username,password, passwordreset, apikey, oidc_id) VALUES (?, ?, ?, ?, ?, ?, ?, '', ?, ?, '', '', ?)",
+        [user.fname, user.lname, user.email, user.address, user.city, user.state, user.zip, user.uname, hash, oidc_id]
     );
 }
 
@@ -142,10 +142,17 @@ async function loginUser(user) {
     );
 }
 
-async function loginOIDCUser(email) {
+async function loginOIDCUser(id) {
     return db_conn.promise().execute(
-        "SELECT username FROM Users WHERE Users.email = ?",
-        [email]
+        "SELECT username FROM Users WHERE Users.oidc_id = ?",
+        [id]
+    );
+}
+
+async function linkOIDCUser(id, oidc_id) {
+    return db_conn.promise().execute(
+        "UPDATE Users SET oidc_id = ? WHERE username = ?",
+        [oidc_id, id]
     );
 }
 
@@ -209,4 +216,5 @@ export default {
     generateAPIKey,
     associateAPIKeyToUser,
     updateUserOIDC,
+    linkOIDCUser,
 };

@@ -46,20 +46,28 @@ async function get_oidc_callback(req, res, next) {
         req.session.userinfo = userinfo;
         req.session.save();
 
-        const [results] = await Models.account.loginOIDCUser(userinfo.email);
+        let [results] = await Models.account.loginOIDCUser(userinfo.sub);
 
-        // SSO User does not have a Boiler Books account, we must register them at the U OIDC endpoint
+        // SSO User does not have a linked Boiler Books account
         if (results.length === 0) {
-            res.redirect("/ui/oidc/register");
-            return next();
+            const [results_1] = await Models.account.getUserByEmail(userinfo.email);
+            //  They really don't have an account, we must register them at the UI OIDC endpoint
+            if (results_1.length === 0) {
+                res.redirect("/ui/oidc/register");
+                return next();
+            }
+
+            await Models.account.linkOIDCUser(results_1[0].username, userinfo.sub);
+            results = results_1;
         }
 
         // SSO User does exist, so we must dump them to the UI OIDC endpoint
         //  First, we should check if any OIDC information differs from their given information
         const response = await Models.account.getUserByID(results[0].username);
         if (response[0].first !== userinfo.given_name ||
-            response[0].last !== userinfo.family_name) {
-            await Models.account.updateUserOIDC(userinfo.given_name, userinfo.family_name, results[0].username);
+            response[0].last !== userinfo.family_name ||
+            response[0].email !== userinfo.email) {
+            await Models.account.updateUserOIDC(userinfo.given_name, userinfo.family_name, userinfo.email, results[0].username);
         }
 
         const response_1 = await Models.account.generateAPIKey(results[0].username);
@@ -192,7 +200,7 @@ async function post_oidc_register(req, res, next) {
 
     try {
         // First try and create the account
-        await Models.account.createUser(req.body, "");
+        await Models.account.createUser(req.body, "", req.session.userinfo.sub);
 
         // Setup the return object
         const user = {

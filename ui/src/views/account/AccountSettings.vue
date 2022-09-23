@@ -7,6 +7,15 @@
 
     <div class="row my-2">
       <div class="label-responsive col-md-4">
+        <h4>Account Username</h4>
+      </div>
+      <div class="col-md-8">
+        <input class="form-control" v-model="uname" v-bind:disabled="useOIDC">
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="label-responsive col-md-4">
         <h4>Current First Name</h4>
       </div>
       <div class="col-md-8">
@@ -100,6 +109,7 @@ export default {
     return {
       fname: '',
       lname: '',
+      uname: auth_state.state.uname,
       email: '',
       address: '',
       city: '',

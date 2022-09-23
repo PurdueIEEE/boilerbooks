@@ -95,7 +95,8 @@ CREATE TABLE `Users` (
   `passwordreset` varchar(512) NOT NULL,
   `resettime` datetime DEFAULT NULL,
   `apikey` varchar(512) NOT NULL,
-  `apikeygentime` datetime DEFAULT NULL
+  `apikeygentime` datetime DEFAULT NULL,
+  `oidc_id` varchar(128) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Add primary key indicies
