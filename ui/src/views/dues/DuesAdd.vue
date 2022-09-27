@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h3>Add Dues Paying Member</h3>
+    <h3>Add Committee Member</h3>
+    <p class="fs-3">The member will appear as 'Unpaid' until the Treasurer marks them as 'Paid' or 'Exempt'.</p>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <form v-on:submit.prevent="submitDues()" class="row g-3 text-start">
