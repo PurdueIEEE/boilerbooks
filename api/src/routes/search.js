@@ -15,6 +15,7 @@
 */
 
 import { Router } from "express";
+import { fiscal_year_lut } from "../common_items.js";
 
 import Models from "../models/index.js";
 
@@ -25,6 +26,7 @@ const router = Router();
     TODO this route performs no request body validation
 */
 router.post("/", async(req, res, next) => {
+    req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : 'any';
     const [results] = await Models.search.search(req.body);
 
     res.status(201).send(results);

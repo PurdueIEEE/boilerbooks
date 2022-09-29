@@ -18,7 +18,7 @@ import { db_conn } from "./index.js";
 
 async function search(params) {
     // These lines seem useless, but they are very important!
-    //  we are dynamically creating this query, so we are passing in
+    //  We are dynamically creating this query, so we are passing in
     //  a value the user gave us into the query string.
     //  This is considered A Bad Idea(tm) so we are sanitizing the input
     //  and limiting the values we can select to known safe ones.
@@ -26,13 +26,16 @@ async function search(params) {
     const itemModifier = params.itemModifier === "LIKE" ? "LIKE" : (params.itemModifier === "EXACTLY" ? "=" : "NOT LIKE");
     const vendorModifier = params.vendorModifier === "LIKE" ? "LIKE" : (params.vendorModifier === "EXACTLY" ? "=" : "NOT LIKE");
     const reasonModifier = params.reasonModifier === "LIKE" ? "LIKE" : (params.reasonModifier === "EXACTLY" ? "=" : "NOT LIKE");
+    const fiscalyearModifier = params.fiscalyear !== 'any' ? "=" : ">=";
     return db_conn.promise().execute(
-        `SELECT p.item, p.purchaseID, p.committee, p.status, DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby FROM Purchases p WHERE
+        `SELECT p.item, p.purchaseID, p.committee, p.status, DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, (SELECT CONCAT(U.first, ' ', U.last)
+        FROM Users U WHERE U.username = p.username) purchasedby FROM Purchases p WHERE
         (LOWER(p.committee) LIKE ?) AND
+        (p.fiscal_year ${fiscalyearModifier} ?) AND
         ((LOWER(p.item) ${itemModifier} ?) ${joiner}
         (LOWER(p.vendor) ${vendorModifier} ?) ${joiner}
         (LOWER(p.purchasereason) ${reasonModifier} ?))`,
-        [selectInput(params.committee, 'any', '%'), selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
+        [selectInput(params.committee, 'any', '%'), params.fiscalyear === 'any' ? 0 : params.fiscalyear, selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
     );
 }
 
