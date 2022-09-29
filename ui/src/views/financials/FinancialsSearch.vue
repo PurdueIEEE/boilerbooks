@@ -92,11 +92,19 @@
       v-bind:row_key="'purchaseID'"
       v-bind:row_headers="[
         ['Purchase ID', 'purchaseID'],
-        ['Item', 'item']]"
+        ['Purchase Date', 'date'],
+        ['Item', 'item'],
+        ['Committee', 'committee'],
+        ['Purchased By', 'purchasedby'],
+        ['Status', 'status']]"
     >
       <template v-slot:data="purchase">
         <td><router-link v-bind:to="goToItem(purchase.row.purchaseID)" class="link-primary text-decoration-none">{{purchase.row.purchaseID}}</router-link></td>
+        <td>{{purchase.row.date}}</td>
         <td>{{purchase.row.item}}</td>
+        <td>{{purchase.row.committee}}</td>
+        <td>{{purchase.row.purchasedby}}</td>
+        <td>{{purchase.row.status}}</td>
       </template>
     </DataTable>
 

@@ -27,8 +27,8 @@ async function search(params) {
     const vendorModifier = params.vendorModifier === "LIKE" ? "LIKE" : (params.vendorModifier === "EXACTLY" ? "=" : "NOT LIKE");
     const reasonModifier = params.reasonModifier === "LIKE" ? "LIKE" : (params.reasonModifier === "EXACTLY" ? "=" : "NOT LIKE");
     return db_conn.promise().execute(
-        `SELECT p.item, p.purchaseID FROM Purchases p WHERE
-        (p.committee LIKE ?) AND
+        `SELECT p.item, p.purchaseID, p.committee, p.status, DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby FROM Purchases p WHERE
+        (LOWER(p.committee) LIKE ?) AND
         ((LOWER(p.item) ${itemModifier} ?) ${joiner}
         (LOWER(p.vendor) ${vendorModifier} ?) ${joiner}
         (LOWER(p.purchasereason) ${reasonModifier} ?))`,
