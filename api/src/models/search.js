@@ -28,10 +28,10 @@ async function search(params) {
     const reasonModifier = params.reasonModifier === "LIKE" ? "LIKE" : (params.reasonModifier === "EXACTLY" ? "=" : "NOT LIKE");
     return db_conn.promise().execute(
         `SELECT p.item, p.purchaseID FROM Purchases p WHERE
-        (p.committee LIKE ?) ${joiner}
-        (p.item ${itemModifier} ?) ${joiner}
+        (p.committee LIKE ?) AND
+        ((p.item ${itemModifier} ?) ${joiner}
         (p.vendor ${vendorModifier} ?) ${joiner}
-        (p.purchasereason ${reasonModifier} ?)`,
+        (p.purchasereason ${reasonModifier} ?))`,
         [selectInput(params.committee, 'any', '%'), selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
     );
 }
