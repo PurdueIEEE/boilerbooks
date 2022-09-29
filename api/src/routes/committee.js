@@ -356,6 +356,11 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 });
 
+/* Internal Helper Function */
+function cleanCSVEntry(text) {
+    return `"${text.replaceAll("\"", "\"\"")}"`
+}
+
 /*
     Get a CSV file of all purchases for a given year
 */
@@ -402,10 +407,10 @@ router.get("/:commID/csv", async(req, res, next) => {
 
     try {
         const [results] = await Models.committee.getCommitteePurchasesByDates(committee_lut[req.params.commID][0], req.query.start, req.query.end);
-        let csvString = "Purchase ID,Date,Purchaser,Item,Vendor,Cost,Reason\n";
+        let csvString = "Purchase ID,Date,Purchaser,Item,Vendor,Cost,Reason,Comments\n";
 
         for (let purchase of results) {
-            csvString += `"${purchase.purchaseid}","${purchase.date}","${purchase.pby.replaceAll("\"", "\"\"")}","${purchase.item.replaceAll("\"", "\"\"")}","${purchase.vendor.replaceAll("\"", "\"\"")}","${purchase.cost.replaceAll("\"", "\"\"")}","${purchase.purchasereason.replaceAll("\"", "\"\"")}"\n`;
+            csvString += `"${purchase.purchaseid}","${purchase.date}",${cleanCSVEntry(purchase.pby)},${cleanCSVEntry(purchase.item)},${cleanCSVEntry(purchase.vendor)},${cleanCSVEntry(purchase.cost)},${cleanCSVEntry(purchase.purchasereason)},${cleanCSVEntry(purchase.comments)}\n`;
         }
 
         res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);
