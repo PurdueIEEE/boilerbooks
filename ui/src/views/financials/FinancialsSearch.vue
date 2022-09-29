@@ -9,7 +9,7 @@
           <label for="searchCommittee" class="form-label fw-bold">Committee</label>
           <select id="searchCommittee" class="form-select" v-model="committee" required>
             <option selected value="any">ALL COMMITTEES</option>
-            <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
+            <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="val[1]">{{val[1]}}</option>
           </select>
         </div>
 
@@ -24,8 +24,8 @@
         <div class="col-md-2">
           <label for="searchJoiner" class="form-label fw-bold">Join Fields With</label>
           <select id="searchJoiner" class="form-select" v-model="joiner" required>
-            <option selected>AND</option>
-            <option>OR</option>
+            <option selected>OR</option>
+            <option>AND</option>
           </select>
         </div>
 
@@ -135,7 +135,7 @@ export default {
       fiscalList: [],
       committee: 'any',
       fiscalyear: 'any',
-      joiner: 'AND',
+      joiner: 'OR',
       itemKey: '',
       itemModifier: 'LIKE',
       vendorKey: '',

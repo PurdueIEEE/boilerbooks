@@ -17,11 +17,28 @@
 import { db_conn } from "./index.js";
 
 async function search(params) {
+    // These lines seem useless, but they are very important!
+    //  we are dynamically creating this query, so we are passing in
+    //  a value the user gave us into the query string.
+    //  This is considered A Bad Idea(tm) so we are sanitizing the input
+    //  and limiting the values we can select to known safe ones.
+    const joiner = params.joiner === "OR" ? "OR" : "AND";
+    const itemModifier = params.itemModifier === "LIKE" ? "LIKE" : (params.itemModifier === "EXACTLY" ? "=" : "NOT LIKE");
+    const vendorModifier = params.vendorModifier === "LIKE" ? "LIKE" : (params.vendorModifier === "EXACTLY" ? "=" : "NOT LIKE");
+    const reasonModifier = params.reasonModifier === "LIKE" ? "LIKE" : (params.reasonModifier === "EXACTLY" ? "=" : "NOT LIKE");
     return db_conn.promise().execute(
         `SELECT p.item, p.purchaseID FROM Purchases p WHERE
-        (p.committee LIKE ?)`,
-        [params.committee === "any" ? '%' : params.committee]
+        (p.committee LIKE ?) ${joiner}
+        (p.item ${itemModifier} ?) ${joiner}
+        (p.vendor ${vendorModifier} ?) ${joiner}
+        (p.purchasereason ${reasonModifier} ?)`,
+        [selectInput(params.committee, 'any', '%'), selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
     );
+}
+
+// helper method to check if an input is a sepcial string and return a special value
+function selectInput(input, check, value) {
+    return input === check ? value : input;
 }
 
 export default {
