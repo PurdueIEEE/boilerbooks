@@ -186,6 +186,10 @@ const routes = [
         component: () => import('../views/financials/FinancialsExport.vue'),
       },
       {
+        path: 'search',
+        component: () => import('../views/financials/FinancialsSearch.vue'),
+      },
+      {
         path: ':pathMatch(.*)',
         component: NotFound
       }

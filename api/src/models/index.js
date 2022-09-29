@@ -21,6 +21,7 @@ import income from "./income.js";
 import access from "./access.js";
 import budgets from "./budgets.js";
 import dues from "./dues.js";
+import search from "./search.js";
 
 import { logger } from "../common_items.js";
 
@@ -74,6 +75,7 @@ export default {
     access,
     budgets,
     dues,
+    search,
 };
 
 export { db_conn, db_check, };

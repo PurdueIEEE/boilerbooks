@@ -14,28 +14,16 @@
    limitations under the License.
 */
 
-import account from "./account.js";
-import budgets from "./budgets.js";
-import purchase from "./purchase.js";
-import committee from "./committee.js";
-import login from "./login.js";
-import receipt from "./receipt.js";
-import income from "./income.js";
-import access from "./access.js";
-import dues from "./dues.js";
-import oidc from "./oidc.js";
-import search from "./search.js";
+import { db_conn } from "./index.js";
+
+async function search(params) {
+    return db_conn.promise().execute(
+        `SELECT p.item, p.purchaseID FROM Purchases p WHERE
+        (p.committee LIKE ?)`,
+        [params.committee === "any" ? '%' : params.committee]
+    );
+}
 
 export default {
-    account,
-    budgets,
-    purchase,
-    committee,
-    login,
-    receipt,
-    income,
-    access,
-    dues,
-    oidc,
     search,
-};
+}

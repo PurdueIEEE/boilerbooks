@@ -14,28 +14,21 @@
    limitations under the License.
 */
 
-import account from "./account.js";
-import budgets from "./budgets.js";
-import purchase from "./purchase.js";
-import committee from "./committee.js";
-import login from "./login.js";
-import receipt from "./receipt.js";
-import income from "./income.js";
-import access from "./access.js";
-import dues from "./dues.js";
-import oidc from "./oidc.js";
-import search from "./search.js";
+import { Router } from "express";
 
-export default {
-    account,
-    budgets,
-    purchase,
-    committee,
-    login,
-    receipt,
-    income,
-    access,
-    dues,
-    oidc,
-    search,
-};
+import Models from "../models/index.js";
+
+const router = Router();
+
+/*
+    Performs an advanced search
+    TODO this route performs no request body validation
+*/
+router.post("/", async(req, res, next) => {
+    const [results] = await Models.search.search(req.body);
+
+    res.status(201).send(results);
+    return next();
+});
+
+export default router;
