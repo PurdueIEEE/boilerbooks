@@ -38,7 +38,7 @@ async function search(params) {
 
 // helper method to check if an input is a sepcial string and return a special value
 function selectInput(input, check, value) {
-    return input === check ? value : input.toLowerCase();
+    return input === check ? value : `%${input.toLowerCase()}%`;
 }
 
 export default {
