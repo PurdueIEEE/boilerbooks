@@ -29,16 +29,16 @@ async function search(params) {
     return db_conn.promise().execute(
         `SELECT p.item, p.purchaseID FROM Purchases p WHERE
         (p.committee LIKE ?) AND
-        ((p.item ${itemModifier} ?) ${joiner}
-        (p.vendor ${vendorModifier} ?) ${joiner}
-        (p.purchasereason ${reasonModifier} ?))`,
+        ((LOWER(p.item) ${itemModifier} ?) ${joiner}
+        (LOWER(p.vendor) ${vendorModifier} ?) ${joiner}
+        (LOWER(p.purchasereason) ${reasonModifier} ?))`,
         [selectInput(params.committee, 'any', '%'), selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
     );
 }
 
 // helper method to check if an input is a sepcial string and return a special value
 function selectInput(input, check, value) {
-    return input === check ? value : input;
+    return input === check ? value : input.toLowerCase();
 }
 
 export default {
