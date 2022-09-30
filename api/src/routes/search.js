@@ -27,7 +27,8 @@ const router = Router();
 */
 router.post("/", async(req, res, next) => {
     req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : 'any';
-    const [results] = await Models.search.search(req.body);
+
+    const [results] = await Models.search.search(req.body, req.context.request_user_id);
 
     res.status(201).send(results);
     return next();
