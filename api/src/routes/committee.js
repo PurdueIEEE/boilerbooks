@@ -358,7 +358,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
 
 /* Internal Helper Function */
 function cleanCSVEntry(text) {
-    return `"${text.replaceAll("\"", "\"\"")}"`
+    return `"${text.replaceAll("\"", "\"\"")}"`;
 }
 
 /*
