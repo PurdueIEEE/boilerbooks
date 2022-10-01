@@ -181,6 +181,7 @@ export default {
   },
   methods: {
     async submitSearch() {
+      this.dispmsg = "";
       const response = await fetchWrapperJSON('/api/v2/search', {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),

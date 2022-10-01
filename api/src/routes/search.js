@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { fiscal_year_lut } from "../common_items.js";
+import { committee_name_api, fiscal_year_lut } from "../common_items.js";
 
 import Models from "../models/index.js";
 
@@ -23,10 +23,19 @@ const router = Router();
 
 /*
     Performs an advanced search
-    TODO this route performs no request body validation
 */
 router.post("/", async(req, res, next) => {
-    req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : 'any';
+    if (committee_name_api[req.body.committee] === undefined && req.body.committee !== "any") {
+        res.status(400).send("Improper committee value");
+        return next();
+    }
+
+    if (fiscal_year_lut[req.body.fiscalyear] === undefined && req.body.fiscalyear !== "any") {
+        res.status(400).send("Improper fiscal year value");
+        return next();
+    }
+
+    req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : "any";
 
     const [results] = await Models.search.search(req.body, req.context.request_user_id);
 

@@ -27,7 +27,7 @@ async function search(params, id) {
     const itemModifier = params.itemModifier === "LIKE" ? "LIKE" : (params.itemModifier === "EXACTLY" ? "=" : "NOT LIKE");
     const vendorModifier = params.vendorModifier === "LIKE" ? "LIKE" : (params.vendorModifier === "EXACTLY" ? "=" : "NOT LIKE");
     const reasonModifier = params.reasonModifier === "LIKE" ? "LIKE" : (params.reasonModifier === "EXACTLY" ? "=" : "NOT LIKE");
-    const fiscalyearModifier = params.fiscalyear !== 'any' ? "=" : ">=";
+    const fiscalyearModifier = params.fiscalyear !== "any" ? "=" : ">=";
     return db_conn.promise().execute(
         `SELECT p.item, p.purchaseID, p.committee, p.status, DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
         FROM Purchases p WHERE
@@ -37,7 +37,7 @@ async function search(params, id) {
         ((LOWER(p.item) ${itemModifier} ?) ${joiner}
         (LOWER(p.vendor) ${vendorModifier} ?) ${joiner}
         (LOWER(p.purchasereason) ${reasonModifier} ?))`,
-        [id, ACCESS_LEVEL.member, selectInput(params.committee, 'any', '%'), params.fiscalyear === 'any' ? 0 : params.fiscalyear, selectInput(params.itemKey, '', '%'), selectInput(params.vendorKey, '', '%'), selectInput(params.reasonKey, '', '%')]
+        [id, ACCESS_LEVEL.member, selectInput(params.committee, "any", "%"), params.fiscalyear === "any" ? 0 : params.fiscalyear, selectInput(params.itemKey, "", "%"), selectInput(params.vendorKey, "", "%"), selectInput(params.reasonKey, "", "%")]
     );
 }
 
@@ -48,4 +48,4 @@ function selectInput(input, check, value) {
 
 export default {
     search,
-}
+};
