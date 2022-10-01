@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Advanced Committee Search</h3>
+    <h3>Advanced Committee Purchase Search</h3>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <form v-on:submit.prevent="submitSearch">
