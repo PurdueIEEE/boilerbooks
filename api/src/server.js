@@ -64,7 +64,7 @@ server.use(rateLimit({
     standardHeaders: true,
     legacyHeaders: true,
     message: "API Rate Limit - only make 100 requests every minute",
-    skip: (req, res) => { return req.originalUrl === "/" },
+    skip: (req, res) => { return req.originalUrl === "/"; },
 }));
 
 // Setup our middleware
