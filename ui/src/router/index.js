@@ -321,13 +321,20 @@ const router = createRouter({
 });
 
 // Make sure user is logged in before moving
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
   if (!requiresAuth) { // does not need auth
     next();
   } else if (requiresAuth && auth_state.state.uname !== '') { // needs auth and auth set
-    next();
+    // verify API key is valid
+    const response = await fetch("/api/v2/");
+    if (response.status === 401) {
+      auth_state.clearAuthState();
+      next(`/login?returnto=${to.fullPath}`);
+    } else {
+      next();
+    }
   } else { // check if cookie exists
     let user = null;
 
@@ -337,7 +344,15 @@ router.beforeEach((to, from, next) => {
 
     if (user !== null) { // found valid old login
       auth_state.setAuthState(user);
-      next();
+
+      // verify API key is valid
+      const response = await fetch("/api/v2/");
+      if (response.status === 401) {
+        auth_state.clearAuthState();
+        next(`/login?returnto=${to.fullPath}`);
+      } else {
+        next();
+      }
     } else { // need to login
       next(`/login?returnto=${to.fullPath}`);
     }

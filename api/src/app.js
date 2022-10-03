@@ -24,6 +24,7 @@ import routes from "./routes/index.js";
 const app = Router();
 
 // Setup our routes
+app.get("/", (req, res, next) => { res.status(204).send(); next(); });
 app.use("/account", routes.account);
 app.use("/budgets", routes.budgets);
 app.use("/purchase", routes.purchase);
