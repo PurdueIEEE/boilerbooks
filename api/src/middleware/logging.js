@@ -19,6 +19,9 @@ import { logger } from "../common_items.js";
 async function apiLogger(req, res, next) {
     // Log every route and it's result
     //   does not catch invalid API keys
+    if (req.originalUrl === "/") {
+        return next(); // Don't clutter logs with a key check
+    }
     logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - Return ${res.statusCode} - "${req.method} ${req.originalUrl}"`);
     next();
 }
