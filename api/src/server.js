@@ -21,6 +21,7 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 
 // Import files
 import app from "./app.js";
@@ -57,6 +58,14 @@ server.use(cors({ credentials:true, origin:true, maxAge:3600, })); // allow cach
 server.use(express.json());
 server.use(express.urlencoded({extended: true,}));
 server.use(cookieParser());
+server.use(rateLimit({
+    windowMs: 1000 * 60, // 1 minute
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: true,
+    message: "API Rate Limit - only make 100 requests every minute",
+    skip: (req, res) => { return req.url === "/" },
+}));
 
 // Setup our middleware
 server.use(checkAPI);

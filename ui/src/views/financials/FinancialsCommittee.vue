@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>View Committee Financials</h3>
-    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error1,'text-danger':error1}">{{dispmsg}}</div>
+    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <div class="row g-3 text-start">
       <div class="col-md-6">
@@ -146,8 +146,7 @@ export default {
       fiscalyear: '',
       found_comm: false,
       found_fy: false,
-      error1: false,
-      error2: false,
+      error: false,
       dispmsg: '',
       totalBalance: {balance:''},
       totalBudget: {budget:''},
@@ -169,13 +168,13 @@ export default {
     });
 
     if (committeeList.error) {
-      this.error1 = true;
+      this.error = true;
       this.dispmsg = committeeList.response;
       return;
     }
 
     if (fiscalList.error) {
-      this.error2 = true;
+      this.error = true;
       this.dispmsg = fiscalList.response;
       return;
     }
@@ -290,6 +289,8 @@ export default {
         this.financialSummary = [];
         this.expenseTable = [];
         this.incomeTable = [];
+        this.error = true;
+        this.dispmsg = "Please refresh page";
         return;
       }
 
