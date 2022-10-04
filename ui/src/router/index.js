@@ -157,6 +157,14 @@ const routes = [
         component: () => import('../views/income/IncomeHome.vue'),
       },
       {
+        path: 'report',
+        component: () => import('../views/income/IncomeReport.vue'),
+      },
+      {
+        path: 'donation',
+        component: () => import('../views/income/IncomeDonation.vue'),
+      },
+      {
         path: 'modify',
         component: () => import('../views/income/IncomeModify.vue'),
       },

@@ -21,7 +21,7 @@ import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
-const new_type = ["BOSO", "Cash", "Discount", "SOGA"];
+const new_type = ["BOSO", "Cash", "Discount", "SOGA", "Item"];
 const new_status = ["Expected", "Received", "Unreceived"];
 
 
@@ -29,7 +29,6 @@ router.post("/", async(req, res, next) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
         req.body.amount === undefined ||
-        req.body.item === undefined ||
         req.body.type === undefined ||
         req.body.status === undefined ||
         req.body.comments === undefined) {
@@ -43,6 +42,13 @@ router.post("/", async(req, res, next) => {
         req.body.type === "" ||
         req.body.status === "") {
         res.status(400).send("All donation details must be completed");
+        return next();
+    }
+
+    if (req.body.item === undefined) {
+        req.body.item = ""; // Income doesn't have an item
+    } else if (req.body.item === "") {
+        res.status(400).send("Item must not be blank");
         return next();
     }
 

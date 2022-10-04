@@ -1,57 +1,17 @@
 <template>
   <div>
-    <h3>Create Donation</h3>
-    <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
-    <br v-else>
-    <form v-on:submit.prevent="submitIncome()" class="row g-3 text-start">
-      <div class="col-md-12">
-        <label for="committeeSelect" class="form-label fw-bold">Committee</label>
-        <select id="committeeSelect" class="form-select" v-model="committee" required>
-          <option selected disabled value="">Select...</option>
-          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
-        </select>
-      </div>
-      <div class="col-12">
-        <label for="sourceName" class="form-label fw-bold">Source</label>
-        <input id="sourceName" type="text" class="form-control" placeholder="Provost, PESC, Northrop, etc." v-model="source" required>
-      </div>
-      <div class="col-md-6">
-        <label for="amountDollars" class="form-label fw-bold">Amount</label>
-        <div class="input-group">
-          <span class="input-group-text">$</span>
-          <input id="amountDollars" type="number" step=".01" class="form-control" placeholder="1500.00" v-model="amount" required>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <label for="itemName" class="form-label fw-bold">Item (Optional)</label>
-        <input id="itemname" type="text" class="form-control" placeholder="If item donation, list item" v-model="item">
-      </div>
-      <div class="col-md-6">
-        <label for="typeSelect" class="form-label fw-bold">Type</label>
-        <select id="typeSelect" class="form-select" v-model="type" required>
-          <option selected disabled value="">Select...</option>
-          <option>BOSO</option>
-          <option>Cash</option>
-          <option>Discount</option>
-          <option>SOGA</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="statusSelect" class="form-label fw-bold">Status</label>
-        <select id="statusSelect" class="form-select" v-model="status" required>
-          <option selected>Expected</option>
-          <option>Received</option>
-          <option>Unreceived</option>
-        </select>
-      </div>
-      <div class="col-12">
-        <label for="commentsField" class="form-label fw-bold">Comments (Optional)</label>
-        <textarea id="commentsField" type="text" class="form-control" v-model="comments"></textarea>
-      </div>
-      <div class="col-12 text-center">
-        <button type="submit" class="btn btn-success">Create Donation</button>
-      </div>
-    </form>
+    <h3>Income and Donation Home</h3>
+    <p class="lead">
+      Report Income and Donations using the links on the sidebar. Income is money given
+      to your committee. Donations are items or discounts that are non-monetary.
+    </p>
+    <p class="lead">
+      A quick rule-of-thumb: If you can spend it, it is Income and counts towards your balance.
+      If you can use it, it is a donation and does not count towards your balance.
+    </p>
+    <p class="lead">
+      Direct any questions towards the IEEE Treasurer.
+    </p>
   </div>
 </template>
 
@@ -72,66 +32,7 @@
   limitations under the License.
 */
 
-import auth_state from '@/state';
-import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
-
 export default {
   name: 'IncomeHome',
-  data() {
-    return {
-      dispmsg: '',
-      error: false,
-      committeeList: [],
-      committee: '',
-      source: '',
-      amount: '',
-      item: '',
-      type: '',
-      status: 'Expected',
-      comments: '',
-    }
-  },
-  methods: {
-    async submitIncome() {
-      this.dispmsg = '';
-
-      const response = await fetchWrapperTXT(`/api/v2/income`, {
-        method: 'post',
-        headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({committee:this.committeeList[this.committee][0],source:this.source,item:this.item,
-                              amount:this.amount,status:this.status,type:this.type,comments:this.comments}),
-      });
-
-      this.error = response.error;
-      this.dispmsg = response.response;
-
-      if (!response.error) {
-        this.source = '';
-        this.amount = '';
-        this.item = '';
-        this.type = '';
-        this.status = 'Expected';
-        this.comments = '';
-      }
-    }
-  },
-  async mounted() {
-    const response_comm = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
-      method: 'get',
-    });
-
-    const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/income`, {
-      method: 'get',
-    });
-
-    if (response_comm.error || response_lastcomm.error) {
-      this.error = true;
-      this.dispmsg = response_comm.error ? response_comm.response : response_lastcomm.response;
-      return;
-    }
-
-    this.committeeList = response_comm.response;
-    this.committee = response_lastcomm.response;
-  }
 }
 </script>
