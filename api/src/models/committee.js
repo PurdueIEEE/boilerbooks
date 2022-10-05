@@ -36,6 +36,17 @@ async function getCommitteeBalance(comm) {
     );
 }
 
+async function getCommitteeCredit(comm) {
+    return db_conn.promise().execute(
+        `SELECT (SELECT SUM(amount) AS income FROM Income
+        WHERE committee = ? AND status != "Unreceived" AND type IN ('BOSO', 'Cash', 'SOGA') AND form IN ('Income','Credit'))
+        -
+        (SELECT SUM(cost) AS spend FROM Purchases
+        WHERE committee = ? AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')) AS balance`,
+        [comm, comm]
+    );
+}
+
 async function getCommitteeBudgetTotals(comm, year) {
     return db_conn.promise().execute(
         "SELECT SUM(Budget.amount) AS budget FROM Budget WHERE Budget.committee = ? AND Budget.fiscal_year = ? AND status='Approved'",
@@ -110,6 +121,7 @@ async function getCommitteeBudgetSummary(comm, year, insgc) {
 export default {
     getCommitteeCategories,
     getCommitteeBalance,
+    getCommitteeCredit,
     getCommitteeBudgetTotals,
     getCommitteeExpenseTotals,
     getCommitteeIncomeTotals,

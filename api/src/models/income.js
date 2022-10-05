@@ -19,22 +19,22 @@ import { max_fiscal_year_count } from "../common_items.js";
 
 async function createNewDonation(donation) {
     return db_conn.promise().execute(
-        "INSERT INTO Income (updated, committee, source, amount, item, type, status, comments, addedby, fiscal_year, refnumber) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
-        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.status, donation.comments, donation.user, max_fiscal_year_count]
+        "INSERT INTO Income (updated, committee, source, amount, item, type, form, status, comments, addedby, fiscal_year, refnumber) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
+        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.form, donation.status, donation.comments, donation.user, max_fiscal_year_count]
     );
 }
 
 async function getAllIncome() {
     return db_conn.promise().execute(
-        "SELECT i.incomeid, DATE_FORMAT(i.updated,'%Y-%m-%d') as date,i.source,i.type,i.committee,i.amount,i.item,i.incomeid,i.status,i.refnumber FROM Income i ORDER BY i.updated DESC",
+        "SELECT i.incomeid, DATE_FORMAT(i.updated,'%Y-%m-%d') as date,i.source,i.type,i.form,i.committee,i.amount,i.item,i.incomeid,i.status,i.refnumber FROM Income i ORDER BY i.updated DESC",
         []
     );
 }
 
 async function updateIncome(income) {
     return db_conn.promise().execute(
-        "UPDATE Income SET status=?, refnumber=? WHERE Income.incomeid = ?",
-        [income.status, income.refnumber, income.id]
+        "UPDATE Income SET status=?, form=?, refnumber=? WHERE Income.incomeid = ?",
+        [income.status, income.form, income.refnumber, income.id]
     );
 }
 

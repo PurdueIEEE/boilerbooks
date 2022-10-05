@@ -97,7 +97,7 @@ export default {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],source:this.source,item:this.item,
-                              amount:this.amount,status:this.status,type:this.type,comments:this.comments}),
+                              amount:this.amount,status:this.status,type:this.type,comments:this.comments,form:'Donation'}),
       });
 
       this.error = response.error;

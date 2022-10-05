@@ -37,6 +37,9 @@
             <p class="fs-5">Fiscal Year: <span class="fw-bold">{{income.fiscal_year}}</span></p>
           </div>
           <div class="col-md-6 border border-secondary p-3">
+            <p class="fs-5">Counted As: <span class="fw-bold">{{income.form}}</span></p>
+          </div>
+          <div class="col-md-6 border border-secondary p-3">
             <p class="fs-5">Comments: <span class="fw-bold">{{income.comments}}</span></p>
           </div>
         </div>
