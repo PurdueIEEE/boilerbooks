@@ -302,7 +302,7 @@ router.get("/:userID/balances", async(req, res, next) => {
             if (results.length !== 0) {
                 const [results_1] = await Models.committee.getCommitteeBalance(committee);
                 const [results_2] = await Models.committee.getCommitteeCredit(committee);
-                outputBalances[committee_name_swap[committee]] = {bal:results_1[0].balance,cred:results_2[0].balance};
+                outputBalances[committee_name_swap[committee]] = {bal:results_1[0].balance,cred:results_2[0].balance,};
             }
         }
     } catch (err) {
