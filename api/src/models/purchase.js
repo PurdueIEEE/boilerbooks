@@ -47,7 +47,7 @@ async function updatePurchase(purchase) {
 
 async function updateReceipt(id, receipt) {
     return db_conn.promise().execute(
-        "Update Purchases SET receipt=? WHERE Purchases.purchaseID=?",
+        "Update Purchases SET modifydate = NOW(), receipt=? WHERE Purchases.purchaseID=?",
         [receipt, id]
     );
 }
@@ -184,14 +184,14 @@ async function getChecks(id) {
 
 async function markReceived(id) {
     return db_conn.promise().execute(
-        "UPDATE Purchases SET status='Reimbursed' WHERE Purchases.purchaseID=?",
+        "UPDATE Purchases SET modifydate = NOW(), status='Reimbursed' WHERE Purchases.purchaseID=?",
         [id]
     );
 }
 
 async function expirePurchase(id) {
     return db_conn.promise().execute(
-        "UPDATE Purchases SET status='Expired' WHERE Purchases.purchaseID=?",
+        "UPDATE Purchases SET modifydate = NOW(), status='Expired' WHERE Purchases.purchaseID=?",
         [id]
     );
 }
