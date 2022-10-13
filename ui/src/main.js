@@ -23,5 +23,6 @@ import "bootstrap";
 
 const app = createApp(App);
 app.use(router);
+app.config.globalProperties.$localizeMoney = (input) => {return input ? parseFloat(input).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00';};
 
 app.mount("#app");

@@ -1,6 +1,7 @@
 <template>
   <div class="list-group list-group-flush">
-    <router-link to="/income" class="list-group-item" exact-active-class="active">New Donation</router-link>
+    <router-link to="/income/report" class="list-group-item" exact-active-class="active">Report Income</router-link>
+    <router-link to="/income/donation" class="list-group-item" exact-active-class="active">Report Donation</router-link>
     <router-link to="/income/modify" class="list-group-item" exact-active-class="active" v-if="auth_state.viewTreasurer">Modify Income</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>

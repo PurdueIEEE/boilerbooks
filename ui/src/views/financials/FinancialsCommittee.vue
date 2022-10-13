@@ -22,13 +22,17 @@
     <br>
     <div v-if="loaded">
       <div class="row my-3 fs-5 fw-bold">
-        <div class="col-md-3">Balance: <span v-bind:class="balanceWarnings">${{totalBalance.balance ? parseFloat(totalBalance.balance).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</span></div>
-        <div class="col-md-3">Income: ${{totalIncome.income ? parseFloat(totalIncome.income).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
-        <div class="col-md-3">Spent: ${{totalSpent.spent ? parseFloat(totalSpent.spent).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
-        <div class="col-md-3">Budget: ${{totalBudget.budget ? parseFloat(totalBudget.budget).toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}}</div>
+        <div class="col-md-4">Financial Summary:</div>
+        <div class="col-md-4">Balance: <span v-bind:class="balanceWarnings">${{$localizeMoney(totalBalance.balance)}}</span></div>
+        <div class="col-md-4">Credit: ${{$localizeMoney(totalCredit.balance)}}</div>
+      </div>
+      <div class="row my-3 fs-5 fw-bold">
+        <div class="col-md-4">Income: ${{$localizeMoney(totalIncome.income)}}</div>
+        <div class="col-md-4">Spent: ${{$localizeMoney(totalSpent.spent)}}</div>
+        <div class="col-md-4">Budget: ${{$localizeMoney(totalBudget.budget)}}</div>
       </div>
 
-      <h4 class="mt-4">{{header}} Financial Summary</h4>
+      <h4 class="mt-5">{{header}} Budget Summary</h4>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -56,7 +60,7 @@
       </div>
       <small><span class="text-danger">*</span> = Budget item not approved</small>
 
-      <h4 class="mt-4">{{header}} Expenses</h4>
+      <h4 class="mt-5">{{header}} Expenses</h4>
       <DataTable
         v-bind:rows="expenseTable"
         v-bind:row_key="'purchaseid'"
@@ -82,7 +86,7 @@
         </template>
       </DataTable>
 
-      <h4 class="mt-4">{{header}} Income</h4>
+      <h4 class="mt-5">{{header}} Income</h4>
       <DataTable
         v-bind:rows="incomeTable"
         v-bind:row_key="'incomeid'"
@@ -149,6 +153,7 @@ export default {
       error: false,
       dispmsg: '',
       totalBalance: {balance:''},
+      totalCredit: {balance:''},
       totalBudget: {budget:''},
       totalIncome: {income:''},
       totalSpent: {spent:''},
@@ -253,6 +258,9 @@ export default {
       const totalBalanceP = fetchWrapperJSON(`/api/v2/committee/${committee}/balance`, {
         method: 'get',
       });
+      const totalCreditP = fetchWrapperJSON(`/api/v2/committee/${committee}/credit`, {
+        method: 'get',
+      });
       const totalBudgetP = fetchWrapperJSON(`/api/v2/committee/${committee}/budget/${fiscalyear}`, {
         method: 'get',
       });
@@ -274,6 +282,7 @@ export default {
 
       // Then wait for them to come back
       const totalBalance = await totalBalanceP;
+      const totalCredit = await totalCreditP;
       const totalBudget = await totalBudgetP;
       const totalIncome = await totalIncomeP;
       const totalSpent = await totalSpentP;
@@ -281,8 +290,9 @@ export default {
       const expenseTable = await expenseTableP;
       const incomeTable = await incomeTableP;
 
-      if (totalBudget.error || totalBalance.error || totalIncome.error || totalSpent.error || financialSummary.error || expenseTable.error || incomeTable.error) {
+      if (totalBudget.error || totalCredit.error || totalBalance.error || totalIncome.error || totalSpent.error || financialSummary.error || expenseTable.error || incomeTable.error) {
         this.totalBalance = {balance:'0.00'};
+        this.totalCredit = {balance:'0.00'};
         this.totalBudget = {budget:'0.00'};
         this.totalIncome = {income:'0.00'};
         this.totalSpent = {spent:'0.00'};
@@ -295,6 +305,7 @@ export default {
       }
 
       this.totalBalance = totalBalance.response;
+      this.totalCredit = totalCredit.response;
       this.totalBudget = totalBudget.response;
       this.totalIncome = totalIncome.response;
       this.totalSpent = totalSpent.response;

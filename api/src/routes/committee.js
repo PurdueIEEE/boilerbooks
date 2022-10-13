@@ -95,6 +95,38 @@ router.get("/:commID/balance", async(req, res, next) => {
 });
 
 /*
+    Get total committee credit level
+*/
+router.get("/:commID/credit", async(req, res, next) => {
+    if (!(req.params.commID in committee_lut)) {
+        res.status(404).send("Invalid committee value");
+        return next();
+    }
+
+    try {
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        if (results.length === 0) {
+            res.status(404).send("Invalid committee value");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    try {
+        const [results] = await Models.committee.getCommitteeCredit(committee_lut[req.params.commID][0]);
+        res.status(200).send(results[0]);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+/*
     Get committee budget for a year
 */
 router.get("/:commID/budget/:year?", async(req, res, next) => {

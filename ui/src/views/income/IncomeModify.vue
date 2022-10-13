@@ -7,7 +7,7 @@
       v-bind:rows="rows"
       v-bind:row_key="'incomeid'"
       v-bind:row_headers="[
-        ['Income ID', 'incomeid'],
+        ['ID', 'incomeid'],
         ['Date','date'],
         ['Source','source'],
         ['Type','type'],
@@ -34,6 +34,8 @@
           <button class="btn btn-outline-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received')">Received</button>
           <br v-if="income.row.status !== 'Received'">
           <button class="btn btn-outline-dark my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived')">Unreceived</button>
+          <br v-if="income.row.status !== 'Unreceived'">
+          <button class="btn btn-outline-secondary my-1" v-if="income.row.status !== 'Credit'" v-on:click="updateStatus(income.row.incomeid, 'Credit')">Credit</button>
         </td>
       </template>
     </DataTable>

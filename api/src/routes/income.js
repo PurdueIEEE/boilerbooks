@@ -21,19 +21,18 @@ import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
-const new_type = ["BOSO", "Cash", "Discount", "SOGA"];
-const new_status = ["Expected", "Received", "Unreceived"];
+const new_type = ["BOSO", "Cash", "Discount", "SOGA", "Item"];
+const new_status = ["Expected", "Received", "Unreceived","Credit"];
 
 
 router.post("/", async(req, res, next) => {
     if (req.body.committee === undefined ||
         req.body.source === undefined ||
         req.body.amount === undefined ||
-        req.body.item === undefined ||
         req.body.type === undefined ||
         req.body.status === undefined ||
         req.body.comments === undefined) {
-        res.status(400).send("All donation details must be completed");
+        res.status(400).send("All details must be completed");
         return next();
     }
 
@@ -42,7 +41,23 @@ router.post("/", async(req, res, next) => {
         req.body.amount === "" ||
         req.body.type === "" ||
         req.body.status === "") {
-        res.status(400).send("All donation details must be completed");
+        res.status(400).send("All details must be completed");
+        return next();
+    }
+
+    // can't escape status so check it first
+    if (!new_status.includes(req.body.status)) {
+        res.status(400).send("Status must be proper value");
+        return next();
+    }
+
+    if (req.body.item === undefined && req.body.status === "Item") {
+        res.status(400).send("All details must be completed");
+        return next();
+    } else if (req.body.item === undefined) {
+        req.body.item = ""; // Income doesn't have an item
+    } else if (req.body.item === "") {
+        res.status(400).send("Item must not be blank");
         return next();
     }
 
@@ -68,12 +83,6 @@ router.post("/", async(req, res, next) => {
     // can't escape type, so check it first
     if (!new_type.includes(req.body.type)) {
         res.status(400).send("Type must be proper value");
-        return next();
-    }
-
-    // can't escape status so check it first
-    if (!new_status.includes(req.body.status)) {
-        res.status(400).send("Status must be proper value");
         return next();
     }
 
@@ -171,7 +180,7 @@ router.put("/:incomeID", async(req, res, next) => {
     }
 
     if (!new_status.includes(req.body.status)) {
-        res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
+        res.status(400).send("Status must be 'Expected', 'Received', 'Unreceived', or 'Credit'");
         return next();
     }
 
