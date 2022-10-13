@@ -94,7 +94,6 @@
           ['Amount','amount'],
           ['Item (if donated)','item'],
           ['Status','status'],
-          ['Counted As','form'],
           ['Ref Number','refnumber']]"
       >
        <template v-slot:data="income">
@@ -105,7 +104,6 @@
           <td>${{income.row.amount}}</td>
           <td>{{income.row.item}}</td>
           <td>{{income.row.status}}</td>
-          <td>{{income.row.form}}</td>
           <td>{{income.row.refnumber}}</td>
        </template>
       </DataTable>

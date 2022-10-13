@@ -39,14 +39,6 @@
           <option>Unreceived</option>
         </select>
       </div>
-      <div class="col-md-6">
-        <label for="formSelect" class="form-label fw-bold">Count as</label>
-        <select id="formSelect" class="form-select" v-model="form" required>
-          <option selected disabled value="">Select...</option>
-          <option value="Income">Income</option>
-          <option value="Credit">Credit (Use this for INSGC)</option>
-        </select>
-      </div>
       <div class="col-12">
         <label for="commentsField" class="form-label fw-bold">Comments (Optional)</label>
         <textarea id="commentsField" type="text" class="form-control" v-model="comments"></textarea>
@@ -89,7 +81,6 @@ export default {
       source: '',
       amount: '',
       type: '',
-      form: '',
       status: 'Expected',
       comments: '',
     }
@@ -102,7 +93,7 @@ export default {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
         body: JSON.stringify({committee:this.committeeList[this.committee][0],source:this.source,amount:this.amount,
-                              status:this.status,type:this.type,comments:this.comments,form:this.form}),
+                              status:this.status,type:this.type,comments:this.comments}),
       });
 
       this.error = response.error;

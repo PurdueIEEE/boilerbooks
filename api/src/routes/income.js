@@ -23,7 +23,6 @@ const router = Router();
 
 const new_type = ["BOSO", "Cash", "Discount", "SOGA", "Item"];
 const new_status = ["Expected", "Received", "Unreceived"];
-const new_form = ["Income", "Credit", "Donation"];
 
 
 router.post("/", async(req, res, next) => {
@@ -31,7 +30,6 @@ router.post("/", async(req, res, next) => {
         req.body.source === undefined ||
         req.body.amount === undefined ||
         req.body.type === undefined ||
-        req.body.form === undefined ||
         req.body.status === undefined ||
         req.body.comments === undefined) {
         res.status(400).send("All donation details must be completed");
@@ -42,7 +40,6 @@ router.post("/", async(req, res, next) => {
         req.body.source === "" ||
         req.body.amount === "" ||
         req.body.type === "" ||
-        req.body.form === "" ||
         req.body.status === "") {
         res.status(400).send("All donation details must be completed");
         return next();
@@ -83,11 +80,6 @@ router.post("/", async(req, res, next) => {
     // can't escape status so check it first
     if (!new_status.includes(req.body.status)) {
         res.status(400).send("Status must be proper value");
-        return next();
-    }
-
-    if (!new_form.includes(req.body.form)) {
-        res.status(400).send("Form must be proper value");
         return next();
     }
 
@@ -179,7 +171,6 @@ router.get("/:incomeID", async(req, res, next) => {
 
 router.put("/:incomeID", async(req, res, next) => {
     if (req.body.status === undefined ||
-        req.body.form === undefined ||
         req.body.refnumber === undefined) {
         res.status(400).send("All income update details must be completed");
         return next();
@@ -187,11 +178,6 @@ router.put("/:incomeID", async(req, res, next) => {
 
     if (!new_status.includes(req.body.status)) {
         res.status(400).send("Status must be 'Expected', 'Received', or 'Unreceived'");
-        return next();
-    }
-
-    if (!new_form.includes(req.body.form)) {
-        res.status(400).send("Form must be proper value");
         return next();
     }
 
@@ -211,7 +197,6 @@ router.put("/:incomeID", async(req, res, next) => {
     const income = {
         refnumber: req.body.refnumber,
         status: req.body.status,
-        form: req.body.form,
         id: req.params.incomeID,
     };
 

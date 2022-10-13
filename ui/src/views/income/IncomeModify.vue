@@ -7,14 +7,14 @@
       v-bind:rows="rows"
       v-bind:row_key="'incomeid'"
       v-bind:row_headers="[
-        [' ID', 'incomeid'],
+        ['Income ID', 'incomeid'],
         ['Date','date'],
         ['Source','source'],
         ['Type','type'],
         ['Amount','amount'],
         ['Committee','committee'],
+        ['Item','item'],
         ['Status','status'],
-        ['Counted As','form'],
         ['Ref Number','refnumber'],
         ['Modify','']]"
     >
@@ -25,18 +25,15 @@
         <td>{{income.row.type}}</td>
         <td>${{income.row.amount}}</td>
         <td>{{income.row.committee}}</td>
+        <td>{{income.row.item}}</td>
         <td>{{income.row.status}}</td>
-        <td>{{income.row.form}}</td>
         <td>{{income.row.refnumber}}</td>
         <td>
-          <button class="btn btn-outline-info my-1" v-if="income.row.status !== 'Expected'" v-on:click="updateStatus(income.row.incomeid, 'Expected', income.row.form)">Expected</button>
+          <button class="btn btn-outline-info my-1" v-if="income.row.status !== 'Expected'" v-on:click="updateStatus(income.row.incomeid, 'Expected')">Expected</button>
           <br v-if="income.row.status !== 'Expected'">
-          <button class="btn btn-outline-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received', income.row.form)">Received</button>
+          <button class="btn btn-outline-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received')">Received</button>
           <br v-if="income.row.status !== 'Received'">
-          <button class="btn btn-outline-dark my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived', income.row.form)">Unreceived</button>
-          <br>
-          <button v-if="income.row.form !== 'Credit'" class="btn btn-outline-secondary my-1" v-on:click="updateStatus(income.row.incomeid, income.row.status, 'Credit')">Mark as Credit</button>
-          <button v-else-if="income.row.form !== 'Income'" class="btn btn-outline-secondary my-1" v-on:click="updateStatus(income.row.incomeid, income.row.status, 'Income')">Mark as Income</button>
+          <button class="btn btn-outline-dark my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived')">Unreceived</button>
         </td>
       </template>
     </DataTable>
@@ -92,7 +89,7 @@ export default {
 
       this.rows = response.response;
     },
-    async updateStatus(id, status, form) {
+    async updateStatus(id, status) {
       let refnumber = "";
       if (status === "Received") {
         refnumber = prompt("Enter the reference number for this income:");
@@ -102,7 +99,7 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/income/${id}`, {
         method: 'put',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({status:status, refnumber:refnumber, form:form}),
+        body: JSON.stringify({status:status, refnumber:refnumber}),
       });
 
       this.error = response.error;
