@@ -64,7 +64,6 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
 <hr>
 
 * `/account`: endpoint for user accounts
-    * POST: create new account
     * `/account/{user_id}`
         * GET: user details
         * PUT: update account details
@@ -77,11 +76,15 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
         * GET: all purchases user can complete
     * `/account/{user_id}/reimbursements`
         * GET: all purchases uer can reimburse
+    * `/account/{user_id}/checks`
+        * GET: any checks currently being mailed to a user
     * `/account/{user_id}/balances`
         * GET: all committee balances user can view
     * `/account/{user_id}/committees`
         * GET: all committee where user has approval powers
-    * `/account/{user_id}/committee/purchases`
+    * `/account/{user_id}/dues`
+        * GET: any dues paid by the user
+    * `/account/{user_id}/committee/purchase`
         * GET: last committee for which a user made a purchase
     * `/account/{user_id}/committee/income`
         * GET: last committee for which a user entered any income
@@ -101,10 +104,12 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
 
 * `/committee`: endpoint for committee finances
     * GET: list of all committees
-    * `/committee/{committee_id}/categories`
+    * `/committee/{committee_id}/categories/{year?}`
         * GET: list all committee budget categories
     * `/committee/{committee_id}/balance`
         * GET: view total committee balance
+    * `/committee/{committee_id}/credit`
+        * GET: view committee credit balance
     * `/committee/{committee_id}/budget/{year?}`
         * GET: view committee budget for an optional year
     * `/committee/{committee_id}/expensetotal/{year?}`
@@ -117,6 +122,8 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
         * GET: view committee income list for an optional year
     * `/committee/{committee_id}/summary/{year?}`
         * GET: view committee financial summary for an optional year
+    * `/committee/{committee_id}/csv`
+        * GET: export a CSV file of all committee purchases for a given time range
 
 <hr>
 
@@ -124,6 +131,8 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
     * POST: add a new dues member
     * `/dues/committees`
         * GET: list all dues committees (different from fiscal committees)
+    * `/dues/amount`
+        * GET: list all dues amounts for the current year
     * `/dues/summary/{year?}`
         * GET: view total counts of dues members for each committee
     * `/dues/all/{year?}`
@@ -141,32 +150,55 @@ Authentication handled by API Token, Authorization handled by ACL on user accoun
     * POST: report a new income
     * GET: view all reported income
     * `/income/{income_id}`
+        * GET: view details for a specific income
         * PUT: update income status
 
 <hr>
 
-* `/login`: endpoint for authentication
-    * POST: login user
-    * `/forgot-user`
+* `/login`: endpoint for user/pass authentication
+    * POST: create new user account
+    * `/login/password`
+        * POST: login with username and password
+    * `/login/forgot-user`
         * POST: find all usernames associated with an email
-    * `/forgot-pass`
+    * `/login/forgot-pass`
         * POST: send password reset email to user
-    * `/reset`
+    * `/login/reset`
         * POST: reset a user account password
+
+* `/oidc`: endpoint for OIDC authentication
+    * `/oidc/login`
+        * GET: start the login process
+    * `/oidc/callback`
+        * GET: return here after the IdP Server authenticates the user
+    * `/oidc/logout`
+        * GET: start the logout process
+    * `/oidc/userinfo`
+        * GET: after redirecting to UI, get some info for the UI to complete the login process
+    * `/oidc/register`
+        * POST: register a new user account
 
 <hr>
 
 * `/purchase`: endpoint for purchasing
     * POST: create a new purchase request
+    * GET: return all processing or reimbursed purchases
     * `/purchase/treasurer`
         * POST: reimburse purchases
     * `/purchase/{purchase_id}`
         * GET: view details of a purchase
         * DELETE: cancel a purchase
+        * PUT: update a purchase if edited by a treasurer
+    * `/purchase/{purchase_id}/expire`
+        * POST: expire a purchase if after the fiscal year
     * `/purchase/{purchase_id}/approve`
         * POST: approve or deny purchase request
     * `/purchase/{purchase_id}/complete`
         * POST: complete a purchase request
+    * `/purchase/{purchase_id}/receipt`
+        * POST: upload a new receipt for a purchase
+    * `/purchase/{purchase_id}/checks`
+        * POST: mark a mailed check as received
 
 <hr>
 
