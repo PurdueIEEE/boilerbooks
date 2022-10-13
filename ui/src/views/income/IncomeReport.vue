@@ -15,7 +15,7 @@
         <label for="sourceName" class="form-label fw-bold">Source</label>
         <input id="sourceName" type="text" class="form-control" placeholder="Provost, PESC, Northrop, etc." v-model="source" required>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
         <label for="amountDollars" class="form-label fw-bold">Amount</label>
         <div class="input-group">
           <span class="input-group-text">$</span>
@@ -34,9 +34,10 @@
       <div class="col-md-6">
         <label for="statusSelect" class="form-label fw-bold">Status</label>
         <select id="statusSelect" class="form-select" v-model="status" required>
-          <option selected>Expected</option>
+          <option selected disabled value="">Select...</option>
+          <option>Expected</option>
           <option>Received</option>
-          <option>Unreceived</option>
+          <option>Credit</option>
         </select>
       </div>
       <div class="col-12">
@@ -81,7 +82,7 @@ export default {
       source: '',
       amount: '',
       type: '',
-      status: 'Expected',
+      status: '',
       comments: '',
     }
   },

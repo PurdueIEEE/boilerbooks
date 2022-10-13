@@ -7,13 +7,15 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Balance</th>
+          <th>Actual Balance</th>
+          <th>Credited Balance</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(bal, comm) in totalBalances" v-bind:key="comm">
           <td>{{comm}}</td>
-          <td>${{bal ? parseFloat(bal).toLocaleString('en-US',{minimumFractionDigits:2}) : "0.00"}}</td>
+          <td>${{bal[0] ? parseFloat(bal[0]).toLocaleString('en-US',{minimumFractionDigits:2}) : "0.00"}}</td>
+          <td>${{bal[1] ? parseFloat(bal[1]).toLocaleString('en-US',{minimumFractionDigits:2}) : "0.00"}}</td>
         </tr>
       </tbody>
     </table>

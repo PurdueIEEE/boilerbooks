@@ -51,7 +51,7 @@ CREATE TABLE `Income` (
   `type` enum('BOSO','Cash','Discount','SOGA','Item') NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `item` varchar(250) NOT NULL,
-  `status` enum('Received','Expected','Unreceived') NOT NULL,
+  `status` enum('Received','Expected','Unreceived','Credit') NOT NULL,
   `comments` varchar(10000) DEFAULT NULL,
   `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
   `addedby` varchar(100) NOT NULL,
