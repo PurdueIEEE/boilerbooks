@@ -2,15 +2,8 @@
   <div>
     <h3>Income and Donation Home</h3>
     <p class="lead">
-      Report Income and Donations using the links on the sidebar. Income is money given
-      to your committee. Donations are items or discounts that are non-monetary.
-    </p>
-    <p class="lead">
-      A quick rule-of-thumb: If you can spend it, it is Income and counts towards your balance.
-      If you can use it, it is a donation and does not count towards your balance.
-    </p>
-    <p class="lead">
-      Direct any questions towards the IEEE Treasurer.
+      Press a link on the sidebar to begin. If you have any questions, please
+      <router-link to="/help#income" class="link-info">view the guide</router-link>.
     </p>
   </div>
 </template>
