@@ -332,6 +332,19 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
 
+  // Attempt to load auth state
+  if (auth_state.state.uname === '') {
+    let user = null;
+
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
+      user = JSON.parse(localStorage.getItem('authState'));
+    }
+
+    if (user !== null) {
+      auth_state.setAuthState(user);
+    }
+  }
+
   if (!requiresAuth) { // does not need auth
     next();
   } else if (requiresAuth && auth_state.state.uname !== '') { // needs auth and auth set
@@ -343,27 +356,8 @@ router.beforeEach(async (to, from, next) => {
     } else {
       next();
     }
-  } else { // check if cookie exists
-    let user = null;
-
-    if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
-      user = JSON.parse(localStorage.getItem('authState'));
-    }
-
-    if (user !== null) { // found valid old login
-      auth_state.setAuthState(user);
-
-      // verify API key is valid
-      const response = await fetch("/api/v2/");
-      if (response.status === 401) {
-        auth_state.clearAuthState();
-        next(`/login?returnto=${to.fullPath}`);
-      } else {
-        next();
-      }
-    } else { // need to login
+  } else { // need to login
       next(`/login?returnto=${to.fullPath}`);
-    }
   }
 });
 
