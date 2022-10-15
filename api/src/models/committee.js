@@ -24,6 +24,13 @@ async function getCommitteeCategories(comm, year=max_fiscal_year_count) {
     );
 }
 
+/*
+    Get all received income
+    -
+    Get all regular purchases
+    -
+    Get all purchases where the funding is from INSGC and there was a received or unreceived INSGC grant
+*/
 async function getCommitteeBalance(comm) {
     return db_conn.promise().execute(
         `SELECT
@@ -32,8 +39,11 @@ async function getCommitteeBalance(comm) {
         -
         (COALESCE((SELECT SUM(cost) AS spend FROM Purchases
         WHERE committee = ? AND fundsource IN ('BOSO','Cash','SOGA') AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')),0))
+        -
+        (COALESCE((SELECT SUM(p.cost) FROM Purchases p INNER JOIN (SELECT i.* FROM Income i WHERE i.committee = ? AND i.type = "INSGC" AND i.status IN ('Received','Unreceived')) AS inc ON inc.fiscal_year = p.fiscal_year
+        WHERE p.committee = ? AND p.fundsource='INSGC' AND p.status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')),0))
         AS balance`,
-        [comm, comm]
+        [comm, comm, comm, comm]
     );
 }
 

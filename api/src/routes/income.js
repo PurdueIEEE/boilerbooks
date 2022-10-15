@@ -21,7 +21,7 @@ import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
 
 const router = Router();
 
-const new_type = ["BOSO", "Cash", "Discount", "SOGA", "Item"];
+const new_type = ["BOSO", "Cash", "Discount", "SOGA", "Item", "INSGC"];
 const new_status = ["Expected", "Received", "Unreceived","Credit"];
 
 

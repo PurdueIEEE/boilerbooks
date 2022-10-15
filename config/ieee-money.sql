@@ -48,7 +48,7 @@ CREATE TABLE `Income` (
   `incomeid` int NOT NULL,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `source` varchar(250) NOT NULL,
-  `type` enum('BOSO','Cash','Discount','SOGA','Item') NOT NULL,
+  `type` enum('BOSO','Cash','Discount','SOGA','Item','INSGC') NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `item` varchar(250) NOT NULL,
   `status` enum('Received','Expected','Unreceived','Credit') NOT NULL,
