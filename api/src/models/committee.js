@@ -24,26 +24,28 @@ async function getCommitteeCategories(comm, year=max_fiscal_year_count) {
     );
 }
 
-// Fun fact: this will return a null if there is not at least 1 purchase and at least 1 income
 async function getCommitteeBalance(comm) {
     return db_conn.promise().execute(
-        `SELECT (SELECT SUM(amount) AS income FROM Income
-        WHERE committee = ? AND status = "Received" AND type IN ('BOSO', 'Cash', 'SOGA'))
+        `SELECT
+        (COALESCE((SELECT SUM(amount) AS income FROM Income
+        WHERE committee = ? AND status = "Received" AND type IN ('BOSO', 'Cash', 'SOGA', 'INSGC')),0))
         -
-        (SELECT SUM(cost) AS spend FROM Purchases
-        WHERE committee = ? AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')) AS balance`,
+        (COALESCE((SELECT SUM(cost) AS spend FROM Purchases
+        WHERE committee = ? AND fundsource IN ('BOSO','Cash','SOGA') AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')),0))
+        AS balance`,
         [comm, comm]
     );
 }
 
-// Fun fact: this will return a null if there is not at least 1 purchase and at least 1 income
 async function getCommitteeCredit(comm) {
     return db_conn.promise().execute(
-        `SELECT (SELECT SUM(amount) AS income FROM Income
-        WHERE committee = ? AND status IN ('Received', 'Credit') AND type IN ('BOSO', 'Cash', 'SOGA'))
+        `SELECT
+        (COALESCE((SELECT SUM(amount) AS income FROM Income
+        WHERE committee = ? AND status IN ('Received', 'Credit') AND type IN ('BOSO', 'Cash', 'SOGA', 'INSGC')),0))
         -
-        (SELECT SUM(cost) AS spend FROM Purchases
-        WHERE committee = ? AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')) AS balance`,
+        (COALESCE((SELECT SUM(cost) AS spend FROM Purchases
+        WHERE committee = ? AND status IN ('Purchased','Processing Reimbursement','Reimbursed','Approved')),0))
+        AS balance`,
         [comm, comm]
     );
 }

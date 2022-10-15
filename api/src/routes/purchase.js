@@ -355,7 +355,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             return next();
         }
 
-        const [results_2] = await Models.committee.getCommitteeBalance(results[0].committee);
+        const [results_2] = await Models.committee.getCommitteeCredit(results[0].committee);
         if (results[0].status === "Requested" || results[0].status === "Approved") {
             results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
         }
