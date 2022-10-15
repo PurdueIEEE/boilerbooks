@@ -369,7 +369,7 @@ router.get("/:userID/dues", async(req, res, next) => {
 /*
     Get the last committee a user made a purchase for
 */
-router.get("/:userID/committee/purchases", async(req, res, next) => {
+router.get("/:userID/committee/purchase", async(req, res, next) => {
     if (req.context.request_user_id !== req.params.userID) {
         res.status(404).send("User not found");
         return next();

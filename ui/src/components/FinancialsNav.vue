@@ -3,7 +3,7 @@
     <router-link to="/financials" class="list-group-item" exact-active-class="active">Current Balances</router-link>
     <router-link to="/financials/committee" class="list-group-item" exact-active-class="active">Committee Breakdown</router-link>
     <router-link to="/financials/export" class="list-group-item" exact-active-class="active">Export Committee Data</router-link>
-    <router-link to="/financials/search" class="list-group-item" exact-active-class="active">Advanced Search</router-link>
+    <router-link to="/financials/search" class="list-group-item" exact-active-class="active">Advanced Purchase Search</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>
 </template>

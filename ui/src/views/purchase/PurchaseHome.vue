@@ -3,7 +3,7 @@
     <h3>Purchasing Home</h3>
     <p class="lead">
       Press a link on the sidebar to begin. If you have any questions, please
-      <router-link to="/help" class="link-info">view the guide</router-link>.
+      <router-link to="/help#purchase" class="link-info">view the guide</router-link>.
     </p>
   </div>
 </template>

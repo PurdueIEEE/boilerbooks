@@ -158,7 +158,7 @@ export default {
       method: 'get',
     });
 
-    const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/purchases`, {
+    const response_lastcomm = await fetchWrapperTXT(`/api/v2/account/${auth_state.state.uname}/committee/purchase`, {
       method: 'get',
     });
 

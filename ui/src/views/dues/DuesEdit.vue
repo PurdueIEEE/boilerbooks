@@ -54,7 +54,7 @@
           <div class="modal-body">
             <div class="row g-3 text-start">
               <div class="col-md-6 offset-md-3">
-                <div class="form-check" v-for="amount in duesAmountList">
+                <div class="form-check" v-for="amount in duesAmountList" v-bind:key="amount">
                   <input class="form-check-input" type="radio" v-model="memberAmount" :value="amount" />
                   <label class="form-check-label">${{amount}} paid</label>
                 </div>
