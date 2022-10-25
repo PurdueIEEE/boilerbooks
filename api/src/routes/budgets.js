@@ -17,7 +17,7 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { fiscal_year_list, committee_lut, ACCESS_LEVEL, logger, max_fiscal_year_count } from "../common_items.js";
+import { fiscal_year_list, committee_lut, ACCESS_LEVEL, logger, max_fiscal_year_count, mailer, current_fiscal_year } from "../common_items.js";
 
 const router = Router();
 
@@ -86,14 +86,28 @@ router.post("/:comm", async(req, res, next) => {
 
             await Models.budgets.addBudget(budget);
         }
+        res.status(201).send("Budget submitted for approval");
+
+        // Inform the treasurer there is a budget to approve
+        if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
+        await mailer.sendMail({
+            to: process.env.TREAS_EMAIL,
+            subject: `Budget submitted by ${committee_lut[req.params.comm][0]}`,
+            text: `${committee_lut[req.params.comm][0]} has submitted a new budget for the current fiscal year.\n`+
+                "Please visit Boiler Books at your earliest convenience to review and/or approve the budget.\n\n"+
+                "This email was automatically sent by Boiler Books",
+            html: `<p>${committee_lut[req.params.comm][0]} has submitted a new budget for the current fiscal year.</p>
+                   <p>Please visit Boiler Books at your earliest convenience to review and/or approve the budget.</p>
+                   <br>
+                   <small>This email was automatically sent by Boiler Books</small>`,
+        });
+
+        return next();
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
         return next();
     }
-
-    res.status(201).send("Budget submitted for approval");
-    return next();
 });
 
 /*
