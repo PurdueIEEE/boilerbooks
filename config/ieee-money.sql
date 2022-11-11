@@ -4,7 +4,7 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 -- Create Database
-CREATE DATABASE IF NOT EXISTS `ieee-money` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+CREATE DATABASE IF NOT EXISTS `ieee-money` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
 USE `ieee-money`;
 
 -- Setup the tables
@@ -123,7 +123,6 @@ ALTER TABLE `Users`
   ADD PRIMARY KEY (`userid`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
-  ADD UNIQUE KEY `userid` (`userid`);
 
 -- Configure the primary keys
 ALTER TABLE `approval`
