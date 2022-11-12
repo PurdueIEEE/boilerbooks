@@ -4,8 +4,11 @@ COPY config/ieee-money.sql /tmp/config/
 COPY config/sql-setup.sql  /tmp/config/
 COPY config/nginx-dev.conf /tmp/config/
 
+RUN echo "postfix postfix/mailname string localhost" | debconf-set-selections\
+    && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
+
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install git mariadb-server-10.5 nginx
+    && apt -y install git mariadb-server-10.5 nginx postfix
 RUN service mariadb start && mariadb < /tmp/config/ieee-money.sql && mariadb < /tmp/config/sql-setup.sql
 RUN mv /tmp/config/nginx-dev.conf /etc/nginx/sites-enabled/default \
     && service nginx reload
