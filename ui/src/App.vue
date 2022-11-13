@@ -28,8 +28,8 @@
     <footer>
         <div class="container-fluid text-center py-3">
             <p class="text-center fs-5 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="dark-link">View page on GitHub</a></p>
-            <br>
-            <p class="text-center lead">Copyright © {{this.year}} Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
+            <p class="text-center">{{version_string}}</p>
+            <p class="text-center lead">Copyright © Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
         </div>
     </footer>
   </div>
@@ -59,8 +59,8 @@ export default {
   data() {
     return {
       auth_state: auth_state.state,
-      year: new Date().getFullYear(),
-      dev: import.meta.env.MODE === "dev"
+      dev: import.meta.env.MODE === "dev",
+      version_string: import.meta.env.VITE_VERSION_STRING
     }
   },
   computed: {

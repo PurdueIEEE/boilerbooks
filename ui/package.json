@@ -3,8 +3,9 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "serve": "vite --mode dev",
-    "dev": "vite preview --mode prod",
+    "vstring": "echo VITE_VERSION_STRING=$(git describe --tags --abbrev=0)-$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD) > src/environment/.env.local",
+    "serve": "npm run vstring && vite --mode dev",
+    "dev": "vite preview",
     "build:dev": "vite build --mode dev",
     "build:prod": "vite build --mode prod",
     "lint": "eslint src/ --ext .js,.vue --ignore-path .gitignore && echo 'No lint errors'"
