@@ -22,7 +22,7 @@ jobs:
       - name: "Embed Version String"
         run: |
           echo VITE_VERSION_STRING=$(git describe --tags --abbrev=0)-$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD) > .env.local
-          rsync -e "ssh -i ~/.ssh/id_github" .env.local ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_DIRECTORY }}/boilerbooks/ui/.env.local
+          rsync -e "ssh -i ~/.ssh/id_github" .env.local ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_DIRECTORY }}/boilerbooks/ui/src/environment/.env.local
       - name: "Deploy Boiler Books"
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -i ~/.ssh/id_github "cd ${{ secrets.DEPLOY_DIRECTORY }}; docker-compose up --build -d;"
       - name: "Clean SSH Key"
