@@ -4,6 +4,8 @@ To update Boiler Books for the upcoming fiscal year, you must modify one variabl
 
 First, update the database. Second, update the code. Upon a push to the 'master' branch, GitHub Actions will automatically deploy the application.
 
+For ease of use, you should also update the [sample data set](/.devcontainer/sample-data.sql) to avoid any errors in development.
+
 ## Updating the MySQL database
 
 Add the fiscal year as a entry in the fiscal year lookup table. Update the command to reflect the current year.
@@ -28,3 +30,8 @@ The update can be done either visually with PHPMyAdmin _or_ through a shell on t
 
 * Modify the `current_fiscal_year` variable in [api/src/common_items.js](https://github.com/PurdueIEEE/boilerbooks/blob/master/api/src/common_items.js#L66)
 * Rebuild and deploy the application as described in [deployment.md](deployment.md#ieee-deploy-information)
+
+## Updating the sample data
+
+* Add a new entry towards the end of the file with the new fiscal year id and fiscal year string
+* Rebuild any devcontainer images for development

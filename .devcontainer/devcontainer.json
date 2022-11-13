@@ -1,0 +1,28 @@
+{
+	"name": "Existing Dockerfile",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		"dockerfile": "Dockerfile"
+	},
+
+	"postCreateCommand": ".devcontainer/postCreateCommand.sh",
+
+	// We use 8080 here to avoid any permission errors
+	"appPort": "8080:80",
+
+	// Some extensions are really nice to have
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Vue.volar",
+				"mikestead.dotenv"
+			]
+		}
+	},
+
+	// Don't bother forwarding ports we don't need
+	"otherPortsAttributes": {
+		"onAutoForward": "ignore"
+	}
+}
