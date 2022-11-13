@@ -182,7 +182,7 @@ router.post("/", async(req, res, next) => {
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        logger.error(err);
+        logger.error(err.stack);
     }
     return next();
 });
@@ -318,7 +318,7 @@ router.post("/treasurer", async(req, res, next) => {
             });
         }
     } catch (err) {
-        logger.error(err);
+        logger.error(err.stack);
     }
     return next();
 });
@@ -614,7 +614,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        logger.error(err);
+        logger.error(err.stack);
     }
     return next();
 });
@@ -781,7 +781,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             <small>This email was automatically sent by Boiler Books</small>`,
         });
     } catch (err) {
-        logger.error(err);
+        logger.error(err.stack);
     }
 
     return next();
