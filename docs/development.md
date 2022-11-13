@@ -60,9 +60,10 @@ Navigate to `http://localhost:8080/ui` to begin.
 2. Install the required packages
 3. Use the given file to initialize the database, tables, and columns
 4. Copy the nginx reverse proxy file so all requests are redirected
-5. Install all NPM packages for the UI and API:
-6. Create a `.env` file for the API, with database and private variables - use `.env.git` as an example:
-7. Start the servers
+5. Create the logging and receipt directories
+6. Install all NPM packages for the UI and API:
+7. Create a `.env` file for the API, with database and private variables - use `.env.git` as an example:
+8. Start the servers
 
 ```sh
 git clone origin https://github.com/PurdueIEEE/boilerbooks.git
@@ -72,10 +73,15 @@ apt install nginx mysql-server-8.0 nodejs postfix
 
 mysql < config/ieee-money.sql
 mysql < config/sql-setup.sql
+mysql < .devcontainer/sample-data.sql
 
 cp config/nginx-dev.conf /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/nginx-dev.conf /etc/nginx/sites-enabled/ieee-money-dev.conf
 service nginx reload
+
+mkdir /var/log/boilerbooks
+mkdir /var/www/receipts
+cp -a .devcontainer/receipts/. /var/www/receipts
 
 npm --prefix ./api ci
 npm --prefix ./ui ci
