@@ -1,7 +1,6 @@
 FROM node:16.14-alpine as build
 ENV NODE_ENV=production
 WORKDIR /app
-RUN apk add --no-cache git
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm ci --include=dev
 COPY . .
