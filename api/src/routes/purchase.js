@@ -344,7 +344,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             // User is purchaser
             if (req.context.request_user_id === results[0].username) {
                 if (results[0].status === "Requested" || results[0].status === "Approved") {
-                    results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
+                    results[0].maxCost = results[0].cost * 1.15 + 10;
                 }
                 results[0].committee = committee_name_swap[results[0].committee];
                 results[0].committeeAPI = committee_name_api[results[0].committee];
@@ -357,12 +357,12 @@ router.get("/:purchaseID", async(req, res, next) => {
 
         const [results_2] = await Models.committee.getCommitteeCredit(results[0].committee);
         if (results[0].status === "Requested" || results[0].status === "Approved") {
-            results[0].maxCost = parseFloat(results[0].cost) * 1.15 + 10;
+            results[0].maxCost = results[0].cost * 1.15 + 10;
         }
         results[0].committee = committee_name_swap[results[0].committee];
         results[0].committeeAPI = committee_name_api[results[0].committee];
-        results[0].costTooHigh = parseFloat(results_2[0].balance) < parseFloat(results[0].cost);
-        results[0].lowBalance = parseFloat(results_2[0].balance) < 200;
+        results[0].costTooHigh = results_2[0].balance < results[0].cost;
+        results[0].lowBalance = results_2[0].balance < 200;
         // Approval powers found
         res.status(200).send(results[0]);
     } catch (err) {
@@ -545,7 +545,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             res.status(404).send("Purchase not found");
             return next();
         }
-        if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
+        if (parseFloat(req.body.price) > (results[0].cost * 1.15 + 10)) {
             res.status(400).send("Purchase cost too high");
             return next();
         }
@@ -685,7 +685,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             res.status(404).send("Purchase not found");
             return next();
         }
-        if (parseFloat(req.body.price) > (parseFloat(results[0].cost) * 1.15 + 10)) {
+        if (parseFloat(req.body.price) > (results[0].cost * 1.15 + 10)) {
             fs.unlink(req.file.path);
             res.status(400).send("Purchase cost too high, create a new request if needed");
             return next();

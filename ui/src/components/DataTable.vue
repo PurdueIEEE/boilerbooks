@@ -120,15 +120,28 @@ export default {
       // Allows us to deep copy the array, could be converted to a watch property later
       let sortData = JSON.parse(JSON.stringify(this.searchData));
       sortData.sort((a, b) => {
-        if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
-          < (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
-          return this.sortKeyAsc ? -1 : 1;
+        if (typeof a[this.sortKey] != "number") // Sort string, boolean, symbol, object, undefined, function
+        {
+          if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
+            < (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
+            return this.sortKeyAsc ? -1 : 1;
+          }
+          if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
+            > (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
+            return this.sortKeyAsc ? 1 : -1;
+          }
+          return 0;
+        } else { // Sort numbers
+          if ((a[this.sortKey] ? a[this.sortKey] : 0)
+            < (b[this.sortKey] ? b[this.sortKey] : 0)) {
+            return this.sortKeyAsc ? -1 : 1;
+          }
+          if ((a[this.sortKey] ? a[this.sortKey] : 0)
+            > (b[this.sortKey] ? b[this.sortKey] : 0)) {
+            return this.sortKeyAsc ? 1 : -1;
+          }
+          return 0;
         }
-        if ((a[this.sortKey] ? a[this.sortKey].toString().toLowerCase() : '')
-          > (b[this.sortKey] ? b[this.sortKey].toString().toLowerCase() : '')) {
-          return this.sortKeyAsc ? 1 : -1;
-        }
-        return 0;
       });
       return sortData;
     },
@@ -182,7 +195,7 @@ export default {
     color:black;
   }
   .sort-arrow:hover {
-    color: #00629B;
+    color: #00629B !important; /* Not good practice but it does force the color to work */
   }
   .sort-arrow-selected {
     color: #CFB991;

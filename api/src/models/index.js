@@ -40,6 +40,7 @@ const db_conn = mysql2.createPool({
     connectionLimit: 10,
     queueLimit: 0,
     charset: "utf8mb4",
+    decimalNumbers: true,
 });
 
 // Backoff pool startup check

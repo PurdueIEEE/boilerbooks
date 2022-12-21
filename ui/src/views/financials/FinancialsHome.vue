@@ -14,8 +14,8 @@
       <tbody>
         <tr v-for="(bal, comm) in totalBalances" v-bind:key="comm">
           <td>{{comm}}</td>
-          <td>${{bal[0] ? parseFloat(bal[0]).toLocaleString('en-US',{minimumFractionDigits:2}) : "0.00"}}</td>
-          <td>${{bal[1] ? parseFloat(bal[1]).toLocaleString('en-US',{minimumFractionDigits:2}) : "0.00"}}</td>
+          <td>${{$localizeMoney(bal[0])}}</td>
+          <td>${{$localizeMoney(bal[1])}}</td>
         </tr>
       </tbody>
     </table>

@@ -20,13 +20,13 @@
           <p class="fs-5"><b>Expected Dues Income:</b></p>
         </div>
         <div class="col-md-6">
-          <p class="fs-5">${{parseFloat(expectedIncome.total).toLocaleString('en-US',{minimumFractionDigits:2})}}</p>
+          <p class="fs-5">${{$localizeMoney(expectedIncome.total)}}</p>
         </div>
         <div class="col-md-6">
           <p class="fs-5"><b>Actual Dues Income:</b></p>
         </div>
         <div class="col-md-6">
-          <p class="fs-5">${{parseFloat(actualIncomeTotal).toLocaleString('en-US',{minimumFractionDigits:2})}}</p>
+          <p class="fs-5">${{$localizeMoney(actualIncomeTotal)}}</p>
         </div>
       </div>
       <br/>
