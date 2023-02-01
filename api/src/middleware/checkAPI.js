@@ -18,8 +18,8 @@ import Models from "../models/index.js";
 import { logger } from "../common_items.js";
 
 async function checkAPI(req, res, next) {
-    // If we are attempting to go to the /account or /login endpoints, don't authenticate
-    if (req.originalUrl.startsWith("/login") || req.originalUrl.startsWith("/oidc")) {
+    // If we are attempting to go to the /, /login, or /oidc endpoints, don't authenticate
+    if (req.originalUrl.startsWith("/login") || req.originalUrl.startsWith("/oidc") || req.originalUrl == "/") {
         req.context = {};
         next();
     } else {
