@@ -442,7 +442,7 @@ router.get("/:commID/csv", async(req, res, next) => {
         let csvString = "Purchase ID,Date,Purchaser,Item,Vendor,Cost,Reason,Comments\n";
 
         for (let purchase of results) {
-            csvString += `"${purchase.purchaseid}","${purchase.date}",${cleanCSVEntry(purchase.pby)},${cleanCSVEntry(purchase.item)},${cleanCSVEntry(purchase.vendor)},${cleanCSVEntry(purchase.cost)},${cleanCSVEntry(purchase.purchasereason)},${cleanCSVEntry(purchase.comments)}\n`;
+            csvString += `"${purchase.purchaseid}","${purchase.date}",${cleanCSVEntry(purchase.pby)},${cleanCSVEntry(purchase.item)},${cleanCSVEntry(purchase.vendor)},${purchase.cost},${cleanCSVEntry(purchase.purchasereason)},${cleanCSVEntry(purchase.comments)}\n`;
         }
 
         res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);
