@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { committee_lut, fiscal_year_list, current_fiscal_year, logger, ACCESS_LEVEL, fiscal_year_lut } from "../common_items.js";
+import { fiscal_year_list, current_fiscal_year, logger, ACCESS_LEVEL, fiscal_year_lut } from "../common_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -26,7 +27,7 @@ const router = Router();
 */
 router.get("/", (req, res, next) => {
     // literally just gets a list of committees
-    res.status(200).send(committee_lut);
+    res.status(200).send(committee_id_to_display);
     return next();
 });
 
@@ -35,7 +36,7 @@ router.get("/", (req, res, next) => {
 */
 router.get("/:commID/categories/:year?", async(req, res, next) => {
     // commKey must be one of the above values, that is in the DB
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -50,7 +51,7 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeCategories(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeCategories(req.params.commID, fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -66,13 +67,13 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
     Get total committee balance
 */
 router.get("/:commID/balance", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -84,7 +85,7 @@ router.get("/:commID/balance", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBalance(committee_lut[req.params.commID][0]);
+        const [results] = await Models.committee.getCommitteeBalance(req.params.commID);
         res.status(200).send(results[0]);
         return next();
     } catch (err) {
@@ -98,13 +99,13 @@ router.get("/:commID/balance", async(req, res, next) => {
     Get total committee credit level
 */
 router.get("/:commID/credit", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -116,7 +117,7 @@ router.get("/:commID/credit", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeCredit(committee_lut[req.params.commID][0]);
+        const [results] = await Models.committee.getCommitteeCredit(req.params.commID);
         res.status(200).send(results[0]);
         return next();
     } catch (err) {
@@ -130,7 +131,7 @@ router.get("/:commID/credit", async(req, res, next) => {
     Get committee budget for a year
 */
 router.get("/:commID/budget/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -145,7 +146,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -157,7 +158,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBudgetTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeBudgetTotals(req.params.commID, fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -175,7 +176,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     Get total expenses for a committee for a year
 */
 router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -190,7 +191,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -202,7 +203,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeExpenseTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeExpenseTotals(req.params.commID, fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -220,7 +221,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     Get total income for a committee for a year
 */
 router.get("/:commID/incometotal/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -235,7 +236,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -247,7 +248,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeIncomeTotals(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeIncomeTotals(req.params.commID, fiscal_year_lut[req.params.year]);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -265,7 +266,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     Get all purchases for a committee for a year
 */
 router.get("/:commID/purchases/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -280,7 +281,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -292,7 +293,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteePurchases(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteePurchases(req.params.commID, fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -306,7 +307,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     Get all income for a committee for a year
 */
 router.get("/:commID/income/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -321,7 +322,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -333,7 +334,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeIncome(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeIncome(req.params.commID, fiscal_year_lut[req.params.year]);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -347,7 +348,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     Get financial summary for a committee for a year
 */
 router.get("/:commID/summary/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -366,7 +367,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -378,7 +379,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBudgetSummary(committee_lut[req.params.commID][0], fiscal_year_lut[req.params.year], req.query.INSGC === "true");
+        const [results] = await Models.committee.getCommitteeBudgetSummary(req.params.commID, fiscal_year_lut[req.params.year], req.query.INSGC === "true");
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -397,7 +398,7 @@ function cleanCSVEntry(text) {
     Get a CSV file of all purchases for a given year
 */
 router.get("/:commID/csv", async(req, res, next) => {
-    if (!(req.params.commID in committee_lut)) {
+    if (!(req.params.commID in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -426,7 +427,7 @@ router.get("/:commID/csv", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.commID][0], ACCESS_LEVEL.internal_leader);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.commID, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -438,14 +439,14 @@ router.get("/:commID/csv", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteePurchasesByDates(committee_lut[req.params.commID][0], req.query.start, req.query.end);
+        const [results] = await Models.committee.getCommitteePurchasesByDates(req.params.commID, req.query.start, req.query.end);
         let csvString = "Purchase ID,Date,Purchaser,Item,Vendor,Cost,Reason,Comments\n";
 
         for (let purchase of results) {
             csvString += `"${purchase.purchaseid}","${purchase.date}",${cleanCSVEntry(purchase.pby)},${cleanCSVEntry(purchase.item)},${cleanCSVEntry(purchase.vendor)},${purchase.cost},${cleanCSVEntry(purchase.purchasereason)},${cleanCSVEntry(purchase.comments)}\n`;
         }
 
-        res.status(200).attachment(`${req.params.commID}_${req.query.start}_${req.query.end}.csv`).send(csvString);
+        res.status(200).attachment(`${committee_id_to_display[req.params.commID].split(" ").join("_")}_${req.query.start}_${req.query.end}.csv`).send(csvString);
         return next();
     } catch (err) {
         logger.error(err.stack);

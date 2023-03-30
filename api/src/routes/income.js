@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
+import { ACCESS_LEVEL, logger } from "../common_items.js";
+import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -57,7 +58,7 @@ router.post("/", async(req, res, next) => {
     } else if (req.body.item === undefined) {
         req.body.item = ""; // Income doesn't have an item
     } else if (req.body.item === "") {
-        res.status(400).send("Item must not be blank");
+        res.status(400).send("Item must not be blank"); // Donations do have an item
         return next();
     }
 
@@ -75,7 +76,7 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape committee so check committee name first
-    if (committee_name_swap[req.body.committee] === undefined) {
+    if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -139,7 +140,7 @@ router.get("/", async(req, res, next) => {
     try {
         const [results] = await Models.income.getAllIncome();
         results.forEach(income => {
-            income.committee = committee_name_swap[income.committee];
+            income.committee = committee_id_to_display[income.committee];
         });
         res.status(200).send(results);
         return next();
@@ -163,6 +164,7 @@ router.get("/:incomeID", async(req, res, next) => {
             res.status(403).send("Income not found");
             return next();
         }
+        results[0].committee = committee_display_to_id[results[0].committee];
         res.status(200).send(results[0]);
         return next();
     } catch (err) {
@@ -174,7 +176,8 @@ router.get("/:incomeID", async(req, res, next) => {
 
 router.put("/:incomeID", async(req, res, next) => {
     if (req.body.status === undefined ||
-        req.body.refnumber === undefined) {
+        req.body.refnumber === undefined ||
+        req.body.refnumber === null) {
         res.status(400).send("All income update details must be completed");
         return next();
     }

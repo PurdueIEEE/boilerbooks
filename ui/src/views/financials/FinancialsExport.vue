@@ -8,7 +8,7 @@
         <label for="committeeSelect" class="form-label fw-bold">Committee</label>
         <select id="committeeSelect" class="form-select" v-model="committee" required>
           <option selected disabled value="">Select...</option>
-          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
+          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val}}</option>
         </select>
       </div>
       <div class="col-6">

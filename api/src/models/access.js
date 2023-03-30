@@ -33,7 +33,7 @@ async function removeApproval(id) {
 
 async function removeTreasurer(id) {
     return db_conn.promise().execute(
-        "DELETE FROM approval A WHERE A.username=? AND A.privilege_level = ?",
+        "DELETE FROM approval WHERE username=? AND privilege_level = ?",
         [id, ACCESS_LEVEL.treasurer]
     );
 }

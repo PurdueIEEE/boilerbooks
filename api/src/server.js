@@ -27,6 +27,7 @@ import rateLimit from "express-rate-limit";
 import app from "./app.js";
 import { db_conn, db_check } from "./models/index.js";
 import { logger, smtp_check } from "./common_items.js";
+import { loader_check } from "./db_loaded_items.js";
 import checkAPI from "./middleware/checkAPI.js";
 import apiLogger from "./middleware/logging.js";
 import { oidc_check } from "./controllers/oidc.js";
@@ -84,9 +85,9 @@ server.all("*", (req, res, next) => {
 // Logging middleware
 server.use(apiLogger);
 
-// Before attaching the process, make sure the database and smtp server are online
+// Before attaching the process, make sure all other services are online
 let aux_check_num = setInterval(() => {
-    if (db_check() && smtp_check() && oidc_check()) {
+    if (db_check() && smtp_check() && oidc_check() && loader_check()) {
         clearInterval(aux_check_num);
         // Start and attach server
         const handle = server.listen(process.env.PORT, () => {

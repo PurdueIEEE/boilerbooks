@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { committee_name_swap, committee_lut, logger, mailer, ACCESS_LEVEL, committee_name_api } from "../common_items.js";
+import { logger, mailer, ACCESS_LEVEL } from "../common_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 import bcrypt from "bcrypt";
 
@@ -184,7 +185,7 @@ router.get("/:userID/purchases", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getPurchaseByUser(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_name_swap[purchase.committee];
+            purchase.committee = committee_id_to_display[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -206,9 +207,6 @@ router.get("/:userID/approvals", async(req, res, next) => {
 
     try {
         const [results] = await Models.purchase.getApprovalsForUser(req.params.userID);
-        results.forEach(purchase => {
-            purchase.committee = committee_name_swap[purchase.committee];
-        });
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -229,9 +227,6 @@ router.get("/:userID/completions", async(req, res, next) => {
 
     try {
         const [results] = await Models.purchase.getCompletionsForUser(req.params.userID);
-        results.forEach(purchase => {
-            purchase.committee = committee_name_swap[purchase.committee];
-        });
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -253,7 +248,7 @@ router.get("/:userID/reimbursements", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getTreasurer(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_name_swap[purchase.committee];
+            purchase.committee = committee_id_to_display[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -275,6 +270,9 @@ router.get("/:userID/checks", async(req, res, next) => {
 
     try {
         const [results] = await Models.purchase.getChecks(req.params.userID);
+        results.forEach(purchase => {
+            purchase.committee = committee_id_to_display[purchase.committee];
+        });
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -293,16 +291,15 @@ router.get("/:userID/balances", async(req, res, next) => {
         return next();
     }
 
-    const committees = Object.keys(committee_name_swap);
     const outputBalances = {};
 
     try {
-        for (let committee of committees) {
+        for (let committee in committee_id_to_display) {
             const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee, ACCESS_LEVEL.internal_leader);
             if (results.length !== 0) {
                 const [results_0] = await Models.committee.getCommitteeBalance(committee);
                 const [results_1] = await Models.committee.getCommitteeCredit(committee);
-                outputBalances[committee_name_swap[committee]] = [results_0[0].balance,results_1[0].balance];
+                outputBalances[committee_id_to_display[committee]] = [results_0[0].balance,results_1[0].balance];
             }
         }
     } catch (err) {
@@ -326,16 +323,11 @@ router.get("/:userID/committees", async(req, res, next) => {
 
     try {
         const [results] = await Models.account.getUserApprovalCommittees(req.params.userID);
-
         // very slow very bad
-        let filtered_lut = {};
-        for (let committee in committee_lut) {
-            for (let approval of results) {
-                if (committee_lut[committee][0] == approval.committee) {
-                    filtered_lut[committee] = committee_lut[committee];
-                }
-            }
-        }
+        let filtered_lut = results.reduce((out, elm) => {
+            out[elm.committee] = committee_id_to_display[elm.committee];
+            return out;
+        }, {});
 
         res.status(200).send(filtered_lut);
         return next();
@@ -378,7 +370,7 @@ router.get("/:userID/committee/purchase", async(req, res, next) => {
     try {
         const [results] = await Models.account.getLastPurchaseCommittee(req.context.request_user_id);
         if (results.length > 0) {
-            res.status(200).send(committee_name_api[results[0].committee]);
+            res.status(200).send(results[0].committee.toString());
             return next();
         } else {
             res.status(200).send("");
@@ -403,7 +395,7 @@ router.get("/:userID/committee/income", async(req, res, next) => {
     try {
         const [results] = await Models.account.getLastIncomeCommittee(req.context.request_user_id);
         if (results.length > 0) {
-            res.status(200).send(committee_name_api[results[0].committee]);
+            res.status(200).send(results[0].committee.toString());
             return next();
         } else {
             res.status(200).send("");

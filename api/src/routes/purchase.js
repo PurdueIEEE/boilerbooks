@@ -20,7 +20,8 @@ import * as fs from "fs/promises";
 import jimp from "jimp";
 
 import Models from "../models/index.js";
-import { committee_name_swap, committee_name_api, mailer, logger, ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
+import { mailer, logger, ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
+import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -65,6 +66,9 @@ router.get("/", async(req, res, next) => {
 
     try {
         const [results] = await Models.purchase.getAllReimbursements();
+        results.forEach(purchase => {
+            purchase.committee = committee_id_to_display[purchase.committee];
+        });
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -119,7 +123,7 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape committe so check for committee name first
-    if (committee_name_swap[req.body.committee] === undefined) {
+    if (committee_display_to_id[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -130,6 +134,7 @@ router.post("/", async(req, res, next) => {
     }
 
     req.body.user = req.context.request_user_id;
+    req.body.committee = committee_display_to_id[req.body.committee];
 
     /** Create the purchase request **/
     let insert_id = 0;
@@ -346,8 +351,8 @@ router.get("/:purchaseID", async(req, res, next) => {
                 if (results[0].status === "Requested" || results[0].status === "Approved") {
                     results[0].maxCost = results[0].cost * 1.15 + 10;
                 }
-                results[0].committee = committee_name_swap[results[0].committee];
-                results[0].committeeAPI = committee_name_api[results[0].committee];
+                results[0].committeeAPI = results[0].committee;
+                results[0].committee = committee_id_to_display[results[0].committee];
                 res.status(200).send(results[0]);
                 return next();
             }
@@ -359,8 +364,8 @@ router.get("/:purchaseID", async(req, res, next) => {
         if (results[0].status === "Requested" || results[0].status === "Approved") {
             results[0].maxCost = results[0].cost * 1.15 + 10;
         }
-        results[0].committee = committee_name_swap[results[0].committee];
-        results[0].committeeAPI = committee_name_api[results[0].committee];
+        results[0].committeeAPI = results[0].committee;
+        results[0].committee = committee_id_to_display[results[0].committee];
         results[0].costTooHigh = results_2[0].balance < results[0].cost;
         results[0].lowBalance = results_2[0].balance < 200;
         // Approval powers found
@@ -495,7 +500,6 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         req.body.comments === undefined ||
         req.body.fundsource === undefined ||
         req.body.status ===  undefined ||
-        req.body.committee === undefined ||
         req.body.category === undefined) {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -507,7 +511,6 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
         req.body.reason === "" ||
         req.body.fundsource === "" ||
         req.body.status === "" ||
-        req.body.committee === "" ||
         req.body.category === "") {
         res.status(400).send("All purchase details must be completed");
         return next();
@@ -552,13 +555,6 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
-        return next();
-    }
-
-    // can't escape committe so check for committee name first
-    req.body.committee = Object.keys(committee_name_swap).find(key => committee_name_swap[key] === req.body.committee);
-    if (!(req.body.committee in committee_name_swap)) {
-        res.status(400).send("Committee must be proper value");
         return next();
     }
 
@@ -607,7 +603,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
-            <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${purchase_deets[0].committee}</em> was ${purchase_deets[0].status}</p>
+            <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${committee_id_to_display[purchase_deets[0].committee]}</em> was ${purchase_deets[0].status}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
@@ -719,11 +715,11 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         let file_save_name = "";
         if (fileType === "png") {
             // BOSO only allows PDF and JPG, so handle png differently
-            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.jpg`;
+            file_save_name = `${committee_id_to_display[results[0].committee]}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.jpg`;
         } else {
             // handle JPG / JPEG / PDF like normal
             //  if the filetype is JPEG, change the file extension to .jpg for BOSO
-            file_save_name = `${results[0].committee}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType === "jpeg" ? "jpg" : fileType}`;
+            file_save_name = `${committee_id_to_display[results[0].committee]}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType === "jpeg" ? "jpg" : fileType}`;
         }
         file_save_name = file_save_name.replaceAll(" ", "_");
         file_save_name = file_save_name.replaceAll(/['"!?#%&{}/<>$:@+`|=]/ig, "");
@@ -770,11 +766,11 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         await mailer.sendMail({
             to:  process.env.TREAS_EMAIL,
             subject: `New Purchase By ${purchase_deets[0].committee}`,
-            text: `${purchase_deets[0].committee} has just purchased ${cleanUTF8(purchase_deets[0].item)} for $${purchase_deets[0].cost}.\n` +
+            text: `${committee_id_to_display[purchase_deets[0].committee]} has just purchased ${cleanUTF8(purchase_deets[0].item)} for $${purchase_deets[0].cost}.\n` +
             "Please visit Boiler Books at your earliest convenience to begin the reimbursement process.\n" +
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
-            html: `<p>${purchase_deets[0].committee} has purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}</p>
+            html: `<p>${committee_id_to_display[purchase_deets[0].committee]} has purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to begin the reimbursement process.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>

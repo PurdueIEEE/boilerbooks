@@ -32,12 +32,12 @@ async function search(params, id) {
         `SELECT p.item, p.purchaseID, p.committee, p.status, DATE_FORMAT(p.purchasedate,'%m-%d-%Y') as date, (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby
         FROM Purchases p WHERE
         (p.committee IN (SELECT ap.committee FROM approval ap WHERE ap.username = ? AND ap.privilege_level > ?)) AND
-        (LOWER(p.committee) LIKE ?) AND
+        (CONVERT(p.committee, CHAR) LIKE ?) AND
         (p.fiscal_year ${fiscalyearModifier} ?) AND
         ((LOWER(p.item) ${itemModifier} ?) ${joiner}
         (LOWER(p.vendor) ${vendorModifier} ?) ${joiner}
         (LOWER(p.purchasereason) ${reasonModifier} ?))`,
-        [id, ACCESS_LEVEL.member, selectInput(params.committee, "any", "%"), params.fiscalyear === "any" ? 0 : params.fiscalyear, selectInput(params.itemKey, "", "%"), selectInput(params.vendorKey, "", "%"), selectInput(params.reasonKey, "", "%")]
+        [id, ACCESS_LEVEL.member, selectInput(params.committee.toString(), "any", "%"), params.fiscalyear === "any" ? 0 : params.fiscalyear, selectInput(params.itemKey, "", "%"), selectInput(params.vendorKey, "", "%"), selectInput(params.reasonKey, "", "%")]
     );
 }
 

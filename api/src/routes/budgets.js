@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { fiscal_year_list, committee_lut, ACCESS_LEVEL, logger, max_fiscal_year_count, mailer, current_fiscal_year } from "../common_items.js";
+import { fiscal_year_list, ACCESS_LEVEL, logger, max_fiscal_year_count, mailer, current_fiscal_year } from "../common_items.js";
+import { committee_id_to_display, committee_display_to_id } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -33,7 +34,7 @@ router.get("/years", (req, res, next) => {
     Create a new budget for the current fiscal year
 */
 router.post("/:comm", async(req, res, next) => {
-    if (!(req.params.comm in committee_lut)) {
+    if (!(req.params.comm in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -45,7 +46,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // First check the user has approval permissions
     try {
-        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee_lut[req.params.comm][0], ACCESS_LEVEL.officer);
+        const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.comm, ACCESS_LEVEL.officer);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -58,7 +59,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // Clear the old budget from the database
     try {
-        await Models.budgets.clearBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
+        await Models.budgets.clearBudget(req.params.comm, max_fiscal_year_count);
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
@@ -80,7 +81,7 @@ router.post("/:comm", async(req, res, next) => {
             let budget = {
                 category: item.category,
                 amount: item.amount,
-                committee: committee_lut[req.params.comm][0],
+                committee: req.params.comm,
                 year: max_fiscal_year_count,
             };
 
@@ -98,11 +99,11 @@ router.post("/:comm", async(req, res, next) => {
         if (process.env.SEND_MAIL !== "yes") return next(); // SEND_MAIL must be "yes" or no mail is sent
         await mailer.sendMail({
             to: process.env.TREAS_EMAIL,
-            subject: `Budget submitted by ${committee_lut[req.params.comm][0]}`,
-            text: `${committee_lut[req.params.comm][0]} has submitted a new budget for the current fiscal year.\n`+
+            subject: `Budget submitted by ${committee_id_to_display[req.params.comm]}`,
+            text: `${committee_id_to_display[req.params.comm]} has submitted a new budget for the current fiscal year.\n`+
                 "Please visit Boiler Books at your earliest convenience to review and/or approve the budget.\n\n"+
                 "This email was automatically sent by Boiler Books",
-            html: `<p>${committee_lut[req.params.comm][0]} has submitted a new budget for the current fiscal year.</p>
+            html: `<p>${committee_id_to_display[req.params.comm]} has submitted a new budget for the current fiscal year.</p>
                     <p>Please visit Boiler Books at your earliest convenience to review and/or approve the budget.</p>
                     <br>
                     <small>This email was automatically sent by Boiler Books</small>`,
@@ -118,7 +119,7 @@ router.post("/:comm", async(req, res, next) => {
     Update the committee budget to approved
 */
 router.put("/:comm", async(req, res, next) => {
-    if (!(req.params.comm in committee_lut)) {
+    if (!(req.params.comm in committee_id_to_display)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -131,7 +132,7 @@ router.put("/:comm", async(req, res, next) => {
             return next();
         }
 
-        await Models.budgets.approveCommitteeBudget(committee_lut[req.params.comm][0], max_fiscal_year_count);
+        await Models.budgets.approveCommitteeBudget(req.params.comm, max_fiscal_year_count);
 
         res.status(200).send("Approved Budget");
         return next();
@@ -157,8 +158,8 @@ router.get("/submitted", async(req, res, next) => {
 
         const budgets = {};
 
-        for (let committee in committee_lut) {
-            const [results_1] = await Models.budgets.getCommitteeSubmittedBudget(committee_lut[committee][0], max_fiscal_year_count);
+        for (let committee in committee_id_to_display) {
+            const [results_1] = await Models.budgets.getCommitteeSubmittedBudget(committee, max_fiscal_year_count);
             budgets[committee] = results_1;
         }
 

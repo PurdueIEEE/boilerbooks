@@ -94,7 +94,13 @@ export default {
     async updateStatus(id, status) {
       let refnumber = "";
       if (status === "Received") {
-        refnumber = prompt("Enter the reference number for this income:");
+        refnumber = prompt("Enter the reference number for this income (leave blank if none):");
+      }
+
+      if (refnumber === null || refnumber === undefined) {
+        this.error = true;
+        this.dispmsg = "Reference number cannot be empty";
+        return;
       }
 
       this.dispmsg = '';

@@ -15,7 +15,8 @@
 */
 
 import { Router } from "express";
-import { committee_name_api, fiscal_year_lut } from "../common_items.js";
+import { fiscal_year_lut } from "../common_items.js";
+import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
 
 import Models from "../models/index.js";
 
@@ -25,7 +26,7 @@ const router = Router();
     Performs an advanced search
 */
 router.post("/", async(req, res, next) => {
-    if (committee_name_api[req.body.committee] === undefined && req.body.committee !== "any") {
+    if ((req.body.committee !== "any") && isNaN(parseInt(req.body.committee,10)) && (committee_id_to_display[parseInt(req.body.committee,10)] === undefined)) {
         res.status(400).send("Improper committee value");
         return next();
     }
@@ -38,6 +39,7 @@ router.post("/", async(req, res, next) => {
     req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : "any";
 
     const [results] = await Models.search.search(req.body, req.context.request_user_id);
+    results.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
 
     res.status(201).send(results);
     return next();
