@@ -30,7 +30,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Dues` WRITE;
 /*!40000 ALTER TABLE `Dues` DISABLE KEYS */;
-INSERT INTO `Dues` VALUES ('Purdue IEEE','ieee-infrastructure@purdueieee.org','','2022-11-13 06:23:39',1,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Racing,Learning,Software Saturdays,Social,ROV',8,0,'Unpaid'),('Purdue Pete','pp@localhost','','2022-11-13 06:23:57',2,'None',8,15,'Paid'),('Boilermaker Express','trainboi@localhost','','2022-11-13 06:24:14',3,2,8,10,'Paid'),('Mitch Daniels','mdma@localhost','','2022-11-13 06:24:25',4,3,8,0,'Exempt'),('ECE Department','pain@localhost','','2022-11-13 06:25:45',5,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Learning,Racing,Software Saturdays,Social,ROV',8,0,'Exempt');
+INSERT INTO `Dues` VALUES ('Purdue IEEE','ieee-infrastructure@purdueieee.org','','2022-11-13 06:23:39',1,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Racing,Learning,Software Saturdays,Social,ROV',8,0,'Unpaid'),('Purdue Pete','pp@localhost','','2022-11-13 06:23:57','Aerial Robotics','None',8,15,'Paid'),('Boilermaker Express','trainboi@localhost','','2022-11-13 06:24:14',3,2,8,10,'Paid'),('Mitch Daniels','mdma@localhost','','2022-11-13 06:24:25',4,'Computer Society',8,0,'Exempt'),('ECE Department','pain@localhost','','2022-11-13 06:25:45',5,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Learning,Racing,Software Saturdays,Social,ROV',8,0,'Exempt');
 /*!40000 ALTER TABLE `Dues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Purchases` WRITE;
 /*!40000 ALTER TABLE `Purchases` DISABLE KEYS */;
-INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8);
+INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 00:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',5,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
 /*!40000 ALTER TABLE `Purchases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +70,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `approval` WRITE;
 /*!40000 ALTER TABLE `approval` DISABLE KEYS */;
-INSERT INTO `approval` VALUES (2,'pain','Treasurer',1,1000000,'*',6),(3,'pain','Treasurer',2,0,'*',6),(4,'pain','Treasurer',3,0,'*',6),(5,'pain','Treasurer','EMBS',0,'*',6),(6,'pain','Treasurer',5,0,'*',6),(7,'pain','Treasurer',6,0,'*',6),(8,'pain','Treasurer',7,0,'*',6),(9,'pain','Treasurer',8,0,'*',6),(10,'mdma','Committee Chair',3,1000000,'*',4),(11,'trainboi','Project Lead',2,100,'*',2);
+INSERT INTO `approval` VALUES (2,'pain','Treasurer',1,1000000,'*',6),(3,'pain','Treasurer',2,0,'*',6),(4,'pain','Treasurer',3,0,'*',6),(5,'pain','Treasurer',4,0,'*',6),(6,'pain','Treasurer',5,0,'*',6),(7,'pain','Treasurer',6,0,'*',6),(8,'pain','Treasurer',7,0,'*',6),(9,'pain','Treasurer',8,0,'*',6),(10,'mdma','Committee Chair',3,1000000,'*',4),(11,'trainboi','Project Lead',2,100,'*',2);
 /*!40000 ALTER TABLE `approval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `committees` WRITE;
 /*!40000 ALTER TABLE `committees` DISABLE KEYS */;
-INSERT INTO `committees` VALUES (2,'Aerial Robotics','aerial','Active','Active'),(3,'Computer Society','csociety','Active','Active'),(4,'EMBS','embs','Active','Active'),(5,'MTT-S','mtt-s','Active','Active'),(6,'Racing','racing','Active','Active'),(7,'ROV','rov','Active','Active'),(8,'SOGA','soga','Active','Active'),(9,'Growth & Engagement','ge','Inactive','Active'),(10,'Learning','learning','Inactive','Active'),(11,'Social','social','Inactive','Active'),(12,'Software Saturdays','swsat','Inactive','Active');
+INSERT INTO `committees` VALUES (2,'Aerial Robotics','aerial','Active','Active'),(3,'Computer Society','csociety','Active','Active'),(4,'EMBS','embs','Active','Active'),(5,'MTT-S','mtt-s','Active','Active'),(6,'Racing','racing','Active','Active'),(7,'ROV','rov','Active','Active'),(8,'SOGA','soga','Active','Inactive'),(9,'Growth & Engagement','ge','Inactive','Active'),(10,'Learning','learning','Inactive','Active'),(11,'Social','social','Inactive','Active'),(12,'Software Saturdays','swsat','Inactive','Active');
 /*!40000 ALTER TABLE `committees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
