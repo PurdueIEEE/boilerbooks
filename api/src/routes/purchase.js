@@ -123,7 +123,7 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape committe so check for committee name first
-    if (committee_display_to_id[req.body.committee] === undefined) {
+    if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -134,7 +134,6 @@ router.post("/", async(req, res, next) => {
     }
 
     req.body.user = req.context.request_user_id;
-    req.body.committee = committee_display_to_id[req.body.committee];
 
     /** Create the purchase request **/
     let insert_id = 0;
@@ -174,7 +173,7 @@ router.post("/", async(req, res, next) => {
     try {
         await mailer.sendMail({
             to: emails,
-            subject: `New Purchase Request for ${req.body.committee}`,
+            subject: `New Purchase Request for ${committee_id_to_display[req.body.committee]}`,
             text: `A request was made by ${cleanUTF8(req.body.user)} for ${cleanUTF8(req.body.item)} costing $${req.body.price}\n` +
             "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
             `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${insert_id}.\n\n` +

@@ -135,7 +135,7 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/purchase`, {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({committee:this.committeeList[this.committee],category:this.category,item:this.itemName,
+        body: JSON.stringify({committee:this.committee,category:this.category,item:this.itemName,
                               reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments,checkType:this.checkType}),
       });
 
