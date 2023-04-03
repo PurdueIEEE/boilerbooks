@@ -18,7 +18,8 @@ import { Router } from "express";
 import crypto from "crypto";
 
 import Models from "../models/index.js";
-import { ACCESS_LEVEL, current_fiscal_year, dues_amount, dues_committees, fiscal_year_list, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
+import { ACCESS_LEVEL, current_fiscal_year, dues_amount, fiscal_year_list, fiscal_year_lut, logger, max_fiscal_year_count } from "../common_items.js";
+import { dues_committees } from "../db_loaded_items.js";
 
 const router = Router();
 

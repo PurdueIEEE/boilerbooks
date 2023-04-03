@@ -9,7 +9,7 @@
           <label for="searchCommittee" class="form-label fw-bold">Committee</label>
           <select id="searchCommittee" class="form-select" v-model="committee" required>
             <option selected value="any">ALL COMMITTEES</option>
-            <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="val[1]">{{val[1]}}</option>
+            <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val}}</option>
           </select>
         </div>
 

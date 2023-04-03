@@ -12,7 +12,7 @@ CREATE TABLE `approval` (
   `approvalID` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `role` varchar(50) NOT NULL,
-  `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
+  `committee` int UNSIGNED NOT NULL,
   `amount` float NOT NULL,
   `category` varchar(255) NOT NULL,
   `privilege_level` int NOT NULL
@@ -22,10 +22,18 @@ CREATE TABLE `Budget` (
   `budgetid` int NOT NULL,
   `category` varchar(250) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
+  `committee` int UNSIGNED NOT NULL,
   `fiscal_year` int UNSIGNED NOT NULL,
   `status` enum('Submitted','Approved') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `committees` (
+  `committee_id` int NOT NULL,
+  `display_name` varchar(20) NOT NULL,
+  `api_name` varchar(20) NOT NULL,
+  `bank_status` enum('Active', 'Inactive') NOT NULL,
+  `dues_status` enum('Active', 'Inactive') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET utf8mb4;
 
 CREATE TABLE `Dues` (
   `name` varchar(100) NOT NULL,
@@ -53,7 +61,7 @@ CREATE TABLE `Income` (
   `item` varchar(250) NOT NULL,
   `status` enum('Received','Expected','Unreceived','Credit') NOT NULL,
   `comments` varchar(10000) DEFAULT NULL,
-  `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
+  `committee` int UNSIGNED NOT NULL,
   `addedby` varchar(100) NOT NULL,
   `fiscal_year` int UNSIGNED NOT NULL,
   `refnumber` varchar(30) NOT NULL
@@ -67,7 +75,7 @@ CREATE TABLE `Purchases` (
   `item` varchar(500) NOT NULL,
   `purchasereason` varchar(500) NOT NULL,
   `vendor` varchar(200) NOT NULL,
-  `committee` enum('General IEEE','Aerial Robotics','Computer Society','EMBS','MTT-S','Orbital','Professional','Learning','Racing','ROV','Social','SOGA','GE') NOT NULL,
+  `committee` int UNSIGNED NOT NULL,
   `category` varchar(250) NOT NULL,
   `receipt` varchar(500) DEFAULT NULL,
   `cost` decimal(10,2) NOT NULL,
@@ -106,6 +114,9 @@ ALTER TABLE `approval`
 ALTER TABLE `Budget`
   ADD PRIMARY KEY (`budgetid`);
 
+ALTER TABLE `committees`
+  ADD PRIMARY KEY (`committee_id`);
+
 ALTER TABLE `Dues`
   ADD PRIMARY KEY (`duesid`);
 
@@ -131,6 +142,9 @@ ALTER TABLE `approval`
 ALTER TABLE `Budget`
   MODIFY `budgetid` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `committees`
+  MODIFY `committee_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `Dues`
   MODIFY `duesid` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
@@ -150,8 +164,14 @@ ALTER TABLE `Users`
 ALTER TABLE `approval`
 ADD FOREIGN KEY (username) REFERENCES Users(username);
 
+ALTER TABLE `approval`
+ADD FOREIGN KEY (committee) REFERENCES committees(committee_id);
+
 ALTER TABLE `Budget`
 ADD FOREIGN KEY (fiscal_year) REFERENCES fiscal_year(fyid);
+
+ALTER TABLE `Budget`
+ADD FOREIGN KEY (committee) REFERENCES committees(committee_id);
 
 ALTER TABLE `Dues`
 ADD FOREIGN KEY (fiscal_year) REFERENCES fiscal_year(fyid);
@@ -162,6 +182,9 @@ ADD FOREIGN KEY (addedby) REFERENCES Users(username);
 ALTER TABLE `Income`
 ADD FOREIGN KEY (fiscal_year) REFERENCES fiscal_year(fyid);
 
+ALTER TABLE `Income`
+ADD FOREIGN KEY (committee) REFERENCES committees(committee_id);
+
 ALTER TABLE `Purchases`
 ADD FOREIGN KEY (username) REFERENCES Users(username);
 
@@ -170,6 +193,9 @@ ADD FOREIGN KEY (approvedby) REFERENCES Users(username);
 
 ALTER TABLE `Purchases`
 ADD FOREIGN KEY (fiscal_year) REFERENCES fiscal_year(fyid);
+
+ALTER TABLE `Purchases`
+ADD FOREIGN KEY (committee) REFERENCES committees(committee_id);
 
 -- Database setup done
 COMMIT;

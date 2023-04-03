@@ -44,7 +44,7 @@
         <label for="committeeSelect" class="form-label fw-bold">Committee</label>
         <select id="committeeSelect" class="form-select" v-model="committee" required>
           <option selected disabled value="">Select...</option>
-          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
+          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val}}</option>
         </select>
       </div>
       <div class="col-md-6">
@@ -130,7 +130,7 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/access/internals`, {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({username:this.username,role:this.role,committee:this.committeeList[this.committee][0],amount:this.amount}),
+        body: JSON.stringify({username:this.username,role:this.role,committee:this.committee,amount:this.amount}),
       })
 
       this.error = response.error;

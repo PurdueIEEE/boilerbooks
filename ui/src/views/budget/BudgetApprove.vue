@@ -5,7 +5,7 @@
     <br v-else>
     <div class="my-3 row justify-content-center">
       <div v-for="(items, comm) in submittedBudgets" v-bind:key="comm" class="p-3 m-2 bg-light border rounded-3 row text-start col-md-10">
-        <p class="fs-2 fw-bold">{{committeeList[comm][1]}}</p>
+        <p class="fs-2 fw-bold">{{committeeList[comm]}}</p>
         <ul>
           <li v-for="item in items" v-bind:key="comm+item.category" class="fs-2 ms-5">{{item.category}} - <span class="fw-bold">${{item.amount}}</span></li>
         </ul>

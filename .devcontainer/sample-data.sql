@@ -20,7 +20,7 @@
 
 LOCK TABLES `Budget` WRITE;
 /*!40000 ALTER TABLE `Budget` DISABLE KEYS */;
-INSERT INTO `Budget` VALUES (1,'General Items',100.00,'General IEEE',8,'Approved'),(2,'Specific Items',100.00,'General IEEE',8,'Approved'),(3,'General Items',100.00,'Aerial Robotics',8,'Approved'),(4,'Specific Items',100.00,'Aerial Robotics',8,'Approved'),(5,'General Items',100.00,'Computer Society',8,'Approved'),(6,'Specific Items',100.00,'Computer Society',8,'Approved'),(7,'General Items',100.00,'EMBS',8,'Approved'),(8,'Specific Items ',100.00,'EMBS',8,'Approved'),(11,'General Items',100.00,'Racing',8,'Submitted'),(12,'Specific Items',100.00,'Racing',8,'Submitted'),(15,'General Items',100.00,'ROV',8,'Submitted'),(16,'Specific Items ',100.00,'ROV',8,'Submitted'),(17,'General Items',100.00,'MTT-S',8,'Submitted'),(18,'Specific Items',100.00,'MTT-S',8,'Submitted');
+INSERT INTO `Budget` VALUES (1,'General Items',100.00,1,8,'Approved'),(2,'Specific Items',100.00,1,8,'Approved'),(3,'General Items',100.00,2,8,'Approved'),(4,'Specific Items',100.00,2,8,'Approved'),(5,'General Items',100.00,3,8,'Approved'),(6,'Specific Items',100.00,3,8,'Approved'),(7,'General Items',100.00,4,8,'Approved'),(8,'Specific Items ',100.00,4,8,'Approved'),(11,'General Items',100.00,6,8,'Submitted'),(12,'Specific Items',100.00,6,8,'Submitted'),(15,'General Items',100.00,7,8,'Submitted'),(16,'Specific Items ',100.00,7,8,'Submitted'),(17,'General Items',100.00,5,8,'Submitted'),(18,'Specific Items',100.00,5,8,'Submitted');
 /*!40000 ALTER TABLE `Budget` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -40,7 +40,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Income` WRITE;
 /*!40000 ALTER TABLE `Income` DISABLE KEYS */;
-INSERT INTO `Income` VALUES (1,'2022-11-13 06:18:58','Income Source','BOSO',10.00,'','Expected','','Aerial Robotics','trainboi',8,''),(2,'2022-11-13 06:20:16','Large Sponsor','Cash',500.00,'','Received','Income was received as a pile of cash.','Computer Society','mdma',8,''),(3,'2022-11-13 06:20:49','Purdue University','Item',10.00,'Computer Monitors','Received','','Computer Society','mdma',8,''),(4,'2022-11-13 06:21:46','Famous Company','BOSO',1000.00,'','Received','','EMBS','pain',8,'ref num'),(5,'2022-11-13 06:22:36','Grant Organization','INSGC',850.00,'','Credit','','Aerial Robotics','pain',8,'');
+INSERT INTO `Income` VALUES (1,'2022-11-13 06:18:58','Income Source','BOSO',10.00,'','Expected','',2,'trainboi',8,''),(2,'2022-11-13 06:20:16','Large Sponsor','Cash',500.00,'','Received','Income was received as a pile of cash.',3,'mdma',8,''),(3,'2022-11-13 06:20:49','Purdue University','Item',10.00,'Computer Monitors','Received','',3,'mdma',8,''),(4,'2022-11-13 06:21:46','Famous Company','BOSO',1000.00,'','Received','',4,'pain',8,'ref num'),(5,'2022-11-13 06:22:36','Grant Organization','INSGC',850.00,'','Credit','',2,'pain',8,'');
 /*!40000 ALTER TABLE `Income` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Purchases` WRITE;
 /*!40000 ALTER TABLE `Purchases` DISABLE KEYS */;
-INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor','General IEEE','General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor','General IEEE','Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor','Aerial Robotics','General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor','Computer Society','Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store','Computer Society','General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8);
+INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 01:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',5,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
 /*!40000 ALTER TABLE `Purchases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +70,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `approval` WRITE;
 /*!40000 ALTER TABLE `approval` DISABLE KEYS */;
-INSERT INTO `approval` VALUES (2,'pain','Treasurer','General IEEE',1000000,'*',6),(3,'pain','Treasurer','Aerial Robotics',0,'*',6),(4,'pain','Treasurer','Computer Society',0,'*',6),(5,'pain','Treasurer','EMBS',0,'*',6),(6,'pain','Treasurer','MTT-S',0,'*',6),(7,'pain','Treasurer','Racing',0,'*',6),(8,'pain','Treasurer','ROV',0,'*',6),(9,'pain','Treasurer','SOGA',0,'*',6),(10,'mdma','Committee Chair','Computer Society',1000000,'*',4),(11,'trainboi','Project Lead','Aerial Robotics',100,'*',2);
+INSERT INTO `approval` VALUES (2,'pain','Treasurer',1,1000000,'*',6),(3,'pain','Treasurer',2,0,'*',6),(4,'pain','Treasurer',3,0,'*',6),(5,'pain','Treasurer',4,0,'*',6),(6,'pain','Treasurer',5,0,'*',6),(7,'pain','Treasurer',6,0,'*',6),(8,'pain','Treasurer',7,0,'*',6),(9,'pain','Treasurer',8,0,'*',6),(10,'mdma','Committee Chair',3,1000000,'*',4),(11,'trainboi','Project Lead',2,100,'*',2);
 /*!40000 ALTER TABLE `approval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -82,6 +82,18 @@ LOCK TABLES `fiscal_year` WRITE;
 /*!40000 ALTER TABLE `fiscal_year` DISABLE KEYS */;
 INSERT INTO `fiscal_year` VALUES (1,'2015-2016'),(2,'2016-2017'),(3,'2017-2018'),(4,'2018-2019'),(5,'2019-2020'),(6,'2020-2021'),(7,'2021-2022'),(8,'2022-2023');
 /*!40000 ALTER TABLE `fiscal_year` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+--
+-- Dumping data for table `committees`
+--
+
+LOCK TABLES `committees` WRITE;
+/*!40000 ALTER TABLE `committees` DISABLE KEYS */;
+INSERT INTO `committees` VALUES (2,'Aerial Robotics','aerial','Active','Active'),(3,'Computer Society','csociety','Active','Active'),(4,'EMBS','embs','Active','Active'),(5,'MTT-S','mtt-s','Active','Active'),(6,'Racing','racing','Active','Active'),(7,'ROV','rov','Active','Active'),(8,'SOGA','soga','Active','Inactive'),(9,'Growth & Engagement','ge','Inactive','Active'),(10,'Learning','learning','Inactive','Active'),(11,'Social','social','Inactive','Active'),(12,'Software Saturdays','swsat','Inactive','Active');
+/*!40000 ALTER TABLE `committees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

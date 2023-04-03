@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { ACCESS_LEVEL, committee_name_swap, logger } from "../common_items.js";
+import { ACCESS_LEVEL, logger } from "../common_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -54,6 +55,7 @@ router.get("/officers", async(req, res, next) => {
             return next();
         }
         const [results_1] = await Models.access.getApprovals(ACCESS_LEVEL.officer);
+        results_1.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -75,6 +77,7 @@ router.get("/internals", async(req, res, next) => {
             return next();
         }
         const [results_1] = await Models.access.getApprovals(ACCESS_LEVEL.internal_leader);
+        results_1.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -126,9 +129,9 @@ router.post("/treasurers", async(req, res, next) => {
             category: "*",
             level: ACCESS_LEVEL.treasurer,
         };
-        for (let committee in committee_name_swap) {
+        for (let committee in committee_id_to_display) {
             approval.committee = committee;
-            if (committee === "General IEEE") {
+            if (committee_id_to_display[committee] === "General IEEE") {
                 approval.amount = 1000000; // if they need more than this we have a problem
             }
             await Models.access.addApproval(approval);
@@ -159,7 +162,7 @@ router.post("/officers", async(req, res, next) => {
         return next();
     }
 
-    if (committee_name_swap[req.body.committee] === undefined) {
+    if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -181,7 +184,7 @@ router.post("/officers", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_name_swap[req.body.committee]);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, req.body.committee);
         if (results_1[0].approvalexists) {
             res.status(400).send(`User already has approval powers for ${req.body.committee}, please remove them before adding more`);
             return next();
@@ -223,7 +226,7 @@ router.post("/internals", async(req, res, next) => {
         return next();
     }
 
-    if (committee_name_swap[req.body.committee] === undefined) {
+    if (req.body.committee === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -245,9 +248,9 @@ router.post("/internals", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_name_swap[req.body.committee]);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, req.body.committee);
         if (results_1[0].approvalexists) {
-            res.status(400).send(`User already has approval powers for ${committee_name_swap[req.body.committee]}, please remove them before adding more`);
+            res.status(400).send(`User already has approval powers for ${req.body.committee}, please remove them before adding more`);
             return next();
         }
 

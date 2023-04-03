@@ -31,7 +31,7 @@
         <label for="committeeSelect" class="form-label fw-bold">Committee</label>
         <select id="committeeSelect" class="form-select" v-model="committee" required>
           <option selected disabled value="">Select...</option>
-          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val[1]}}</option>
+          <option v-for="(val,com) in committeeList" v-bind:key="com" v-bind:value="com">{{val}}</option>
         </select>
       </div>
       <div class="col-md-6">
@@ -135,7 +135,7 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/purchase`, {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({committee:this.committeeList[this.committee][0],category:this.category,item:this.itemName,
+        body: JSON.stringify({committee:this.committee,category:this.category,item:this.itemName,
                               reason:this.itemReason,vendor:this.vendor,price:this.price,comments:this.comments,checkType:this.checkType}),
       });
 
