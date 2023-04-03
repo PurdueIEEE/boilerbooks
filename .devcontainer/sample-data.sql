@@ -20,7 +20,7 @@
 
 LOCK TABLES `Budget` WRITE;
 /*!40000 ALTER TABLE `Budget` DISABLE KEYS */;
-INSERT INTO `Budget` VALUES (1,'General Items',100.00,1,8,'Approved'),(2,'Specific Items',100.00,1,8,'Approved'),(3,'General Items',100.00,2,8,'Approved'),(4,'Specific Items',100.00,2,8,'Approved'),(5,'General Items',100.00,3,8,'Approved'),(6,'Specific Items',100.00,3,8,'Approved'),(7,'General Items',100.00,'EMBS',8,'Approved'),(8,'Specific Items ',100.00,'EMBS',8,'Approved'),(11,'General Items',100.00,6,8,'Submitted'),(12,'Specific Items',100.00,6,8,'Submitted'),(15,'General Items',100.00,7,8,'Submitted'),(16,'Specific Items ',100.00,7,8,'Submitted'),(17,'General Items',100.00,5,8,'Submitted'),(18,'Specific Items',100.00,5,8,'Submitted');
+INSERT INTO `Budget` VALUES (1,'General Items',100.00,1,8,'Approved'),(2,'Specific Items',100.00,1,8,'Approved'),(3,'General Items',100.00,2,8,'Approved'),(4,'Specific Items',100.00,2,8,'Approved'),(5,'General Items',100.00,3,8,'Approved'),(6,'Specific Items',100.00,3,8,'Approved'),(7,'General Items',100.00,4,8,'Approved'),(8,'Specific Items ',100.00,4,8,'Approved'),(11,'General Items',100.00,6,8,'Submitted'),(12,'Specific Items',100.00,6,8,'Submitted'),(15,'General Items',100.00,7,8,'Submitted'),(16,'Specific Items ',100.00,7,8,'Submitted'),(17,'General Items',100.00,5,8,'Submitted'),(18,'Specific Items',100.00,5,8,'Submitted');
 /*!40000 ALTER TABLE `Budget` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -30,7 +30,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Dues` WRITE;
 /*!40000 ALTER TABLE `Dues` DISABLE KEYS */;
-INSERT INTO `Dues` VALUES ('Purdue IEEE','ieee-infrastructure@purdueieee.org','','2022-11-13 06:23:39',1,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Racing,Learning,Software Saturdays,Social,ROV',8,0,'Unpaid'),('Purdue Pete','pp@localhost','','2022-11-13 06:23:57','Aerial Robotics','None',8,15,'Paid'),('Boilermaker Express','trainboi@localhost','','2022-11-13 06:24:14',3,2,8,10,'Paid'),('Mitch Daniels','mdma@localhost','','2022-11-13 06:24:25',4,'Computer Society',8,0,'Exempt'),('ECE Department','pain@localhost','','2022-11-13 06:25:45',5,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Learning,Racing,Software Saturdays,Social,ROV',8,0,'Exempt');
+INSERT INTO `Dues` VALUES ('Purdue IEEE','ieee-infrastructure@purdueieee.org','','2022-11-13 06:23:39',1,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Racing,Learning,Software Saturdays,Social,ROV',8,0,'Unpaid'),('Purdue Pete','pp@localhost','','2022-11-13 06:23:57',2,'None',8,15,'Paid'),('Boilermaker Express','trainboi@localhost','','2022-11-13 06:24:14',3,'Aerial Robotics',8,10,'Paid'),('Mitch Daniels','mdma@localhost','','2022-11-13 06:24:25',4,'Computer Society',8,0,'Exempt'),('ECE Department','pain@localhost','','2022-11-13 06:25:45',5,'Aerial Robotics,Computer Society,EMBS,Growth & Engagement,MTT-S,Learning,Racing,Software Saturdays,Social,ROV',8,0,'Exempt');
 /*!40000 ALTER TABLE `Dues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -40,7 +40,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Income` WRITE;
 /*!40000 ALTER TABLE `Income` DISABLE KEYS */;
-INSERT INTO `Income` VALUES (1,'2022-11-13 06:18:58','Income Source','BOSO',10.00,'','Expected','',2,'trainboi',8,''),(2,'2022-11-13 06:20:16','Large Sponsor','Cash',500.00,'','Received','Income was received as a pile of cash.',3,'mdma',8,''),(3,'2022-11-13 06:20:49','Purdue University','Item',10.00,'Computer Monitors','Received','',3,'mdma',8,''),(4,'2022-11-13 06:21:46','Famous Company','BOSO',1000.00,'','Received','','EMBS','pain',8,'ref num'),(5,'2022-11-13 06:22:36','Grant Organization','INSGC',850.00,'','Credit','',2,'pain',8,'');
+INSERT INTO `Income` VALUES (1,'2022-11-13 06:18:58','Income Source','BOSO',10.00,'','Expected','',2,'trainboi',8,''),(2,'2022-11-13 06:20:16','Large Sponsor','Cash',500.00,'','Received','Income was received as a pile of cash.',3,'mdma',8,''),(3,'2022-11-13 06:20:49','Purdue University','Item',10.00,'Computer Monitors','Received','',3,'mdma',8,''),(4,'2022-11-13 06:21:46','Famous Company','BOSO',1000.00,'','Received','',4,'pain',8,'ref num'),(5,'2022-11-13 06:22:36','Grant Organization','INSGC',850.00,'','Credit','',2,'pain',8,'');
 /*!40000 ALTER TABLE `Income` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Purchases` WRITE;
 /*!40000 ALTER TABLE `Purchases` DISABLE KEYS */;
-INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 00:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',5,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
+INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 01:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',5,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
 /*!40000 ALTER TABLE `Purchases` ENABLE KEYS */;
 UNLOCK TABLES;
 

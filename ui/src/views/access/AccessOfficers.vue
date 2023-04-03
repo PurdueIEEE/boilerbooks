@@ -123,7 +123,7 @@ export default {
       const response = await fetchWrapperTXT(`/api/v2/access/officers`, {
         method: 'post',
         headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify({username:this.username,role:this.role,committee:this.committeeList[this.committee]}),
+        body: JSON.stringify({username:this.username,role:this.role,committee:this.committee}),
       });
 
       this.error = response.error;

@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL, logger } from "../common_items.js";
-import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -161,10 +161,10 @@ router.get("/:incomeID", async(req, res, next) => {
         }
         const [results_0] = await Models.account.getUserApprovals(req.context.request_user_id, results[0].committee, ACCESS_LEVEL.internal_leader);
         if (results_0.length === 0) {
-            res.status(403).send("Income not found");
+            res.status(404).send("Income not found");
             return next();
         }
-        results[0].committee = committee_display_to_id[results[0].committee];
+        results[0].committee = committee_id_to_display[results[0].committee];
         res.status(200).send(results[0]);
         return next();
     } catch (err) {

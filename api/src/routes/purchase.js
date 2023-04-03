@@ -21,7 +21,7 @@ import jimp from "jimp";
 
 import Models from "../models/index.js";
 import { mailer, logger, ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
-import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {

@@ -16,7 +16,7 @@
 
 import { Router } from "express";
 import { fiscal_year_lut } from "../common_items.js";
-import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 import Models from "../models/index.js";
 
@@ -26,7 +26,7 @@ const router = Router();
     Performs an advanced search
 */
 router.post("/", async(req, res, next) => {
-    if ((req.body.committee !== "any") && isNaN(parseInt(req.body.committee,10)) && (committee_id_to_display[parseInt(req.body.committee,10)] === undefined)) {
+    if ((req.body.committee !== "any") && (committee_id_to_display[req.body.committee] === undefined)) {
         res.status(400).send("Improper committee value");
         return next();
     }

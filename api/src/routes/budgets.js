@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { fiscal_year_list, ACCESS_LEVEL, logger, max_fiscal_year_count, mailer, current_fiscal_year } from "../common_items.js";
-import { committee_id_to_display, committee_display_to_id } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 

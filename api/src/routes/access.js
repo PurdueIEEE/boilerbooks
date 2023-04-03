@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL, logger } from "../common_items.js";
-import { committee_display_to_id, committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -162,7 +162,7 @@ router.post("/officers", async(req, res, next) => {
         return next();
     }
 
-    if (committee_display_to_id[req.body.committee] === undefined) {
+    if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -184,7 +184,7 @@ router.post("/officers", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_display_to_id[req.body.committee]);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, req.body.committee);
         if (results_1[0].approvalexists) {
             res.status(400).send(`User already has approval powers for ${req.body.committee}, please remove them before adding more`);
             return next();
@@ -194,7 +194,7 @@ router.post("/officers", async(req, res, next) => {
         const approval = {
             username: req.body.username,
             role: req.body.role,
-            committee: committee_display_to_id[req.body.committee],
+            committee: req.body.committee,
             amount: 1000000, // if they need more than this we have a problem
             category: "*",
             level: ACCESS_LEVEL.officer,
@@ -226,7 +226,7 @@ router.post("/internals", async(req, res, next) => {
         return next();
     }
 
-    if (committee_display_to_id[req.body.committee] === undefined) {
+    if (req.body.committee === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
@@ -248,7 +248,7 @@ router.post("/internals", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username, committee_display_to_id[req.body.committee]);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, req.body.committee);
         if (results_1[0].approvalexists) {
             res.status(400).send(`User already has approval powers for ${req.body.committee}, please remove them before adding more`);
             return next();
@@ -258,7 +258,7 @@ router.post("/internals", async(req, res, next) => {
         const approval = {
             username: req.body.username,
             role: req.body.role,
-            committee: committee_display_to_id[req.body.committee],
+            committee: req.body.committee,
             amount: req.body.amount,
             category: "*",
             level: ACCESS_LEVEL.internal_leader,

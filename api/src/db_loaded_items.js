@@ -56,10 +56,10 @@ let loader_check_num = setInterval(async() => {
             logger.error("Loader failed to grab fields");
             process.exit(1);
         }
-
+        logger.info("Loader grabbed fields");
         loader_good = true;
     }
-});
+}, 500);
 function loader_check() {
     return loader_good;
 }
