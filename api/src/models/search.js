@@ -15,7 +15,7 @@
 */
 
 import { ACCESS_LEVEL } from "../common_items.js";
-import { db_conn } from "./index.js";
+import { db_conn } from "../utils/db.js";
 
 async function search(params, id) {
     // These lines seem useless, but they are very important!

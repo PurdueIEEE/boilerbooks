@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import { db_conn } from "./index.js";
+import { db_conn } from "../utils/db.js";
 import { max_fiscal_year_count } from "../common_items.js";
 
 async function getCommitteeCategories(comm, year=max_fiscal_year_count) {

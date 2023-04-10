@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import { db_conn } from "./index.js";
+import { db_conn } from "../utils/db.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 import { v4 as uuidv4} from "uuid";
 

@@ -25,10 +25,10 @@ import rateLimit from "express-rate-limit";
 
 // Import files
 import app from "./app.js";
-import { db_conn, db_check } from "./models/index.js";
+import { db_conn, db_check } from "./utils/db.js";
 import { smtp_check } from "./utils/mailer.js";
-import { logger } from "./utils/logging.js";
 import { loader_check } from "./db_loaded_items.js";
+import { logger } from "./utils/logging.js";
 import checkAPI from "./middleware/checkAPI.js";
 import apiLogger from "./middleware/logging.js";
 import { oidc_check } from "./controllers/oidc.js";
