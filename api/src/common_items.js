@@ -16,8 +16,6 @@
 
 // variables, functions, enums, etc. that are used elsewhere in the code
 
-import { logger } from "./utils/logging.js";
-
 // -------------- fiscal year globals -------------
 
 /** CHANGE BELOW ANNUALLY **/
@@ -123,46 +121,6 @@ const ACCESS_LEVEL = Object.freeze({
 });
 // -------------------------------------------------
 
-// ----------------- Logging -----------------------
-
-// -------------------------------------------------
-
-// ------------------ SMTP mailer ------------------
-import nodemailer from "nodemailer";
-const mailer = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
-    ignoreTLS: true,
-},{
-    from: "Boiler Books <boilerbooks@purdueieee.org>",
-});
-
-// Backoff smtp startup check
-let try_count = 0;
-let smtp_good = false;
-function smtp_startup() {
-    mailer.verify((err) => {
-        if (!err) {
-            logger.info("SMTP connection verified");
-            smtp_good = true;
-            return;
-        }
-        logger.error(`SMTP connection fail ${try_count}: ${err.message}`);
-        try_count += 1;
-        if (try_count >= 5) {
-            logger.error("SMTP connection failed to verify");
-            process.exit(1);
-        }
-        setTimeout(smtp_startup, try_count * 1000); // Retry the startup, backoff longer each time
-    });
-}
-function smtp_check() {
-    return smtp_good;
-}
-smtp_startup();
-// -------------------------------------------------
-
 // ---------------- utf-8 -> ascii ----------------
 function cleanUTF8(input) {
     let clean = "";
@@ -189,7 +147,5 @@ export {
     dues_committees,
     dues_amount,
     ACCESS_LEVEL,
-    mailer,
-    smtp_check,
     cleanUTF8,
 };
