@@ -38,69 +38,6 @@ const min_fiscal_year_count = 1;
 const max_fiscal_year_count = fiscal_year_list.length;
 // -------------------------------------------------
 
-// ------------ financial committee lut ------------
-// this is the best solution I can come up with
-//  with out a database schema migration. Here is the problem:
-//  the committee column in the database is an enum with some values,
-//  but the name of the committee does not match the enum value.
-//  Further, the name of the committee is not a http safe thing to put in a URL.
-//  Therefore, this is a lookup table of sorts to cross reference these
-//  three different names for THE SAME COMMITEE
-// format = { http-name: [ db enum, committee name ] }
-const committee_lut =
-{
-    "general":["General IEEE", "General IEEE"],
-    "aerial":["Aerial Robotics", "Aerial Robotics"],
-    "csociety":["Computer Society", "Computer Society"],
-    "embs":["EMBS", "EMBS"],
-    "mtt-s":["MTT-S", "MTT-S"],
-    "racing":["Racing", "Racing"],
-    "rov":["ROV", "ROV"],
-    "soga":["SOGA", "SOGA"],
-};
-// mini-LUT for db enum : committee name
-const committee_name_swap =
-{
-    "General IEEE":"General IEEE",
-    "Aerial Robotics":"Aerial Robotics",
-    "Computer Society":"Computer Society",
-    "EMBS":"EMBS",
-    "MTT-S":"MTT-S",
-    "Racing":"Racing",
-    "ROV":"ROV",
-    "SOGA":"SOGA",
-};
-// mini-LUT for db enum : api name
-const committee_name_api =
-{
-    "General IEEE":"general",
-    "Aerial Robotics":"aerial",
-    "Computer Society":"csociety",
-    "EMBS":"embs",
-    "MTT-S":"mtt-s",
-    "Racing":"racing",
-    "ROV":"rov",
-    "SOGA":"soga",
-};
-// -------------------------------------------------
-
-// ------------- dues committee lut ----------------
-// List of all committees a member can be part of
-const dues_committees =
-[
-    "Aerial Robotics",
-    "Computer Society",
-    "EMBS",
-    "Growth & Engagement",
-    "MTT-S",
-    "Learning",
-    "Racing",
-    "ROV",
-    "Social",
-    "Software Saturdays"
-];
-// -------------------------------------------------
-
 // ----------------- dues amount -------------------
 // Current annual local dues
 
@@ -141,10 +78,6 @@ export {
     fiscal_year_lut,
     min_fiscal_year_count,
     max_fiscal_year_count,
-    committee_lut,
-    committee_name_swap,
-    committee_name_api,
-    dues_committees,
     dues_amount,
     ACCESS_LEVEL,
     cleanUTF8,
