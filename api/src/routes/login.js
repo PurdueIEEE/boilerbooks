@@ -19,7 +19,9 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 
 import Models from "../models/index.js";
-import { mailer, logger, ACCESS_LEVEL } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { logger } from "../utils/logging.js";
+import { mailer } from "../utils/mailer.js";
 
 const router = Router();
 const bcrypt_rounds = 10;

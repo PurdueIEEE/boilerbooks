@@ -17,7 +17,9 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { logger, mailer, ACCESS_LEVEL } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { logger } from "../utils/logging.js";
+import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display } from "../db_loaded_items.js";
 
 import bcrypt from "bcrypt";
