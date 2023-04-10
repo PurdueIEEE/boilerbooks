@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import { logger } from "../common_items.js";
+import { logger } from "../utils/logging.js";
 
 async function apiLogger(req, res, next) {
     // Log every route and it's result

@@ -16,49 +16,7 @@
 
 // variables, functions, enums, etc. that are used elsewhere in the code
 
-// ---------------- un/escape functions ---------------
-// Escaping is not necessary with our usage of Prepared Statements
-// These are left here if needed but they are not exported or used
-// -> Only concern is if the API user does not sanitize the
-// ->   possibly valid HTML in the responses.
-// ->   Vue does this an thereforore our front-end is safe.
-
-// (NOT USED)
-function clean_input_all(string) {
-    // ' " \ / < > ` &
-    string = string.replaceAll(/['"\\/<>&`]/ig, "");
-    string = string.trim();
-    return string;
-}
-
-// (NOT USED)
-function clean_input_keepslash(string) {
-    // ' " \ < > ` &
-    string = string.replaceAll(/['"\\<>&`]/ig, "");
-    string = string.trim();
-    return string;
-}
-
-// (NOT USED)
-function clean_input_encodeurl(string) {
-    //string = string.replaceAll(/[']/ig, '%27');
-    string = encodeURIComponent(string);
-    return string;
-}
-
-// (NOT USED)
-function unescape_object(obj) {
-    for (let key in obj) {
-        // javascript is a perfect language with no flaws
-        if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] && typeof(obj[key]) === "string") {
-            //obj[key] = obj[key].replaceAll(/[%27]/ig, "'");
-            obj[key] = decodeURIComponent(obj[key]);
-        }
-    }
-
-    return obj;
-}
-// -------------------------------------------------
+import { logger } from "./utils/logging.js";
 
 // -------------- fiscal year globals -------------
 
@@ -166,38 +124,7 @@ const ACCESS_LEVEL = Object.freeze({
 // -------------------------------------------------
 
 // ----------------- Logging -----------------------
-import winston from "winston";
-import "winston-daily-rotate-file";
-const transport = new winston.transports.DailyRotateFile({
-    filename: "boilerbooks-%DATE%.log",
-    datePattern:"YYYY-MM-DD",
-    zippedArchive: true,
-    dirname: "/var/log/boilerbooks/",
-    maxSize: "20m",
-    maxFiles: 10,
-});
-const format = winston.format.printf((log) => {
-    return `${log.timestamp} [${log.level}]: ${log.message}`;
-});
-const logger = winston.createLogger({
-    transports: [
-        transport
-    ],
-    level: "info",
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.splat(),
-        format
-    ),
-});
-logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.timestamp(),
-        winston.format.splat(),
-        format
-    ),
-}));
+
 // -------------------------------------------------
 
 // ------------------ SMTP mailer ------------------
@@ -263,7 +190,6 @@ export {
     dues_amount,
     ACCESS_LEVEL,
     mailer,
-    logger,
     smtp_check,
     cleanUTF8,
 };

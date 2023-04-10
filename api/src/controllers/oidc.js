@@ -16,7 +16,8 @@
 
 import { Issuer, generators } from "openid-client";
 
-import { logger, ACCESS_LEVEL } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { logger } from "../utils/logging.js";
 import Models from "../models/index.js";
 
 let oidcIssuer;

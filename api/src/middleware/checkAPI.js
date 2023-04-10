@@ -15,7 +15,7 @@
 */
 
 import Models from "../models/index.js";
-import { logger } from "../common_items.js";
+import { logger } from "../utils/logging.js";
 
 async function checkAPI(req, res, next) {
     // If we are attempting to go to the /, /login, or /oidc endpoints, don't authenticate

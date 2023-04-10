@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { ACCESS_LEVEL, logger } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { logger } from "../utils/logging.js";
 
 const router = Router();
 

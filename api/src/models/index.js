@@ -23,7 +23,7 @@ import budgets from "./budgets.js";
 import dues from "./dues.js";
 import search from "./search.js";
 
-import { logger } from "../common_items.js";
+import { logger } from "../utils/logging.js";
 
 import mysql2 from "mysql2";
 

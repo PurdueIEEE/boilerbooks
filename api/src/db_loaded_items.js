@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import { logger } from "./common_items.js";
+import { logger } from "./utils/logging.js";
 import { db_conn, db_check } from "./models/index.js";
 
 let committee_display_to_id;
