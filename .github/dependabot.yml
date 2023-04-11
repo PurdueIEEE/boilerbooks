@@ -1,0 +1,19 @@
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/api"
+    schedule:
+      interval: "monthly"
+    allow:
+      dependency-type: production
+    open-pull-requests-limit: 5
+      
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "monthly"
+    allow:
+      dependency-type: production
+    open-pull-requests-limit: 5
