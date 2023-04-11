@@ -11,7 +11,7 @@
     "lint": "eslint src/ --ext .js,.vue --ignore-path .gitignore && echo 'No lint errors'"
   },
   "dependencies": {
-    "@popperjs/core": "^2.11.6",
+    "@popperjs/core": "^2.11.7",
     "bootstrap": "^5.2.1",
     "core-js": "^3.30.0",
     "vue": "^3.2.47",
