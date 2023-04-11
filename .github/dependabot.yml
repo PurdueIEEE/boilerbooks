@@ -7,7 +7,7 @@ updates:
     schedule:
       interval: "monthly"
     allow:
-      dependency-type: production
+      - dependency-type: production
     open-pull-requests-limit: 5
       
   - package-ecosystem: "npm"
@@ -15,5 +15,5 @@ updates:
     schedule:
       interval: "monthly"
     allow:
-      dependency-type: production
+      - dependency-type: production
     open-pull-requests-limit: 5
