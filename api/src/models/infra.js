@@ -14,9 +14,15 @@
    limitations under the License.
 */
 
-import { db_conn } from "./index.js";
+import { db_conn } from "../utils/db.js";
 
+async function getAllCommittees() {
+    return db_conn.promise().execute(
+        "SELECT * FROM committees",
+        []
+    );
+}
 
 export default {
-
+    getAllCommittees,
 };

@@ -17,7 +17,19 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
+import { logger } from "../utils/logging.js";
 
 const router = Router();
+
+router.get("/committees", async(req, res, next) => {
+    try {
+        const [results] = await Models.infra.getAllCommittees();
+        res.status(200).send(results);
+    } catch (err) {
+        logger.err(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
 
 export default router;
