@@ -21,12 +21,124 @@ import { logger } from "../utils/logging.js";
 
 const router = Router();
 
+const bank_statuses = ["Active", "Inactive"];
+const dues_statuses = ["Active", "Inactive"];
+
 router.get("/committees", async(req, res, next) => {
     try {
-        const [results] = await Models.infra.getAllCommittees();
-        res.status(200).send(results);
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send([]);
+            return next();
+        }
+
+        const [results_1] = await Models.infra.getAllCommittees();
+        res.status(200).send(results_1);
+        return next();
     } catch (err) {
-        logger.err(err.stack);
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+router.post("/committees", async(req, res, next) => {
+    if (req.body.display_name === undefined || req.body.display_name === "" ||
+        req.body.api_name === undefined || req.body.api_name === "" ||
+        req.body.bank_status === undefined || req.body.bank_status === "" ||
+        req.body.dues_status === undefined || req.body.dues_status === "") {
+        res.status(400).send("All fields must be filled out");
+        return next();
+    }
+
+    if (!bank_statuses.includes(req.body.bank_status)) {
+        res.status(400).send("Bank Status must be valid status");
+        return next();
+    }
+
+    if (!dues_statuses.includes(req.body.dues_status)) {
+        res.status(400).send("Dues Status must be valid status");
+        return next();
+    }
+
+    if (req.body.display_name.length > 20) {
+        res.status(400).send("Display Name must be <= 20 characters");
+        return next();
+    }
+
+    if (req.body.api_name.length > 20) {
+        res.status(400).send("API Name must be <= 20 characters");
+        return next();
+    }
+
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send([]);
+            return next();
+        }
+
+        await Models.infra.addNewCommittee(req.body);
+        res.status(200).send("Saved committee details");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+router.put("/committees/:commID", async(req, res, next) => {
+    if (req.body.display_name === undefined || req.body.display_name === "" ||
+        req.body.api_name === undefined || req.body.api_name === "" ||
+        req.body.bank_status === undefined || req.body.bank_status === "" ||
+        req.body.dues_status === undefined || req.body.dues_status === "") {
+        res.status(400).send("All fields must be filled out");
+        return next();
+    }
+
+    if (!bank_statuses.includes(req.body.bank_status)) {
+        res.status(400).send("Bank Status must be valid status");
+        return next();
+    }
+
+    if (!dues_statuses.includes(req.body.dues_status)) {
+        res.status(400).send("Dues Status must be valid status");
+        return next();
+    }
+
+    if (req.body.display_name.length > 20) {
+        res.status(400).send("Display Name must be <= 20 characters");
+        return next();
+    }
+
+    if (req.body.api_name.length > 20) {
+        res.status(400).send("API Name must be <= 20 characters");
+        return next();
+    }
+
+    try {
+        // Validate committee ID (no global list exists like elsewhere)
+        const [results_0] = await Models.infra.getCommitteeByID(req.params.commID);
+        if (results_0.length === 0) {
+            res.status(400).send("Committee ID invalid");
+            return next();
+        }
+
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send([]);
+            return next();
+        }
+
+        await Models.infra.updateCommitteeDetails(req.params.commID, req.body);
+        res.status(200).send("Saved committee details");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
         res.status(500).send("Internal Server Error");
         return next();
     }

@@ -23,6 +23,30 @@ async function getAllCommittees() {
     );
 }
 
+async function getCommitteeByID(id) {
+    return db_conn.promise().execute(
+        "SELECT * FROM committees WHERE committee_id = ?",
+        [id]
+    );
+}
+
+async function updateCommitteeDetails(id, comm) {
+    return db_conn.promise().execute(
+        "UPDATE committees SET display_name=?, api_name=?, bank_status=?, dues_status=? WHERE committee_id=?",
+        [comm.display_name, comm.api_name, comm.bank_status, comm.dues_status, id]
+    );
+}
+
+async function addNewCommittee(comm) {
+    return db_conn.promise().execute(
+        "INSERT INTO committees (display_name, api_name, bank_status, dues_status) VALUES (?,?,?,?)",
+        [comm.display_name, comm.api_name, comm.bank_status, comm.dues_status]
+    );
+}
+
 export default {
     getAllCommittees,
+    getCommitteeByID,
+    updateCommitteeDetails,
+    addNewCommittee,
 };
