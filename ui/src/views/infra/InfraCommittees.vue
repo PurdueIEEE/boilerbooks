@@ -4,6 +4,27 @@
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
 
+    <div class="modal" id="verifyStatusChange" tabindex="-1" aria-labelledby="verifyStatusChange" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="verifyStatusChange">Are you sure?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="fs-5">You have selected to change {{ warning_committee }}'s Finances from "Active" to "Inactive".</p>
+            <p class="fs-5">This is a destructive action: users will no longer be able to complete purchase workflows, income workflows, or view financial history.</p>
+            <p class="fs-5">While this action is reversible, it may have side effects that may corrupt data.</p>
+            <p class="fw-bold fs-4">Are you sure you want to proceed?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Go Back</button>
+            <button type="button" class="btn btn-primary" v-on:click="actuallySaveEdit(warning_idx)">Yes, I'm sure!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="p-3 m-2 bg-light border rounded-3 row text-start">
       <div class="col-md-1">
         <p class="fs-3 fw-bold">ID</p>
@@ -104,6 +125,7 @@
 */
 
 import { fetchWrapperJSON, fetchWrapperTXT } from '@/api_wrapper';
+import { Modal } from 'bootstrap';
 
 export default {
   name: 'InfraCommittees',
@@ -120,7 +142,10 @@ export default {
         api_name: '',
         bank_status: 'Active',
         dues_status: 'Active',
-      }
+      },
+      warning_modal: null,
+      warning_committee: '',
+      warning_idx: 0,
     }
   },
   methods: {
@@ -131,7 +156,8 @@ export default {
     stopEdit(idx) {
       this.activeEditList[idx] = false;
     },
-    async saveEdit(idx) {
+    async actuallySaveEdit(idx) {
+      this.warning_modal.hide();
       const response = await fetchWrapperTXT(`/api/v2/infra/committees/${this.committeeListEdit[idx].committee_id}`, {
         method: 'put',
         headers: new Headers({'content-type': 'application/json'}),
@@ -145,6 +171,29 @@ export default {
 
       if (!this.error) {
         this.stopEdit(idx);
+      }
+    },
+    saveEdit(idx) {
+      if (this.committeeListEdit[idx].display_name.length > 20) {
+        this.error = true;
+        this.dispmsg = "Display Name must be <= 20 characters";
+        return;
+      }
+
+      if (this.committeeListEdit[idx].api_name.length > 20) {
+        this.error = true;
+        this.dispmsg = "API Name must be <= 20 characters";
+        return;
+      }
+
+      // Verify that the user is OK with this destructive action
+      if (this.committeeList[idx].bank_status === "Active" && this.committeeListEdit[idx].bank_status === "Inactive") {
+        this.warning_committee = this.committeeListEdit[idx].display_name;
+        this.warning_idx = idx;
+        // Show modal
+        this.warning_modal.show();
+      } else {
+        this.actuallySaveEdit(idx);
       }
     },
     async addNew() {
@@ -192,6 +241,8 @@ export default {
     this.activeEditList = this.committeeList.map(() => (false));
 
     this.new_committee.committee_id = this.committeeList[this.committeeList.length - 1].committee_id + 1;
+
+    this.warning_modal = new Modal(document.getElementById("verifyStatusChange"),  {backdrop:'static'});
   }
 }
 </script>
