@@ -21,42 +21,46 @@ let committee_display_to_id;
 let committee_id_to_display;
 let dues_committees;
 
+async function performLoad() {
+    try {
+        const [results] = await db_conn.promise().execute(
+            "SELECT * FROM committees",
+            []
+        );
+
+        committee_display_to_id = results.reduce((out, elm) => {
+            if (elm.bank_status === "Active") {
+                out[elm.display_name] = elm.committee_id;
+            }
+            return out;
+        }, {});
+
+        committee_id_to_display = results.reduce((out, elm) => {
+            if (elm.bank_status === "Active") {
+                out[elm.committee_id] = elm.display_name;
+            }
+            return out;
+        }, {});
+
+        dues_committees = results.reduce((out, elm) => {
+            if (elm.dues_status === "Active") {
+                out.push(elm.display_name);
+            }
+            return out;
+        }, []);
+
+    } catch (err) {
+        logger.error("Loader failed to grab fields");
+        process.exit(1);
+    }
+    logger.info("Loader grabbed fields");
+}
+
 let loader_good = false;
 let loader_check_num = setInterval(async() => {
     if (db_check()) {
         clearInterval(loader_check_num);
-        try {
-            const [results] = await db_conn.promise().execute(
-                "SELECT * FROM committees",
-                []
-            );
-
-            committee_display_to_id = results.reduce((out, elm) => {
-                if (elm.bank_status === "Active") {
-                    out[elm.display_name] = elm.committee_id;
-                }
-                return out;
-            }, {});
-
-            committee_id_to_display = results.reduce((out, elm) => {
-                if (elm.bank_status === "Active") {
-                    out[elm.committee_id] = elm.display_name;
-                }
-                return out;
-            }, {});
-
-            dues_committees = results.reduce((out, elm) => {
-                if (elm.dues_status === "Active") {
-                    out.push(elm.display_name);
-                }
-                return out;
-            }, []);
-
-        } catch (err) {
-            logger.error("Loader failed to grab fields");
-            process.exit(1);
-        }
-        logger.info("Loader grabbed fields");
+        await performLoad();
         loader_good = true;
     }
 }, 500);
@@ -66,6 +70,7 @@ function loader_check() {
 
 export {
     loader_check,
+    performLoad,
     committee_display_to_id,
     committee_id_to_display,
     dues_committees,

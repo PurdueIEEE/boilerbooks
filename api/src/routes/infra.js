@@ -18,6 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
+import { performLoad } from "../db_loaded_items.js";
 
 const router = Router();
 
@@ -82,6 +83,10 @@ router.post("/committees", async(req, res, next) => {
 
         await Models.infra.addNewCommittee(req.body);
         res.status(200).send("Saved committee details");
+
+        // Make sure we grab the newest fields
+        performLoad();
+
         return next();
     } catch (err) {
         logger.error(err.stack);
@@ -136,6 +141,10 @@ router.put("/committees/:commID", async(req, res, next) => {
 
         await Models.infra.updateCommitteeDetails(req.params.commID, req.body);
         res.status(200).send("Saved committee details");
+
+        // Make sure we grab the newest fields
+        performLoad();
+
         return next();
     } catch (err) {
         logger.error(err.stack);
