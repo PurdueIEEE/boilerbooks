@@ -25,6 +25,7 @@ import access from "./access.js";
 import dues from "./dues.js";
 import oidc from "./oidc.js";
 import search from "./search.js";
+import infra from "./infra.js";
 
 export default {
     account,
@@ -38,4 +39,5 @@ export default {
     dues,
     oidc,
     search,
+    infra,
 };

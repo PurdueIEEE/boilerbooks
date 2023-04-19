@@ -298,6 +298,23 @@ const routes = [
     }
   },
   {
+    path: '/infra',
+    component: () => import('../views/infra/InfraFrame.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('../views/infra/InfraHome.vue'),
+      },
+      {
+        path: 'committees',
+        component: () => import('../views/infra/InfraCommittees.vue'),
+      },
+    ],
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/oidc',
     component: () => import('../views/oidc/OIDCFrame.vue'),
     children: [

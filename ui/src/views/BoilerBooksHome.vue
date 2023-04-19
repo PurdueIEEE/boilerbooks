@@ -79,6 +79,18 @@
         </div>
         </div>
 
+        <div class="col-md-3 d-flex align-items-stretch mb-3" v-if="auth_state.viewTreasurer">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Modify Infrastructure</h5>
+            <p class="card-text">Modify committee status and fiscal years.</p>
+          </div>
+          <div class="card-footer">
+            <router-link to="/infra" class="btn btn-secondary">Go to Infrastructure</router-link>
+          </div>
+        </div>
+        </div>
+
     </div>
 
   </div>

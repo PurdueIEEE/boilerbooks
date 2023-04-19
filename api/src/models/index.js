@@ -22,6 +22,7 @@ import access from "./access.js";
 import budgets from "./budgets.js";
 import dues from "./dues.js";
 import search from "./search.js";
+import infra from "./infra.js";
 
 export default {
     account,
@@ -32,4 +33,5 @@ export default {
     budgets,
     dues,
     search,
+    infra,
 };
