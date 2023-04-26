@@ -73,7 +73,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./ui
-          file: Dockerfile.prod
+          file: ui/Dockerfile.prod
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
@@ -97,7 +97,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{env.IMAGE_NAME_UI }}
           flavor: |
-            suffix=-dev,onlatest-true
+            suffix=-dev,onlatest=true
           tags: |
             type=ref,event=branch
       - name: Setup Docker Buildx
@@ -106,6 +106,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./ui
-          file: Dockerfile.dev
+          file: ui/Dockerfile.dev
           push: true
           tags: ${{ steps.meta.outputs.tags }}
