@@ -16,7 +16,7 @@
 
 import { Router } from "express";
 import { fiscal_year_lut } from "../common_items.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 import Models from "../models/index.js";
 
@@ -26,7 +26,7 @@ const router = Router();
     Performs an advanced search
 */
 router.post("/", async(req, res, next) => {
-    if ((req.body.committee !== "any") && (committee_id_to_display[req.body.committee] === undefined)) {
+    if ((req.body.committee !== "any") && (committee_id_to_display_readonly_included[req.body.committee] === undefined)) {
         res.status(400).send("Improper committee value");
         return next();
     }
@@ -39,7 +39,7 @@ router.post("/", async(req, res, next) => {
     req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : "any";
 
     const [results] = await Models.search.search(req.body, req.context.request_user_id);
-    results.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
+    results.forEach((elm) => (elm.committee = committee_id_to_display_readonly_included[elm.committee]));
 
     res.status(201).send(results);
     return next();

@@ -19,7 +19,7 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { fiscal_year_list, current_fiscal_year, ACCESS_LEVEL, fiscal_year_lut } from "../common_items.js";
 import { logger } from "../utils/logging.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 const router = Router();
 
@@ -28,7 +28,11 @@ const router = Router();
 */
 router.get("/", (req, res, next) => {
     // literally just gets a list of committees
-    res.status(200).send(committee_id_to_display);
+    if (req.query.readonly === "yes") {
+        res.status(200).send(committee_id_to_display_readonly_included);
+    } else {
+        res.status(200).send(committee_id_to_display);
+    }
     return next();
 });
 
@@ -37,7 +41,7 @@ router.get("/", (req, res, next) => {
 */
 router.get("/:commID/categories/:year?", async(req, res, next) => {
     // commKey must be one of the above values, that is in the DB
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -68,7 +72,7 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
     Get total committee balance
 */
 router.get("/:commID/balance", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -100,7 +104,7 @@ router.get("/:commID/balance", async(req, res, next) => {
     Get total committee credit level
 */
 router.get("/:commID/credit", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -132,7 +136,7 @@ router.get("/:commID/credit", async(req, res, next) => {
     Get committee budget for a year
 */
 router.get("/:commID/budget/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -177,7 +181,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     Get total expenses for a committee for a year
 */
 router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -222,7 +226,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     Get total income for a committee for a year
 */
 router.get("/:commID/incometotal/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -267,7 +271,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     Get all purchases for a committee for a year
 */
 router.get("/:commID/purchases/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -308,7 +312,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     Get all income for a committee for a year
 */
 router.get("/:commID/income/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -349,7 +353,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     Get financial summary for a committee for a year
 */
 router.get("/:commID/summary/:year?", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -399,7 +403,7 @@ function cleanCSVEntry(text) {
     Get a CSV file of all purchases for a given year
 */
 router.get("/:commID/csv", async(req, res, next) => {
-    if (!(req.params.commID in committee_id_to_display)) {
+    if (!(req.params.commID in committee_id_to_display_readonly_included)) {
         res.status(404).send("Invalid committee value");
         return next();
     }
@@ -447,7 +451,7 @@ router.get("/:commID/csv", async(req, res, next) => {
             csvString += `"${purchase.purchaseid}","${purchase.date}",${cleanCSVEntry(purchase.pby)},${cleanCSVEntry(purchase.item)},${cleanCSVEntry(purchase.vendor)},${purchase.cost},${cleanCSVEntry(purchase.purchasereason)},${cleanCSVEntry(purchase.comments)}\n`;
         }
 
-        res.status(200).attachment(`${committee_id_to_display[req.params.commID].split(" ").join("_")}_${req.query.start}_${req.query.end}.csv`).send(csvString);
+        res.status(200).attachment(`${committee_id_to_display_readonly_included[req.params.commID].split(" ").join("_")}_${req.query.start}_${req.query.end}.csv`).send(csvString);
         return next();
     } catch (err) {
         logger.error(err.stack);

@@ -19,7 +19,7 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 import { logger } from "../utils/logging.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 const router = Router();
 
@@ -77,6 +77,7 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape committee so check committee name first
+    // don't check against the read-only list, no new income can be created
     if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
@@ -98,6 +99,20 @@ router.post("/", async(req, res, next) => {
         const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.body.committee, ACCESS_LEVEL.internal_leader);
         if (results.length === 0) {
             res.status(403).send("Not allowed to create donation");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
+    // Paranoid sanity check - make sure committee is open to transactions
+    // This check should never fail, it should get caught with some input validation above
+    try {
+        const [results] = await Models.committee.isCommitteeValidForTransactions(req.body.committee);
+        if (results.length === 0) {
+            res.status(403).send("Committee is not able to create income/donations");
             return next();
         }
     } catch (err) {
@@ -141,7 +156,7 @@ router.get("/", async(req, res, next) => {
     try {
         const [results] = await Models.income.getAllIncome();
         results.forEach(income => {
-            income.committee = committee_id_to_display[income.committee];
+            income.committee = committee_id_to_display_readonly_included[income.committee];
         });
         res.status(200).send(results);
         return next();
@@ -165,7 +180,7 @@ router.get("/:incomeID", async(req, res, next) => {
             res.status(404).send("Income not found");
             return next();
         }
-        results[0].committee = committee_id_to_display[results[0].committee];
+        results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
         res.status(200).send(results[0]);
         return next();
     } catch (err) {

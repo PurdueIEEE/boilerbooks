@@ -46,6 +46,20 @@ router.post("/:comm", async(req, res, next) => {
         return next();
     }
 
+    // Paranoid sanity check - make sure committee is open to transactions
+    // This check should never fail, it should get caught with some input validation above
+    try {
+        const [results] = await Models.committee.isCommitteeValidForTransactions(req.params.comm);
+        if (results.length === 0) {
+            res.status(403).send("Committee is not able to create budgets");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+
     // First check the user has approval permissions
     try {
         const [results] = await Models.account.getUserApprovals(req.context.request_user_id, req.params.comm, ACCESS_LEVEL.officer);
@@ -131,6 +145,14 @@ router.put("/:comm", async(req, res, next) => {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
             res.status(200).send("Approved Budget");
+            return next();
+        }
+
+        // Paranoid sanity check - make sure committee is open to transactions
+        // This check should never fail, it should get caught with some input validation above
+        const [results_0] = await Models.committee.isCommitteeValidForTransactions(req.params.comm);
+        if (results_0.length === 0) {
+            res.status(403).send("Committee is not able to create budgets");
             return next();
         }
 

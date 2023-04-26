@@ -62,6 +62,7 @@
         <select v-else v-model="committeeListEdit[idx].bank_status" class="form-select">
           <option>Active</option>
           <option>Inactive</option>
+          <option>Read-Only</option>
         </select>
       </div>
       <div class="col-md-2">
@@ -92,6 +93,7 @@
         <select id="dues-input-new" v-model="new_committee.bank_status" class="form-select">
           <option>Active</option>
           <option>Inactive</option>
+          <option>Read-Only</option>
         </select>
       </div>
       <div class="col-md-2">

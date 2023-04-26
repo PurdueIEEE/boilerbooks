@@ -131,6 +131,13 @@ async function getCommitteeBudgetSummary(comm, year, insgc) {
     );
 }
 
+async function isCommitteeValidForTransactions(comm) {
+    return db_conn.promise().execute(
+        "SELECT 1 FROM committees WHERE committee_id = ? AND bank_status = 'Active'",
+        [comm]
+    );
+}
+
 export default {
     getCommitteeCategories,
     getCommitteeBalance,
@@ -142,4 +149,5 @@ export default {
     getCommitteeIncome,
     getCommitteeBudgetSummary,
     getCommitteePurchasesByDates,
+    isCommitteeValidForTransactions,
 };
