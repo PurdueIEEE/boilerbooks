@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
-import { performLoad } from "../db_loaded_items.js";
+import loader from "../utils/committees.js";
 
 const router = Router();
 
@@ -85,7 +85,13 @@ router.post("/committees", async(req, res, next) => {
         res.status(200).send("Saved committee details");
 
         // Make sure we grab the newest fields
-        performLoad();
+        const load_status = await loader.update();
+        if (load_status) {
+            logger.info("Committee loader updated successfully");
+        } else {
+            logger.error("Committee loader failed to updated");
+        }
+
 
         return next();
     } catch (err) {
@@ -143,7 +149,12 @@ router.put("/committees/:commID", async(req, res, next) => {
         res.status(200).send("Saved committee details");
 
         // Make sure we grab the newest fields
-        performLoad();
+        const load_status = await loader.update();
+        if (load_status) {
+            logger.info("Committee loader updated successfully");
+        } else {
+            logger.error("Committee loader failed to updated");
+        }
 
         return next();
     } catch (err) {

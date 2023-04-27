@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+import { sleep } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 
 import mysql2 from "mysql2";
@@ -34,32 +35,68 @@ const db_conn = mysql2.createPool({
     decimalNumbers: true,
 });
 
-// Backoff pool startup check
-let try_count = 0;
-let db_good = false;
-function db_startup() {
-    db_conn.getConnection((err, conn) => {
-        if (!err) {
-            logger.info("MySQL connection pool started");
-            db_conn.releaseConnection(conn);
-            db_good = true;
-            return;
-        }
-        logger.error(`MySQL connection pool fail ${try_count}: ${err.message}`);
-        try_count += 1;
-        if (try_count >= 5) {
-            logger.error("MySQL connection pool failed to start");
-            process.exit(1);
-        }
-        setTimeout(db_startup, try_count * 1000); // Retry the startup, backoff longer each time
+const MAX_TRIES = 5;
+
+// Small helper function to check the database connection by
+//  aquiring a connection from the pool
+function checkDB() {
+    return new Promise((resolve, reject) => {
+        db_conn.getConnection((err, conn) => {
+            if (!err) {
+                db_conn.releaseConnection(conn);
+                resolve(true);
+            } else {
+                reject(err.message);
+            }
+        });
     });
 }
-function db_check() {
-    return db_good;
-}
-db_startup();
 
+// Loops the database check
+async function loopCheckDB(try_count) {
+    if (try_count == 0) {
+        throw false;
+    }
+    try {
+        return await checkDB();
+    } catch (err) {
+        logger.warn(`MySQL connection pool fail ${try_count}: ${err}`);
+        if (try_count == 1) {
+            throw false;
+        }
+        await sleep(1000 * (MAX_TRIES - try_count + 1));
+        return await loopCheckDB(try_count - 1);
+    }
+}
+
+async function init() {
+    return await loopCheckDB(MAX_TRIES);
+}
+
+function finalize() {
+    return new Promise((resolve, reject) => {
+        db_conn.end((err) => {
+            if (err) {
+                reject(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
+
+async function update() {
+    return true;
+}
+
+// Specific exports
 export {
     db_conn,
-    db_check,
+};
+
+// Standardized exports
+export default {
+    init,
+    finalize,
+    update,
 };

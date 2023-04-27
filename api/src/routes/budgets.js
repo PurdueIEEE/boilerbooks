@@ -20,7 +20,7 @@ import Models from "../models/index.js";
 import { fiscal_year_list, ACCESS_LEVEL, max_fiscal_year_count, current_fiscal_year } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
-import { committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../utils/committees.js";
 
 const router = Router();
 

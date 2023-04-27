@@ -14,8 +14,8 @@
    limitations under the License.
 */
 
-import { logger } from "./utils/logging.js";
-import { db_conn, db_check } from "./utils/db.js";
+import { logger } from "./logging.js";
+import { db_conn } from "./db.js";
 
 let committee_display_to_id;
 let committee_id_to_display;
@@ -50,28 +50,43 @@ async function performLoad() {
         }, []);
 
     } catch (err) {
-        logger.error("Loader failed to grab fields");
-        process.exit(1);
+        return false;
     }
-    logger.info("Loader grabbed fields");
+
+    return true;
 }
 
-let loader_good = false;
-let loader_check_num = setInterval(async() => {
-    if (db_check()) {
-        clearInterval(loader_check_num);
-        await performLoad();
-        loader_good = true;
+async function init() {
+    const load_success = await performLoad();
+    if (!load_success) {
+        throw false;
     }
-}, 500);
-function loader_check() {
-    return loader_good;
+    return true;
 }
 
+async function finalize() {
+    return true;
+}
+
+async function update() {
+    const load_success = await performLoad();
+    if (!load_success) {
+        logger.warn("Committee Loader failed, application may run in a degraded state!");
+        throw false;
+    }
+    return true;
+}
+
+// Specific exports
 export {
-    loader_check,
-    performLoad,
     committee_display_to_id,
     committee_id_to_display,
     dues_committees,
+};
+
+// Standardized exports
+export default {
+    init,
+    finalize,
+    update,
 };

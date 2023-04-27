@@ -23,15 +23,19 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 
-// Import files
+// Import middleware
 import app from "./app.js";
-import { db_conn, db_check } from "./utils/db.js";
-import { smtp_check } from "./utils/mailer.js";
-import { loader_check } from "./db_loaded_items.js";
-import { logger } from "./utils/logging.js";
 import checkAPI from "./middleware/checkAPI.js";
 import apiLogger from "./middleware/logging.js";
-import { oidc_check } from "./controllers/oidc.js";
+
+// Import startup checks
+import db from "./utils/db.js";
+import smtp from "./utils/mailer.js";
+import loader from "./utils/committees.js";
+import oidc from "./utils/oidc.js";
+
+// Import misc utils
+import { logger } from "./utils/logging.js";
 
 const server = express();
 server.set("trust proxy", 1);
@@ -54,6 +58,46 @@ if (process.env.USE_OIDC === "true") {
         store: new MemoryStore(),
     }));
 }
+
+// Startup all utils
+let startup_flag = 4;
+db.init()
+    .then((res) => {
+        startup_flag -= 1;
+        logger.info("MySQL init complete");
+        loader.init()
+            .then((res) => {
+                startup_flag -= 1;
+                logger.info("Committee Loader init complete");
+            })
+            .catch((err) => {
+                logger.error("Committee Loader init failed");
+                process.exit(1);
+            });
+    })
+    .catch((err) => {
+        logger.error("MySQL init failed");
+        process.exit(1);
+    });
+smtp.init()
+    .then((res) => {
+        startup_flag -= 1;
+        logger.info("SMTP init complete");
+    })
+    .catch((err) => {
+        logger.error("SMTP init failed");
+        process.exit(1);
+    });
+oidc.init()
+    .then((res) => {
+        startup_flag -= 1;
+        logger.info("OIDC init complete");
+    })
+    .catch((err) => {
+        logger.error("OIDC init failed");
+        process.exit(1);
+    });
+
 
 // Setup predefined middleware
 server.use(cors({ credentials:true, origin:true, maxAge:3600, })); // allow caching for 1 hour (firefox max is 24hrs, chromium max is 2hrs)
@@ -86,9 +130,25 @@ server.all("*", (req, res, next) => {
 // Logging middleware
 server.use(apiLogger);
 
+// Internal helper function
+function end_all() {
+    db.finalize().then(() => {
+        logger.warn("MySQL ended");
+    });
+    loader.finalize().then(() => {
+        logger.warn("Committee Loader ended");
+    });
+    smtp.finalize().then(() => {
+        logger.warn("SMTP ended");
+    });
+    oidc.finalize().then(() => {
+        logger.warn("OIDC ended");
+    });
+}
+
 // Before attaching the process, make sure all other services are online
 let aux_check_num = setInterval(() => {
-    if (db_check() && smtp_check() && oidc_check() && loader_check()) {
+    if (startup_flag == 0) {
         clearInterval(aux_check_num);
         // Start and attach server
         const handle = server.listen(process.env.PORT, () => {
@@ -100,9 +160,7 @@ let aux_check_num = setInterval(() => {
             handle.close(() => {
                 logger.warn("HTTP server closed");
             });
-            db_conn.end(() => {
-                logger.warn("MySQL connection closed");
-            });
+            end_all();
         });
 
         process.on("SIGINT", () => {
@@ -110,9 +168,7 @@ let aux_check_num = setInterval(() => {
             handle.close(() => {
                 logger.warn("HTTP server closed");
             });
-            db_conn.end(() => {
-                logger.warn("MySQL connection closed");
-            });
+            end_all();
         });
     }
 }, 500); // 500ms is offset from all the wait periods

@@ -23,7 +23,7 @@ import Models from "../models/index.js";
 import { ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
-import { committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../utils/committees.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {

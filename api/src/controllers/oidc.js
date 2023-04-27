@@ -18,10 +18,9 @@ import { Issuer, generators } from "openid-client";
 
 import { ACCESS_LEVEL } from "../common_items.js";
 import { logger } from "../utils/logging.js";
+import { oidcClient } from "../utils/oidc.js";
 import Models from "../models/index.js";
 
-let oidcIssuer;
-let oidcClient;
 
 function get_oidc_login(req, res, next) {
     const code_verifier = generators.codeVerifier();
@@ -242,52 +241,7 @@ async function post_oidc_register(req, res, next) {
     }
 }
 
-let oidc_good = false;
-let try_count = 0;
-async function setupOIDC(cb) {
-    try {
-        oidcIssuer = await Issuer.discover(process.env.OIDC_SERVER);
-        oidcClient = new oidcIssuer.Client({
-            client_id: process.env.OIDC_CLIENT_ID,
-            client_secret: process.env.OIDC_CLIENT_SECRET,
-            redirect_uris: [process.env.OIDC_REDIRECT_URI],
-            response_types: ["code"],
-        });
-        cb(false);
-    } catch (err) {
-        if (err.code) {
-            return cb({ message: err.code, });
-        }
-        cb({ message: err.error, });
-    }
-}
-function oidc_startup() {
-    setupOIDC((err) => {
-        if (!err) {
-            logger.info("OIDC SSO server discovered");
-            oidc_good = true;
-            return;
-        }
-        logger.error(`OIDC SSO server discovery fail ${try_count}: ${err.message}`);
-        try_count += 1;
-        if (try_count >= 5) {
-            logger.error("OIDC SSO server was not discovered");
-            process.exit(1);
-        }
-        setTimeout(oidc_startup, try_count * 1000); // Retyr the startup, backoff longer each time
-    });
-}
-function oidc_check() {
-    return process.env.USE_OIDC === "true" ? oidc_good : true;
-}
-// Only do the startup if we are using OIDC
-if (process.env.USE_OIDC === "true") {
-    oidc_startup();
-}
-
-
 export {
-    oidc_check,
     get_oidc_login,
     get_oidc_callback,
     get_oidc_logout,
