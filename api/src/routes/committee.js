@@ -19,7 +19,7 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { fiscal_year_list, current_fiscal_year, ACCESS_LEVEL, fiscal_year_lut } from "../common_items.js";
 import { logger } from "../utils/logging.js";
-import { committee_id_to_display } from "../db_loaded_items.js";
+import { committee_id_to_display } from "../utils/committees.js";
 
 const router = Router();
 

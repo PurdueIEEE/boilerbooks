@@ -14,53 +14,56 @@
    limitations under the License.
 */
 
-import nodemailer from "nodemailer";
+import { Issuer } from "openid-client";
 import { logger } from "./logging.js";
 import { sleep } from "../common_items.js";
 
-const mailer = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
-    ignoreTLS: true,
-},{
-    from: "Boiler Books <boilerbooks@purdueieee.org>",
-});
-
 const MAX_TRIES = 5;
 
-// Small helper function to check the SMTP connection by
-//  using an internal mailer function
-function checkSMTP() {
-    return new Promise((resolve, reject) => {
-        mailer.verify((err) => {
-            if (!err) {
-                resolve(true);
-            } else {
-                reject(err.message);
-            }
+let oidcIssuer;
+let oidcClient;
+
+async function setupOIDC() {
+    try {
+        oidcIssuer = await Issuer.discover(process.env.OIDC_SERVER);
+        oidcClient = new oidcIssuer.Client({
+            client_id: process.env.OIDC_CLIENT_ID,
+            client_secret: process.env.OIDC_CLIENT_SECRET,
+            redirect_uris: [process.env.OIDC_REDIRECT_URI],
+            response_types: ["code"],
         });
-    });
+        return true;
+    } catch (err) {
+        if (err.code) {
+            throw err.code;
+        }
+        throw err.error;
+    }
 }
 
-async function loopCheckSMTP(try_count) {
+async function loopSetupOIDC(try_count) {
     if (try_count == 0) {
         throw false;
     }
+
     try {
-        return await checkSMTP();
+        return await setupOIDC();
     } catch (err) {
-        logger.warn(`SMTP connection fail ${try_count}: ${err}`);
+        logger.warn(`OIDC SSO server discovery fail ${try_count}: ${err}`);
         if (try_count == 1) {
             throw false;
         }
         await sleep(1000 * (MAX_TRIES - try_count + 1));
-        return await loopCheckSMTP(try_count - 1);
+        return await loopSetupOIDC(try_count - 1);
     }
 }
 
 async function init() {
-    return await loopCheckSMTP(MAX_TRIES);
+    if (process.env.USE_OIDC !== "true") {
+        return true;
+    }
+
+    return await loopSetupOIDC(MAX_TRIES);
 }
 
 async function finalize() {
@@ -71,12 +74,10 @@ async function update() {
     return true;
 }
 
-// Specific exports
 export {
-    mailer,
+    oidcClient,
 };
 
-// Standardized exports
 export default {
     init,
     finalize,

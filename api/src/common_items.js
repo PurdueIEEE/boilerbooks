@@ -58,7 +58,7 @@ const ACCESS_LEVEL = Object.freeze({
 });
 // -------------------------------------------------
 
-// ---------------- utf-8 -> ascii ----------------
+// ---------------- utf-8 -> ascii -----------------
 function cleanUTF8(input) {
     let clean = "";
     for (let i = 0; i < input.length; i++) {
@@ -68,6 +68,12 @@ function cleanUTF8(input) {
             clean += input[i];
         }
     }
+}
+// -------------------------------------------------
+
+// ---------------- fake sleep func ----------------
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 // -------------------------------------------------
 
@@ -81,4 +87,5 @@ export {
     dues_amount,
     ACCESS_LEVEL,
     cleanUTF8,
+    sleep,
 };
