@@ -15,7 +15,7 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { max_fiscal_year_count } from "../common_items.js";
+import { max_fiscal_year_count } from "../utils/fiscal_year.js";
 
 async function createNewMember(dues) {
     return db_conn.promise().execute(

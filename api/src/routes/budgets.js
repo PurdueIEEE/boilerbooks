@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { fiscal_year_list, ACCESS_LEVEL, max_fiscal_year_count, current_fiscal_year } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { fiscal_year_list, max_fiscal_year_count } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display } from "../utils/committees.js";

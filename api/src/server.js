@@ -31,7 +31,8 @@ import apiLogger from "./middleware/logging.js";
 // Import startup checks
 import db from "./utils/db.js";
 import smtp from "./utils/mailer.js";
-import loader from "./utils/committees.js";
+import comm_loader from "./utils/committees.js";
+import fy_loader from "./utils/fiscal_year.js";
 import oidc from "./utils/oidc.js";
 
 // Import misc utils
@@ -65,13 +66,21 @@ db.init()
     .then((res) => {
         startup_flag -= 1;
         logger.info("MySQL init complete");
-        loader.init()
+        comm_loader.init()
             .then((res) => {
                 startup_flag -= 1;
                 logger.info("Committee Loader init complete");
             })
             .catch((err) => {
                 logger.error("Committee Loader init failed");
+                process.exit(1);
+            });
+        fy_loader.init()
+            .then((res) => {
+                logger.info("Fiscal Year Loader init complete");
+            })
+            .catch((err) => {
+                logger.error("Fiscal Year Loader init failed");
                 process.exit(1);
             });
     })
@@ -135,8 +144,11 @@ function end_all() {
     db.finalize().then(() => {
         logger.warn("MySQL ended");
     });
-    loader.finalize().then(() => {
+    comm_loader.finalize().then(() => {
         logger.warn("Committee Loader ended");
+    });
+    fy_loader.finalize().then(() => {
+        logger.warn("Fiscal Year Loader ended");
     });
     smtp.finalize().then(() => {
         logger.warn("SMTP ended");

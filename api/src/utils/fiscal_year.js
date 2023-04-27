@@ -14,41 +14,37 @@
    limitations under the License.
 */
 
-import { logger } from "./logging.js";
 import { db_conn } from "./db.js";
 
-let committee_id_to_display;
-let committee_id_to_display_readonly_included;
-let dues_committees;
+let current_fiscal_year;
+let first_fiscal_year;
+let min_fiscal_year_count;
+let max_fiscal_year_count;
+let fiscal_year_list;
+let fiscal_year_lut;
 
 async function performLoad() {
     try {
         const [results] = await db_conn.promise().execute(
-            "SELECT * FROM committees",
+            "SELECT * FROM fiscal_year",
             []
         );
 
-        committee_id_to_display = results.reduce((out, elm) => {
-            if (elm.bank_status === "Active") {
-                out[elm.committee_id] = elm.display_name;
-            }
-            return out;
-        }, {});
+        current_fiscal_year = results[results.length - 1].fiscal_year;
+        first_fiscal_year = results[0].fiscal_year;
 
-        committee_id_to_display_readonly_included = results.reduce((out, elm) => {
-            if (elm.bank_status === "Active" || elm.bank_status === "Read-Only") {
-                out[elm.committee_id] = elm.display_name;
-            }
-            return out;
-        }, {});
+        min_fiscal_year_count = 1;
+        max_fiscal_year_count = results.length;
 
-        dues_committees = results.reduce((out, elm) => {
-            if (elm.dues_status === "Active") {
-                out.push(elm.display_name);
-            }
+        fiscal_year_list = results.reduce((out, elm) => {
+            out.push(elm.fiscal_year);
             return out;
         }, []);
 
+        fiscal_year_lut = results.reduce((out, elm) => {
+            out[elm.fiscal_year] = elm.fyid;
+            return out;
+        }, {});
     } catch (err) {
         throw false;
     }
@@ -70,12 +66,16 @@ async function update() {
 
 // Specific exports
 export {
-    committee_id_to_display,
-    committee_id_to_display_readonly_included,
-    dues_committees,
+    current_fiscal_year,
+    first_fiscal_year,
+    min_fiscal_year_count,
+    max_fiscal_year_count,
+    fiscal_year_list,
+    fiscal_year_lut,
 };
 
 // Standardized exports
+
 export default {
     init,
     finalize,

@@ -15,7 +15,8 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { ACCESS_LEVEL, max_fiscal_year_count } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { max_fiscal_year_count } from "../utils/fiscal_year.js";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
