@@ -17,8 +17,8 @@
 import { logger } from "./logging.js";
 import { db_conn } from "./db.js";
 
-let committee_display_to_id;
 let committee_id_to_display;
+let committee_id_to_display_readonly_included;
 let dues_committees;
 
 async function performLoad() {
@@ -28,15 +28,15 @@ async function performLoad() {
             []
         );
 
-        committee_display_to_id = results.reduce((out, elm) => {
+        committee_id_to_display = results.reduce((out, elm) => {
             if (elm.bank_status === "Active") {
-                out[elm.display_name] = elm.committee_id;
+                out[elm.committee_id] = elm.display_name;
             }
             return out;
         }, {});
 
-        committee_id_to_display = results.reduce((out, elm) => {
-            if (elm.bank_status === "Active") {
+        committee_id_to_display_readonly_included = results.reduce((out, elm) => {
+            if (elm.bank_status === "Active" || elm.bank_status === "Read-Only") {
                 out[elm.committee_id] = elm.display_name;
             }
             return out;
@@ -79,8 +79,8 @@ async function update() {
 
 // Specific exports
 export {
-    committee_display_to_id,
     committee_id_to_display,
+    committee_id_to_display_readonly_included,
     dues_committees,
 };
 
