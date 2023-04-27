@@ -17,11 +17,8 @@
 import { db_conn } from "./db.js";
 
 let current_fiscal_year;
-let first_fiscal_year;
-let min_fiscal_year_count;
 let max_fiscal_year_count;
-let fiscal_year_list;
-let fiscal_year_lut;
+let fiscal_year_id_to_display;
 
 async function performLoad() {
     try {
@@ -31,18 +28,11 @@ async function performLoad() {
         );
 
         current_fiscal_year = results[results.length - 1].fiscal_year;
-        first_fiscal_year = results[0].fiscal_year;
 
-        min_fiscal_year_count = 1;
         max_fiscal_year_count = results.length;
 
-        fiscal_year_list = results.reduce((out, elm) => {
-            out.push(elm.fiscal_year);
-            return out;
-        }, []);
-
-        fiscal_year_lut = results.reduce((out, elm) => {
-            out[elm.fiscal_year] = elm.fyid;
+        fiscal_year_id_to_display = results.reduce((out, elm) => {
+            out[elm.fyid] = elm.fiscal_year;
             return out;
         }, {});
     } catch (err) {
@@ -67,11 +57,8 @@ async function update() {
 // Specific exports
 export {
     current_fiscal_year,
-    first_fiscal_year,
-    min_fiscal_year_count,
     max_fiscal_year_count,
-    fiscal_year_list,
-    fiscal_year_lut,
+    fiscal_year_id_to_display,
 };
 
 // Standardized exports

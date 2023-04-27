@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { fiscal_year_lut } from "../utils/fiscal_year.js";
+import { fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 import Models from "../models/index.js";

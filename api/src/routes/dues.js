@@ -19,7 +19,7 @@ import crypto from "crypto";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL, dues_amount } from "../common_items.js";
-import { current_fiscal_year, fiscal_year_list, fiscal_year_lut, max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { current_fiscal_year, max_fiscal_year_count, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { dues_committees } from "../utils/committees.js";
 
@@ -214,7 +214,7 @@ router.get("/summary/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -227,7 +227,7 @@ router.get("/summary/:year?", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await Models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesMembers(req.params.year);
         const resp_obj = dues_committees.reduce((out, elm) => (out[elm]=[0,0], out), {});
         results_1.forEach(dues => {
             // the shit regex is a holdover since some multi-committee dues use ', ' instead of ','
@@ -262,7 +262,7 @@ router.get("/all/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -275,7 +275,7 @@ router.get("/all/:year?", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await Models.dues.getDuesMembers(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesMembers(req.params.year);
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -289,7 +289,7 @@ router.get("/all/:year?", async(req, res, next) => {
     Get actual dues income for a given year
 */
 router.get("/income/:year", async(req, res, next) => {
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -302,7 +302,7 @@ router.get("/income/:year", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await Models.dues.getDuesIncomeActual(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesIncomeActual(req.params.year);
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -316,7 +316,7 @@ router.get("/income/:year", async(req, res, next) => {
     Get expected dues income for a given year
 */
 router.get("/expected/:year", async(req, res, next) => {
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -329,7 +329,7 @@ router.get("/expected/:year", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await Models.dues.getDuesIncomeExpected(fiscal_year_lut[req.params.year]);
+        const [results_1] = await Models.dues.getDuesIncomeExpected(req.params.year);
         res.status(200).send({total:results_1.reduce((prev, curr) => { return prev + curr.amount; }, 0),});
         return next();
     } catch (err) {

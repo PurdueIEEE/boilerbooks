@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
-import { fiscal_year_list, current_fiscal_year, fiscal_year_lut } from "../utils/fiscal_year.js";
+import { current_fiscal_year, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
@@ -51,13 +51,13 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeCategories(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeCategories(req.params.commID, req.params.year);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -146,7 +146,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -164,7 +164,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBudgetTotals(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeBudgetTotals(req.params.commID, req.params.year);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -191,7 +191,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -209,7 +209,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeExpenseTotals(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeExpenseTotals(req.params.commID, req.params.year);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -236,7 +236,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -254,7 +254,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeIncomeTotals(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeIncomeTotals(req.params.commID, req.params.year);
         if (results.length === 0) {
             res.status(404).send("Invalid committee value");
             return next();
@@ -281,7 +281,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -299,7 +299,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteePurchases(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteePurchases(req.params.commID, req.params.year);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -322,7 +322,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -340,7 +340,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeIncome(req.params.commID, fiscal_year_lut[req.params.year]);
+        const [results] = await Models.committee.getCommitteeIncome(req.params.commID, req.params.year);
         res.status(200).send(results);
         return next();
     } catch (err) {
@@ -363,7 +363,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
         req.params.year = current_fiscal_year;
     }
 
-    if (!(fiscal_year_list.includes(req.params.year))) {
+    if (fiscal_year_id_to_display[req.params.year] === undefined) {
         res.status(404).send("Invalid fiscal year");
         return next();
     }
@@ -385,7 +385,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     try {
-        const [results] = await Models.committee.getCommitteeBudgetSummary(req.params.commID, fiscal_year_lut[req.params.year], req.query.INSGC === "true");
+        const [results] = await Models.committee.getCommitteeBudgetSummary(req.params.commID, req.params.year, req.query.INSGC === "true");
         res.status(200).send(results);
         return next();
     } catch (err) {

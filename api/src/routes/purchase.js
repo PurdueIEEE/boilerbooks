@@ -24,6 +24,7 @@ import { ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
+import { fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -369,6 +370,8 @@ router.get("/:purchaseID", async(req, res, next) => {
                 }
                 results[0].committeeAPI = results[0].committee;
                 results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
+                results[0].fiscalYearAPI = results[0].fiscal_year;
+                results[0].fiscal_year = fiscal_year_id_to_display[results[0].fiscal_year];
                 res.status(200).send(results[0]);
                 return next();
             }
@@ -382,6 +385,8 @@ router.get("/:purchaseID", async(req, res, next) => {
         }
         results[0].committeeAPI = results[0].committee;
         results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
+        results[0].fiscalYearAPI = results[0].fiscal_year;
+        results[0].fiscal_year = fiscal_year_id_to_display[results[0].fiscal_year];
         results[0].costTooHigh = results_2[0].balance < results[0].cost;
         results[0].lowBalance = results_2[0].balance < 200;
         // Approval powers found

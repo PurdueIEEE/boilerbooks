@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
-import { fiscal_year_list, max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { max_fiscal_year_count, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display } from "../utils/committees.js";
@@ -29,7 +29,7 @@ const router = Router();
     Get a list of all fiscal years
 */
 router.get("/years", (req, res, next) => {
-    res.status(200).send(fiscal_year_list);
+    res.status(200).send(fiscal_year_id_to_display);
     return next();
 });
 

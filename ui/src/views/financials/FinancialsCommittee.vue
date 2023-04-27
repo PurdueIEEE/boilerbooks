@@ -15,7 +15,7 @@
         <label for="FiscalSelect" class="form-label fw-bold">Fiscal Year</label>
         <select id="FiscalSelect" class="form-select" v-model="fiscalyear" required>
           <option selected disabled value="">Select...</option>
-          <option v-for="year in fiscalList" v-bind:key="year">{{year}}</option>
+          <option v-for="(val,year) in fiscalList" v-bind:key="year" v-bind:value="year">{{val}}</option>
         </select>
       </div>
     </div>
@@ -145,7 +145,7 @@ export default {
   data() {
     return {
       committeeList: {},
-      fiscalList: [],
+      fiscalList: {},
       committee: '',
       fiscalyear: '',
       found_comm: false,

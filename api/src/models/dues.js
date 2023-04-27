@@ -34,7 +34,7 @@ async function getMemberByEmail(email, fiscal_year) {
 
 async function getDuesMembers(year) {
     return db_conn.promise().execute(
-        "SELECT D.duesid, D.name, D.email, D.committee, D.amount, (SELECT fiscal_year FROM fiscal_year WHERE fyid=D.fiscal_year) AS fiscal_year, D.status FROM Dues D WHERE fiscal_year=?",
+        "SELECT D.duesid, D.name, D.email, D.committee, D.amount, D.fiscal_year, D.status FROM Dues D WHERE D.fiscal_year=?",
         [year]
     );
 }
@@ -57,7 +57,7 @@ async function getDuesIncomeActual(year) {
     return db_conn.promise().execute(
         `SELECT I.incomeid, I.source, I.amount, I.refnumber, I.status,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = I.addedby) addedbyname,
-        (SELECT F.fiscal_year FROM fiscal_year F WHERE F.fyid=I.fiscal_year)
+        I.fiscal_year
         FROM Income I
         WHERE LOWER(I.source) LIKE '%dues%'
         AND I.fiscal_year = ?`,

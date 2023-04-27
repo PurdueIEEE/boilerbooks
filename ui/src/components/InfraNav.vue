@@ -1,6 +1,7 @@
 <template>
   <div class="list-group list-group-flush">
     <router-link to="/infra/committees" class="list-group-item" exact-active-class="active">Modify Committees</router-link>
+    <router-link to="/infra/fiscal" class="list-group-item" exact-active-class="active">Modify Fiscal Year</router-link>
     <router-link to="/" class="list-group-item">Boiler Books Home</router-link>
   </div>
 </template>

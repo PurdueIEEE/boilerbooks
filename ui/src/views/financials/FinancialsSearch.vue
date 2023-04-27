@@ -17,7 +17,7 @@
           <label for="searchFiscalYear" class="form-label fw-bold">Fiscal Year</label>
           <select id="searchFiscalYear" class="form-select" v-model="fiscalyear" required>
             <option selected value="any">ALL FISCAL YEARS</option>
-            <option v-for="val in fiscalList" v-bind:key="val" v-bind:value="val">{{val}}</option>
+            <option v-for="(val,year) in fiscalList" v-bind:key="year" v-bind:value="year">{{val}}</option>
           </select>
         </div>
 
@@ -140,7 +140,7 @@ export default {
   data() {
     return {
       committeeList: {},
-      fiscalList: [],
+      fiscalList: {},
       committee: 'any',
       fiscalyear: 'any',
       joiner: 'OR',

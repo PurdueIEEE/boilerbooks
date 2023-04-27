@@ -23,6 +23,7 @@ import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 import bcrypt from "bcrypt";
+import { fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 
 const router = Router();
 const bcrypt_rounds = 10;
@@ -355,6 +356,7 @@ router.get("/:userID/dues", async(req, res, next) => {
 
     try {
         const [results] = await Models.account.getUserDues(req.context.request_user_id);
+        results[0].fiscal_year = fiscal_year_id_to_display[results[0].fiscal_year];
         res.status(200).send(results);
         return next();
     } catch (err) {

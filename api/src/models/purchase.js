@@ -24,7 +24,7 @@ async function getFullPurchaseByID(id) {
         p.cost, p.comments, p.fundsource, p.username, p.purchaseid, p.check_type,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby,
-        (SELECT fiscal_year FROM fiscal_year WHERE fyid = p.fiscal_year) fiscal_year
+        p.fiscal_year
         FROM Purchases p
         WHERE p.purchaseID = ?`,
         [id]
