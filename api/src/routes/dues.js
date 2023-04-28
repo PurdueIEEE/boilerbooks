@@ -211,7 +211,7 @@ router.put("/:duesid", async(req, res, next) => {
 */
 router.get("/summary/:year?", async(req, res, next) => {
     if (req.params.year === undefined) {
-        req.params.year = current_fiscal_year;
+        req.params.year = max_fiscal_year_count;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -259,7 +259,7 @@ router.get("/summary/:year?", async(req, res, next) => {
 */
 router.get("/all/:year?", async(req, res, next) => {
     if (req.params.year === undefined) {
-        req.params.year = current_fiscal_year;
+        req.params.year = max_fiscal_year_count;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {

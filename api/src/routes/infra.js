@@ -18,7 +18,8 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
-import loader from "../utils/committees.js";
+import comm_loader from "../utils/committees.js";
+import fiscal_loader from "../utils/fiscal_year.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 
 const router = Router();
@@ -78,7 +79,7 @@ router.post("/committees", async(req, res, next) => {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            res.status(200).send([]);
+            res.status(201).send("Saved committee details");
             return next();
         }
 
@@ -101,10 +102,10 @@ router.post("/committees", async(req, res, next) => {
             }
         }
 
-        res.status(200).send("Saved committee details");
+        res.status(201).send("Saved committee details");
 
         // Make sure we grab the newest fields
-        const load_status = await loader.update();
+        const load_status = await comm_loader.update();
         if (load_status) {
             logger.info("Committee loader updated successfully");
         } else {
@@ -162,7 +163,7 @@ router.put("/committees/:commID", async(req, res, next) => {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
         if (results.validuser === 0) {
-            res.status(200).send([]);
+            res.status(200).send("Saved committee details");
             return next();
         }
 
@@ -178,7 +179,7 @@ router.put("/committees/:commID", async(req, res, next) => {
         // TODO fix permissions when bank_status is changed with 'Inactive'
 
         // Make sure we grab the newest fields
-        const load_status = await loader.update();
+        const load_status = await comm_loader.update();
         if (load_status) {
             logger.info("Committee loader updated successfully");
         } else {
@@ -191,6 +192,156 @@ router.put("/committees/:commID", async(req, res, next) => {
         if (res.headersSent === false) {
             res.status(500).send("Internal Server Error");
         }
+        return next();
+    }
+});
+
+router.get("/fiscal", async(req, res, next) => {
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send({});
+            return next();
+        }
+
+        const [results_1] = await Models.infra.getAllFiscalYears();
+        res.status(200).send(results_1);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+router.post("/fiscal", async(req, res, next) => {
+    if (req.body.fiscal_year === undefined || req.body.fiscal_year === "") {
+        res.status(400).send("Must add fiscal year");
+        return next();
+    }
+
+    // This will technically error out in the year 9999
+    // But if we make it that far we may have bigger problems
+    // Otherwise time to enjoy ~~Y2K~~ ~~Y2K38~~ Y9K999
+    if (req.body.fiscal_year.length != 9) {
+        res.status(400).send("Fiscal Year must be the form 'XXXX-YYYY'");
+        return next();
+    }
+
+    if (req.body.fiscal_year[4] != "-") {
+        res.status(400).send("Fiscal Year must be the form 'XXXX-YYYY'");
+        return next();
+    }
+
+    const parts = req.body.fiscal_year.split("-");
+
+    const first_half = parseInt(parts[0], 10);
+    const second_half = parseInt(parts[1], 10);
+
+    if (isNaN(first_half) || isNaN(second_half)) {
+        res.status(400).send("Fiscal Year must consist of two numbers");
+        return next();
+    }
+
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(201).send("Created new fiscal year");
+            return next();
+        }
+
+        await Models.infra.createNewFiscalYear(req.body.fiscal_year);
+
+        const load_status = await fiscal_loader.update();
+        if (load_status) {
+            logger.info("Fiscal Year updated");
+        } else {
+            logger.error("Fiscal Year update failed");
+        }
+
+        res.status(201).send("Created new fiscal year");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        if (res.headersSent === false) {
+            res.status(500).send("Internal Server Error");
+        }
+        return next();
+    }
+});
+
+router.get("/fiscal", async(req, res, next) => {
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(200).send({});
+            return next();
+        }
+
+        const [results_1] = await Models.infra.getAllFiscalYears();
+        res.status(200).send(results_1);
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
+});
+
+router.post("/fiscal", async(req, res, next) => {
+    if (req.body.fiscal_year === undefined || req.body.fiscal_year === "") {
+        res.status(400).send("Must add fiscal year");
+        return next();
+    }
+
+    // This will technically error out in the year 9999
+    // But if we make it that far we may have bigger problems
+    // Otherwise time to enjoy ~~Y2K~~ ~~Y2K38~~ Y9K999
+    if (req.body.fiscal_year.length != 9) {
+        res.status(400).send("Fiscal Year must be the form 'XXXX-YYYY'");
+        return next();
+    }
+
+    if (req.body.fiscal_year[4] != "-") {
+        res.status(400).send("Fiscal Year must be the form 'XXXX-YYYY'");
+        return next();
+    }
+
+    const parts = req.body.fiscal_year.split("-");
+
+    const first_half = parseInt(parts[0], 10);
+    const second_half = parseInt(parts[1], 10);
+
+    if (isNaN(first_half) || isNaN(second_half)) {
+        res.status(400).send("Fiscal Year must consist of two numbers");
+        return next();
+    }
+
+    try {
+        // first make sure user is actually a treasurer
+        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        if (results.validuser === 0) {
+            res.status(201).send("Created new fiscal year");
+            return next();
+        }
+
+        await Models.infra.createNewFiscalYear(req.body.fiscal_year);
+
+        const load_status = await fiscal_loader.update();
+        if (load_status) {
+            logger.info("Fiscal Year updated");
+        } else {
+            logger.error("Fiscal Year update failed");
+        }
+
+        res.status(201).send("Created new fiscal year");
+        return next();
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
         return next();
     }
 });

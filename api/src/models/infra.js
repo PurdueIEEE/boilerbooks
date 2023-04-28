@@ -44,9 +44,25 @@ async function addNewCommittee(comm) {
     );
 }
 
+async function getAllFiscalYears() {
+    return db_conn.promise().execute(
+        "SELECT * FROM fiscal_year",
+        []
+    );
+}
+
+async function createNewFiscalYear(string) {
+    return db_conn.promise().execute(
+        "INSERT INTO fiscal_year (fiscal_year) VALUES (?)",
+        [string]
+    );
+}
+
 export default {
     getAllCommittees,
     getCommitteeByID,
     updateCommitteeDetails,
     addNewCommittee,
+    getAllFiscalYears,
+    createNewFiscalYear,
 };
