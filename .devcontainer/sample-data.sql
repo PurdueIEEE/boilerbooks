@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.5.15-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: ieee-money
+-- Host: localhost    Database: boilerbooks
 -- ------------------------------------------------------
 -- Server version	10.5.15-MariaDB-0+deb11u1
 
