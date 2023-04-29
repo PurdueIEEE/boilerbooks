@@ -19,7 +19,7 @@ import crypto from "crypto";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL, dues_amount } from "../common_items.js";
-import { current_fiscal_year, max_fiscal_year_count, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
+import { current_fiscal_year_fyid, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { dues_committees } from "../utils/committees.js";
 
@@ -94,7 +94,7 @@ router.post("/", async(req, res, next) => {
             return next();
         }
 
-        const [results_1] = await Models.dues.getMemberByEmail(req.body.email, max_fiscal_year_count);
+        const [results_1] = await Models.dues.getMemberByEmail(req.body.email, current_fiscal_year_fyid);
         if (results_1.length) {
             // 409 is an unusual status code but sort of applies here?
             res.status(409).send("Member email already exists");
@@ -211,7 +211,7 @@ router.put("/:duesid", async(req, res, next) => {
 */
 router.get("/summary/:year?", async(req, res, next) => {
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -259,7 +259,7 @@ router.get("/summary/:year?", async(req, res, next) => {
 */
 router.get("/all/:year?", async(req, res, next) => {
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {

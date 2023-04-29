@@ -15,13 +15,13 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 
 async function createNewMember(dues) {
     return db_conn.promise().execute(
         `INSERT INTO Dues (timestamp, name, email, id_hash, committee, fiscal_year, amount, status)
         VALUES (NOW(), ?,?,?,?,?,?,'Unpaid')`,
-        [dues.name, dues.email, dues.puid, dues.committees, max_fiscal_year_count, 0]
+        [dues.name, dues.email, dues.puid, dues.committees, current_fiscal_year_fyid, 0]
     );
 }
 

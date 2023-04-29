@@ -16,8 +16,8 @@
 
 import { db_conn } from "./db.js";
 
-let current_fiscal_year;
-let max_fiscal_year_count;
+let current_fiscal_year_string;
+let current_fiscal_year_fyid;
 let fiscal_year_id_to_display;
 
 async function performLoad() {
@@ -27,9 +27,9 @@ async function performLoad() {
             []
         );
 
-        current_fiscal_year = results[results.length - 1].fiscal_year;
+        current_fiscal_year_string = results[results.length - 1].fiscal_year;
 
-        max_fiscal_year_count = results.length;
+        current_fiscal_year_fyid = results.length;
 
         fiscal_year_id_to_display = results.reduce((out, elm) => {
             out[elm.fyid] = elm.fiscal_year;
@@ -56,8 +56,8 @@ async function update() {
 
 // Specific exports
 export {
-    current_fiscal_year,
-    max_fiscal_year_count,
+    current_fiscal_year_string,
+    current_fiscal_year_fyid,
     fiscal_year_id_to_display,
 };
 

@@ -19,8 +19,12 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
 import comm_loader from "../utils/committees.js";
+<<<<<<< HEAD
 import fiscal_loader from "../utils/fiscal_year.js";
 import { ACCESS_LEVEL } from "../common_items.js";
+=======
+import fiscal_loader, { current_fiscal_year_string } from "../utils/fiscal_year.js";
+>>>>>>> 2000c8d (Resolved lint issues and naming issues)
 
 const router = Router();
 
@@ -189,9 +193,7 @@ router.put("/committees/:commID", async(req, res, next) => {
         return next();
     } catch (err) {
         logger.error(err.stack);
-        if (res.headersSent === false) {
-            res.status(500).send("Internal Server Error");
-        }
+        res.status(500).send("Internal Server Error");
         return next();
     }
 });
@@ -317,6 +319,18 @@ router.post("/fiscal", async(req, res, next) => {
 
     if (isNaN(first_half) || isNaN(second_half)) {
         res.status(400).send("Fiscal Year must consist of two numbers");
+        return next();
+    }
+
+    if (second_half !== (first_half + 1)) {
+        res.status(400).send("Second number must immediately follow the first number");
+        return next();
+    }
+
+    const end_of_current_fy =  parseInt(current_fiscal_year_string.split("-")[1], 10);
+
+    if (first_half < end_of_current_fy) {
+        res.status(400).send("Fiscal year must start after the current fiscal year");
         return next();
     }
 

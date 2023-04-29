@@ -15,9 +15,9 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 
-async function getCommitteeCategories(comm, year=max_fiscal_year_count) {
+async function getCommitteeCategories(comm, year=current_fiscal_year_fyid) {
     return db_conn.promise().execute(
         "SELECT category FROM Budget WHERE committee=? AND fiscal_year=? AND status='Approved'",
         [comm, year]

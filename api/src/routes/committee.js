@@ -18,7 +18,7 @@ import { Router } from "express";
 
 import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
-import { current_fiscal_year, fiscal_year_id_to_display, max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { current_fiscal_year_string, fiscal_year_id_to_display, current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
@@ -48,7 +48,7 @@ router.get("/:commID/categories/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -143,7 +143,7 @@ router.get("/:commID/budget/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -188,7 +188,7 @@ router.get("/:commID/expensetotal/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -233,7 +233,7 @@ router.get("/:commID/incometotal/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -278,7 +278,7 @@ router.get("/:commID/purchases/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -319,7 +319,7 @@ router.get("/:commID/income/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -360,7 +360,7 @@ router.get("/:commID/summary/:year?", async(req, res, next) => {
     }
 
     if (req.params.year === undefined) {
-        req.params.year = max_fiscal_year_count;
+        req.params.year = current_fiscal_year_fyid;
     }
 
     if (fiscal_year_id_to_display[req.params.year] === undefined) {
@@ -410,11 +410,11 @@ router.get("/:commID/csv", async(req, res, next) => {
     }
 
     if (req.query.start === undefined) {
-        req.query.start = `${current_fiscal_year.split("-")[0]}-08-01`;
+        req.query.start = `${current_fiscal_year_string.split("-")[0]}-08-01`;
     }
 
     if (req.query.end === undefined) {
-        req.query.end = `${current_fiscal_year.split("-")[1]}-08-01`;
+        req.query.end = `${current_fiscal_year_string.split("-")[1]}-08-01`;
     }
 
     if ((req.query.start.match(/^\d{4}-\d{2}-\d{2}$/)).length === 0) {

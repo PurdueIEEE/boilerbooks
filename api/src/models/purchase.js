@@ -16,7 +16,7 @@
 
 import { db_conn } from "../utils/db.js";
 import { ACCESS_LEVEL } from "../common_items.js";
-import { max_fiscal_year_count } from "../utils/fiscal_year.js";
+import { current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
@@ -34,7 +34,7 @@ async function getFullPurchaseByID(id) {
 async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
         "INSERT INTO Purchases (fiscal_year,username,item,purchasereason,vendor,committee,category,cost,status,comments,check_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?, ?)",
-        [max_fiscal_year_count, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments, purchase.checkType]
+        [current_fiscal_year_fyid, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments, purchase.checkType]
     );
 }
 
