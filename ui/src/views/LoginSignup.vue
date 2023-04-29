@@ -75,8 +75,8 @@
               <input type="password" class="form-control" id="new_pass2" v-model="new_pass2" placeholder="********" required>
             </div>
             <div class="col-12">
-              <label for="new_pin" class="form-label">IEEE Code</label>
-              <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter the code given by IEEE to enable account creation" required>
+              <label for="new_pin" class="form-label">Account Creation Code</label>
+              <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter an account creation code to continue" required>
             </div>
             <div class="text-center text-danger">
               <p v-if="showCapsWarning">Caps Lock is on!</p>
@@ -92,7 +92,7 @@
 
     <div v-else class="mt-5">
       <br><br><br><br><br><br><br>
-      <a href="/api/v2/oidc/login"><button type="button" class="btn btn-outline-secondary pb-3 px-3"><i class="bi bi-key-fill fs-2"></i><br><span class="fs-4 fw-bold">Login with Purdue IEEE SSO</span></button></a>
+      <a href="/api/v2/oidc/login"><button type="button" class="btn btn-outline-secondary pb-3 px-3"><i class="bi bi-key-fill fs-2"></i><br><span class="fs-4 fw-bold">Login with {{ OIDC_provider }}</span></button></a>
       <br><br><br><br><br><br><br>
     </div>
 
@@ -141,6 +141,7 @@ export default {
       errmsg: '',
       showCapsWarning: false,
       useOIDC: import.meta.env.VITE_USE_OIDC === "true",
+      OIDC_provider: import.meta.env.VITE_OIDC_NAME,
     }
   },
   created() {

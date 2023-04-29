@@ -2,7 +2,7 @@
   <div class="container-lg my-5 pt-5">
     <div v-if="$route.query.type === 'user'">
       <h1>Forgot Username</h1>
-      <p class="lead fs-3">Enter the email associated with the account below.<br>If you don't remember the email you used, please contact IEEE at <a href="mailto:ieee@purdue.edu">ieee@purdue.edu</a> for more help.</p>
+      <p class="lead fs-3">Enter the email associated with the account below.<br>If you don't remember the email you used, please contact the system administrator for more help.</p>
       <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
       <br v-else>
       <div class="row">

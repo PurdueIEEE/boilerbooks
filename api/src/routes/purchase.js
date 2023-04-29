@@ -194,12 +194,12 @@ router.post("/", async(req, res, next) => {
             subject: `New Purchase Request for ${committee_id_to_display[req.body.committee]}`,
             text: `A request was made by ${cleanUTF8(req.body.user)} for ${cleanUTF8(req.body.item)} costing $${req.body.price}\n` +
             "Please visit Boiler Books at your earliest convenience to approve or deny the request.\n" +
-            `You always view the most up-to-date status of the purchase at https://money.purdueieee.org/ui/detail-view?id=${insert_id}.\n\n` +
+            `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${insert_id}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>New Purchase Request!</h2>
             <p>A request was made by ${req.body.user} for ${req.body.item} costing $${req.body.price}.</p>
-            <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
-            <p>You always view the most up-to-date status of the purchase <a href="https://money.purdueieee.org/ui/detail-view?id=${insert_id}">here</a>.</p>
+            <p>Please visit <a href="https://${process.env.HTTP_HOST}" target="_blank">Boiler Books</a> at your earliest convenience to approve or deny the request.</p>
+            <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${insert_id}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
         });
@@ -632,7 +632,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             "This email was automatically sent by Boiler Books",
             html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
             <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${committee_id_to_display_readonly_included[purchase_deets[0].committee]}</em> was ${purchase_deets[0].status}</p>
-            <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
+            <p>Please visit <a href="https://${process.env.HTTP_HOST}" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,
@@ -809,7 +809,7 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<p>${committee_id_to_display[purchase_deets[0].committee]} has purchased ${purchase_deets[0].item} for $${purchase_deets[0].cost}</p>
-            <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to begin the reimbursement process.</p>
+            <p>Please visit <a href="https://${process.env.HTTP_HOST}" target="_blank">Boiler Books</a> at your earliest convenience to begin the reimbursement process.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
             <small>This email was automatically sent by Boiler Books</small>`,

@@ -1,7 +1,7 @@
 {
   "name": "boilerbooks-api",
-  "version": "2.0.0",
-  "description": "Backend API for the Purdue IEEE boilerbooks accounting software",
+  "version": "2.2",
+  "description": "Backend API for the Boiler Books accounting software",
   "main": "src/server.js",
   "private": true,
   "type": "module",

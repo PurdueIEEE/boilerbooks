@@ -2,7 +2,7 @@
   <div>
     <h3>Infrastructure Home</h3>
     <p class="lead">
-      Press a link on the sidebar. If you have any questions, please contact the IEEE Infrastructure Lead.
+      Press a link on the sidebar. If you have any questions, please contact the system administrator.
     </p>
   </div>
 </template>

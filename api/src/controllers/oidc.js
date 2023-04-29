@@ -231,7 +231,7 @@ async function post_oidc_register(req, res, next) {
         // Username already exists (should not ever get hit)
         if (err.code === "ER_DUP_ENTRY") {
             logger.error("DUPLICATE USERNAME/EMAIL:" + req.body.uname);
-            res.status(400).send("Unexpected Error: Please contact Purdue IEEE!");
+            res.status(400).send("Unexpected Error: Please contact the system administrator!");
             return next();
         } else {
             logger.error(err.stack);

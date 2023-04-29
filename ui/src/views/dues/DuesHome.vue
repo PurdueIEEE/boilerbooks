@@ -3,10 +3,10 @@
     <h3>Dues Home</h3>
     <p class="lead">
       Press a link on the left sidebar to begin. Local dues are stated
-      <a href="https://purdueieee.org/join/#dues"> on our website</a>.
+      on our website.
     </p>
     <p class="lead">
-      To pay dues or ask any questions about dues, talk to an IEEE officer.
+      To pay dues or ask any questions about dues, talk to an officer.
     </p>
   </div>
 </template>
