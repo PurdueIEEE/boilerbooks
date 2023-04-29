@@ -19,6 +19,7 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
 import loader from "../utils/committees.js";
+import { ACCESS_LEVEL } from "../common_items.js";
 
 const router = Router();
 
@@ -81,7 +82,25 @@ router.post("/committees", async(req, res, next) => {
             return next();
         }
 
-        await Models.infra.addNewCommittee(req.body);
+        const [results_0] = await Models.infra.addNewCommittee(req.body);
+
+        // Add permissions for all the treasurers, only if the banking status is valid
+        if (req.body.bank_status !== "Inactive") {
+            const [list_of_treasurers] = await Models.access.getTreasurers(ACCESS_LEVEL.treasurer);
+            for (const treas of list_of_treasurers) {
+                const approval = {
+                    username: treas.username,
+                    role: treas.role,
+                    amount: 0,
+                    category: "*",
+                    level: ACCESS_LEVEL.treasurer,
+                    committee: results_0.insertId,
+                };
+
+                await Models.access.addApproval(approval);
+            }
+        }
+
         res.status(200).send("Saved committee details");
 
         // Make sure we grab the newest fields
@@ -96,7 +115,9 @@ router.post("/committees", async(req, res, next) => {
         return next();
     } catch (err) {
         logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
+        if (res.headersSent === false) {
+            res.status(500).send("Internal Server Error");
+        }
         return next();
     }
 });
@@ -148,6 +169,14 @@ router.put("/committees/:commID", async(req, res, next) => {
         await Models.infra.updateCommitteeDetails(req.params.commID, req.body);
         res.status(200).send("Saved committee details");
 
+        // IMPORTANT: if the committee bank_status changed to 'Inactive', new treasurers will not
+        //  be added to it. This includes when the status is changed back to 'Active'.
+        // Since we warn the user that changing to 'Inactive' is a destructive action, I'm not
+        //  too concerned, but this may be an issue we want to revisit.
+        // Further, changing to 'Inactive' does not remove permissions for existing treasurers.
+        // Again, we told the user things would get wonky, but is a known issue. For future search:
+        // TODO fix permissions when bank_status is changed with 'Inactive'
+
         // Make sure we grab the newest fields
         const load_status = await loader.update();
         if (load_status) {
@@ -159,7 +188,9 @@ router.put("/committees/:commID", async(req, res, next) => {
         return next();
     } catch (err) {
         logger.error(err.stack);
-        res.status(500).send("Internal Server Error");
+        if (res.headersSent === false) {
+            res.status(500).send("Internal Server Error");
+        }
         return next();
     }
 });
