@@ -22,7 +22,7 @@ import loader from "../utils/committees.js";
 
 const router = Router();
 
-const bank_statuses = ["Active", "Inactive"];
+const bank_statuses = ["Active", "Inactive", "Read-Only"];
 const dues_statuses = ["Active", "Inactive"];
 
 router.get("/committees", async(req, res, next) => {

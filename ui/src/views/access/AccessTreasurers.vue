@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     async init() {
-      const response = await fetchWrapperJSON(`/api/v2/access/treasurers`, {
+      const response = await fetchWrapperJSON(`/api/v2/access/treasurers?readonly=yes`, {
         method: 'get',
       });
 

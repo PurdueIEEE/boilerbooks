@@ -156,7 +156,7 @@ export default {
     }
   },
   async mounted() {
-    const committeeList = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees`, {
+    const committeeList = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}/committees?readonly=yes`, {
       method: 'get',
     });
 

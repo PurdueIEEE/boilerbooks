@@ -83,7 +83,7 @@ export default {
   },
   async mounted() {
     this.init();
-    const response = await fetchWrapperJSON(`/api/v2/committee`, {
+    const response = await fetchWrapperJSON(`/api/v2/committee?readonly=yes`, {
       method: 'get',
     });
 

@@ -31,7 +31,7 @@ CREATE TABLE `committees` (
   `committee_id` int NOT NULL,
   `display_name` varchar(20) NOT NULL,
   `api_name` varchar(20) NOT NULL,
-  `bank_status` enum('Active', 'Inactive') NOT NULL,
+  `bank_status` enum('Active', 'Inactive', 'Read-Only') NOT NULL,
   `dues_status` enum('Active', 'Inactive') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET utf8mb4;
 

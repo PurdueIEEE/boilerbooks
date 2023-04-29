@@ -23,7 +23,7 @@ import Models from "../models/index.js";
 import { ACCESS_LEVEL, cleanUTF8 } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 // filter uploaded files based on type
 function fileFilter(req, file, cb) {
@@ -69,7 +69,7 @@ router.get("/", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getAllReimbursements();
         results.forEach(purchase => {
-            purchase.committee = committee_id_to_display[purchase.committee];
+            purchase.committee = committee_id_to_display_readonly_included[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -125,6 +125,7 @@ router.post("/", async(req, res, next) => {
     }
 
     // can't escape committe so check for committee name first
+    // don't check against the read-only list, no new purchases can be created
     if (committee_id_to_display[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
@@ -136,6 +137,20 @@ router.post("/", async(req, res, next) => {
     }
 
     req.body.user = req.context.request_user_id;
+
+    // Paranoid sanity check - make sure committee is open to transactions
+    // This check should never fail, it should get caught with some input validation above
+    try {
+        const [results] = await Models.committee.isCommitteeValidForTransactions(req.body.committee);
+        if (results.length === 0) {
+            res.status(403).send("Committee is not able to create income/donations");
+            return next();
+        }
+    } catch (err) {
+        logger.error(err.stack);
+        res.status(500).send("Internal Server Error");
+        return next();
+    }
 
     /** Create the purchase request **/
     let insert_id = 0;
@@ -353,7 +368,7 @@ router.get("/:purchaseID", async(req, res, next) => {
                     results[0].maxCost = results[0].cost * 1.15 + 10;
                 }
                 results[0].committeeAPI = results[0].committee;
-                results[0].committee = committee_id_to_display[results[0].committee];
+                results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
                 res.status(200).send(results[0]);
                 return next();
             }
@@ -366,7 +381,7 @@ router.get("/:purchaseID", async(req, res, next) => {
             results[0].maxCost = results[0].cost * 1.15 + 10;
         }
         results[0].committeeAPI = results[0].committee;
-        results[0].committee = committee_id_to_display[results[0].committee];
+        results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
         results[0].costTooHigh = results_2[0].balance < results[0].cost;
         results[0].lowBalance = results_2[0].balance < 200;
         // Approval powers found
@@ -553,6 +568,13 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             res.status(400).send("Purchase cost too high");
             return next();
         }
+
+        // While we're here, check that the committee this purchase belongs to is valid for purchases
+        const [results_1] = await Models.committee.isCommitteeValidForTransactions(results[0].committee);
+        if (results_1.length === 0) {
+            res.status(403).send("Committee is not able to approve purchases");
+            return next();
+        }
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
@@ -604,7 +626,7 @@ router.post("/:purchaseID/approve", async(req, res, next) => {
             `You always view the most up-to-date status of the purchase at https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}.\n\n` +
             "This email was automatically sent by Boiler Books",
             html: `<h2>Your Purchase Request Was ${purchase_deets[0].status}</h2>
-            <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${committee_id_to_display[purchase_deets[0].committee]}</em> was ${purchase_deets[0].status}</p>
+            <p>Your request to buy <em>${purchase_deets[0].item}</em> for <em>${committee_id_to_display_readonly_included[purchase_deets[0].committee]}</em> was ${purchase_deets[0].status}</p>
             <p>Please visit <a href="https://money.purdueieee.org" target="_blank">Boiler Books</a> at your earliest convenience to complete the request.</p>
             <p>You always view the most up-to-date status of the purchase <a href="https://${process.env.HTTP_HOST}/ui/detail-view?id=${req.params.purchaseID}">here</a>.</p>
             <br>
@@ -687,6 +709,14 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
             res.status(400).send("Purchase cost too high, create a new request if needed");
             return next();
         }
+
+        // While we're here, check that the committee this purchase belongs to is valid for purchases
+        const [results_1] = await Models.committee.isCommitteeValidForTransactions(results[0].committee);
+        if (results_1.length === 0) {
+            fs.unlink(req.file.path);
+            res.status(403).send("Committee is not able to complete purchases");
+            return next();
+        }
     } catch (err) {
         logger.error(err.stack);
         fs.unlink(req.file.path);
@@ -716,10 +746,12 @@ router.post("/:purchaseID/complete", fileHandler.single("receipt"), async(req, r
         let file_save_name = "";
         if (fileType === "png") {
             // BOSO only allows PDF and JPG, so handle png differently
+            // we can ignore the read-only committees, should only be able to approve non-read-only purchases
             file_save_name = `${committee_id_to_display[results[0].committee]}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.jpg`;
         } else {
             // handle JPG / JPEG / PDF like normal
             //  if the filetype is JPEG, change the file extension to .jpg for BOSO
+            // we can ignore the read-only committees, should only be able to approve non-read-only purchases
             file_save_name = `${committee_id_to_display[results[0].committee]}_${results[0].username}_${results[0].item}_${results[0].purchaseid}.${fileType === "jpeg" ? "jpg" : fileType}`;
         }
         file_save_name = file_save_name.replaceAll(" ", "_");

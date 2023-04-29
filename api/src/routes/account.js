@@ -20,7 +20,7 @@ import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 import bcrypt from "bcrypt";
 
@@ -187,7 +187,7 @@ router.get("/:userID/purchases", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getPurchaseByUser(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_id_to_display[purchase.committee];
+            purchase.committee = committee_id_to_display_readonly_included[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -250,7 +250,7 @@ router.get("/:userID/reimbursements", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getTreasurer(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_id_to_display[purchase.committee];
+            purchase.committee = committee_id_to_display_readonly_included[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -273,7 +273,7 @@ router.get("/:userID/checks", async(req, res, next) => {
     try {
         const [results] = await Models.purchase.getChecks(req.params.userID);
         results.forEach(purchase => {
-            purchase.committee = committee_id_to_display[purchase.committee];
+            purchase.committee = committee_id_to_display_readonly_included[purchase.committee];
         });
         res.status(200).send(results);
         return next();
@@ -296,12 +296,12 @@ router.get("/:userID/balances", async(req, res, next) => {
     const outputBalances = {};
 
     try {
-        for (let committee in committee_id_to_display) {
+        for (let committee in committee_id_to_display_readonly_included) {
             const [results] = await Models.account.getUserApprovals(req.context.request_user_id, committee, ACCESS_LEVEL.internal_leader);
             if (results.length !== 0) {
                 const [results_0] = await Models.committee.getCommitteeBalance(committee);
                 const [results_1] = await Models.committee.getCommitteeCredit(committee);
-                outputBalances[committee_id_to_display[committee]] = [results_0[0].balance,results_1[0].balance];
+                outputBalances[committee_id_to_display_readonly_included[committee]] = [results_0[0].balance,results_1[0].balance];
             }
         }
     } catch (err) {
@@ -324,10 +324,14 @@ router.get("/:userID/committees", async(req, res, next) => {
     }
 
     try {
+        // TODO convert this into a single sql query
         const [results] = await Models.account.getUserApprovalCommittees(req.params.userID);
-        // very slow very bad
         let filtered_lut = results.reduce((out, elm) => {
-            out[elm.committee] = committee_id_to_display[elm.committee];
+            if (req.query.readonly === "yes") {
+                out[elm.committee] = committee_id_to_display_readonly_included[elm.committee];
+            } else {
+                out[elm.committee] = committee_id_to_display[elm.committee];
+            }
             return out;
         }, {});
 
@@ -371,7 +375,7 @@ router.get("/:userID/committee/purchase", async(req, res, next) => {
 
     try {
         const [results] = await Models.account.getLastPurchaseCommittee(req.context.request_user_id);
-        if (results.length > 0) {
+        if (results.length > 0 && (committee_id_to_display[results[0].committee] !== undefined)) {
             res.status(200).send(results[0].committee.toString());
             return next();
         } else {
@@ -396,7 +400,7 @@ router.get("/:userID/committee/income", async(req, res, next) => {
 
     try {
         const [results] = await Models.account.getLastIncomeCommittee(req.context.request_user_id);
-        if (results.length > 0) {
+        if (results.length > 0 && (committee_id_to_display[results[0].committee] !== undefined)) {
             res.status(200).send(results[0].committee.toString());
             return next();
         } else {

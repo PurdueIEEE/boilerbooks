@@ -19,7 +19,7 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 import { logger } from "../utils/logging.js";
-import { committee_id_to_display } from "../utils/committees.js";
+import { committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 const router = Router();
 
@@ -56,7 +56,7 @@ router.get("/officers", async(req, res, next) => {
             return next();
         }
         const [results_1] = await Models.access.getApprovals(ACCESS_LEVEL.officer);
-        results_1.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
+        results_1.forEach((elm) => (elm.committee = committee_id_to_display_readonly_included[elm.committee]));
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -78,7 +78,7 @@ router.get("/internals", async(req, res, next) => {
             return next();
         }
         const [results_1] = await Models.access.getApprovals(ACCESS_LEVEL.internal_leader);
-        results_1.forEach((elm) => (elm.committee = committee_id_to_display[elm.committee]));
+        results_1.forEach((elm) => (elm.committee = committee_id_to_display_readonly_included[elm.committee]));
         res.status(200).send(results_1);
         return next();
     } catch (err) {
@@ -130,9 +130,9 @@ router.post("/treasurers", async(req, res, next) => {
             category: "*",
             level: ACCESS_LEVEL.treasurer,
         };
-        for (let committee in committee_id_to_display) {
+        for (let committee in committee_id_to_display_readonly_included) {
             approval.committee = committee;
-            if (committee_id_to_display[committee] === "General IEEE") {
+            if (committee_id_to_display_readonly_included[committee] === "General IEEE") {
                 approval.amount = 1000000; // if they need more than this we have a problem
             }
             await Models.access.addApproval(approval);
@@ -163,7 +163,7 @@ router.post("/officers", async(req, res, next) => {
         return next();
     }
 
-    if (committee_id_to_display[req.body.committee] === undefined) {
+    if (committee_id_to_display_readonly_included[req.body.committee] === undefined) {
         res.status(400).send("Committee must be proper value");
         return next();
     }
