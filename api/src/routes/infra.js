@@ -19,12 +19,8 @@ import { Router } from "express";
 import Models from "../models/index.js";
 import { logger } from "../utils/logging.js";
 import comm_loader from "../utils/committees.js";
-<<<<<<< HEAD
-import fiscal_loader from "../utils/fiscal_year.js";
+import fiscal_loader, { current_fiscal_year_string }  from "../utils/fiscal_year.js";
 import { ACCESS_LEVEL } from "../common_items.js";
-=======
-import fiscal_loader, { current_fiscal_year_string } from "../utils/fiscal_year.js";
->>>>>>> 2000c8d (Resolved lint issues and naming issues)
 
 const router = Router();
 
