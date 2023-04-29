@@ -16,28 +16,6 @@
 
 // variables, functions, enums, etc. that are used elsewhere in the code
 
-// -------------- fiscal year globals -------------
-
-/** CHANGE BELOW ANNUALLY **/
-const current_fiscal_year = "2022-2023";
-/** CHANGE ABOVE ANNUALLY **/
-
-const first_fiscal_year = "2015-2016";
-const yearStart = parseInt(first_fiscal_year.substring(0,4));
-const yearEnd = parseInt(current_fiscal_year.substring(0,4));
-const fiscal_year_list = [];
-for (let year = yearEnd; year >= yearStart; year--) {
-    fiscal_year_list.push(`${year}-${year+1}`);
-}
-const fiscal_year_lut = fiscal_year_list.slice().reverse().reduce(
-    (result, curr, index, array) => {
-        result[curr] = index+1;
-        return result;
-    }, {});
-const min_fiscal_year_count = 1;
-const max_fiscal_year_count = fiscal_year_list.length;
-// -------------------------------------------------
-
 // ----------------- dues amount -------------------
 // Current annual local dues
 
@@ -78,12 +56,6 @@ function sleep(ms) {
 // -------------------------------------------------
 
 export {
-    current_fiscal_year,
-    first_fiscal_year,
-    fiscal_year_list,
-    fiscal_year_lut,
-    min_fiscal_year_count,
-    max_fiscal_year_count,
     dues_amount,
     ACCESS_LEVEL,
     cleanUTF8,

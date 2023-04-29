@@ -20,6 +20,7 @@ import Models from "../models/index.js";
 import { ACCESS_LEVEL } from "../common_items.js";
 import { logger } from "../utils/logging.js";
 import { committee_id_to_display, committee_id_to_display_readonly_included } from "../utils/committees.js";
+import { fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 
 const router = Router();
 
@@ -181,6 +182,7 @@ router.get("/:incomeID", async(req, res, next) => {
             return next();
         }
         results[0].committee = committee_id_to_display_readonly_included[results[0].committee];
+        results[0].fiscal_year = fiscal_year_id_to_display[results[0].fiscal_year];
         res.status(200).send(results[0]);
         return next();
     } catch (err) {

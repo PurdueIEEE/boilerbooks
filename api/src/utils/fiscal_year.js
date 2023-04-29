@@ -14,41 +14,27 @@
    limitations under the License.
 */
 
-import { logger } from "./logging.js";
 import { db_conn } from "./db.js";
 
-let committee_id_to_display;
-let committee_id_to_display_readonly_included;
-let dues_committees;
+let current_fiscal_year_string;
+let current_fiscal_year_fyid;
+let fiscal_year_id_to_display;
 
 async function performLoad() {
     try {
         const [results] = await db_conn.promise().execute(
-            "SELECT * FROM committees",
+            "SELECT * FROM fiscal_year",
             []
         );
 
-        committee_id_to_display = results.reduce((out, elm) => {
-            if (elm.bank_status === "Active") {
-                out[elm.committee_id] = elm.display_name;
-            }
+        current_fiscal_year_string = results[results.length - 1].fiscal_year;
+
+        current_fiscal_year_fyid = results.length;
+
+        fiscal_year_id_to_display = results.reduce((out, elm) => {
+            out[elm.fyid] = elm.fiscal_year;
             return out;
         }, {});
-
-        committee_id_to_display_readonly_included = results.reduce((out, elm) => {
-            if (elm.bank_status === "Active" || elm.bank_status === "Read-Only") {
-                out[elm.committee_id] = elm.display_name;
-            }
-            return out;
-        }, {});
-
-        dues_committees = results.reduce((out, elm) => {
-            if (elm.dues_status === "Active") {
-                out.push(elm.display_name);
-            }
-            return out;
-        }, []);
-
     } catch (err) {
         throw false;
     }
@@ -70,12 +56,13 @@ async function update() {
 
 // Specific exports
 export {
-    committee_id_to_display,
-    committee_id_to_display_readonly_included,
-    dues_committees,
+    current_fiscal_year_string,
+    current_fiscal_year_fyid,
+    fiscal_year_id_to_display,
 };
 
 // Standardized exports
+
 export default {
     init,
     finalize,

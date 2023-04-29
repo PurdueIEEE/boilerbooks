@@ -15,12 +15,12 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { max_fiscal_year_count } from "../common_items.js";
+import { current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 
 async function createNewDonation(donation) {
     return db_conn.promise().execute(
         "INSERT INTO Income (updated, committee, source, amount, item, type, status, comments, addedby, fiscal_year, refnumber) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
-        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.status, donation.comments, donation.user, max_fiscal_year_count]
+        [donation.committee, donation.source, donation.amount, donation.item, donation.type, donation.status, donation.comments, donation.user, current_fiscal_year_fyid]
     );
 }
 
@@ -42,7 +42,7 @@ async function getIncome(id) {
     return db_conn.promise().execute(
         `SELECT *, DATE_FORMAT(i.updated, '%Y-%m-%dT%H:%i:%sZ') AS mdate,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = i.addedby) reportedby,
-        (SELECT fiscal_year FROM fiscal_year WHERE fyid = i.fiscal_year) fiscal_year
+        i.fiscal_year
         FROM Income i WHERE i.incomeid = ?`,
         [id]
     );

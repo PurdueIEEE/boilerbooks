@@ -15,7 +15,8 @@
 */
 
 import { db_conn } from "../utils/db.js";
-import { ACCESS_LEVEL, max_fiscal_year_count } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { current_fiscal_year_fyid } from "../utils/fiscal_year.js";
 
 async function getFullPurchaseByID(id) {
     return db_conn.promise().execute(
@@ -23,7 +24,7 @@ async function getFullPurchaseByID(id) {
         p.cost, p.comments, p.fundsource, p.username, p.purchaseid, p.check_type,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
         (SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.approvedby) approvedby,
-        (SELECT fiscal_year FROM fiscal_year WHERE fyid = p.fiscal_year) fiscal_year
+        p.fiscal_year
         FROM Purchases p
         WHERE p.purchaseID = ?`,
         [id]
@@ -33,7 +34,7 @@ async function getFullPurchaseByID(id) {
 async function createNewPurchase(purchase) {
     return db_conn.promise().execute(
         "INSERT INTO Purchases (fiscal_year,username,item,purchasereason,vendor,committee,category,cost,status,comments,check_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Requested', ?, ?)",
-        [max_fiscal_year_count, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments, purchase.checkType]
+        [current_fiscal_year_fyid, purchase.user, purchase.item, purchase.reason, purchase.vendor, purchase.committee, purchase.category, purchase.price, purchase.comments, purchase.checkType]
     );
 }
 

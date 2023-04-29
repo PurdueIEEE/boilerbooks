@@ -17,7 +17,8 @@
 import { Router } from "express";
 
 import Models from "../models/index.js";
-import { fiscal_year_list, ACCESS_LEVEL, max_fiscal_year_count, current_fiscal_year } from "../common_items.js";
+import { ACCESS_LEVEL } from "../common_items.js";
+import { current_fiscal_year_fyid, fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { logger } from "../utils/logging.js";
 import { mailer } from "../utils/mailer.js";
 import { committee_id_to_display } from "../utils/committees.js";
@@ -28,7 +29,7 @@ const router = Router();
     Get a list of all fiscal years
 */
 router.get("/years", (req, res, next) => {
-    res.status(200).send(fiscal_year_list);
+    res.status(200).send(fiscal_year_id_to_display);
     return next();
 });
 
@@ -75,7 +76,7 @@ router.post("/:comm", async(req, res, next) => {
 
     // Clear the old budget from the database
     try {
-        await Models.budgets.clearBudget(req.params.comm, max_fiscal_year_count);
+        await Models.budgets.clearBudget(req.params.comm, current_fiscal_year_fyid);
     } catch (err) {
         logger.error(err.stack);
         res.status(500).send("Internal Server Error");
@@ -98,7 +99,7 @@ router.post("/:comm", async(req, res, next) => {
                 category: item.category,
                 amount: item.amount,
                 committee: req.params.comm,
-                year: max_fiscal_year_count,
+                year: current_fiscal_year_fyid,
             };
 
             await Models.budgets.addBudget(budget);
@@ -156,7 +157,7 @@ router.put("/:comm", async(req, res, next) => {
             return next();
         }
 
-        await Models.budgets.approveCommitteeBudget(req.params.comm, max_fiscal_year_count);
+        await Models.budgets.approveCommitteeBudget(req.params.comm, current_fiscal_year_fyid);
 
         res.status(200).send("Approved Budget");
         return next();
@@ -183,7 +184,7 @@ router.get("/submitted", async(req, res, next) => {
         const budgets = {};
 
         for (let committee in committee_id_to_display) {
-            const [results_1] = await Models.budgets.getCommitteeSubmittedBudget(committee, max_fiscal_year_count);
+            const [results_1] = await Models.budgets.getCommitteeSubmittedBudget(committee, current_fiscal_year_fyid);
             budgets[committee] = results_1;
         }
 

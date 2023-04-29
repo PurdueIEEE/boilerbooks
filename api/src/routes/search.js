@@ -15,7 +15,7 @@
 */
 
 import { Router } from "express";
-import { fiscal_year_lut } from "../common_items.js";
+import { fiscal_year_id_to_display } from "../utils/fiscal_year.js";
 import { committee_id_to_display_readonly_included } from "../utils/committees.js";
 
 import Models from "../models/index.js";
@@ -31,12 +31,12 @@ router.post("/", async(req, res, next) => {
         return next();
     }
 
-    if (fiscal_year_lut[req.body.fiscalyear] === undefined && req.body.fiscalyear !== "any") {
+    if (fiscal_year_id_to_display[req.body.fiscalyear] === undefined && req.body.fiscalyear !== "any") {
         res.status(400).send("Improper fiscal year value");
         return next();
     }
 
-    req.body.fiscalyear = fiscal_year_lut[req.body.fiscalyear] !== undefined ? fiscal_year_lut[req.body.fiscalyear] : "any";
+    req.body.fiscalyear = fiscal_year_id_to_display[req.body.fiscalyear] !== undefined ? req.body.fiscalyear : "any";
 
     const [results] = await Models.search.search(req.body, req.context.request_user_id);
     results.forEach((elm) => (elm.committee = committee_id_to_display_readonly_included[elm.committee]));

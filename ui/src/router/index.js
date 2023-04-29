@@ -309,6 +309,14 @@ const routes = [
         path: 'committees',
         component: () => import('../views/infra/InfraCommittees.vue'),
       },
+      {
+        path: 'fiscal',
+        component: () => import('../views/infra/InfraFiscal.vue'),
+      },
+      {
+        path: ':pathMatch(.*)',
+        component: NotFound
+      }
     ],
     meta: {
       requiresAuth: true,

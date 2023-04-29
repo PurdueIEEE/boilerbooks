@@ -251,7 +251,7 @@ export default {
       }
 
       this.dispmsg = '';
-      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscal_year}`, {
+      const response = await fetchWrapperJSON(`/api/v2/committee/${this.purchase.committeeAPI}/categories/${this.purchase.fiscalYearAPI}`, {
         method: 'get',
       });
 

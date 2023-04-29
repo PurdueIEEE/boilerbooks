@@ -80,29 +80,29 @@
       </div>
     </div>
     <div class="p-3 m-2 bg-light border rounded-3 row text-start">
-      <div class="col-md-1">
+      <div class="col-md-1 my-3">
         <p class="fs-5 fw-bold">#</p>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 mt-3">
         <input id="name-input-new" type="text" v-model="new_committee.display_name" class="form-control" placeholder="Committee Name...">
       </div>
-      <div class="col-md-2">
+      <div class="col-md-2 my-3">
         <input id="api-input-new" type="text" v-model="new_committee.api_name" class="form-control" placeholder="API Key...">
       </div>
-      <div class="col-md-2">
+      <div class="col-md-2 my-3">
         <select id="dues-input-new" v-model="new_committee.bank_status" class="form-select">
           <option>Active</option>
           <option>Inactive</option>
           <option>Read-Only</option>
         </select>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-2 my-3">
         <select id="dues-input-new" v-model="new_committee.dues_status" class="form-select">
           <option>Active</option>
           <option>Inactive</option>
         </select>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-2 my-3">
         <button  v-on:click="addNew" class="btn btn-success"><i class="bi bi-plus-lg"></i></button>
       </div>
     </div>
