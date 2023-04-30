@@ -144,8 +144,8 @@ router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
-            res.status(404).send("Income not found");
+        if (results[0].validuser === 0) {
+            res.status(200).send([]);
             return next();
         }
     } catch (err) {
@@ -208,7 +208,7 @@ router.put("/:incomeID", async(req, res, next) => {
     // Check that user is treasurer
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(404).send("Income not found");
             return next();
         }

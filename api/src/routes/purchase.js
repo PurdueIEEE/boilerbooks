@@ -57,7 +57,7 @@ router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]); // silently fail on no authorization
             return next();
         }
@@ -232,7 +232,7 @@ router.post("/treasurer", async(req, res, next) => {
     // Check that user is treasurer
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Purchase(s) updated"); // silently fail on no authorization
             return next();
         }
@@ -424,7 +424,7 @@ router.put("/:purchaseID", async(req,res, next) => {
     try {
         // check the user is a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Updated Purchase");
             return next();
         }
@@ -484,7 +484,7 @@ router.post("/:purchaseID/expire", async(req, res, next) => {
     // check that the user is a treasurer and the purchase is valid
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(404).send("Purchase not found");
             return next();
         }
@@ -837,7 +837,7 @@ router.post("/:purchaseID/receipt", fileHandler.single("receipt"), async(req, re
 
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             fs.unlink(req.file.path);
             res.status(404).send("Purchase not found");
             return next();

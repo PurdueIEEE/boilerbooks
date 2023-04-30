@@ -147,7 +147,7 @@ router.put("/:duesid", async(req, res, next) => {
         try {
             // check the user is a treasurer
             const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-            if (results.validuser === 0) {
+            if (results[0].validuser === 0) {
                 res.status(200).send("Member status updated"); // silently fail on no authorization
                 return next();
             }
@@ -185,7 +185,7 @@ router.put("/:duesid", async(req, res, next) => {
         try {
             // first make sure user is actually a treasurer
             const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-            if (results.validuser === 0) {
+            if (results[0].validuser === 0) {
                 res.status(200).send("Member details updated"); // Silently fail on no authorization
                 return next();
             }
@@ -194,6 +194,7 @@ router.put("/:duesid", async(req, res, next) => {
 
             await Models.dues.updateMemberDetails(req.params.duesid, req.body);
             res.status(200).send("Member details updated");
+            return next();
 
         } catch (err) {
             logger.error(err.stack);
@@ -297,7 +298,7 @@ router.get("/income/:year", async(req, res, next) => {
     try {
         // check the user is a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]); // silently failed on no authorization
             return next();
         }
@@ -324,7 +325,7 @@ router.get("/expected/:year", async(req, res, next) => {
     try {
         // check the user is a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send({total:0,}); // silently failed on no authorization
             return next();
         }

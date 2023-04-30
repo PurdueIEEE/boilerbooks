@@ -69,7 +69,7 @@ async function getUserTreasurer(user) {
     return db_conn.promise().execute(
         `SELECT COUNT(U3.username) as validuser FROM Users U3
         INNER JOIN approval A ON U3.username = A.username
-        WHERE A.role >= ? AND U3.username = ?`,
+        WHERE A.privilege_level >= ? AND U3.username = ?`,
         [ACCESS_LEVEL.treasurer, user]
     );
 }

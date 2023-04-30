@@ -144,7 +144,7 @@ router.put("/:comm", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Approved Budget");
             return next();
         }
@@ -176,7 +176,7 @@ router.get("/submitted", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send({});
             return next();
         }

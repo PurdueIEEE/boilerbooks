@@ -34,7 +34,7 @@ const bcrypt_rounds = 10;
 router.get("/:userID", async(req, res, next) => {
     try {
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0 && req.context.request_user_id !== req.params.userID) {
+        if (results[0].validuser === 0 && req.context.request_user_id !== req.params.userID) {
             res.status(404).send("User not found");
             return next();
         }
