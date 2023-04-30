@@ -1,5 +1,7 @@
 # v2 API Design
 
+**This is really out of date**
+
 ## Note
 
 All actions should be able to be completed using only the API. In BBv1, actions are performed from the API and from the UI. To create a separable web application, all UI code should be decoupled from the API.

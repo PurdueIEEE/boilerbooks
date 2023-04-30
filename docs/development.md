@@ -6,7 +6,7 @@ The preferred development environment uses Visual Studio Code devcontainers. How
 
 ## Important Notes
 
-By default, a bootstrap account is created with the username `pieee` and the password `test`.
+By default, a bootstrap account is created with the username `master` and the password `test`.
 This account has Treasurer permissions and should be used to grant permissions to your actual testing accounts.
 While this is a local testing platform, changing the default password is highly recommended.
 
@@ -19,7 +19,6 @@ The accounts are:
 * `trainboi` (Boilermaker Express) - `qwertyuiop` - internal leader (Aerial Robotics)
 * `mdma` (Mitch Daniels)           - `qwertyuiop` - officer (Computer Society)
 * `pain` (ECE Department)          - `qwertyuiop` - treasurer
-
 
 ## Developing with Visual Studio Code \[Preferred\]
 
@@ -40,6 +39,12 @@ The command for this is most likely `git clone origin https://github.com/PurdueI
 Somewhere on screen, there will be a popup asking to reopen the workspace in a container.
 Accept this, and wait 30 seconds to 3 minutes for all installation and setup instructions.
 From then, open a split terminal and start both the API and UI servers.
+
+> If you are re-opening the development environment, you may need to first run a startup command:
+>
+> `.devcontainer/postCreateCommand.sh`
+>
+> Creating a new devcontainer will automatically run this command.
 
 ```sh
 cd api
