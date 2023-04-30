@@ -54,6 +54,8 @@ All the documentation is available in the `docs/` folder, broken up by topic.
 The prebuilt UI Docker image expects you to be using the Purdue IEEE SSO system.
 Because the constants are baked in at build time, if you are not utilizing this system you will need to build the image from scratch after modifications.
 
+Also, the committee with ID #2 is assumed to be a general fund. Treasurers will only be assigned purchase approval powers on this general fund.
+
 ### Docker Image Tag Policy
 
 We tag and maintain a few series of Docker image tags:

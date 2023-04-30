@@ -23,6 +23,10 @@ import { committee_id_to_display_readonly_included } from "../utils/committees.j
 
 const router = Router();
 
+// We assume that committee 2 is a general fund
+//  so that the Treasurer gets assigned permissions properly
+const ASSUMED_GENERAL_COMMITTEE = "2";
+
 /*
     Get all treasurers
 */
@@ -115,9 +119,9 @@ router.post("/treasurers", async(req, res, next) => {
         }
 
         // second verify that user doesn't have approvals already
-        const [results_1] = await Models.access.checkApprovalExists(req.body.username, "General IEEE", true);
+        const [results_1] = await Models.access.checkApprovalExists(req.body.username, ASSUMED_GENERAL_COMMITTEE, true);
         if (results_1[0].approvalexists) {
-            res.status(400).send("User already has approval powers for General IEEE, please remove them before adding more");
+            res.status(400).send("User already has approval powers for the general fund, please remove them before adding more");
             return next();
         }
 
@@ -132,7 +136,7 @@ router.post("/treasurers", async(req, res, next) => {
         };
         for (let committee in committee_id_to_display_readonly_included) {
             approval.committee = committee;
-            if (committee_id_to_display_readonly_included[committee] === "General IEEE") {
+            if (committee === ASSUMED_GENERAL_COMMITTEE) {
                 approval.amount = 1000000; // if they need more than this we have a problem
             }
             await Models.access.addApproval(approval);
