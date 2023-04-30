@@ -162,11 +162,13 @@ async function getTreasurer(id) {
 		(SELECT CONCAT(U.first, ' ', U.last) FROM Users U WHERE U.username = p.username) purchasedby,
 		(SELECT CONCAT(U2.first, ' ', U2.last) FROM Users U2 WHERE U2.username = p.approvedby) approvedby
 		FROM Purchases p
-		WHERE p.status in ('Purchased','Processing Reimbursement')
-		AND ? in (
-		SELECT U3.username FROM Users U3
-		INNER JOIN approval A ON U3.username = A.username
-		WHERE (A.privilege_level >= ?))
+		WHERE p.status IN ('Purchased','Processing Reimbursement')
+		AND ? IN (
+		    SELECT U3.username FROM Users U3
+		    INNER JOIN approval A ON U3.username = A.username
+		    WHERE (A.privilege_level >= ?)
+            AND A.committee != 1
+        )
 		ORDER BY p.purchasedate DESC`,
         [id, ACCESS_LEVEL.treasurer]
     );
