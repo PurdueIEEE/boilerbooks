@@ -143,7 +143,7 @@ router.post("/", async(req, res, next) => {
 router.get("/", async(req, res, next) => {
     // Check that user is treasurer
     try {
-        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
         if (results[0].validuser === 0) {
             res.status(200).send([]);
             return next();
@@ -207,7 +207,7 @@ router.put("/:incomeID", async(req, res, next) => {
 
     // Check that user is treasurer
     try {
-        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
         if (results[0].validuser === 0) {
             res.status(404).send("Income not found");
             return next();

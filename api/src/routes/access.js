@@ -30,7 +30,7 @@ router.get("/treasurers", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]);
             return next();
         }
@@ -51,7 +51,7 @@ router.get("/officers", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]);
             return next();
         }
@@ -73,7 +73,7 @@ router.get("/internals", async(req, res, next) => {
     try {
         // first we make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]);
             return next();
         }
@@ -109,7 +109,7 @@ router.post("/treasurers", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Treasurer added"); // silently failed
             return next();
         }
@@ -179,7 +179,7 @@ router.post("/officers", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Officer added"); // silently failed
             return next();
         }
@@ -243,7 +243,7 @@ router.post("/internals", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Internal Leader added"); // silently failed
             return next();
         }
@@ -286,7 +286,7 @@ router.delete("/approvals/:approverID", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Access removed");
             return next();
         }
@@ -307,7 +307,7 @@ router.delete("/treasurer/:username", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Access removed");
             return next();
         }

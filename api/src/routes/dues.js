@@ -146,7 +146,7 @@ router.put("/:duesid", async(req, res, next) => {
 
         try {
             // check the user is a treasurer
-            const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+            const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
             if (results[0].validuser === 0) {
                 res.status(200).send("Member status updated"); // silently fail on no authorization
                 return next();
@@ -184,7 +184,7 @@ router.put("/:duesid", async(req, res, next) => {
 
         try {
             // first make sure user is actually a treasurer
-            const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+            const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
             if (results[0].validuser === 0) {
                 res.status(200).send("Member details updated"); // Silently fail on no authorization
                 return next();
@@ -297,7 +297,7 @@ router.get("/income/:year", async(req, res, next) => {
 
     try {
         // check the user is a treasurer
-        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
         if (results[0].validuser === 0) {
             res.status(200).send([]); // silently failed on no authorization
             return next();
@@ -324,7 +324,7 @@ router.get("/expected/:year", async(req, res, next) => {
 
     try {
         // check the user is a treasurer
-        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
         if (results[0].validuser === 0) {
             res.status(200).send({total:0,}); // silently failed on no authorization
             return next();
