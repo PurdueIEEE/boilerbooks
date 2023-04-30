@@ -20,7 +20,7 @@
 
 LOCK TABLES `Budget` WRITE;
 /*!40000 ALTER TABLE `Budget` DISABLE KEYS */;
-INSERT INTO `Budget` VALUES (1,'General Items',100.00,1,8,'Approved'),(2,'Specific Items',100.00,1,8,'Approved'),(3,'General Items',100.00,2,8,'Approved'),(4,'Specific Items',100.00,2,8,'Approved'),(5,'General Items',100.00,3,8,'Approved'),(6,'Specific Items',100.00,3,8,'Approved'),(7,'General Items',100.00,4,8,'Approved'),(8,'Specific Items ',100.00,4,8,'Approved'),(11,'General Items',100.00,6,8,'Submitted'),(12,'Specific Items',100.00,6,8,'Submitted'),(15,'General Items',100.00,7,8,'Submitted'),(16,'Specific Items ',100.00,7,8,'Submitted'),(17,'General Items',100.00,5,8,'Submitted'),(18,'Specific Items',100.00,5,8,'Submitted');
+INSERT INTO `Budget` VALUES (1,'General Items',100.00,2,8,'Approved'),(2,'Specific Items',100.00,2,8,'Approved'),(3,'General Items',100.00,3,8,'Approved'),(4,'Specific Items',100.00,3,8,'Approved'),(5,'General Items',100.00,4,8,'Approved'),(6,'Specific Items',100.00,4,8,'Approved'),(7,'General Items',100.00,5,8,'Approved'),(8,'Specific Items ',100.00,5,8,'Approved'),(11,'General Items',100.00,7,8,'Submitted'),(12,'Specific Items',100.00,7,8,'Submitted'),(15,'General Items',100.00,8,8,'Submitted'),(16,'Specific Items ',100.00,8,8,'Submitted'),(17,'General Items',100.00,56,8,'Submitted'),(18,'Specific Items',100.00,6,8,'Submitted');
 /*!40000 ALTER TABLE `Budget` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `Purchases` WRITE;
 /*!40000 ALTER TABLE `Purchases` DISABLE KEYS */;
-INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',1,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',1,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',2,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',3,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',3,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 01:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',5,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
+INSERT INTO `Purchases` VALUES (1,'2022-11-13 06:18:00','pp',NULL,'Test Item 1','General Reason Given','Some Vendor',2,'General Items',NULL,20.00,'Denied',NULL,NULL,'','Pick-up',8),(2,'2022-11-13 06:07:27','pp',NULL,'Test Item 2','Specific Reason Given','A different vendor',2,'Specific Items',NULL,4.60,'Requested',NULL,NULL,'','Mailed',8),(3,'2022-11-13 06:30:00','pp',NULL,'Technical Items','Creating project components','Another vendor',3,'General Items',NULL,43.23,'Approved','trainboi','Cash','Approver changed funding source','Pick-up',8),(4,'2022-11-13 06:30:31','pp','2022-11-13 00:00:00','Challenging Supplies','Future Preparedness, changed by approver','One more vendor',4,'Specific Items','/receipts/Computer_Society_pp_Challenging_Supplies_4.jpg',10.00,'Purchased','mdma','BOSO','https://www.youtube.com/watch?v=dQw4w9WgXcQ','Mailed',8),(5,'2022-11-13 06:28:28','mdma',NULL,'Paper Products','Supplies for Events','Big Box Store',4,'General Items',NULL,30.00,'Denied','mdma','BOSO','','Mailed',8),(6,'2023-03-31 01:45:10','mdma','/receipts/MTT-S_trainboi_A_pile_of_wires_6.jpg','A pile of wires','To build radio equipment','The Wire Store',6,'General Items',NULL,25.76,'Processing Reimbursement','trainboi','SOGA','','Mailed',8);
 /*!40000 ALTER TABLE `Purchases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -70,7 +70,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `approval` WRITE;
 /*!40000 ALTER TABLE `approval` DISABLE KEYS */;
-INSERT INTO `approval` VALUES (2,'pain','Treasurer',1,1000000,'*',6),(3,'pain','Treasurer',2,0,'*',6),(4,'pain','Treasurer',3,0,'*',6),(5,'pain','Treasurer',4,0,'*',6),(6,'pain','Treasurer',5,0,'*',6),(7,'pain','Treasurer',6,0,'*',6),(8,'pain','Treasurer',7,0,'*',6),(9,'pain','Treasurer',8,0,'*',6),(10,'mdma','Committee Chair',3,1000000,'*',4),(11,'trainboi','Project Lead',2,100,'*',2);
+INSERT INTO `approval` VALUES (2,'pain','Treasurer',2,1000000,'*',6),(3,'pain','Treasurer',3,0,'*',6),(4,'pain','Treasurer',4,0,'*',6),(5,'pain','Treasurer',5,0,'*',6),(6,'pain','Treasurer',6,0,'*',6),(7,'pain','Treasurer',7,0,'*',6),(8,'pain','Treasurer',8,0,'*',6),(9,'pain','Treasurer',9,0,'*',6),(10,'mdma','Committee Chair',4,1000000,'*',4),(11,'trainboi','Project Lead',3,100,'*',2);
 /*!40000 ALTER TABLE `approval` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `committees` WRITE;
 /*!40000 ALTER TABLE `committees` DISABLE KEYS */;
-INSERT INTO `committees` VALUES (2,'Aerial Robotics','aerial','Active','Active'),(3,'Computer Society','csociety','Active','Active'),(4,'EMBS','embs','Active','Active'),(5,'MTT-S','mtt-s','Active','Active'),(6,'Racing','racing','Active','Active'),(7,'ROV','rov','Active','Active'),(8,'SOGA','soga','Active','Inactive'),(9,'Growth & Engagement','ge','Inactive','Active'),(10,'Learning','learning','Inactive','Active'),(11,'Social','social','Inactive','Active'),(12,'Software Saturdays','swsat','Inactive','Active');
+INSERT INTO `committees` VALUES (2,'General IEEE','general','Active','Active'),(3,'Aerial Robotics','aerial','Active','Active'),(4,'Computer Society','csociety','Active','Active'),(5,'EMBS','embs','Active','Active'),(6,'MTT-S','mtt-s','Active','Active'),(7,'Racing','racing','Active','Active'),(8,'ROV','rov','Active','Active'),(9,'SOGA','soga','Active','Inactive'),(10,'Growth & Engagement','ge','Inactive','Active'),(11,'Learning','learning','Inactive','Active'),(12,'Social','social','Inactive','Active'),(13,'Software Saturdays','swsat','Inactive','Active');
 /*!40000 ALTER TABLE `committees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
