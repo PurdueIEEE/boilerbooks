@@ -34,8 +34,12 @@ services:
       OIDC_CLIENT_ID: 'boilerbooks'
       OIDC_CLIENT_SECRET: 'anothersecret'
       OIDC_REDIRECT_URI: 'https://boilerbooks.example.com/api/v2/oidc/callback'
+      UI_NAV_TEXT: 'Club Name'
+      UI_NAV_IMAGE: '/path/to/image.ext'
+      UI_NAV_LINK: 'https://example.com'
     volumes:
       - ./receipts:/srv/receipts
+      - ./assets:/srv/assets
       - ./logs:/var/log/boilerbooks
     depends_on:
       - db

@@ -32,3 +32,4 @@ RUN mkdir /var/log/boilerbooks && chown node:node /var/log/boilerbooks
 RUN mkdir /var/www/receipts && chown node:node /var/www/receipts
 RUN service mariadb start && mariadb boilerbooks < /tmp/config/sample-data.sql
 ADD .devcontainer/receipts /var/www/receipts/
+ADD .devcontainer/assets /var/www/assets/

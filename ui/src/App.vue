@@ -17,7 +17,7 @@
               <li class="nav-item mx-1" v-if="showUser"><router-link class="nav-link" active-class="active" to="/myaccount"><i class="bi bi-person-fill me-1"></i>{{ auth_state.full_name }}</router-link></li>
               <li class="nav-item mx-1"><router-link class="nav-link" active-class="active" to="/help"><i class="bi bi-question-circle-fill me-1"></i>Help</router-link></li>
               <li class="nav-item mx-1" v-if="showUser"><span class="nav-link" style="cursor:pointer" v-on:click="logout"><i class="bi bi-box-arrow-right me-1"></i>Sign Out</span></li>
-              <li class="nav-item mx-1"><a class="nav-link" href="https://purdueieee.org/"><img class="me-2" src="./assets/pieee-kite.svg" alt="" width="25" height="25">Purdue IEEE</a></li>
+              <li class="nav-item mx-1"><a class="nav-link" v-bind:href="nav_link"><img class="me-2" src="/api/v2/ui/image" alt="" width="25" height="25">{{ nav_text }}</a></li>
             </ul>
           </div>
         </div>
@@ -53,13 +53,17 @@
 
 import auth_state from '@/state';
 
+import { fetchWrapperTXT } from './api_wrapper';
+
 export default {
   name:"BoilerBooks",
   data() {
     return {
       auth_state: auth_state.state,
       dev: import.meta.env.MODE === "dev",
-      version_string: import.meta.env.VITE_VERSION_STRING
+      version_string: import.meta.env.VITE_VERSION_STRING,
+      nav_text: '',
+      nav_link: '',
     }
   },
   computed: {
@@ -78,11 +82,28 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     if (this.dev) {
       document.getElementById("favicon").href = `${import.meta.env.BASE_URL}dev-favicon.ico`;
       document.title = "Boiler Books [DEV]"
     }
+
+    const ui_text = await fetchWrapperTXT('/api/v2/ui/text', {
+      'method': 'get'
+    });
+
+    const ui_link = await fetchWrapperTXT('/api/v2/ui/link', {
+      'method': 'get'
+    })
+
+    if (ui_text.error || ui_link.error) {
+      this.nav_text = "...";
+      this.nav_link = "#";
+      return;
+    }
+
+    this.nav_text = ui_text.response;
+    this.nav_link = ui_link.response;
   }
 }
 </script>

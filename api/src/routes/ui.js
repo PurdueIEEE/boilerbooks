@@ -14,22 +14,31 @@
    limitations under the License.
 */
 
+import { Router } from "express";
 import { logger } from "../utils/logging.js";
 
-async function apiLogger(req, res, next) {
-    // Log every route and it's result
-    //   does not catch invalid API keys
+const router = Router();
 
-    if (req.originalUrl === "/") {
-        return next(); // Don't clutter logs with a key check
-    }
-
-    if (req.originalUrl.startsWith("/ui")) {
-        return next(); // Don't clutter logs with UI loading calls
-    }
-
-    logger.info(`[${req.context.request_user_id ? req.context.request_user_id : ""}] - Return ${res.statusCode} - "${req.method} ${req.originalUrl}"`);
+router.get("/text", (req, res, next) => {
+    res.status(200).send(process.env.UI_NAV_TEXT);
     next();
-}
+});
 
-export default apiLogger;
+router.get("/image", (req, res, next) => {
+    res.status(200).sendFile(process.env.UI_NAV_IMAGE, (err) => {
+        if (err) {
+            if (!res.headersSent) {
+                res.status(500).send("Internal Server Error");
+                logger.error(err.message);
+            }
+        }
+        next();
+    });
+});
+
+router.get("/link", (req, res, next) => {
+    res.status(200).send(process.env.UI_NAV_LINK);
+    next();
+});
+
+export default router;
