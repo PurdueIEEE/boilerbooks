@@ -1,5 +1,5 @@
 [Unit]
-Description=Purdue IEEE Boiler Books
+Description=Boiler Books
 Documentation=https://github.com/PurdueIEEE/boilerbooks
 After=network.target
 

@@ -76,12 +76,13 @@ cd boilerbooks
 
 apt install nginx mysql-server-8.0 nodejs postfix
 
-mysql < config/ieee-money.sql
+mysql < config/boilerbooks.sql
+mysql < .devcontainer/sql-presetup.sql
 mysql < config/sql-setup.sql
 mysql < .devcontainer/sample-data.sql
 
 cp config/nginx-dev.conf /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/nginx-dev.conf /etc/nginx/sites-enabled/ieee-money-dev.conf
+ln -s /etc/nginx/sites-available/nginx-dev.conf /etc/nginx/sites-enabled/boilerbooks-dev.conf
 service nginx reload
 
 mkdir /var/log/boilerbooks
