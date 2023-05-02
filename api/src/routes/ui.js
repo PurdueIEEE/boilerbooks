@@ -41,4 +41,18 @@ router.get("/link", (req, res, next) => {
     next();
 });
 
+router.get("/login", (req, res, next) => {
+    const login_details = {
+        "type": process.env.UI_LOGIN_TYPE,
+    };
+
+    if (login_details.type === "oidc") {
+        login_details.oidc_name = process.env.UI_LOGIN_OIDC_NAME;
+        login_details.oidc_profile = process.env.UI_LOGIN_OIDC_PROFILE;
+    }
+
+    res.status(200).send(login_details);
+    next();
+});
+
 export default router;

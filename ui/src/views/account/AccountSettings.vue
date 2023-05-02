@@ -10,7 +10,7 @@
         <h4>Account Username</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="uname" v-bind:disabled="useOIDC">
+        <input class="form-control" v-model="uname" v-bind:disabled="login_type.type === 'oidc'">
       </div>
     </div>
 
@@ -19,7 +19,7 @@
         <h4>Current First Name</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="fname" v-bind:disabled="useOIDC">
+        <input class="form-control" v-model="fname" v-bind:disabled="login_type.type === 'oidc'">
       </div>
     </div>
 
@@ -28,7 +28,7 @@
         <h4>Current Last Name</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="lname" v-bind:disabled="useOIDC">
+        <input class="form-control" v-model="lname" v-bind:disabled="login_type.type === 'oidc'">
       </div>
     </div>
 
@@ -37,7 +37,7 @@
         <h4>Current Email</h4>
       </div>
       <div class="col-md-8">
-        <input class="form-control" v-model="email" v-bind:disabled="useOIDC">
+        <input class="form-control" v-model="email" v-bind:disabled="login_type.type === 'oidc'">
       </div>
     </div>
 
@@ -117,7 +117,7 @@ export default {
       zip: '',
       dispmsg:'',
       error:false,
-      useOIDC: import.meta.env.VITE_USE_OIDC === "true"
+      login_type: {type: ''},
     }
   },
   methods: {
@@ -145,14 +145,15 @@ export default {
       }
     },
     changePassword() {
-      if (this.useOIDC) {
-        window.location.href = import.meta.env.VITE_OIDC_ACCOUNT;
+      if (this.login_type.type === 'oidc') {
+        window.location.href = this.login_type.oidc_profile;
       } else {
         this.$router.push('/myaccount/password');
       }
     }
   },
   async mounted() {
+    // Get account details
     const response = await fetchWrapperJSON(`/api/v2/account/${auth_state.state.uname}`, {
       method: 'get',
     });
@@ -170,6 +171,19 @@ export default {
     this.city = response.response.city;
     this.state = response.response.state;
     this.zip = response.response.zip;
+
+    // Get API login details
+    const other_response = await fetchWrapperJSON('/api/v2/ui/login', {
+      'method': 'get',
+    });
+
+    if (other_response.error) {
+      this.error = true;
+      this.errmsg = other_response.response;
+      return;
+    }
+
+    this.login_type = other_response.response
   }
 }
 </script>

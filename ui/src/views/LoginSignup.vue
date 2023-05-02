@@ -1,7 +1,7 @@
 <template>
   <div class="container-lg my-5 pt-5">
 
-    <div v-if="!useOIDC&&login_status">
+    <div v-if="(login_type.type === 'password')&&login_status">
       <h1>Please Sign In</h1>
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
       <form v-on:submit.prevent="login()" name="login_form">
@@ -28,7 +28,7 @@
       <button class="btn btn-link link-secondary mt-4 fw-bold" v-on:click="swapLoginNew">Make an account</button>
     </div>
 
-    <div v-else-if="!useOIDC">
+    <div v-else-if="(login_type.type === 'password')">
       <h1>Make a Boiler Books Account</h1>
       <div v-if="error" class="lead fw-bold my-1 fs-3 text-danger">{{errmsg}}</div>
       <div class="row">
@@ -90,9 +90,13 @@
       <button class="btn btn-link link-secondary mt-4 fw-bold" v-on:click="swapLoginNew">I already have an account</button>
     </div>
 
-    <div v-else class="mt-5">
+    <div v-else-if="login_type.type === 'oidc'" class="mt-5">
       <br><br><br><br><br><br><br>
-      <a href="/api/v2/oidc/login"><button type="button" class="btn btn-outline-secondary pb-3 px-3"><i class="bi bi-key-fill fs-2"></i><br><span class="fs-4 fw-bold">Login with {{ OIDC_provider }}</span></button></a>
+      <a href="/api/v2/oidc/login">
+        <button type="button" class="btn btn-outline-secondary pb-3 px-3">
+          <i class="bi bi-key-fill fs-2"></i><br><span class="fs-4 fw-bold">Login with {{ login_type.oidc_name }}</span>
+        </button>
+      </a>
       <br><br><br><br><br><br><br>
     </div>
 
@@ -140,8 +144,7 @@ export default {
       error: false,
       errmsg: '',
       showCapsWarning: false,
-      useOIDC: import.meta.env.VITE_USE_OIDC === "true",
-      OIDC_provider: import.meta.env.VITE_OIDC_NAME,
+      login_type: {type: ''},
     }
   },
   created() {
@@ -152,7 +155,7 @@ export default {
       this.showCapsWarning = e.getModifierState('CapsLock');
     });
   },
-  mounted() {
+  async mounted() {
     let user = null;
     if (document.cookie.split(';').some((item) => item.trim().startsWith('apikey='))) {
       user = JSON.parse(localStorage.getItem('authState'));
@@ -160,7 +163,20 @@ export default {
     if (user !== null) {
       auth_state.setAuthState(user);
       this.$router.replace('/');
+      return;
     }
+
+    const response = await fetchWrapperJSON('/api/v2/ui/login', {
+      'method': 'get',
+    });
+
+    if (response.error) {
+      this.error = true;
+      this.errmsg = response.response;
+      return;
+    }
+
+    this.login_type = response.response
   },
   methods: {
     async login() {

@@ -26,7 +26,7 @@
 
     <footer>
         <div class="container-fluid text-center py-3">
-          <p class="text-center lead">Boiler Books {{version_string}}</p>
+          <p class="text-center fs-5 lead">Boiler Books {{ version_string }}</p>
           <p class="text-center fs-6 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="dark-link">View project on GitHub</a></p>
           <p class="text-center fs-6 fw-light">Copyright © Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
         </div>
@@ -75,11 +75,7 @@ export default {
     logout() {
       auth_state.clearAuthState();
       // TODO this should invalidate the API key
-      if (import.meta.env.VITE_USE_OIDC === "true") {
-        window.location.href = '/api/v2/oidc/logout';
-      } else {
-        this.$router.push('/login');
-      }
+      this.$router.push('/login');
     }
   },
   async mounted() {
