@@ -1,19 +1,28 @@
 # Boiler Books
 
-The ultimate IEEE financial recordkeeping system! Boiler Books is used to track income, expenses, dues, and more across all of Purdue IEEE. Originally written with PHP in 2016, it has since been rewritten in JavaScript in 2022.
+The ultimate student organization financial recordkeeping system!
+Boiler Books is used to track income, expenses, dues, and more across an entire club.
+Originally written with PHP in 2016, it has since been rewritten in JavaScript in 2022.
 
 This system has three components: the database, the API, and the UI. The database is a standard MySQL installation, the API is an Express server, and the UI is a Vue SPA.
 
-Boiler Books is hosted at [money.purdueieee.org](https://money.purdueieee.org).
+## Public Demos
 
-## Documentation
+A public demo Boiler Books instance _will_ be hosted at [fake-money.purdueieee.org](https://fake-money.purdueieee.org).
+This demo will reset itself every 12 hours.
 
-All the documentation is available in the `docs/` folder, broken up by topic. For a full reference of server infrastructure, refer to the **Purdue IEEE Infrastructure Guide** stored with the Purdue IEEE president.
+The following usernames / passwords will be active for the demo instance:
 
-* Updating the Fiscal Year to match the current one: [updating_fiscalyear.md](docs/updating_fiscalyear.md)
-* Setting up a development environment: [development.md](docs/development.md)
-* Deploying app for production: [deployment.md](docs/deployment.md)
-* API endpoint documentation: [api_endpoint.md](docs/api_endpoints.md)
+* username / password / role
+* master   / password / Admin Account
+* treas    / password / Treasurer
+* officer  / password / Officer
+* internal / password / Internal Leader
+* member   / password / Regular Member
+
+<hr>
+
+Purdue IEEE's Boiler Books instance is hosted at [money.purdueieee.org](https://money.purdueieee.org).
 
 ## Features
 
@@ -27,4 +36,35 @@ All users can see the dues they have paid thus far and officers can view all due
 
 Officers must submit budgets to the treasurer who can approve the budget request for the current fiscal year. Once approved, any user can create purchase requests.
 
-The treasurer can add and remove authorized committee members, officers, and other treasurers from the permission list.
+The treasurer or admin can add and remove authorized committee members, officers, and other treasurers from the permission list.
+
+The treasurer or admin can create new committees and fiscal years right from the interface.
+
+## Documentation
+
+All the documentation is available in the `docs/` folder, broken up by topic.
+
+* Updating the Fiscal Year to match the current one: [updating_fiscalyear.md](docs/updating_fiscalyear.md)
+* Setting up a development environment: [development.md](docs/development.md)
+* Deploying app for production: [deployment.md](docs/deployment.md)
+* API endpoint documentation: [api_endpoint.md](docs/api_endpoints.md)
+
+## Before You Deploy
+
+The prebuilt UI Docker image expects you to be using the Purdue IEEE SSO system.
+Because the constants are baked in at build time, if you are not utilizing this system you will need to build the image from scratch after modifications.
+
+Also, the committee with ID #2 is assumed to be a general fund. Treasurers will only be assigned purchase approval powers on this general fund.
+
+### Docker Image Tag Policy
+
+We tag and maintain a few series of Docker image tags:
+* `latest`, `2.3`, `2` : latest release
+* `master`, `master-dev` (UI only) : latest master commit
+
+The Boiler Books release cadence is around 2 times a year.
+If there is an urgent fix you need, the `master` tags on the prebuilt Docker images are always built from the latest master.
+
+## Support
+
+If you encounter a bug or want to suggest a new feature, create a [new issue](https://github.com/PurdueIEEE/boilerbooks/issues/new). If you have an urgent problem, reach out to our infrastructure team via email at [ieee-infrastructure@purdueieeeorg](mailto:ieee-infrastructure@purdueieee.org).

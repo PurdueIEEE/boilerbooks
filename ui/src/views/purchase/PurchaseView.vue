@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>View Purchases</h3>
-    <p class="lead">Below are your past purchases for IEEE.</p>
+    <p class="lead">Below are your past purchases.</p>
     <div v-if="dispmsg!==''" class="lead fw-bold my-1 fs-3" v-bind:class="{'text-success':!error,'text-danger':error}">{{dispmsg}}</div>
     <br v-else>
     <!-- As much as I would like, all the fields do not fit here -->

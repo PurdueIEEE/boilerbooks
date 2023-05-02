@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0-debian
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'superpassword'
+      MYSQL_DATABASE: 'boilerbooks'
+      MYSQL_USER: 'boilerbooks'
+      MYSQL_PASSWORD: 'boilerbooks-password'
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+  api:
+    restart: unless-stopped
+    image: ghcr.io/purdueieee/boilerbooks-api:latest
+    environment:
+      PORT: 3000
+      ACCOUNT_PIN: 'example'
+      DB_HOST: 'db'
+      DB_USER: 'boilerbooks'
+      DB_PASS: 'boilerbooks-password'
+      DB_DATABASE: 'boilerbooks'
+      RECEIPT_BASEDIR: '/example/path'
+      SEND_MAIL: 'yes'
+      SMTP_HOST: 'localhost'
+      SMTP_PORT: 25
+      SMTP_FROM: 'boilerbooks@example.com'
+      HTTP_HOST: 'boilerbooks.example.com'
+      TREAS_EMAIL: 'treasurer@example.com'
+      USE_OIDC: 'true'
+      SESSION_SECRET: 'supersecret'
+      OIDC_SERVER: 'https://sso.example.com'
+      OIDC_CLIENT_ID: 'boilerbooks'
+      OIDC_CLIENT_SECRET: 'anothersecret'
+      OIDC_REDIRECT_URI: 'https://boilerbooks.example.com/api/v2/oidc/callback'
+      UI_NAV_TEXT: 'Club Name'
+      UI_NAV_IMAGE: '/path/to/image.ext'
+      UI_NAV_LINK: 'https://example.com'
+      UI_LOGIN_TYPE: 'password'
+      UI_LOGIN_OIDC_NAME: 'Example Provider'
+      UI_LOGIN_OIDC_PROFILE: 'https://sso.example.org/profile'
+    volumes:
+      - ./receipts:/srv/receipts
+      - ./assets:/srv/assets
+      - ./logs:/var/log/boilerbooks
+    depends_on:
+      - db
+  ui_proxy:
+    restart: unless-stopped
+    image: ghcr.io/purdueieee/boilerbooks-ui:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./boilerbooks/config/nginx-prod.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+      - db
+      - pma
+  pma:
+    image: phpmyadmin:5-apache
+    restart: unless-stopped
+    volumes:
+      - ./phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+    environment:
+      PMA_ABSOLUTE_URI: https://boilerbooks.example.com/pma/
+      PMA_HOST: db
+    depends_on:
+      - db

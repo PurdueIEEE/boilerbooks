@@ -33,7 +33,7 @@ const bcrypt_rounds = 10;
 */
 router.get("/:userID", async(req, res, next) => {
     try {
-        const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
+        const [results] = await Models.account.getUserTreasurerButExcludeAdmin(req.context.request_user_id);
         if (results[0].validuser === 0 && req.context.request_user_id !== req.params.userID) {
             res.status(404).send("User not found");
             return next();
@@ -159,11 +159,11 @@ router.post("/:userID", (req, res, next) => {
                 subject: "Boiler Books Password Changed",
                 text: "Your Boiler Books password was recently changed.\n" +
                       "If you made this request, you can safely ignore this message.\n" +
-                      "Otherwise, please reach out to IEEE.\n\n" +
+                      "Otherwise, please reach out to the system administrator.\n\n" +
                       "This email was automatically sent by Boiler Books",
                 html: `<h2>Your Boiler Books password was recently changed.</h2>
                        <p>If you made this request, you can safely ignore this message.<p>
-                       <p><b>Otherwise, please reach out to IEEE.</b></p>
+                       <p><b>Otherwise, please reach out to the system administrator.</b></p>
                        <br>
                        <small>This email was automatically sent by Boiler Books</small>`,
             });

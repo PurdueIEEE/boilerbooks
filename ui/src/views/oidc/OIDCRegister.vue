@@ -38,8 +38,8 @@
               <input type="text" class="form-control" id="new_zip" v-model="new_zip" placeholder="47907" required>
             </div>
             <div class="col-12">
-              <label for="new_pin" class="form-label">IEEE Code</label>
-              <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter the code given by IEEE to enable account creation" required>
+              <label for="new_pin" class="form-label">Account Creation Code</label>
+              <input type="password" class="form-control" id="new_pin" v-model="new_pin" placeholder="Enter an account creation code to continue" required>
             </div>
             <div class="text-center text-danger">
               <p v-if="showCapsWarning">Caps Lock is on!</p>

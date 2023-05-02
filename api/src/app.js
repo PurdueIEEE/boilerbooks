@@ -35,6 +35,7 @@ app.use("/access", routes.access);
 app.use("/dues", routes.dues);
 app.use("/search", routes.search);
 app.use("/infra", routes.infra);
+app.use("/ui/", routes.ui);
 
 // conditionally mount login routes
 if (process.env.USE_OIDC === "true") {

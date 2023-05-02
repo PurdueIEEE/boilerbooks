@@ -95,7 +95,7 @@
         </template>
       </DataTable>
       <br/><br/>
-      <h5>NOTE: 'Exempt' members are those who have an existing International IEEE membership.</h5>
+      <h5>NOTE: 'Exempt' members are those who do not need to pay dues.</h5>
     </div>
   </div>
 </template>

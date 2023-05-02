@@ -375,11 +375,11 @@ router.post("/reset", async(req, res, next) => {
                 subject: "Boiler Books Password Reset",
                 text: "Your Boiler Books password was reset.\n" +
                       "If you made this change, you can safely ignore this message.\n" +
-                      "Otherwise, please reach out to IEEE.\n\n" +
+                      "Otherwise, please reach out to the system administrator.\n\n" +
                       "This email was automatically sent by Boiler Books",
                 html: `<h2>Your Boiler Books password was resent.</h2>
                        <p>If you made this change, you can safely ignore this message.<p>
-                       <p><b>Otherwise, please reach out to IEEE.</b></p>
+                       <p><b>Otherwise, please reach out to the system administrator.</b></p>
                        <br>
                        <small>This email was automatically sent by Boiler Books</small>`,
             });

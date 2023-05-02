@@ -14,8 +14,8 @@
           </div>
           <div class="modal-body">
             <p class="fs-5">You have selected to have your check mailed to the address on your account. Make sure this is a valid address where you can receive mail.</p>
-            <p class="fs-5">Mailing your check can cause your reimbursement to be delayed by several weeks. If you are on campus, picking up your check from the IEEE office is significantly quicker.</p>
-            <p class="fs-5">Further, the IEEE Treasurer can, at their discretion, choose to not follow your request.</p>
+            <p class="fs-5">Mailing your check can cause your reimbursement to be delayed by several weeks. If you are on campus, picking up your check from the treasurer is significantly quicker.</p>
+            <p class="fs-5">Further, the Treasurer can, at their discretion, choose to not follow your request.</p>
             <p class="fw-bold fs-4">Are you sure you want to proceed?</p>
           </div>
           <div class="modal-footer">
@@ -64,7 +64,7 @@
         <label for="checkSelect" class="form-label fw-bold">How would you like to receive this check?</label>
         <select id="checkSelect" class="form-select" v-model="checkType" required>
           <option selected disabled value="">Select...</option>
-          <option value="Pick-up">Pickup From Office</option>
+          <option value="Pick-up">Pickup From Treasurer</option>
           <option value="Mailed">Mailed to Address</option>
         </select>
       </div>

@@ -31,7 +31,7 @@ router.get("/committees", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send([]);
             return next();
         }
@@ -78,7 +78,7 @@ router.post("/committees", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(201).send("Saved committee details");
             return next();
         }
@@ -162,7 +162,7 @@ router.put("/committees/:commID", async(req, res, next) => {
 
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send("Saved committee details");
             return next();
         }
@@ -198,7 +198,7 @@ router.get("/fiscal", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send({});
             return next();
         }
@@ -245,7 +245,7 @@ router.post("/fiscal", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(201).send("Created new fiscal year");
             return next();
         }
@@ -274,7 +274,7 @@ router.get("/fiscal", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(200).send({});
             return next();
         }
@@ -333,7 +333,7 @@ router.post("/fiscal", async(req, res, next) => {
     try {
         // first make sure user is actually a treasurer
         const [results] = await Models.account.getUserTreasurer(req.context.request_user_id);
-        if (results.validuser === 0) {
+        if (results[0].validuser === 0) {
             res.status(201).send("Created new fiscal year");
             return next();
         }

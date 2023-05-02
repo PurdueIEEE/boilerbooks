@@ -5,7 +5,7 @@
       Add a new budget request each fiscal year. Once submitted, the treasurer will approve or deny the budget.
     </p>
     <p class="lead">
-      Per the <a href="https://purdueieee.org/constitution/" target="_blank">IEEE constitution</a>, budgets must be submitted within the first week of the academic year.
+      Contact the treasurer with any questions about budget details and deadlines.
     </p>
   </div>
 </template>

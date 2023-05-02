@@ -74,6 +74,16 @@ async function getUserTreasurer(user) {
     );
 }
 
+async function getUserTreasurerButExcludeAdmin(user) {
+    return db_conn.promise().execute(
+        `SELECT COUNT(U3.username) as validuser FROM Users U3
+        INNER JOIN approval A ON U3.username = A.username
+        WHERE A.privilege_level >= ? AND U3.username = ?
+        AND A.committee != 1`,
+        [ACCESS_LEVEL.treasurer, user]
+    );
+}
+
 async function getUserApprovalCommittees(user) {
     return db_conn.promise().execute(
         "SELECT committee FROM approval WHERE username = ? AND privilege_level > ?",
@@ -205,6 +215,7 @@ export default {
     updatePassword,
     getUserApprovals,
     getUserTreasurer,
+    getUserTreasurerButExcludeAdmin,
     getUserApprovalCommittees,
     setPasswordResetDetails,
     checkResetTime,

@@ -4,8 +4,8 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 -- Create Database
-CREATE DATABASE IF NOT EXISTS `ieee-money` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
-USE `ieee-money`;
+CREATE DATABASE IF NOT EXISTS `boilerbooks` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;
+USE `boilerbooks`;
 
 -- Setup the tables
 CREATE TABLE `approval` (
