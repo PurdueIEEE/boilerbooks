@@ -22,7 +22,11 @@ const mailer = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     secure: false,
-    ignoreTLS: true,
+    auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD,
+    },
+    ignoreTLS: process.env.SMTP_IGNORE_TLS == "true",
 },{
     from: "Boiler Books <boilerbooks@purdueieee.org>",
 });
