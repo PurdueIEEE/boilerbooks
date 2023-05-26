@@ -33,7 +33,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{env.IMAGE_NAME_API }}
           tags: |
             type=ref,event=branch
-            type=match,pattern=v\d.\d,group=0
+            type=match,pattern=v(\d.\d),group=1
             type=match,pattern=v(\d).\d,group=1
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -65,8 +65,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{env.IMAGE_NAME_UI }}
           tags: |
             type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver, pattern={{major}}
+            type=match,pattern=v(\d.\d),group=1
+            type=match,pattern=v(\d).\d,group=1
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Build and push Docker image
