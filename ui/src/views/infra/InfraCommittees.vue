@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="p-3 m-2 bg-light border rounded-3 row text-start">
+    <div class="p-3 m-2 bg-light-subtle border rounded-3 row text-start">
       <div class="col-md-1">
         <p class="fs-3 fw-bold">ID</p>
       </div>
@@ -45,7 +45,7 @@
         <p class="fs-3 fw-bold">Edit</p>
       </div>
     </div>
-    <div v-for="(item, idx) in committeeList" v-bind:key="idx" class="p-3 m-2 bg-light border rounded-3 row text-start">
+    <div v-for="(item, idx) in committeeList" v-bind:key="idx" class="p-3 m-2 bg-light-subtle border rounded-3 row text-start">
       <div class="col-md-1">
         <p class="fs-5 fw-bold">{{ item.committee_id }}</p>
       </div>
@@ -79,7 +79,7 @@
         <button v-if="activeEditList[idx]" v-on:click="saveEdit(idx)" class="btn btn-primary"><i class="bi bi-check-lg"></i></button>
       </div>
     </div>
-    <div class="p-3 m-2 bg-light border rounded-3 row text-start">
+    <div class="p-3 m-2 bg-light-subtle border rounded-3 row text-start">
       <div class="col-md-1 my-3">
         <p class="fs-5 fw-bold">#</p>
       </div>

@@ -6,7 +6,7 @@
 
     <div class="row">
       <div v-for="(item, idx) in fiscalYearList" v-bind:key="idx" class="col-md-4">
-        <div class="row p-3 m-2 bg-light border rounded-3 text-start">
+        <div class="row p-3 m-2 bg-light-subtle border rounded-3 text-start">
           <div class="col-md-2">
             <p class="fs-5 fw-bold">{{ item.fyid }}</p>
           </div>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="row p-3 m-2 bg-light border rounded-3 text-start">
+    <div class="row p-3 m-2 bg-light-subtle border rounded-3 text-start">
       <div class="offset-md-2 col-md-4 my-3">
         <input id="fiscal-input-new" type="text" v-model="new_fiscalyear" class="form-control" placeholder="20XX-20YY">
       </div>

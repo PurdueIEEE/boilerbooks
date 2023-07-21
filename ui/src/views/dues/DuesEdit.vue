@@ -87,11 +87,11 @@
           <td>{{dues.row.fiscal_year}}</td>
           <td>{{dues.row.status}}</td>
           <td>
-            <button class="btn btn-outline-info my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Paid')">Paid</button>
+            <button class="btn btn-info my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Paid')">Paid</button>
             <br>
-            <button class="btn btn-outline-dark my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Exempt')">Exempt</button>
+            <button class="btn btn-secondary my-1" v-on:click="triggerAmountModal(dues.row.duesid, 'Exempt')">Exempt</button>
           </td>
-          <td><button class="btn btn-outline-primary" v-on:click="triggerUpdateModal(dues.row)">Edit</button></td>
+          <td><button class="btn btn-primary" v-on:click="triggerUpdateModal(dues.row)">Edit</button></td>
         </template>
       </DataTable>
       <br/><br/>

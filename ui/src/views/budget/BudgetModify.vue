@@ -17,7 +17,7 @@
       <p class="fs-2">Current budget status: <span v-bind:class="budgetStatus()">{{financialSummary.length == 0 ? "Not Submitted" : financialSummary[0].budget}}</span></p>
       <form v-on:submit.prevent="pushNewBudget">
 
-        <div v-for="(item, idx) in currBudget" v-bind:key="item.category" class="p-3 m-2 bg-light border rounded-3 row text-start">
+        <div v-for="(item, idx) in currBudget" v-bind:key="item.category" class="p-3 m-2 bg-light-subtle border rounded-3 row text-start">
           <div class="col-md-5 mt-1">
             <label v-bind:for="'cat-input-'+idx" class="form-label fw-bold">Category</label>
             <input v-bind:id="'cat-input-'+idx" type="text" v-model="currEditBudget[idx].category" class="form-control" required>
@@ -34,7 +34,7 @@
           </div>
         </div>
 
-        <div class="p-3 m-2 bg-light border rounded-3 row text-start">
+        <div class="p-3 m-2 bg-light-subtle border rounded-3 row text-start">
           <div class="col-md-5 mt-1">
             <label for="cat-input-new" class="form-label fw-bold">Category</label>
             <input id="cat-input-new" type="text" v-model="newCat" class="form-control" placeholder="Category name...">

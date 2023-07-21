@@ -29,13 +29,13 @@
         <td>{{income.row.status}}</td>
         <td>{{income.row.refnumber}}</td>
         <td>
-          <button class="btn btn-outline-info my-1" v-if="income.row.status !== 'Expected'" v-on:click="updateStatus(income.row.incomeid, 'Expected')">Expected</button>
+          <button class="btn btn-info my-1" v-if="income.row.status !== 'Expected'" v-on:click="updateStatus(income.row.incomeid, 'Expected')">Expected</button>
           <br v-if="income.row.status !== 'Expected'">
-          <button class="btn btn-outline-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received')">Received</button>
+          <button class="btn btn-success my-1" v-if="income.row.status !== 'Received'" v-on:click="updateStatus(income.row.incomeid, 'Received')">Received</button>
           <br v-if="income.row.status !== 'Received'">
-          <button class="btn btn-outline-dark my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived')">Unreceived</button>
+          <button class="btn btn-warning my-1" v-if="income.row.status !== 'Unreceived'" v-on:click="updateStatus(income.row.incomeid, 'Unreceived')">Unreceived</button>
           <br v-if="income.row.status !== 'Unreceived'">
-          <button class="btn btn-outline-secondary my-1" v-if="income.row.status !== 'Credit'" v-on:click="updateStatus(income.row.incomeid, 'Credit')">Credit</button>
+          <button class="btn btn-secondary my-1" v-if="income.row.status !== 'Credit'" v-on:click="updateStatus(income.row.incomeid, 'Credit')">Credit</button>
         </td>
       </template>
     </DataTable>

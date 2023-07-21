@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-md fixed-top bg-dark-subtle" data-bs-theme="dark">
         <div class="container-lg">
           <router-link class="navbar-brand fw-bold" to="/">Boiler Books {{dev ? "[DEV]" : ""}}</router-link>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarlink" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
 
     <footer>
         <div class="container-fluid text-center py-3">
-            <p class="text-center fs-5 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="dark-link">View page on GitHub</a></p>
+            <p class="text-center fs-5 my-0"><a href="https://github.com/PurdueIEEE/boilerbooks" target="_blank" class="link-secondary">View page on GitHub</a></p>
             <p class="text-center">{{version_string}}</p>
             <p class="text-center lead">Copyright © Purdue IEEE<br>with Hadi Ahmed and Kyle Rakos</p>
         </div>
@@ -91,16 +91,6 @@ export default {
 <style>
 #app {
   text-align: center;
-}
-
-.dark-link {
-  text-decoration: none;
-  color: black;
-}
-
-.dark-link:hover {
-  text-decoration: underline;
-  color: black;
 }
 
 .debug {
