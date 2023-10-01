@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^6.8.0",
+    "express-rate-limit": "^7.0.2",
     "express-session": "^1.17.3",
     "jimp": "^0.22.8",
     "memorystore": "^1.6.7",
